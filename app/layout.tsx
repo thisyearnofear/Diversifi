@@ -5,7 +5,11 @@ import Script from "next/script";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
 import { auth } from "@/app/auth";
 
@@ -81,10 +85,16 @@ export default async function RootLayout({
           <Toaster position="top-center" />
           <Providers>
             <SidebarProvider>
-              <AppSidebar user={session?.user} />
-              <SidebarInset>{children}</SidebarInset>
-              <div className="flex fixed top-0 right-0 z-50 p-2">
-                <ConnectButton />
+              <div className="flex min-h-screen w-full">
+                <AppSidebar user={session?.user} />
+                <div className="flex-1 w-full">
+                  <main className="size-full">
+                    {children}
+                    <div className="fixed top-0 right-0 z-50 p-2">
+                      <ConnectButton />
+                    </div>
+                  </main>
+                </div>
               </div>
             </SidebarProvider>
           </Providers>

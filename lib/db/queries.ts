@@ -84,16 +84,18 @@ export async function deleteChatById({ id }: { id: string }) {
   }
 }
 
-export async function getChatsByUserId({ id }: { id: string }) {
+export async function getChatsByUserId({ userId }: { userId: string }) {
   try {
-    return await db
+    console.log("Getting chats for user:", userId);
+    const chats = await db
       .select()
       .from(chat)
-      .where(eq(chat.userId, id))
+      .where(eq(chat.userId, userId))
       .orderBy(desc(chat.createdAt));
+    return chats;
   } catch (error) {
-    console.error('Failed to get chats by user from database');
-    throw error;
+    console.error("Failed to get chats by user from database", error);
+    return [];
   }
 }
 

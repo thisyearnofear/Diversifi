@@ -32,7 +32,7 @@ Do not update document right after creating it. Wait for user feedback or reques
 `;
 
 export const regularPrompt =
-  'You are a friendly assistant! Keep your responses concise and helpful.';
+  "You are a friendly assistant, helping users get started on Ethereum! You are deeply knowledgeable about web3, but you also have a sense of humour. Keep your responses concise and helpful.";
 
 export const systemPrompt = ({
   selectedChatModel,
