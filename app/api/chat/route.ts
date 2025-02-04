@@ -24,7 +24,13 @@ import { generateTitleFromUserMessage } from "../../actions";
 import { createDocument } from "@/lib/ai/tools/create-document";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
-import { getWeather } from "@/lib/ai/tools/get-weather";
+import {
+  pythActionProvider,
+  walletActionProvider,
+  AgentKit,
+} from "@coinbase/agentkit";
+import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
+import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
 
 export const maxDuration = 60;
 
@@ -57,6 +63,21 @@ export async function POST(request: Request) {
     });
   }
 
+  const walletProvider = await PrivyWalletProvider.configureWithWallet({
+    appId: process.env.PRIVY_APP_ID as string,
+    appSecret: process.env.PRIVY_APP_SECRET as string,
+    networkId: "base-sepolia",
+    walletId: process.env.PRIVY_WALLET_ID as string,
+    authorizationKey: process.env.PRIVY_WALLET_AUTHORIZATION_KEY as string,
+  });
+
+  const agentKit = await AgentKit.from({
+    walletProvider,
+    actionProviders: [pythActionProvider(), walletActionProvider()],
+  });
+
+  const tools = agentKitToTools(agentKit);
+
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
@@ -64,19 +85,14 @@ export async function POST(request: Request) {
         system: systemPrompt({ selectedChatModel }),
         messages,
         maxSteps: 5,
-        experimental_activeTools:
-          selectedChatModel === "chat-model-reasoning"
-            ? []
-            : [
-                "getWeather",
-                "createDocument",
-                "updateDocument",
-                "requestSuggestions",
-              ],
+        // experimental_activeTools:
+        //   selectedChatModel === "chat-model-reasoning"
+        //     ? []
+        //     : ["createDocument", "updateDocument", "requestSuggestions"],
         experimental_transform: smoothStream({ chunking: "word" }),
         experimental_generateMessageId: generateUUID,
         tools: {
-          getWeather,
+          ...tools,
           createDocument: createDocument({ session, dataStream }),
           updateDocument: updateDocument({ session, dataStream }),
           requestSuggestions: requestSuggestions({

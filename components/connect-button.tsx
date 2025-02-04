@@ -1,28 +1,22 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
-import { ConnectWallet } from "@coinbase/onchainkit/wallet";
 import { Button } from "@/components/ui/button";
+import { WalletDefault } from "@coinbase/onchainkit/wallet";
 export function ConnectButton() {
-  const { isAuthenticated, isLoading, login, address, sessionAddress } =
-    useAuth();
-
-  console.log("isAuthenticated", isAuthenticated);
-  console.log("isLoading", isLoading);
-  console.log("address", address);
-  console.log("sessionAddress", sessionAddress);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { login, isAuthenticated, address, isLoading } = useAuth();
 
   if (!address) {
-    return <ConnectWallet onConnect={login} />;
+    return <WalletDefault />;
   }
 
-  if (!isAuthenticated || address !== sessionAddress) {
-    return <Button onClick={login}>Sign In</Button>;
+  if (!isAuthenticated) {
+    return (
+      <Button type="button" onClick={login} disabled={isLoading}>
+        {isLoading ? "Signing in..." : "Sign In"}
+      </Button>
+    );
   }
 
-  return <ConnectWallet />;
+  return <WalletDefault />;
 }

@@ -147,27 +147,30 @@ const PurePreviewMessage = ({
 
                     return (
                       <div key={toolCallId}>
-                        {toolName === 'getWeather' ? (
+                        {toolName === "getWeather" ? (
                           <Weather weatherAtLocation={result} />
-                        ) : toolName === 'createDocument' ? (
+                        ) : toolName === "createDocument" ? (
                           <DocumentPreview
                             isReadonly={isReadonly}
                             result={result}
                           />
-                        ) : toolName === 'updateDocument' ? (
+                        ) : toolName === "updateDocument" ? (
                           <DocumentToolResult
                             type="update"
                             result={result}
                             isReadonly={isReadonly}
                           />
-                        ) : toolName === 'requestSuggestions' ? (
+                        ) : toolName === "requestSuggestions" ? (
                           <DocumentToolResult
                             type="request-suggestions"
                             result={result}
                             isReadonly={isReadonly}
                           />
                         ) : (
-                          <pre>{JSON.stringify(result, null, 2)}</pre>
+                          <pre>
+                            <p>{`Tool call: ${toolName}`}</p>
+                            {JSON.stringify(result, null, 2).slice(0, 100)}
+                          </pre>
                         )}
                       </div>
                     );

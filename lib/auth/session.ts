@@ -27,7 +27,7 @@ export async function decrypt(session: string | undefined = "") {
     });
     return payload;
   } catch (error) {
-    console.log("Failed to verify session");
+    // console.log("Failed to verify session");
   }
 }
 
@@ -48,6 +48,4 @@ export async function createSession(userId: string) {
     sameSite: "lax",
     path: "/",
   });
-
-  console.log("session", session);
 }

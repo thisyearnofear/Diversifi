@@ -1,76 +1,74 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useAccount, useSignMessage } from "wagmi";
-import { auth, generateSiweChallenge, verifySiwe } from "@/app/auth-actions";
-
-interface AuthState {
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  sessionAddress: string | undefined;
-}
+import { useState } from "react";
+import { useAccount, useAccountEffect, useSignMessage } from "wagmi";
+import {
+  auth,
+  generateSiweChallenge,
+  verifySiwe,
+  logout,
+} from "@/app/auth-actions";
+import useSWR from "swr";
 
 export function useAuth() {
-  const { address } = useAccount();
+  const { address, status } = useAccount();
   const { signMessage } = useSignMessage();
-  const [state, setState] = useState<AuthState>({
-    isAuthenticated: false,
-    isLoading: true,
-    sessionAddress: undefined,
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { data: session, mutate } = useSWR(
+    status === "connected" ? ["auth", address] : null,
+    () => auth()
+  );
+
+  const isAuthenticated = !!(session?.user && session.user.id === address);
+
+  useAccountEffect({
+    onConnect(data) {
+      console.log("Wallet connected!", data);
+    },
+    onDisconnect: async () => {
+      console.log("Wallet disconnected!");
+      await logout(); // Use server action to delete cookie
+      mutate(); // Revalidate auth state
+    },
   });
 
-  // Check session status
-  const checkAuth = useCallback(async () => {
-    setState((prev) => ({ ...prev, isLoading: true }));
-    const session = await auth();
-    console.log("session", session);
-
-    setState({
-      isAuthenticated: !!session.user,
-      isLoading: false,
-      sessionAddress: session.user?.id,
-    });
-  }, []);
-
-  // Login with SIWE
-  const login = useCallback(async () => {
+  async function login() {
     if (!address) return;
 
     try {
+      setIsLoading(true);
       const message = await generateSiweChallenge(address);
       signMessage(
         { message },
         {
           onSuccess: async (signature) => {
-            console.log("signature", signature);
-            const verification = await verifySiwe(message, signature);
-            console.log("verification", verification);
-            checkAuth();
+            try {
+              await verifySiwe(message, signature);
+              mutate(); // Revalidate auth state
+              setIsLoading(false);
+            } catch (error) {
+              console.error("Verification failed:", error);
+              setIsLoading(false);
+            }
+          },
+          onError: (error) => {
+            console.error("Login failed:", error);
+            setIsLoading(false);
           },
         }
       );
     } catch (error) {
       console.error("Login failed:", error);
+      setIsLoading(false);
     }
-  }, [address, signMessage, checkAuth]);
-
-  // Check auth on mount and when address changes
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  // Handle address changes
-  useEffect(() => {
-    if (state.sessionAddress && address !== state.sessionAddress) {
-      checkAuth(); // This will effectively log out the user if session address doesn't match
-    }
-  }, [address, state.sessionAddress, checkAuth]);
+  }
 
   return {
-    isAuthenticated: state.isAuthenticated,
-    isLoading: state.isLoading,
+    isAuthenticated,
+    isLoading,
     login,
     address,
-    sessionAddress: state.sessionAddress,
+    sessionAddress: session?.user?.id,
   };
 }

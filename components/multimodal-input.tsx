@@ -20,6 +20,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage, useWindowSize } from 'usehooks-ts';
+import { useAuth } from "@/hooks/use-auth";
 
 import { sanitizeUIMessages } from '@/lib/utils';
 
@@ -67,6 +68,7 @@ function PureMultimodalInput({
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -118,14 +120,17 @@ function PureMultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
-    window.history.replaceState({}, '', `/chat/${chatId}`);
+    // Only update URL if user is authenticated
+    if (isAuthenticated) {
+      window.history.replaceState({}, "", `/chat/${chatId}`);
+    }
 
     handleSubmit(undefined, {
       experimental_attachments: attachments,
     });
 
     setAttachments([]);
-    setLocalStorageInput('');
+    setLocalStorageInput("");
     resetHeight();
 
     if (width && width > 768) {
@@ -138,6 +143,7 @@ function PureMultimodalInput({
     setLocalStorageInput,
     width,
     chatId,
+    isAuthenticated,
   ]);
 
   const uploadFile = async (file: File) => {

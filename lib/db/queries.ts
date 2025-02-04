@@ -26,23 +26,25 @@ import { BlockKind } from '@/components/block';
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUser(email: string): Promise<Array<User>> {
+export async function getUser(id: string): Promise<Array<User>> {
   try {
-    return await db.select().from(user).where(eq(user.email, email));
+    return await db.select().from(user).where(eq(user.id, id));
   } catch (error) {
-    console.error('Failed to get user from database');
+    console.error("Failed to get user from database");
     throw error;
   }
 }
 
-export async function createUser(email: string, password: string) {
-  const salt = genSaltSync(10);
-  const hash = hashSync(password, salt);
-
+export async function createUserIfNotExists(address: string): Promise<void> {
   try {
-    return await db.insert(user).values({ email, password: hash });
+    const existingUser = await getUser(address);
+    if (existingUser.length === 0) {
+      await db.insert(user).values({
+        id: address,
+      });
+    }
   } catch (error) {
-    console.error('Failed to create user in database');
+    console.error("Failed to create user");
     throw error;
   }
 }
@@ -57,14 +59,15 @@ export async function saveChat({
   title: string;
 }) {
   try {
+    await createUserIfNotExists(userId); // Ensure user exists
     return await db.insert(chat).values({
       id,
-      createdAt: new Date(),
       userId,
       title,
+      createdAt: new Date(),
     });
   } catch (error) {
-    console.error('Failed to save chat in database');
+    console.error("Failed to save chat");
     throw error;
   }
 }

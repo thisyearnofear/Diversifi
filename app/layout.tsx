@@ -9,8 +9,9 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
 import { auth } from "@/app/auth";
 
-import './globals.css';
+import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
+import { ConnectButton } from "@/components/connect-button";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
@@ -44,9 +45,9 @@ const THEME_COLOR_SCRIPT = `\
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const [session, cookieStore] = await Promise.all([auth(), cookies()]);
   const isCollapsed = cookieStore.get("sidebar:state")?.value !== "true";
 
@@ -79,9 +80,12 @@ export default async function RootLayout({
         >
           <Toaster position="top-center" />
           <Providers>
-            <SidebarProvider defaultOpen={!isCollapsed}>
+            <SidebarProvider>
               <AppSidebar user={session?.user} />
               <SidebarInset>{children}</SidebarInset>
+              <div className="flex fixed top-0 right-0 z-50 p-2">
+                <ConnectButton />
+              </div>
             </SidebarProvider>
           </Providers>
         </ThemeProvider>
