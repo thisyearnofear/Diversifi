@@ -1,22 +1,29 @@
 import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
+import { cookies } from "next/headers";
+import Script from "next/script";
 
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from "@/components/theme-provider";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Providers } from "@/lib/web3/providers";
+import { auth } from "@/app/auth";
 
 import './globals.css';
+import "@coinbase/onchainkit/styles.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Next.js Chatbot Template',
-  description: 'Next.js chatbot template using the AI SDK.',
+  metadataBase: new URL("https://chat.vercel.ai"),
+  title: "Next.js Chatbot Template",
+  description: "Next.js chatbot template using the AI SDK.",
 };
 
 export const viewport = {
   maximumScale: 1, // Disable auto-zoom on mobile Safari
 };
 
-const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';
-const DARK_THEME_COLOR = 'hsl(240deg 10% 3.92%)';
+const LIGHT_THEME_COLOR = "hsl(0 0% 100%)";
+const DARK_THEME_COLOR = "hsl(240deg 10% 3.92%)";
 const THEME_COLOR_SCRIPT = `\
 (function() {
   var html = document.documentElement;
@@ -40,6 +47,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [session, cookieStore] = await Promise.all([auth(), cookies()]);
+  const isCollapsed = cookieStore.get("sidebar:state")?.value !== "true";
+
   return (
     <html
       lang="en"
@@ -55,6 +65,10 @@ export default async function RootLayout({
             __html: THEME_COLOR_SCRIPT,
           }}
         />
+        <Script
+          src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
+          strategy="beforeInteractive"
+        />
       </head>
       <body className="antialiased">
         <ThemeProvider
@@ -64,7 +78,12 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Toaster position="top-center" />
-          {children}
+          <Providers>
+            <SidebarProvider defaultOpen={!isCollapsed}>
+              <AppSidebar user={session?.user} />
+              <SidebarInset>{children}</SidebarInset>
+            </SidebarProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
