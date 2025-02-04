@@ -29,6 +29,7 @@ import {
   walletActionProvider,
   AgentKit,
 } from "@coinbase/agentkit";
+import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20/erc20ActionProvider";
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
 
@@ -73,7 +74,11 @@ export async function POST(request: Request) {
 
   const agentKit = await AgentKit.from({
     walletProvider,
-    actionProviders: [pythActionProvider(), walletActionProvider()],
+    actionProviders: [
+      pythActionProvider(),
+      walletActionProvider(),
+      erc20ActionProvider(),
+    ],
   });
 
   const tools = agentKitToTools(agentKit);
