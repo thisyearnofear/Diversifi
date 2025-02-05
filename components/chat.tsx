@@ -1,21 +1,23 @@
 'use client';
 
 import type { Attachment, Message } from 'ai';
-import { useChat } from 'ai/react';
-import { useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
+import { useChat } from "ai/react";
+import { useState, useCallback } from "react";
+import useSWR, { useSWRConfig } from "swr";
 
-import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
-import { fetcher, generateUUID } from '@/lib/utils';
+import { ChatHeader } from "@/components/chat-header";
+import type { Vote } from "@/lib/db/schema";
+import { fetcher, generateUUID } from "@/lib/utils";
 
-import { Block } from './block';
-import { MultimodalInput } from './multimodal-input';
-import { Messages } from './messages';
-import { VisibilityType } from './visibility-selector';
-import { useBlockSelector } from '@/hooks/use-block';
-import { toast } from 'sonner';
+import { Block } from "./block";
+import { MultimodalInput } from "./multimodal-input";
+import { Messages } from "./messages";
+import { VisibilityType } from "./visibility-selector";
+import { useBlockSelector } from "@/hooks/use-block";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { ChatProvider } from "@/contexts/chat-context";
+import { useChatForm } from "@/hooks/use-chat-form";
 
 export function Chat({
   id,
@@ -33,17 +35,7 @@ export function Chat({
   const { mutate } = useSWRConfig();
   const { isAuthenticated } = useAuth();
 
-  const {
-    messages,
-    setMessages,
-    handleSubmit,
-    input,
-    setInput,
-    append,
-    isLoading,
-    stop,
-    reload,
-  } = useChat({
+  const chatMethods = useChat({
     id,
     body: { id, selectedChatModel: selectedChatModel },
     initialMessages,
@@ -67,8 +59,15 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isBlockVisible = useBlockSelector((state) => state.isVisible);
 
+  const { submitForm } = useChatForm({
+    chatId: id,
+    handleSubmit: chatMethods.handleSubmit,
+    attachments,
+    setAttachments,
+  });
+
   return (
-    <>
+    <ChatProvider value={{ ...chatMethods, submitForm }}>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
         <ChatHeader
           chatId={id}
@@ -79,11 +78,11 @@ export function Chat({
 
         <Messages
           chatId={id}
-          isLoading={isLoading}
+          isLoading={chatMethods.isLoading}
           votes={votes}
-          messages={messages}
-          setMessages={setMessages}
-          reload={reload}
+          messages={chatMethods.messages}
+          setMessages={chatMethods.setMessages}
+          reload={chatMethods.reload}
           isReadonly={isReadonly}
           isBlockVisible={isBlockVisible}
         />
@@ -92,16 +91,10 @@ export function Chat({
           {!isReadonly && (
             <MultimodalInput
               chatId={id}
-              input={input}
-              setInput={setInput}
-              handleSubmit={handleSubmit}
-              isLoading={isLoading}
-              stop={stop}
+              input={chatMethods.input}
+              isLoading={chatMethods.isLoading}
               attachments={attachments}
               setAttachments={setAttachments}
-              messages={messages}
-              setMessages={setMessages}
-              append={append}
             />
           )}
         </form>
@@ -109,20 +102,20 @@ export function Chat({
 
       <Block
         chatId={id}
-        input={input}
-        setInput={setInput}
-        handleSubmit={handleSubmit}
-        isLoading={isLoading}
-        stop={stop}
+        input={chatMethods.input}
+        setInput={chatMethods.setInput}
+        handleSubmit={chatMethods.handleSubmit}
+        isLoading={chatMethods.isLoading}
+        stop={chatMethods.stop}
         attachments={attachments}
         setAttachments={setAttachments}
-        append={append}
-        messages={messages}
-        setMessages={setMessages}
-        reload={reload}
+        append={chatMethods.append}
+        messages={chatMethods.messages}
+        setMessages={chatMethods.setMessages}
+        reload={chatMethods.reload}
         votes={votes}
         isReadonly={isReadonly}
       />
-    </>
+    </ChatProvider>
   );
 }

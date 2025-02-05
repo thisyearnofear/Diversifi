@@ -1,97 +1,120 @@
 import { Button } from "./ui/button";
-import { WalletDefault } from "@coinbase/onchainkit/wallet";
 import { FundButton } from "@coinbase/onchainkit/fund";
 import { ConnectButton } from "./connect-button";
-import { useState, useCallback } from "react";
-import { Message } from "ai";
+import { useState, useCallback, useRef } from "react";
+import type { UserAction } from "@/lib/utils/message-helpers";
+import { useChatContext } from "@/contexts/chat-context";
 
-interface Option {
-  label: string;
-  value: string;
-  description?: string;
+interface ActionButtonsProps {
+  args: Array<Record<string, any>>;
+  chatId: string;
+}
+
+function ActionButtons({ args, chatId }: ActionButtonsProps) {
+  const { setInput, submitForm, append } = useChatContext();
+
+  const handleSelect = useCallback(
+    (option: Record<string, any>) => {
+      append({
+        role: "user",
+        content: option.label,
+      });
+    },
+    [append]
+  );
+
+  return (
+    <div className="flex flex-col gap-2">
+      {args.map((arg) => (
+        <Button
+          key={arg.value}
+          variant={arg.value === "selected" ? "default" : "outline"}
+          onClick={() => handleSelect(arg)}
+          className="justify-start"
+        >
+          <div className="text-left">
+            <div>{arg.label}</div>
+            {arg.description && (
+              <div className="text-sm text-muted-foreground">
+                {arg.description}
+              </div>
+            )}
+          </div>
+        </Button>
+      ))}
+    </div>
+  );
 }
 
 interface InteractiveElementProps {
-  type: "connect-wallet" | "fund-wallet" | "transaction" | "options" | "help";
-  options?: Option[];
-  transactionData?: {
-    to: string;
-    value: string;
-    data?: string;
-  };
-  onSelect?: (value: string) => void;
-  onComplete?: () => void;
-  onHelp?: () => void;
+  actions: UserAction[];
+  chatId: string;
 }
 
 export function InteractiveElement({
-  type,
-  options,
-  transactionData,
-  onSelect,
-  onComplete,
-  onHelp,
+  actions,
+  chatId,
 }: InteractiveElementProps) {
-  const [selected, setSelected] = useState<string | null>(null);
+  const { setInput, submitForm } = useChatContext();
 
-  const handleSelect = useCallback(
-    (value: string) => {
-      setSelected(value);
-      onSelect?.(value);
+  const handleAction = useCallback(
+    (action: UserAction) => {
+      setInput(action.label || action.action);
+
+      setTimeout(() => {
+        submitForm();
+      }, 100);
     },
-    [onSelect]
+    [setInput, submitForm]
   );
 
-  switch (type) {
-    case "connect-wallet":
-      return <ConnectButton />;
+  // Find the first action that matches each type
+  const connectWalletAction = actions.find(
+    (a) => a.action === "connect-wallet"
+  );
+  const fundWalletAction = actions.find((a) => a.action === "fund-wallet");
+  const transactionAction = actions.find((a) => a.action === "transaction");
+  const optionsAction = actions.find((a) => a.action === "options");
+  const helpAction = actions.find((a) => a.action === "help");
 
-    case "fund-wallet":
-      return <FundButton />;
+  return (
+    <div className="flex flex-col gap-4">
+      {connectWalletAction && <ConnectButton />}
 
-    case "transaction":
-      return (
+      {fundWalletAction && <FundButton />}
+
+      {transactionAction && transactionAction.args && (
         <div className="flex flex-col gap-2 p-4 border rounded-lg">
           <h3 className="font-medium">Transaction Details</h3>
           <div className="text-sm text-muted-foreground">
-            <p>To: {transactionData?.to}</p>
-            <p>Value: {transactionData?.value} ETH</p>
+            <p>To: {transactionAction.args[0].to}</p>
+            <p>Value: {transactionAction.args[0].value} ETH</p>
           </div>
-          <Button onClick={onComplete}>Confirm Transaction</Button>
+          <Button
+            onClick={() =>
+              handleAction({
+                ...transactionAction,
+                action: "confirm-transaction",
+              })
+            }
+          >
+            Confirm Transaction
+          </Button>
         </div>
-      );
+      )}
 
-    case "options":
-      return (
-        <div className="flex flex-col gap-2">
-          {options?.map((option) => (
-            <Button
-              key={option.value}
-              variant={selected === option.value ? "default" : "outline"}
-              onClick={() => handleSelect(option.value)}
-              className="justify-start"
-            >
-              <div className="text-left">
-                <div>{option.label}</div>
-                {option.description && (
-                  <div className="text-sm text-muted-foreground">
-                    {option.description}
-                  </div>
-                )}
-              </div>
-            </Button>
-          ))}
-        </div>
-      );
+      {optionsAction && optionsAction.args && (
+        <ActionButtons args={optionsAction.args} chatId={chatId} />
+      )}
 
-    case "help":
-      return (
-        <Button variant="outline" onClick={onHelp}>
-          Help, I don&apos;t understand
+      {helpAction && (
+        <Button
+          variant="outline"
+          onClick={() => handleAction({ action: "help" })}
+        >
+          {helpAction.label || "Help, I don't understand"}
         </Button>
-      );
-
-    default:
-      return null;
-  }
+      )}
+    </div>
+  );
 }

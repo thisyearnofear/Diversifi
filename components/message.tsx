@@ -1,32 +1,33 @@
 'use client';
 
-import type { ChatRequestOptions, Message } from 'ai';
-import cx from 'classnames';
-import { AnimatePresence, motion } from 'framer-motion';
-import { memo, useMemo, useState } from 'react';
+import type { ChatRequestOptions } from "ai";
+import type { Message } from "@/types/message";
+import cx from "classnames";
+import { AnimatePresence, motion } from "framer-motion";
+import { memo, useMemo, useState } from "react";
 
-import type { Vote } from '@/lib/db/schema';
+import type { Vote } from "@/lib/db/schema";
 
-import { DocumentToolCall, DocumentToolResult } from './document';
+import { DocumentToolCall, DocumentToolResult } from "./document";
 import {
   ChevronDownIcon,
   LoaderIcon,
   PencilEditIcon,
   SparklesIcon,
-} from './icons';
-import { Markdown } from './markdown';
-import { MessageActions } from './message-actions';
-import { PreviewAttachment } from './preview-attachment';
-import { Weather } from './weather';
-import equal from 'fast-deep-equal';
+} from "./icons";
+import { Markdown } from "./markdown";
+import { MessageActions } from "./message-actions";
+import { PreviewAttachment } from "./preview-attachment";
+import { Weather } from "./weather";
+import equal from "fast-deep-equal";
 import { cn, generateUUID } from "@/lib/utils";
-import { Button } from './ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { MessageEditor } from './message-editor';
-import { DocumentPreview } from './document-preview';
-import { MessageReasoning } from './message-reasoning';
+import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { MessageEditor } from "./message-editor";
+import { DocumentPreview } from "./document-preview";
+import { MessageReasoning } from "./message-reasoning";
 import { InteractiveElement } from "./interactive-element";
-import { parseInteractiveCommands } from "@/lib/utils/parse-interactive";
+import { parseMessageContent } from "@/lib/utils/message-helpers";
 
 const PurePreviewMessage = ({
   chatId,
@@ -42,14 +43,14 @@ const PurePreviewMessage = ({
   vote: Vote | undefined;
   isLoading: boolean;
   setMessages: (
-    messages: Message[] | ((messages: Message[]) => Message[]),
+    messages: Message[] | ((messages: Message[]) => Message[])
   ) => void;
   reload: (
-    chatRequestOptions?: ChatRequestOptions,
+    chatRequestOptions?: ChatRequestOptions
   ) => Promise<string | null | undefined>;
   isReadonly: boolean;
 }) => {
-  const [mode, setMode] = useState<'view' | 'edit'>('view');
+  const [mode, setMode] = useState<"view" | "edit">("view");
 
   return (
     <AnimatePresence>
@@ -121,46 +122,15 @@ const PurePreviewMessage = ({
                   })}
                 >
                   {(() => {
-                    const { text, interactive } = parseInteractiveCommands(
-                      message.content || ""
-                    );
+                    const { text, interactive } = parseMessageContent(message);
                     return (
                       <>
                         <Markdown>{text}</Markdown>
                         {interactive && (
                           <div className="mt-4">
                             <InteractiveElement
-                              {...interactive}
-                              onSelect={(value) => {
-                                setMessages((messages) => [
-                                  ...messages,
-                                  {
-                                    id: generateUUID(),
-                                    role: "user",
-                                    content: `Selected: ${value}`,
-                                  },
-                                ]);
-                              }}
-                              onComplete={() => {
-                                setMessages((messages) => [
-                                  ...messages,
-                                  {
-                                    id: generateUUID(),
-                                    role: "user",
-                                    content: "Transaction completed",
-                                  },
-                                ]);
-                              }}
-                              onHelp={() => {
-                                setMessages((messages) => [
-                                  ...messages,
-                                  {
-                                    id: generateUUID(),
-                                    role: "user",
-                                    content: "I need help understanding this.",
-                                  },
-                                ]);
-                              }}
+                              actions={interactive.actions}
+                              chatId={chatId}
                             />
                           </div>
                         )}

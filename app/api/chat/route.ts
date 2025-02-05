@@ -3,6 +3,7 @@ import {
   createDataStreamResponse,
   smoothStream,
   streamText,
+  Output,
 } from "ai";
 
 import { auth } from "@/app/auth";
@@ -32,6 +33,7 @@ import {
 import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20/erc20ActionProvider";
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
+import { z } from "zod";
 
 export const maxDuration = 60;
 
@@ -94,7 +96,25 @@ export async function POST(request: Request) {
         //   selectedChatModel === "chat-model-reasoning"
         //     ? []
         //     : ["createDocument", "updateDocument", "requestSuggestions"],
-        experimental_transform: smoothStream({ chunking: "word" }),
+        experimental_output: Output.object({
+          schema: z.object({
+            agent: z.string(),
+            content: z.string(),
+            userActions: z.array(
+              z.object({
+                action: z.string(),
+                label: z
+                  .string()
+                  .optional()
+                  .describe(
+                    "An additional label with more context about the action for the user"
+                  ),
+                args: z.record(z.any()).optional(),
+              })
+            ),
+          }),
+        }),
+        // experimental_transform: smoothStream({ chunking: "word" }),
         experimental_generateMessageId: generateUUID,
         tools: {
           ...tools,
@@ -105,7 +125,24 @@ export async function POST(request: Request) {
             dataStream,
           }),
         },
-        onFinish: async ({ response, reasoning }) => {
+        onFinish: async ({ response, reasoning, text }) => {
+          // currently the content of the last message is truncated, so passing in the text as a partial fix
+          const assistantMessages = response.messages.filter(
+            (message) => message.role === "assistant"
+          );
+          const lastAssistantMessage =
+            assistantMessages[assistantMessages.length - 1];
+          if (lastAssistantMessage) {
+            response.messages[response.messages.length - 1] = {
+              ...lastAssistantMessage,
+              content: [
+                {
+                  type: "text",
+                  text,
+                },
+              ],
+            };
+          }
           if (session.user?.id) {
             try {
               const sanitizedResponseMessages = sanitizeResponseMessages({
@@ -119,7 +156,10 @@ export async function POST(request: Request) {
                     id: message.id,
                     chatId: id,
                     role: message.role,
-                    content: message.content,
+                    content:
+                      typeof message.content === "string"
+                        ? message.content
+                        : JSON.stringify(message.content),
                     createdAt: new Date(),
                   };
                 }),

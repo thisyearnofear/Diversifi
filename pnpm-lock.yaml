@@ -81,8 +81,8 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0(utf-8-validate@5.0.10)
       ai:
-        specifier: 4.1.16
-        version: 4.1.16(react@19.0.0-rc-45804af1-20241021)(zod@3.23.8)
+        specifier: 4.1.18
+        version: 4.1.18(react@19.0.0-rc-45804af1-20241021)(zod@3.23.8)
       bcrypt-ts:
         specifier: ^5.0.2
         version: 5.0.2
@@ -2106,8 +2106,8 @@ packages:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
 
-  ai@4.1.16:
-    resolution: {integrity: sha512-4l8Dl2+reG210/l19E/D9NrpfumJuiyih7EehVm1wdMhz4/rSLjVewxkcmdcTczPee3/axB5Rp5h8q5hyIYB/g==}
+  ai@4.1.18:
+    resolution: {integrity: sha512-Ua0rfJ6PQqW3bC+pXcaznAjZyHto5qm/AFoAF7ifvPvkbOZEbENP/KF3/2gF7M+oklTo9yUSLAoShghMvKSh2A==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
@@ -7325,7 +7325,7 @@ snapshots:
     dependencies:
       humanize-ms: 1.2.1
 
-  ai@4.1.16(react@19.0.0-rc-45804af1-20241021)(zod@3.23.8):
+  ai@4.1.18(react@19.0.0-rc-45804af1-20241021)(zod@3.23.8):
     dependencies:
       '@ai-sdk/provider': 1.0.7
       '@ai-sdk/provider-utils': 2.1.6(zod@3.23.8)

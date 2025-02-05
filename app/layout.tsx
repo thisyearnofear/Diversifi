@@ -5,11 +5,7 @@ import Script from "next/script";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
 import { auth } from "@/app/auth";
 
@@ -86,7 +82,7 @@ export default async function RootLayout({
           <Providers>
             <SidebarProvider>
               <div className="flex min-h-screen w-full">
-                <AppSidebar user={session?.user} />
+                <AppSidebar />
                 <div className="flex-1 w-full">
                   <main className="size-full">
                     {children}
