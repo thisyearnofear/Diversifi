@@ -56,7 +56,8 @@ export const verifySiwe = async (message: string, signature: `0x${string}`) => {
       return { status: "failed" };
     }
 
-    createSession(parsedMessage.address);
+    // Create session and explicitly set cookie
+    await createSession(parsedMessage.address);
 
     return { status: "success" };
   } catch (error) {

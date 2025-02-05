@@ -8,14 +8,15 @@ import {
   verifySiwe,
   logout,
 } from "@/app/auth-actions";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 export function useAuth() {
   const { address, status } = useAccount();
-  const { signMessage } = useSignMessage();
+  const { signMessageAsync } = useSignMessage();
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate: globalMutate } = useSWRConfig();
 
-  const { data: session, mutate } = useSWR(
+  const { data: session, mutate: mutateSession } = useSWR(
     status === "connected" ? ["auth", address] : null,
     () => auth()
   );
@@ -28,8 +29,8 @@ export function useAuth() {
     },
     onDisconnect: async () => {
       console.log("Wallet disconnected!");
-      await logout(); // Use server action to delete cookie
-      mutate(); // Revalidate auth state
+      await logout();
+      mutateSession();
     },
   });
 
@@ -38,28 +39,45 @@ export function useAuth() {
 
     try {
       setIsLoading(true);
-      const message = await generateSiweChallenge(address);
-      signMessage(
-        { message },
-        {
-          onSuccess: async (signature) => {
-            try {
-              await verifySiwe(message, signature);
-              mutate(); // Revalidate auth state
-              setIsLoading(false);
-            } catch (error) {
-              console.error("Verification failed:", error);
-              setIsLoading(false);
-            }
-          },
-          onError: (error) => {
-            console.error("Login failed:", error);
-            setIsLoading(false);
-          },
-        }
-      );
+
+      // Get challenge
+      const challengeRes = await fetch("/api/auth/siwe/challenge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ address }),
+      });
+
+      if (!challengeRes.ok) throw new Error("Failed to get challenge");
+      const { message } = await challengeRes.json();
+
+      // Sign message
+      const signature = await signMessageAsync({ message });
+
+      // Verify signature
+      const verifyRes = await fetch("/api/auth/siwe/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ message, signature }),
+      });
+
+      if (!verifyRes.ok) {
+        const error = await verifyRes.text();
+        throw new Error(`Failed to verify signature: ${error}`);
+      }
+
+      const result = await verifyRes.json();
+      console.log("Verify response:", result);
+
+      // Check if cookie was set
+      console.log("Cookies after verify:", document.cookie);
+
+      // Update both auth state and history
+      await Promise.all([mutateSession(), globalMutate("/api/history")]);
     } catch (error) {
       console.error("Login failed:", error);
+    } finally {
       setIsLoading(false);
     }
   }

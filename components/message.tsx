@@ -19,12 +19,14 @@ import { MessageActions } from './message-actions';
 import { PreviewAttachment } from './preview-attachment';
 import { Weather } from './weather';
 import equal from 'fast-deep-equal';
-import { cn } from '@/lib/utils';
+import { cn, generateUUID } from "@/lib/utils";
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
 import { MessageReasoning } from './message-reasoning';
+import { InteractiveElement } from "./interactive-element";
+import { parseInteractiveCommands } from "@/lib/utils/parse-interactive";
 
 const PurePreviewMessage = ({
   chatId,
@@ -59,14 +61,14 @@ const PurePreviewMessage = ({
       >
         <div
           className={cn(
-            'flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl',
+            "flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl",
             {
-              'w-full': mode === 'edit',
-              'group-data-[role=user]/message:w-fit': mode !== 'edit',
-            },
+              "w-full": mode === "edit",
+              "group-data-[role=user]/message:w-fit": mode !== "edit",
+            }
           )}
         >
-          {message.role === 'assistant' && (
+          {message.role === "assistant" && (
             <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
               <div className="translate-y-px">
                 <SparklesIcon size={14} />
@@ -93,16 +95,16 @@ const PurePreviewMessage = ({
               />
             )}
 
-            {(message.content || message.reasoning) && mode === 'view' && (
+            {message.content && mode === "view" && (
               <div className="flex flex-row gap-2 items-start">
-                {message.role === 'user' && !isReadonly && (
+                {message.role === "user" && !isReadonly && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
                         className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
                         onClick={() => {
-                          setMode('edit');
+                          setMode("edit");
                         }}
                       >
                         <PencilEditIcon />
@@ -113,17 +115,63 @@ const PurePreviewMessage = ({
                 )}
 
                 <div
-                  className={cn('flex flex-col gap-4', {
-                    'bg-primary text-primary-foreground px-3 py-2 rounded-xl':
-                      message.role === 'user',
+                  className={cn("flex flex-col gap-4", {
+                    "bg-primary text-primary-foreground px-3 py-2 rounded-xl":
+                      message.role === "user",
                   })}
                 >
-                  <Markdown>{message.content as string}</Markdown>
+                  {(() => {
+                    const { text, interactive } = parseInteractiveCommands(
+                      message.content || ""
+                    );
+                    return (
+                      <>
+                        <Markdown>{text}</Markdown>
+                        {interactive && (
+                          <div className="mt-4">
+                            <InteractiveElement
+                              {...interactive}
+                              onSelect={(value) => {
+                                setMessages((messages) => [
+                                  ...messages,
+                                  {
+                                    id: generateUUID(),
+                                    role: "user",
+                                    content: `Selected: ${value}`,
+                                  },
+                                ]);
+                              }}
+                              onComplete={() => {
+                                setMessages((messages) => [
+                                  ...messages,
+                                  {
+                                    id: generateUUID(),
+                                    role: "user",
+                                    content: "Transaction completed",
+                                  },
+                                ]);
+                              }}
+                              onHelp={() => {
+                                setMessages((messages) => [
+                                  ...messages,
+                                  {
+                                    id: generateUUID(),
+                                    role: "user",
+                                    content: "I need help understanding this.",
+                                  },
+                                ]);
+                              }}
+                            />
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             )}
 
-            {message.content && mode === 'edit' && (
+            {message.content && mode === "edit" && (
               <div className="flex flex-row gap-2 items-start">
                 <div className="size-8" />
 
@@ -142,7 +190,7 @@ const PurePreviewMessage = ({
                 {message.toolInvocations.map((toolInvocation) => {
                   const { toolName, toolCallId, state, args } = toolInvocation;
 
-                  if (state === 'result') {
+                  if (state === "result") {
                     const { result } = toolInvocation;
 
                     return (
@@ -179,20 +227,20 @@ const PurePreviewMessage = ({
                     <div
                       key={toolCallId}
                       className={cx({
-                        skeleton: ['getWeather'].includes(toolName),
+                        skeleton: ["getWeather"].includes(toolName),
                       })}
                     >
-                      {toolName === 'getWeather' ? (
+                      {toolName === "getWeather" ? (
                         <Weather />
-                      ) : toolName === 'createDocument' ? (
+                      ) : toolName === "createDocument" ? (
                         <DocumentPreview isReadonly={isReadonly} args={args} />
-                      ) : toolName === 'updateDocument' ? (
+                      ) : toolName === "updateDocument" ? (
                         <DocumentToolCall
                           type="update"
                           args={args}
                           isReadonly={isReadonly}
                         />
-                      ) : toolName === 'requestSuggestions' ? (
+                      ) : toolName === "requestSuggestions" ? (
                         <DocumentToolCall
                           type="request-suggestions"
                           args={args}

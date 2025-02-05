@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 
-export function AppSidebar({ user }: { user: User | undefined }) {
+export function AppSidebar() {
   const { setOpenMobile, toggleSidebar } = useSidebar();
 
   return (
@@ -39,9 +39,8 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarHistory user={user} />
+        <SidebarHistory />
       </SidebarContent>
-      <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
     </Sidebar>
   );
 }
