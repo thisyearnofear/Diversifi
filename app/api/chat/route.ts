@@ -14,6 +14,7 @@ import {
   getChatById,
   saveChat,
   saveMessages,
+  getUser,
 } from "@/lib/db/queries";
 import {
   generateUUID,
@@ -34,6 +35,11 @@ import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20/
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
 import { z } from "zod";
+import {
+  saveUserInformation,
+  getUserInformation,
+  deleteUserInformationTool,
+} from "@/lib/ai/tools/user-information";
 
 export const maxDuration = 60;
 
@@ -52,8 +58,11 @@ export async function POST(request: Request) {
     return new Response("No user message found", { status: 400 });
   }
 
+  let userProfile = "User is not signed in";
   // If user is authenticated, save chat history
   if (session?.user?.id) {
+    userProfile = JSON.stringify(await getUser(session.user.id));
+
     const chat = await getChatById({ id });
     if (!chat) {
       const title = await generateTitleFromUserMessage({
@@ -92,7 +101,7 @@ export async function POST(request: Request) {
     execute: (dataStream) => {
       const result = streamText({
         model: myProvider.languageModel(selectedChatModel),
-        system: systemPrompt({ selectedChatModel }) + userSystemInformation,
+        system: systemPrompt({ selectedChatModel }) + userProfile,
         messages,
         maxSteps: 10,
         // experimental_activeTools:
@@ -127,6 +136,9 @@ export async function POST(request: Request) {
             session,
             dataStream,
           }),
+          saveUserInformation: saveUserInformation({ session }),
+          getUserInformation: getUserInformation({ session }),
+          deleteUserInformation: deleteUserInformationTool({ session }),
         },
         onFinish: async ({ response, reasoning, text }) => {
           // currently the content of the last message is truncated, so passing in the text as a partial fix

@@ -1,9 +1,10 @@
 import 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { and, asc, desc, eq, gt, gte, inArray } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { and, asc, desc, eq, gt, gte, inArray, isNull, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "./schema";
 
 import {
   user,
@@ -15,8 +16,14 @@ import {
   type Message,
   message,
   vote,
-} from './schema';
-import { BlockKind } from '@/components/block';
+  userKnowledge,
+  starterKit,
+  type UserKnowledge,
+  type StarterKit,
+  charge,
+  type UserWithRelations,
+} from "./schema";
+import { BlockKind } from "@/components/block";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -24,13 +31,33 @@ import { BlockKind } from '@/components/block';
 
 // biome-ignore lint: Forbidden non-null assertion.
 const client = postgres(process.env.POSTGRES_URL!);
-const db = drizzle(client);
+const db = drizzle(client, { schema });
 
-export async function getUser(id: string): Promise<Array<User>> {
+export async function getUser(id: string): Promise<Array<UserWithRelations>> {
   try {
-    return await db.select().from(user).where(eq(user.id, id));
+    const users = await db.select().from(user).where(eq(user.id, id));
+
+    if (users.length === 0) {
+      return [];
+    }
+
+    // Get related data separately
+    const [information, createdKits, claimedKits, charges] = await Promise.all([
+      db.select().from(userKnowledge).where(eq(userKnowledge.userId, id)),
+      db.select().from(starterKit).where(eq(starterKit.creatorId, id)),
+      db.select().from(starterKit).where(eq(starterKit.claimerId, id)),
+      db.select().from(charge).where(eq(charge.userId, id)),
+    ]);
+
+    return users.map((u) => ({
+      ...u,
+      information,
+      createdKits,
+      claimedKits,
+      charges,
+    }));
   } catch (error) {
-    console.error("Failed to get user from database");
+    console.error("Failed to get user with related data:", error);
     throw error;
   }
 }
@@ -79,7 +106,7 @@ export async function deleteChatById({ id }: { id: string }) {
 
     return await db.delete(chat).where(eq(chat.id, id));
   } catch (error) {
-    console.error('Failed to delete chat by id from database');
+    console.error("Failed to delete chat by id from database");
     throw error;
   }
 }
@@ -104,7 +131,7 @@ export async function getChatById({ id }: { id: string }) {
     const [selectedChat] = await db.select().from(chat).where(eq(chat.id, id));
     return selectedChat;
   } catch (error) {
-    console.error('Failed to get chat by id from database');
+    console.error("Failed to get chat by id from database");
     throw error;
   }
 }
@@ -113,7 +140,7 @@ export async function saveMessages({ messages }: { messages: Array<Message> }) {
   try {
     return await db.insert(message).values(messages);
   } catch (error) {
-    console.error('Failed to save messages in database', error);
+    console.error("Failed to save messages in database", error);
     throw error;
   }
 }
@@ -126,7 +153,7 @@ export async function getMessagesByChatId({ id }: { id: string }) {
       .where(eq(message.chatId, id))
       .orderBy(asc(message.createdAt));
   } catch (error) {
-    console.error('Failed to get messages by chat id from database', error);
+    console.error("Failed to get messages by chat id from database", error);
     throw error;
   }
 }
@@ -138,7 +165,7 @@ export async function voteMessage({
 }: {
   chatId: string;
   messageId: string;
-  type: 'up' | 'down';
+  type: "up" | "down";
 }) {
   try {
     const [existingVote] = await db
@@ -149,16 +176,16 @@ export async function voteMessage({
     if (existingVote) {
       return await db
         .update(vote)
-        .set({ isUpvoted: type === 'up' })
+        .set({ isUpvoted: type === "up" })
         .where(and(eq(vote.messageId, messageId), eq(vote.chatId, chatId)));
     }
     return await db.insert(vote).values({
       chatId,
       messageId,
-      isUpvoted: type === 'up',
+      isUpvoted: type === "up",
     });
   } catch (error) {
-    console.error('Failed to upvote message in database', error);
+    console.error("Failed to upvote message in database", error);
     throw error;
   }
 }
@@ -167,7 +194,7 @@ export async function getVotesByChatId({ id }: { id: string }) {
   try {
     return await db.select().from(vote).where(eq(vote.chatId, id));
   } catch (error) {
-    console.error('Failed to get votes by chat id from database', error);
+    console.error("Failed to get votes by chat id from database", error);
     throw error;
   }
 }
@@ -195,7 +222,7 @@ export async function saveDocument({
       createdAt: new Date(),
     });
   } catch (error) {
-    console.error('Failed to save document in database');
+    console.error("Failed to save document in database");
     throw error;
   }
 }
@@ -210,7 +237,7 @@ export async function getDocumentsById({ id }: { id: string }) {
 
     return documents;
   } catch (error) {
-    console.error('Failed to get document by id from database');
+    console.error("Failed to get document by id from database");
     throw error;
   }
 }
@@ -225,7 +252,7 @@ export async function getDocumentById({ id }: { id: string }) {
 
     return selectedDocument;
   } catch (error) {
-    console.error('Failed to get document by id from database');
+    console.error("Failed to get document by id from database");
     throw error;
   }
 }
@@ -243,8 +270,8 @@ export async function deleteDocumentsByIdAfterTimestamp({
       .where(
         and(
           eq(suggestion.documentId, id),
-          gt(suggestion.documentCreatedAt, timestamp),
-        ),
+          gt(suggestion.documentCreatedAt, timestamp)
+        )
       );
 
     return await db
@@ -252,7 +279,7 @@ export async function deleteDocumentsByIdAfterTimestamp({
       .where(and(eq(document.id, id), gt(document.createdAt, timestamp)));
   } catch (error) {
     console.error(
-      'Failed to delete documents by id after timestamp from database',
+      "Failed to delete documents by id after timestamp from database"
     );
     throw error;
   }
@@ -266,7 +293,7 @@ export async function saveSuggestions({
   try {
     return await db.insert(suggestion).values(suggestions);
   } catch (error) {
-    console.error('Failed to save suggestions in database');
+    console.error("Failed to save suggestions in database");
     throw error;
   }
 }
@@ -283,7 +310,7 @@ export async function getSuggestionsByDocumentId({
       .where(and(eq(suggestion.documentId, documentId)));
   } catch (error) {
     console.error(
-      'Failed to get suggestions by document version from database',
+      "Failed to get suggestions by document version from database"
     );
     throw error;
   }
@@ -293,7 +320,7 @@ export async function getMessageById({ id }: { id: string }) {
   try {
     return await db.select().from(message).where(eq(message.id, id));
   } catch (error) {
-    console.error('Failed to get message by id from database');
+    console.error("Failed to get message by id from database");
     throw error;
   }
 }
@@ -310,7 +337,7 @@ export async function deleteMessagesByChatIdAfterTimestamp({
       .select({ id: message.id })
       .from(message)
       .where(
-        and(eq(message.chatId, chatId), gte(message.createdAt, timestamp)),
+        and(eq(message.chatId, chatId), gte(message.createdAt, timestamp))
       );
 
     const messageIds = messagesToDelete.map((message) => message.id);
@@ -319,18 +346,18 @@ export async function deleteMessagesByChatIdAfterTimestamp({
       await db
         .delete(vote)
         .where(
-          and(eq(vote.chatId, chatId), inArray(vote.messageId, messageIds)),
+          and(eq(vote.chatId, chatId), inArray(vote.messageId, messageIds))
         );
 
       return await db
         .delete(message)
         .where(
-          and(eq(message.chatId, chatId), inArray(message.id, messageIds)),
+          and(eq(message.chatId, chatId), inArray(message.id, messageIds))
         );
     }
   } catch (error) {
     console.error(
-      'Failed to delete messages by id after timestamp from database',
+      "Failed to delete messages by id after timestamp from database"
     );
     throw error;
   }
@@ -341,12 +368,244 @@ export async function updateChatVisiblityById({
   visibility,
 }: {
   chatId: string;
-  visibility: 'private' | 'public';
+  visibility: "private" | "public";
 }) {
   try {
     return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
   } catch (error) {
-    console.error('Failed to update chat visibility in database');
+    console.error("Failed to update chat visibility in database");
+    throw error;
+  }
+}
+
+export async function saveUserInformation(
+  data: Omit<UserKnowledge, "id" | "createdAt" | "deletedAt">
+) {
+  try {
+    return await db.insert(userKnowledge).values({
+      ...data,
+      createdAt: new Date(),
+      deletedAt: null,
+    });
+  } catch (error) {
+    console.error("Failed to save user information");
+    throw error;
+  }
+}
+
+export async function getUserInformation(userId: string) {
+  try {
+    return await db
+      .select()
+      .from(userKnowledge)
+      .where(
+        and(eq(userKnowledge.userId, userId), isNull(userKnowledge.deletedAt))
+      )
+      .orderBy(desc(userKnowledge.createdAt));
+  } catch (error) {
+    console.error("Failed to get user information");
+    throw error;
+  }
+}
+
+export async function createStarterKit({
+  value,
+  userId,
+  chargeId,
+  claimerId,
+}: {
+  value: number;
+  userId?: string;
+  chargeId?: string;
+  claimerId?: string;
+}) {
+  try {
+    return await db.insert(starterKit).values({
+      creatorId: userId,
+      claimerId,
+      value,
+      chargeId,
+      createdAt: new Date(),
+      ...(claimerId && { claimedAt: new Date() }),
+    });
+  } catch (error) {
+    console.error("Failed to create starter kit");
+    throw error;
+  }
+}
+
+export async function claimStarterKit({
+  kitId,
+  userId,
+}: {
+  kitId: string;
+  userId: string;
+}) {
+  try {
+    return await db
+      .update(starterKit)
+      .set({
+        claimerId: userId,
+        claimedAt: new Date(),
+      })
+      .where(and(eq(starterKit.id, kitId), isNull(starterKit.claimerId)));
+  } catch (error) {
+    console.error("Failed to claim starter kit");
+    throw error;
+  }
+}
+
+export async function getClaimedStarterKits(userId: string) {
+  try {
+    return await db
+      .select()
+      .from(starterKit)
+      .where(eq(starterKit.claimerId, userId))
+      .orderBy(desc(starterKit.claimedAt));
+  } catch (error) {
+    console.error("Failed to get claimed starter kits");
+    throw error;
+  }
+}
+
+export async function getCreatedStarterKits(userId: string) {
+  try {
+    return await db
+      .select()
+      .from(starterKit)
+      .where(eq(starterKit.creatorId, userId))
+      .orderBy(desc(starterKit.createdAt));
+  } catch (error) {
+    console.error("Failed to get created starter kits");
+    throw error;
+  }
+}
+
+export async function useStarterKit({
+  kitId,
+  amount,
+}: {
+  kitId: string;
+  amount: number;
+}) {
+  try {
+    return await db
+      .update(starterKit)
+      .set({
+        balance: sql`${starterKit.balance} + ${amount}`,
+      })
+      .where(eq(starterKit.id, kitId));
+  } catch (error) {
+    console.error("Failed to use starter kit");
+    throw error;
+  }
+}
+
+export async function getUnclaimedStarterKits(userId: string) {
+  try {
+    return await db
+      .select()
+      .from(starterKit)
+      .where(
+        and(eq(starterKit.creatorId, userId), isNull(starterKit.claimerId))
+      )
+      .orderBy(desc(starterKit.createdAt));
+  } catch (error) {
+    console.error("Failed to get unclaimed starter kits");
+    throw error;
+  }
+}
+
+export async function deleteUserInformation(id: string) {
+  try {
+    return await db
+      .update(userKnowledge)
+      .set({ deletedAt: new Date() })
+      .where(eq(userKnowledge.id, id));
+  } catch (error) {
+    console.error("Failed to delete user information");
+    throw error;
+  }
+}
+
+export async function createCharge({
+  id,
+  userId,
+  amount,
+  currency,
+  product = "STARTERKIT",
+}: {
+  id: string;
+  userId: string;
+  amount: string;
+  currency: string;
+  product?: "STARTERKIT";
+}) {
+  try {
+    return await db.insert(charge).values({
+      id,
+      userId,
+      amount,
+      currency,
+      product,
+      createdAt: new Date(),
+    });
+  } catch (error) {
+    console.error("Failed to create charge");
+    throw error;
+  }
+}
+
+export async function updateChargeStatus({
+  id,
+  status,
+  payerAddress,
+  transactionHash,
+  confirmedAt,
+  expiresAt,
+}: {
+  id: string;
+  status: "NEW" | "PENDING" | "COMPLETED" | "EXPIRED" | "FAILED";
+  payerAddress?: string;
+  transactionHash?: string;
+  confirmedAt?: Date;
+  expiresAt?: Date;
+}) {
+  try {
+    return await db
+      .update(charge)
+      .set({
+        status,
+        ...(payerAddress && { payerAddress }),
+        ...(transactionHash && { transactionHash }),
+        ...(confirmedAt && { confirmedAt }),
+        ...(expiresAt && { expiresAt }),
+      })
+      .where(eq(charge.id, id));
+  } catch (error) {
+    console.error("Failed to update charge status");
+    throw error;
+  }
+}
+
+export async function getChargeById(id: string) {
+  try {
+    return await db.select().from(charge).where(eq(charge.id, id));
+  } catch (error) {
+    console.error("Failed to get charge");
+    throw error;
+  }
+}
+
+export async function getUserCharges(userId: string) {
+  try {
+    return await db
+      .select()
+      .from(charge)
+      .where(eq(charge.userId, userId))
+      .orderBy(desc(charge.createdAt));
+  } catch (error) {
+    console.error("Failed to get user charges");
     throw error;
   }
 }

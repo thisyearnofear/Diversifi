@@ -4,6 +4,12 @@ import { ConnectButton } from "./connect-button";
 import { useState, useCallback, useRef } from "react";
 import type { UserAction } from "@/lib/utils/message-helpers";
 import { useChatContext } from "@/contexts/chat-context";
+import {
+  Checkout,
+  CheckoutButton,
+  CheckoutStatus,
+} from "@coinbase/onchainkit/checkout";
+import { StarterKitCheckout } from "./starter-kit-checkout";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -11,7 +17,7 @@ interface ActionButtonsProps {
 }
 
 function ActionButtons({ args, chatId }: ActionButtonsProps) {
-  const { setInput, submitForm, append } = useChatContext();
+  const { append } = useChatContext();
 
   const handleSelect = useCallback(
     (option: Record<string, any>) => {
@@ -55,17 +61,16 @@ export function InteractiveElement({
   actions,
   chatId,
 }: InteractiveElementProps) {
-  const { setInput, submitForm } = useChatContext();
+  const { append } = useChatContext();
 
   const handleAction = useCallback(
-    (action: UserAction) => {
-      setInput(action.label || action.action);
-
-      setTimeout(() => {
-        submitForm();
-      }, 100);
+    (message: string) => {
+      append({
+        role: "user",
+        content: message,
+      });
     },
-    [setInput, submitForm]
+    [append]
   );
 
   // Find the first action that matches each type
@@ -73,15 +78,46 @@ export function InteractiveElement({
     (a) => a.action === "connect-wallet"
   );
   const fundWalletAction = actions.find((a) => a.action === "fund-wallet");
+  const buyStarterKitAction = actions.find(
+    (a) => a.action === "buy-starter-kit"
+  );
+  const giftStarterKitAction = actions.find(
+    (a) => a.action === "gift-starter-kit"
+  );
   const transactionAction = actions.find((a) => a.action === "transaction");
   const optionsAction = actions.find((a) => a.action === "options");
   const helpAction = actions.find((a) => a.action === "help");
+
+  console.log(actions);
 
   return (
     <div className="flex flex-col gap-4">
       {connectWalletAction && <ConnectButton />}
 
       {fundWalletAction && <FundButton />}
+
+      {buyStarterKitAction && (
+        <StarterKitCheckout
+          onSuccess={() => {
+            append({
+              role: "user",
+              content: "I bought a starter kit!",
+            });
+          }}
+        />
+      )}
+
+      {giftStarterKitAction && (
+        <StarterKitCheckout
+          isGift={true}
+          onSuccess={() => {
+            append({
+              role: "user",
+              content: "I bought a starter kit as a gift!",
+            });
+          }}
+        />
+      )}
 
       {transactionAction && transactionAction.args && (
         <div className="flex flex-col gap-2 p-4 border rounded-lg">
@@ -90,16 +126,7 @@ export function InteractiveElement({
             <p>To: {transactionAction.args[0].to}</p>
             <p>Value: {transactionAction.args[0].value} ETH</p>
           </div>
-          <Button
-            onClick={() =>
-              handleAction({
-                ...transactionAction,
-                action: "confirm-transaction",
-              })
-            }
-          >
-            Confirm Transaction
-          </Button>
+          <Button>Confirm Transaction</Button>
         </div>
       )}
 
@@ -110,7 +137,9 @@ export function InteractiveElement({
       {helpAction && (
         <Button
           variant="outline"
-          onClick={() => handleAction({ action: "help" })}
+          onClick={() =>
+            handleAction(helpAction.label || "Help, I don't understand")
+          }
         >
           {helpAction.label || "Help, I don't understand"}
         </Button>

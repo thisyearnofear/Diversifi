@@ -9,13 +9,68 @@ import {
   primaryKey,
   foreignKey,
   boolean,
-} from 'drizzle-orm/pg-core';
+  bigint,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("User", {
   id: varchar("id", { length: 42 }).primaryKey().notNull(), // Ethereum address
 });
 
+export const userKnowledge = pgTable("UserKnowledge", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userId: varchar("userId", { length: 42 })
+    .notNull()
+    .references(() => user.id),
+  type: varchar("type", { enum: ["ACTION", "INTEREST", "GOAL"] }).notNull(),
+  content: json("content").notNull(),
+  createdAt: timestamp("createdAt").notNull(),
+  deletedAt: timestamp("deletedAt"),
+});
+
+export const charge = pgTable("Charge", {
+  id: text("id").primaryKey().notNull(),
+  userId: varchar("userId", { length: 42 })
+    .notNull()
+    .references(() => user.id),
+  status: varchar("status", {
+    enum: ["NEW", "PENDING", "COMPLETED", "EXPIRED", "FAILED"],
+  })
+    .notNull()
+    .default("NEW"),
+  product: varchar("product", {
+    enum: ["STARTERKIT"],
+  })
+    .notNull()
+    .default("STARTERKIT"),
+  payerAddress: varchar("payerAddress", { length: 42 }),
+  amount: text("amount").notNull(),
+  currency: text("currency").notNull(),
+  createdAt: timestamp("createdAt").notNull(),
+  confirmedAt: timestamp("confirmedAt"),
+  expiresAt: timestamp("expiresAt"),
+  transactionHash: text("transactionHash"),
+});
+
+export const starterKit = pgTable("StarterKit", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  creatorId: varchar("creatorId", { length: 42 }).references(() => user.id),
+  claimerId: varchar("claimerId", { length: 42 }).references(() => user.id),
+  chargeId: text("chargeId").references(() => charge.id),
+  createdAt: timestamp("createdAt").notNull(),
+  claimedAt: timestamp("claimedAt"),
+  value: bigint("value", { mode: "number" }).notNull(),
+  balance: bigint("balance", { mode: "number" }).notNull().default(0),
+  deletedAt: timestamp("deletedAt"),
+});
+
 export type User = InferSelectModel<typeof user>;
+
+export type UserWithRelations = User & {
+  information: Array<UserKnowledge>;
+  createdKits: Array<StarterKit>;
+  claimedKits: Array<StarterKit>;
+  charges: Array<Charge>;
+};
 
 export const chat = pgTable("Chat", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -111,3 +166,9 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+export type UserKnowledge = InferSelectModel<typeof userKnowledge>;
+
+export type StarterKit = InferSelectModel<typeof starterKit>;
+
+export type Charge = InferSelectModel<typeof charge>;

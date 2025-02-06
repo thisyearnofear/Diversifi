@@ -36,6 +36,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <WagmiProvider config={wagmiConfig}>
           <OnchainKitProvider
             apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
+            projectId={process.env.NEXT_PUBLIC_CDP_PROJECT_ID}
             chain={baseSepolia} // add baseSepolia for testing
             config={{
               wallet: {
