@@ -33,6 +33,7 @@ import {
 import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20/erc20ActionProvider";
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
+import { basenameActionProvider } from "@/lib/web3/agentkit/action-providers/basename/basenameActionProvider";
 import { z } from "zod";
 
 export const maxDuration = 60;
@@ -80,10 +81,13 @@ export async function POST(request: Request) {
       pythActionProvider(),
       walletActionProvider(),
       erc20ActionProvider(),
+      basenameActionProvider(),
     ],
   });
 
   const tools = agentKitToTools(agentKit);
+
+  console.log("");
 
   return createDataStreamResponse({
     execute: (dataStream) => {
