@@ -1,7 +1,7 @@
 import { PrivyClient } from "@privy-io/server-auth";
 import { createViemAccount } from "@privy-io/server-auth/viem";
 import { ViemWalletProvider } from "@coinbase/agentkit";
-import { createWalletClient, http, WalletClient } from "viem";
+import { createWalletClient, http, type WalletClient } from "viem";
 import { NETWORK_ID_TO_VIEM_CHAIN } from "./network";
 
 interface PrivyWalletConfig {
@@ -46,7 +46,7 @@ export class PrivyWalletProvider extends ViemWalletProvider {
       chainId: "84532",
     };
 
-    const chain = NETWORK_ID_TO_VIEM_CHAIN[network.networkId!];
+    const chain = NETWORK_ID_TO_VIEM_CHAIN[network.networkId];
     const walletClient = createWalletClient({
       account,
       chain,

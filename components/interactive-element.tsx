@@ -1,14 +1,9 @@
 import { Button } from "./ui/button";
 import { FundButton } from "@coinbase/onchainkit/fund";
 import { ConnectButton } from "./connect-button";
-import { useState, useCallback, useRef } from "react";
+import { useCallback, } from "react";
 import type { UserAction } from "@/lib/utils/message-helpers";
 import { useChatContext } from "@/contexts/chat-context";
-import {
-  Checkout,
-  CheckoutButton,
-  CheckoutStatus,
-} from "@coinbase/onchainkit/checkout";
 import { StarterKitCheckout } from "./starter-kit-checkout";
 
 interface ActionButtonsProps {
@@ -119,7 +114,7 @@ export function InteractiveElement({
         />
       )}
 
-      {transactionAction && transactionAction.args && (
+      {transactionAction?.args && (
         <div className="flex flex-col gap-2 p-4 border rounded-lg">
           <h3 className="font-medium">Transaction Details</h3>
           <div className="text-sm text-muted-foreground">
@@ -130,7 +125,7 @@ export function InteractiveElement({
         </div>
       )}
 
-      {optionsAction && optionsAction.args && (
+      {optionsAction?.args && (
         <ActionButtons args={optionsAction.args} chatId={chatId} />
       )}
 

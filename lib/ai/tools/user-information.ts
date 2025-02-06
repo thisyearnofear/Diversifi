@@ -5,7 +5,7 @@ import {
   getUserInformation as getUserInfoFromDb,
   deleteUserInformation as deleteUserInfoFromDb,
 } from "@/lib/db/queries";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 
 interface UserInformationProps {
   session: Session;

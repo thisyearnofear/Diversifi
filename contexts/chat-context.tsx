@@ -1,5 +1,5 @@
-import { Message, ChatRequestOptions, CreateMessage } from "ai";
-import { createContext, useContext, ReactNode } from "react";
+import type { Message, ChatRequestOptions, CreateMessage } from "ai";
+import { createContext, useContext, type ReactNode } from "react";
 
 interface ChatContextType {
   messages: Message[];

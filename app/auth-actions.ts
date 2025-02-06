@@ -11,7 +11,7 @@ import {
   generateSiweNonce,
   parseSiweMessage,
 } from "viem/siwe";
-import { createSession, decrypt, SessionPayload } from "@/lib/auth/session";
+import { createSession, decrypt, type SessionPayload } from "@/lib/auth/session";
 
 const chain = process.env.PRIMARY_CHAIN === "base" ? base : baseSepolia;
 const domain = process.env.NEXT_PUBLIC_APP_URL || "localhost:3000";

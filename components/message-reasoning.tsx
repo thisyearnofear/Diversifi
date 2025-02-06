@@ -43,14 +43,16 @@ export function MessageReasoning({
       ) : (
         <div className="flex flex-row gap-2 items-center">
           <div className="font-medium">Reasoned for a few seconds</div>
-          <div
+          <button
+            type="button"
             className="cursor-pointer"
             onClick={() => {
               setIsExpanded(!isExpanded);
             }}
+            aria-label={isExpanded ? "Collapse reasoning" : "Expand reasoning"}
           >
             <ChevronDownIcon />
-          </div>
+          </button>
         </div>
       )}
 
@@ -62,8 +64,8 @@ export function MessageReasoning({
             animate="expanded"
             exit="collapsed"
             variants={variants}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
-            style={{ overflow: 'hidden' }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
             className="pl-4 text-zinc-600 dark:text-zinc-400 border-l flex flex-col gap-4"
           >
             <Markdown>{reasoning}</Markdown>

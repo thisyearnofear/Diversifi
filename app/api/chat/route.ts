@@ -1,7 +1,6 @@
 import {
   type Message,
   createDataStreamResponse,
-  smoothStream,
   streamText,
   Output,
 } from "ai";

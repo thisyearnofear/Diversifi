@@ -76,7 +76,7 @@ export async function POST(
       latestStatus === "COMPLETED" &&
       (!existingCharge || existingCharge[0]?.status !== "COMPLETED")
     ) {
-      const value = parseInt(data.pricing.local.amount, 10);
+      const value = Number.parseInt(data.pricing.local.amount, 10);
       const isGift =
         data.pricing.product_id ===
         process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT_GIFT;

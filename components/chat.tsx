@@ -2,7 +2,7 @@
 
 import type { Attachment, Message } from 'ai';
 import { useChat } from "ai/react";
-import { useState, useCallback } from "react";
+import { useState, } from "react";
 import useSWR, { useSWRConfig } from "swr";
 
 import { ChatHeader } from "@/components/chat-header";
@@ -12,7 +12,7 @@ import { fetcher, generateUUID } from "@/lib/utils";
 import { Block } from "./block";
 import { MultimodalInput } from "./multimodal-input";
 import { Messages } from "./messages";
-import { VisibilityType } from "./visibility-selector";
+import type { VisibilityType } from "./visibility-selector";
 import { useBlockSelector } from "@/hooks/use-block";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";

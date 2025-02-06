@@ -1,6 +1,4 @@
 import 'server-only';
-
-import { genSaltSync, hashSync } from 'bcrypt-ts';
 import { and, asc, desc, eq, gt, gte, inArray, isNull, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
@@ -9,7 +7,6 @@ import * as schema from "./schema";
 import {
   user,
   chat,
-  type User,
   document,
   type Suggestion,
   suggestion,
@@ -19,11 +16,10 @@ import {
   userKnowledge,
   starterKit,
   type UserKnowledge,
-  type StarterKit,
   charge,
   type UserWithRelations,
 } from "./schema";
-import { BlockKind } from "@/components/block";
+import type { BlockKind } from "@/components/block";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
