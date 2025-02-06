@@ -84,14 +84,17 @@ export async function POST(request: Request) {
   });
 
   const tools = agentKitToTools(agentKit);
+  const userSystemInformation = session?.user?.id
+    ? `The user is signed in as ${session.user.id}.`
+    : `The user is not signed in.`;
 
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
         model: myProvider.languageModel(selectedChatModel),
-        system: systemPrompt({ selectedChatModel }),
+        system: systemPrompt({ selectedChatModel }) + userSystemInformation,
         messages,
-        maxSteps: 5,
+        maxSteps: 10,
         // experimental_activeTools:
         //   selectedChatModel === "chat-model-reasoning"
         //     ? []
@@ -109,7 +112,7 @@ export async function POST(request: Request) {
                   .describe(
                     "An additional label with more context about the action for the user"
                   ),
-                args: z.record(z.any()).optional(),
+                args: z.array(z.record(z.any())).optional(),
               })
             ),
           }),
@@ -180,7 +183,7 @@ export async function POST(request: Request) {
       });
     },
     onError: (error) => {
-      return "Oops, an error occured!";
+      return `Oops, an error occured! ${error}`;
     },
   });
 }
