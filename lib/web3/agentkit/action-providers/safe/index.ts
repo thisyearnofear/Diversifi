@@ -54,7 +54,7 @@ export class SafeActionProvider extends ActionProvider {
             };
 
             const protocolKit = await Safe.init({
-                provider: baseSepolia.rpcUrls.default.http[0],//`https://base-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+                provider: baseSepolia.rpcUrls.default.http[0],
                 signer: walletProvider.getAddress(),
                 predictedSafe,
                 onchainAnalytics // Optional
