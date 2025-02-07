@@ -33,6 +33,7 @@ import {
 import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20/erc20ActionProvider";
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
+import { safeActionProvider } from "@/lib/web3/agentkit/action-providers/safe";
 import { z } from "zod";
 import {
   saveUserInformation,
@@ -88,6 +89,7 @@ export async function POST(request: Request) {
       pythActionProvider(),
       walletActionProvider(),
       erc20ActionProvider(),
+      safeActionProvider(),
     ],
   });
 
