@@ -13,7 +13,8 @@ import {
 } from "viem/siwe";
 import { createSession, decrypt, type SessionPayload } from "@/lib/auth/session";
 
-const chain = process.env.PRIMARY_CHAIN === "base" ? base : baseSepolia;
+const chain =
+  process.env.NEXT_PUBLIC_ACTIVE_CHAIN === "base" ? base : baseSepolia;
 const domain = process.env.NEXT_PUBLIC_APP_URL || "localhost:3000";
 const uri = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
