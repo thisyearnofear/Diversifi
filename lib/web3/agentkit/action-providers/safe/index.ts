@@ -40,7 +40,7 @@ export class SafeActionProvider extends ActionProvider {
     async createSafe(
         walletProvider: EvmWalletProvider,
         args: z.infer<typeof CreateSafeSchema>
-    ): Promise<string> {
+    ): Promise<CreateSafeReturnType> {
         try {
             const safeAccountConfig: SafeAccountConfig = {
                 owners: args.owners,
@@ -90,9 +90,14 @@ export class SafeActionProvider extends ActionProvider {
 
             const deployedSafeAddress = await newProtocolKit.getAddress();
 
-            return `Safe created at ${deployedSafeAddress} with threshold ${args.threshold} and owners ${args.owners.join(', ')}`;
+            return {
+                safeAddress: deployedSafeAddress,
+                transactionHash,
+                threshold: args.threshold,
+                owners: args.owners
+                };
         } catch (error: any) {
-            return `Error creating safe: ${error}`;
+            return { error };
         }
     }
 
