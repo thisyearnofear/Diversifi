@@ -34,6 +34,9 @@ import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20"
 import { onchainKitActionProvider } from "@/lib/web3/agentkit/action-providers/onchainkit";
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
+import { safeActionProvider } from "@/lib/web3/agentkit/action-providers/safe";
+import { ZoraActionProvider, zoraActionProvider } from "@/lib/web3/agentkit/action-providers/zora";
+import { alchemyActionProvider } from "@/lib/web3/agentkit/action-providers/alchemy";
 import { z } from "zod";
 import {
   saveUserInformation,
@@ -88,19 +91,16 @@ export async function POST(request: Request) {
     walletProvider,
     actionProviders: [
       // pythActionProvider(),
-      // walletActionProvider(),
+      walletActionProvider(),
       // erc20ActionProvider(),
-      onchainKitActionProvider(process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY as string),
+      // safeActionProvider(),
+      // alchemyActionProvider(process.env.ALCHEMY_API_KEY as string),
+      zoraActionProvider(),
     ],
   }); 
 
-  console.log(walletProvider.getNetwork())
-
   const tools = agentKitToTools(agentKit);
-
-  console.log(agentKit.getActions())
-  console.log(onchainKitActionProvider(process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY as string).getActions(walletProvider))
-
+  
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
