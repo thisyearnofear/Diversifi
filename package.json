@@ -25,7 +25,7 @@
     "@codemirror/state": "^6.5.0",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@codemirror/view": "^6.35.3",
-    "@coinbase/agentkit": "0.1.1",
+    "@coinbase/agentkit": "0.1.2",
     "@coinbase/onchainkit": "github:azf20/onchainkit#534f302c60da4ab9a2f95187c04a67be062ad4a9",
     "@privy-io/server-auth": "^1.18.4",
     "@radix-ui/react-alert-dialog": "^1.1.2",

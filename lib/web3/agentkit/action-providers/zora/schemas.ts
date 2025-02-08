@@ -14,12 +14,28 @@ export const mint1155Schema = z
     quantityToMint: z
       .number()
       .describe("Quantity of tokens to mint"),
-    mintComment: z
+    mintRecipient: z
       .string()
       .optional()
-      .describe("Optional comment to include with the mint"),
-    mintReferral: z
-      .string()
-      .optional()
-      .describe("Optional address that will receive a mint referral reward"),
+      .describe("Optional recipient address to mint to"),
   }) 
+  .strip()
+  .describe("Mint parameters for ERC-1155 tokens");
+
+/**
+ * Response type for mint_1155 action
+ */
+export type Mint1155Response = {
+  success: boolean;
+  message: string;
+  data?: {
+    tokenContract: string;
+    tokenId: string;
+    quantity: number;
+    recipient: string;
+    transactionHash: string;
+    blockNumber: string;
+    value?: string;
+  };
+  error?: string;
+};

@@ -3,7 +3,7 @@ import {
   ActionProvider,
   CreateAction,
 } from "@coinbase/agentkit";
-import type { Network } from "./types";
+import type { Network } from "../types";
 import { searchBaseTokensSchema, getPortfoliosSchema } from "./schemas";
 import { getTokens, getPortfolios, GetTokensResponse, GetPortfoliosResponse, APIError } from "@coinbase/onchainkit/api";
 import { setOnchainKitConfig } from '@coinbase/onchainkit';
