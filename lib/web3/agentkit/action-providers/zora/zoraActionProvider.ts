@@ -8,8 +8,7 @@ import {
 import type { Network } from "../types";
 import { mint1155Schema, type Mint1155Response } from "./schemas";
 import { mint } from "@zoralabs/protocol-sdk";
-import { createPublicClient, http, encodeFunctionData, type Hex } from 'viem'
-
+import { createPublicClient, http, encodeFunctionData, type Hex } from "viem";
 
 /**
  * ZoraActionProvider provides actions for interacting with Zora Protocol.
@@ -50,14 +49,12 @@ export class ZoraActionProvider extends ActionProvider {
     args: z.infer<typeof mint1155Schema>
   ): Promise<Mint1155Response> {
     try {
-      console.log("Minting 1155 tokens", args, walletProvider);
-
-      const network = walletProvider.getNetwork()
+      const network = walletProvider.getNetwork();
       const publicClient = createPublicClient({
         chain: NETWORK_ID_TO_VIEM_CHAIN[network.networkId!],
-        transport: http()
-      })
-      
+        transport: http(),
+      });
+
       const recipient = args.mintRecipient || walletProvider.getAddress();
 
       // Prepare mint parameters
@@ -67,10 +64,8 @@ export class ZoraActionProvider extends ActionProvider {
         tokenId: BigInt(args.tokenId),
         quantityToMint: args.quantityToMint,
         minterAccount: recipient,
-        publicClient
+        publicClient,
       });
-
-      console.log("Mint parameters", parameters.functionName, parameters.args)
 
       // Execute the mint transaction
       const hash = await walletProvider.sendTransaction({

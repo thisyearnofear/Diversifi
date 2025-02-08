@@ -31,11 +31,10 @@ import {
   AgentKit,
 } from "@coinbase/agentkit";
 import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20";
-import { onchainKitActionProvider } from "@/lib/web3/agentkit/action-providers/onchainkit";
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
 import { safeActionProvider } from "@/lib/web3/agentkit/action-providers/safe";
-import { ZoraActionProvider, zoraActionProvider } from "@/lib/web3/agentkit/action-providers/zora";
+import { zoraActionProvider } from "@/lib/web3/agentkit/action-providers/zora";
 import { alchemyActionProvider } from "@/lib/web3/agentkit/action-providers/alchemy";
 import { z } from "zod";
 import {
@@ -54,6 +53,21 @@ export async function POST(request: Request) {
   }: { id: string; messages: Array<Message>; selectedChatModel: string } =
     await request.json();
 
+  const attachments = messages.flatMap(
+    (message) => message.experimental_attachments ?? []
+  );
+
+  const attachmentsString = attachments.length
+    ? `The user has shared the following files:\n${attachments
+        .map(
+          (attachment, index) =>
+            `${index + 1}. ${attachment.name} (${attachment.contentType}, ${
+              attachment.url
+            })`
+        )
+        .join("\n")}`
+    : "";
+
   const session = await auth();
   const userMessage = getMostRecentUserMessage(messages);
 
@@ -64,7 +78,28 @@ export async function POST(request: Request) {
   let userProfile = "User is not signed in";
   // If user is authenticated, save chat history
   if (session?.user?.id) {
-    userProfile = JSON.stringify(await getUser(session.user.id));
+    const userInfo = await getUser(session.user.id);
+    userProfile = `
+    ${attachmentsString}
+    User's connected wallet is ${userInfo[0].id}
+    We have the following information about them: ${userInfo[0].information
+      .map((interest) => `${interest.type}: ${interest.content}`)
+      .join("\n")}
+    ${
+      userInfo[0].claimedKits.length > 0
+        ? `They have claimed ${userInfo[0].claimedKits.length} kits`
+        : ""
+    }
+    ${
+      userInfo[0].createdKits.length > 0
+        ? `They have created ${userInfo[0].createdKits.length} kits, of which ${
+            userInfo[0].createdKits.filter((kit) => !kit.claimedAt).length
+          } are unclaimed`
+        : ""
+    }
+    `;
+
+    console.log("userProfile", userProfile);
 
     const chat = await getChatById({ id });
     if (!chat) {
@@ -78,7 +113,10 @@ export async function POST(request: Request) {
     });
   }
 
-  const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN === 'base' ? "base-mainnet" : "base-sepolia"
+  const activeChain =
+    process.env.NEXT_PUBLIC_ACTIVE_CHAIN === "base"
+      ? "base-mainnet"
+      : "base-sepolia";
   const walletProvider = await PrivyWalletProvider.configureWithWallet({
     appId: process.env.PRIVY_APP_ID as string,
     appSecret: process.env.PRIVY_APP_SECRET as string,
@@ -90,22 +128,25 @@ export async function POST(request: Request) {
   const agentKit = await AgentKit.from({
     walletProvider,
     actionProviders: [
-      // pythActionProvider(),
+      pythActionProvider(),
       walletActionProvider(),
-      // erc20ActionProvider(),
-      // safeActionProvider(),
-      // alchemyActionProvider(process.env.ALCHEMY_API_KEY as string),
+      erc20ActionProvider(),
+      safeActionProvider(),
+      alchemyActionProvider(process.env.ALCHEMY_API_KEY as string),
       zoraActionProvider(),
     ],
-  }); 
+  });
 
   const tools = agentKitToTools(agentKit);
-  
+
+  console.log(messages);
+
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
         model: myProvider.languageModel(selectedChatModel),
-        system: systemPrompt({ selectedChatModel }) + userProfile,
+        system:
+          systemPrompt({ selectedChatModel }) + userProfile + attachmentsString,
         messages,
         maxSteps: 10,
         // experimental_activeTools:

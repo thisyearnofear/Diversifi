@@ -2,9 +2,14 @@ import type { z } from "zod";
 import {
   ActionProvider,
   CreateAction,
-  type EvmWalletProvider,
+  EvmWalletProvider,
 } from "@coinbase/agentkit";
-import { getTokenBalancesSchema, type TokenBalanceWithMetadata, getNFTsForOwnerSchema, type NFTWithMetadata } from "./schemas";
+import {
+  getTokenBalancesSchema,
+  type TokenBalanceWithMetadata,
+  getNFTsForOwnerSchema,
+  type NFTWithMetadata,
+} from "./schemas";
 import { Network } from "../types";
 
 /**
@@ -63,12 +68,10 @@ export class AlchemyActionProvider extends ActionProvider {
   async getTokenBalances(
     walletProvider: EvmWalletProvider,
     args: z.infer<typeof getTokenBalancesSchema>
-  ): Promise<TokenBalanceWithMetadata[]> {
+  ): Promise<TokenBalanceWithMetadata[] | { error: string }> {
     try {
       const chainId = String(walletProvider.getNetwork().chainId);
       const baseURL = this.getBaseUrl(chainId);
-
-      // Get token balances
       const balancesResponse = await fetch(baseURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,45 +87,48 @@ export class AlchemyActionProvider extends ActionProvider {
       const balances = balancesData.result.tokenBalances;
 
       // Filter out zero balances if requested
-      const filteredBalances = args.includeZeroBalances 
-        ? balances 
+      const filteredBalances = args.includeZeroBalances
+        ? balances
         : balances.filter((token: any) => token.tokenBalance !== "0");
 
       // Get metadata for each token
-      const tokenBalancesWithMetadata: TokenBalanceWithMetadata[] = await Promise.all(
-        filteredBalances.map(async (token: any) => {
-          const metadataResponse = await fetch(baseURL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              jsonrpc: "2.0", 
-              method: "alchemy_getTokenMetadata",
-              params: [token.contractAddress],
-              id: 42,
-            }),
-          });
+      const tokenBalancesWithMetadata: TokenBalanceWithMetadata[] =
+        await Promise.all(
+          filteredBalances.map(async (token: any) => {
+            const metadataResponse = await fetch(baseURL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                jsonrpc: "2.0",
+                method: "alchemy_getTokenMetadata",
+                params: [token.contractAddress],
+                id: 42,
+              }),
+            });
 
-          const metadataData = await metadataResponse.json();
-          const metadata = metadataData.result;
+            const metadataData = await metadataResponse.json();
+            const metadata = metadataData.result;
 
-          // Convert balance to human readable format
-          const balance = (
-            parseInt(token.tokenBalance) / Math.pow(10, metadata.decimals)
-          ).toFixed(2);
+            // Convert balance to human readable format
+            const balance = (
+              parseInt(token.tokenBalance) / Math.pow(10, metadata.decimals)
+            ).toFixed(2);
 
-          return {
-            name: metadata.name,
-            symbol: metadata.symbol,
-            balance,
-            decimals: metadata.decimals,
-            contractAddress: token.contractAddress,
-          };
-        })
-      );
+            return {
+              name: metadata.name,
+              symbol: metadata.symbol,
+              balance,
+              decimals: metadata.decimals,
+              contractAddress: token.contractAddress,
+            };
+          })
+        );
 
       return tokenBalancesWithMetadata;
     } catch (error) {
-      throw new Error(`Error getting token balances: ${error}`);
+      return {
+        error: `Error getting token balances: ${JSON.stringify(error)}`,
+      };
     }
   }
 

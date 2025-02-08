@@ -4,7 +4,7 @@ import {
   CheckoutStatus,
   type LifecycleStatus,
 } from "@coinbase/onchainkit/checkout";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 
@@ -39,12 +39,43 @@ export function StarterKitCheckout({
     ? process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT_GIFT
     : process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT;
 
+  // Add a ref to track the last processed charge status
+  const processedChargeRef = useRef<{
+    chargeId?: string;
+    status?: string;
+    lastProcessed?: number;
+  }>({});
+
   const statusHandler = useCallback(
     async (status: LifecycleStatus) => {
       const { statusName, statusData } = status;
 
       try {
         if (statusName !== "error" && statusData?.chargeId && productId) {
+          // Check if we've recently processed this charge
+          const now = Date.now();
+          const minInterval = 2000; // 2 seconds between calls
+          const lastProcessed = processedChargeRef.current.lastProcessed || 0;
+
+          // Skip if:
+          // 1. It's the same charge we just processed within minInterval
+          // 2. Or if we've already seen this charge completed successfully
+          if (
+            (statusData.chargeId === processedChargeRef.current.chargeId &&
+              now - lastProcessed < minInterval) ||
+            (statusData.chargeId === processedChargeRef.current.chargeId &&
+              processedChargeRef.current.status === "success")
+          ) {
+            return;
+          }
+
+          // Update our tracking ref
+          processedChargeRef.current = {
+            chargeId: statusData.chargeId,
+            status: statusName,
+            lastProcessed: now,
+          };
+
           await trigger({
             productId,
             chargeId: statusData.chargeId,
@@ -79,11 +110,7 @@ export function StarterKitCheckout({
 
   return (
     <div>
-      <Checkout
-        productId={productId}
-        onStatus={statusHandler}
-        isSponsored={false}
-      >
+      <Checkout productId={productId} onStatus={statusHandler}>
         <CheckoutButton
           text={
             isGift ? "Buy Starter Kit as Gift" : "Buy Starter Kit for Yourself"

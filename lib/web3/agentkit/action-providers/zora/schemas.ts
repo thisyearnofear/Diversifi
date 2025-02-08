@@ -39,3 +39,32 @@ export type Mint1155Response = {
   };
   error?: string;
 };
+
+export const create1155Schema = z.object({
+  contractAddress: z.string(),
+  name: z.string(),
+  description: z.string(),
+  imageFile: z.instanceof(File),
+  // Optional fields
+  attributes: z
+    .array(
+      z.object({
+        trait_type: z.string(),
+        value: z.string(),
+      })
+    )
+    .optional(),
+});
+
+export type Create1155Response = {
+  success: boolean;
+  message: string;
+  data?: {
+    contractAddress: string;
+    tokenId: string;
+    tokenUri: string;
+    transactionHash: string;
+    blockNumber: string;
+  };
+  error?: string;
+};

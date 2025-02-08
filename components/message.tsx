@@ -14,11 +14,10 @@ import {
   SparklesIcon,
 } from "./icons";
 import { Markdown } from "./markdown";
-import { MessageActions } from "./message-actions";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
 import equal from "fast-deep-equal";
-import { cn, } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { MessageEditor } from "./message-editor";
@@ -219,16 +218,6 @@ const PurePreviewMessage = ({
                   );
                 })}
               </div>
-            )}
-
-            {!isReadonly && (
-              <MessageActions
-                key={`action-${message.id}`}
-                chatId={chatId}
-                message={message}
-                vote={vote}
-                isLoading={isLoading}
-              />
             )}
           </div>
         </div>

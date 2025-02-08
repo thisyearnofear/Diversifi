@@ -44,13 +44,15 @@ export const POST = async (
       throw new Error("Failed to verify charge with Coinbase Commerce");
     }
 
-    const data = (await response.json()) as CoinbaseChargeResponse;
+    const { data } = (await response.json()) as {
+      data: CoinbaseChargeResponse;
+    };
 
-    const amount = data.pricing?.settlement?.amount || "1";
-    const currency = data.pricing?.settlement?.currency || "USD";
+    const amount = data.pricing?.settlement?.amount || "10";
+    const currency = data.pricing?.settlement?.currency || "USDC";
 
-    const latestStatus = data?.timeline?.[data.timeline.length - 1]?.status;
-    const successEvent = data?.web3_data?.success_events?.[0];
+    // const latestStatus = data?.timeline?.[data.timeline.length - 1]?.status;
+    // const successEvent = data?.web3_data?.success_events?.[0];
 
     // Check if charge exists in our database
     const existingCharge = await getChargeById(chargeId);
@@ -64,31 +66,14 @@ export const POST = async (
         currency,
         product: "STARTERKIT",
       });
-    }
 
-    const successStatus = ["COMPLETED", "PENDING"];
-    const status = successStatus.includes(latestStatus)
-      ? "COMPLETED"
-      : latestStatus;
-
-    // If charge is completed and it's a starter kit, create it
-    if (status === "COMPLETED") {
-      await updateChargeStatus({
-        id: chargeId,
-        status,
-        payerAddress: successEvent?.sender,
-        transactionHash: successEvent?.tx_hash,
-        confirmedAt: data.confirmed_at
-          ? new Date(data.confirmed_at)
-          : undefined,
-        expiresAt: data.expires_at ? new Date(data.expires_at) : undefined,
-      });
       const value = Number.parseInt(amount, 10);
       const isGift =
         productId ===
         process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT_GIFT;
 
       await createStarterKit({
+        id: chargeId,
         value,
         userId: session.user.id,
         chargeId,
@@ -96,7 +81,10 @@ export const POST = async (
       });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json({
+      success: true,
+      message: "Charge verified successfully",
+    });
   } catch (error) {
     console.error("Error verifying charge:", error);
     return NextResponse.json(

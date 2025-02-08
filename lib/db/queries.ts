@@ -405,25 +405,53 @@ export async function getUserInformation(userId: string) {
 }
 
 export async function createStarterKit({
+  id,
   value,
   userId,
   chargeId,
   claimerId,
 }: {
+  id?: string;
   value: number;
   userId?: string;
   chargeId?: string;
   claimerId?: string;
 }) {
   try {
-    return await db.insert(starterKit).values({
-      creatorId: userId,
-      claimerId,
-      value,
-      chargeId,
-      createdAt: new Date(),
-      ...(claimerId && { claimedAt: new Date() }),
-    });
+    if (id) {
+      // If id is provided, do an upsert
+      return await db
+        .insert(starterKit)
+        .values({
+          id,
+          creatorId: userId,
+          claimerId,
+          value,
+          chargeId,
+          createdAt: new Date(),
+          ...(claimerId && { claimedAt: new Date() }),
+        })
+        .onConflictDoUpdate({
+          target: starterKit.id,
+          set: {
+            creatorId: userId,
+            claimerId,
+            value,
+            chargeId,
+            ...(claimerId && { claimedAt: new Date() }),
+          },
+        });
+    } else {
+      // If no id is provided, just do a regular insert
+      return await db.insert(starterKit).values({
+        creatorId: userId,
+        claimerId,
+        value,
+        chargeId,
+        createdAt: new Date(),
+        ...(claimerId && { claimedAt: new Date() }),
+      });
+    }
   } catch (error) {
     console.error("Failed to create starter kit");
     throw error;

@@ -89,16 +89,19 @@ export function InteractiveElement({
 
       {fundWalletAction && <FundButton />}
 
-      {buyStarterKitAction && <StarterKitCheckout />}
+      {buyStarterKitAction && (
+        <StarterKitCheckout
+          onSuccess={() => {
+            console.log("successfully bought a starter kit");
+          }}
+        />
+      )}
 
       {giftStarterKitAction && (
         <StarterKitCheckout
           isGift={true}
           onSuccess={() => {
-            append({
-              role: "user",
-              content: "I bought a starter kit as a gift!",
-            });
+            console.log("successfully bought a starter kit as a gift");
           }}
         />
       )}
