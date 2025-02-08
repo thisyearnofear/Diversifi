@@ -12,7 +12,6 @@ import { auth } from "@/app/auth";
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
 import { ConnectButton } from "@/components/connect-button";
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
   title: "Next.js Chatbot Template",

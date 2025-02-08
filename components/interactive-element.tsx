@@ -83,24 +83,13 @@ export function InteractiveElement({
   const optionsAction = actions.find((a) => a.action === "options");
   const helpAction = actions.find((a) => a.action === "help");
 
-  console.log(actions);
-
   return (
     <div className="flex flex-col gap-4">
       {connectWalletAction && <ConnectButton />}
 
       {fundWalletAction && <FundButton />}
 
-      {buyStarterKitAction && (
-        <StarterKitCheckout
-          onSuccess={() => {
-            append({
-              role: "user",
-              content: "I bought a starter kit!",
-            });
-          }}
-        />
-      )}
+      {buyStarterKitAction && <StarterKitCheckout />}
 
       {giftStarterKitAction && (
         <StarterKitCheckout

@@ -30,7 +30,8 @@ import {
   walletActionProvider,
   AgentKit,
 } from "@coinbase/agentkit";
-import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20/erc20ActionProvider";
+import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20";
+import { onchainKitActionProvider } from "@/lib/web3/agentkit/action-providers/onchainkit";
 import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
 import { z } from "zod";
@@ -74,10 +75,11 @@ export async function POST(request: Request) {
     });
   }
 
+  const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN === 'base' ? "base-mainnet" : "base-sepolia"
   const walletProvider = await PrivyWalletProvider.configureWithWallet({
     appId: process.env.PRIVY_APP_ID as string,
     appSecret: process.env.PRIVY_APP_SECRET as string,
-    networkId: "base-sepolia",
+    networkId: activeChain,
     walletId: process.env.PRIVY_WALLET_ID as string,
     authorizationKey: process.env.PRIVY_WALLET_AUTHORIZATION_KEY as string,
   });
@@ -85,16 +87,19 @@ export async function POST(request: Request) {
   const agentKit = await AgentKit.from({
     walletProvider,
     actionProviders: [
-      pythActionProvider(),
-      walletActionProvider(),
-      erc20ActionProvider(),
+      // pythActionProvider(),
+      // walletActionProvider(),
+      // erc20ActionProvider(),
+      onchainKitActionProvider(process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY as string),
     ],
-  });
+  }); 
+
+  console.log(walletProvider.getNetwork())
 
   const tools = agentKitToTools(agentKit);
-  const userSystemInformation = session?.user?.id
-    ? `The user is signed in as ${session.user.id}.`
-    : `The user is not signed in.`;
+
+  console.log(agentKit.getActions())
+  console.log(onchainKitActionProvider(process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY as string).getActions(walletProvider))
 
   return createDataStreamResponse({
     execute: (dataStream) => {
