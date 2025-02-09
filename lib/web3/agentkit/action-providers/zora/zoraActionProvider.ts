@@ -51,6 +51,7 @@ export class ZoraActionProvider extends ActionProvider {
     try {
       const network = walletProvider.getNetwork();
       const publicClient = createPublicClient({
+        // biome-ignore lint: networkId is not null
         chain: NETWORK_ID_TO_VIEM_CHAIN[network.networkId!],
         transport: http(),
       });

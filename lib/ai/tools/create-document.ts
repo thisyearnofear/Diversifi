@@ -8,7 +8,8 @@ import {
   tool,
 } from 'ai';
 import { z } from 'zod';
-import { codePrompt, sheetPrompt } from '../prompts';
+import { codePrompt } from "../prompts/constants/code";
+import { sheetPrompt } from "../prompts/constants/sheet";
 import { saveDocument } from '@/lib/db/queries';
 import type { Session } from 'next-auth';
 import { myProvider } from '../models';

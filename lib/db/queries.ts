@@ -29,7 +29,9 @@ import type { BlockKind } from "@/components/block";
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client, { schema });
 
-export async function getUser(id: string): Promise<Array<UserWithRelations>> {
+export type User = UserWithRelations;
+
+export async function getUser(id: string): Promise<User[]> {
   try {
     const users = await db.select().from(user).where(eq(user.id, id));
 

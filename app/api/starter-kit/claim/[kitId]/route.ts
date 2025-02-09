@@ -4,7 +4,7 @@ import { claimStarterKit } from "@/lib/db/queries";
 
 export async function POST(
   request: Request,
-  { params }: { params: { kitId: string } }
+  { params }: { params: Promise<{ kitId: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -13,7 +13,7 @@ export async function POST(
 
   try {
     await claimStarterKit({
-      kitId: params.kitId,
+      kitId: (await params).kitId,
       userId: session.user.id,
     });
     return NextResponse.json({ success: true });

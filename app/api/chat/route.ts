@@ -7,7 +7,7 @@ import {
 
 import { auth } from "@/app/auth";
 import { myProvider } from "@/lib/ai/models";
-import { systemPrompt } from "@/lib/ai/prompts";
+import { generateSystemPrompt } from "@/lib/ai/prompts";
 import {
   deleteChatById,
   getChatById,
@@ -25,23 +25,15 @@ import { generateTitleFromUserMessage } from "../../actions";
 import { createDocument } from "@/lib/ai/tools/create-document";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
-import {
-  pythActionProvider,
-  walletActionProvider,
-  AgentKit,
-} from "@coinbase/agentkit";
-import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20";
-import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
-import { safeActionProvider } from "@/lib/web3/agentkit/action-providers/safe";
-import { zoraActionProvider } from "@/lib/web3/agentkit/action-providers/zora";
-import { alchemyActionProvider } from "@/lib/web3/agentkit/action-providers/alchemy";
 import { z } from "zod";
 import {
   saveUserInformation,
   getUserInformation,
   deleteUserInformationTool,
 } from "@/lib/ai/tools/user-information";
+import { setupAgentKit } from "@/lib/web3/agentkit/setup";
+import { generateUserProfile } from "@/lib/ai/prompts/user";
 
 export const maxDuration = 60;
 
@@ -57,17 +49,7 @@ export async function POST(request: Request) {
     (message) => message.experimental_attachments ?? []
   );
 
-  const attachmentsString = attachments.length
-    ? `The user has shared the following files:\n${attachments
-        .map(
-          (attachment, index) =>
-            `${index + 1}. ${attachment.name} (${attachment.contentType}, ${
-              attachment.url
-            })`
-        )
-        .join("\n")}`
-    : "";
-
+  let userProfile = "User is not signed in";
   const session = await auth();
   const userMessage = getMostRecentUserMessage(messages);
 
@@ -75,31 +57,12 @@ export async function POST(request: Request) {
     return new Response("No user message found", { status: 400 });
   }
 
-  let userProfile = "User is not signed in";
-  // If user is authenticated, save chat history
   if (session?.user?.id) {
     const userInfo = await getUser(session.user.id);
-    userProfile = `
-    ${attachmentsString}
-    User's connected wallet is ${userInfo[0].id}
-    We have the following information about them: ${userInfo[0].information
-      .map((interest) => `${interest.type}: ${interest.content}`)
-      .join("\n")}
-    ${
-      userInfo[0].claimedKits.length > 0
-        ? `They have claimed ${userInfo[0].claimedKits.length} kits`
-        : ""
-    }
-    ${
-      userInfo[0].createdKits.length > 0
-        ? `They have created ${userInfo[0].createdKits.length} kits, of which ${
-            userInfo[0].createdKits.filter((kit) => !kit.claimedAt).length
-          } are unclaimed`
-        : ""
-    }
-    `;
-
-    console.log("userProfile", userProfile);
+    userProfile = generateUserProfile({
+      userInfo: userInfo[0],
+      attachments,
+    });
 
     const chat = await getChatById({ id });
     if (!chat) {
@@ -113,40 +76,15 @@ export async function POST(request: Request) {
     });
   }
 
-  const activeChain =
-    process.env.NEXT_PUBLIC_ACTIVE_CHAIN === "base"
-      ? "base-mainnet"
-      : "base-sepolia";
-  const walletProvider = await PrivyWalletProvider.configureWithWallet({
-    appId: process.env.PRIVY_APP_ID as string,
-    appSecret: process.env.PRIVY_APP_SECRET as string,
-    networkId: activeChain,
-    walletId: process.env.PRIVY_WALLET_ID as string,
-    authorizationKey: process.env.PRIVY_WALLET_AUTHORIZATION_KEY as string,
-  });
-
-  const agentKit = await AgentKit.from({
-    walletProvider,
-    actionProviders: [
-      pythActionProvider(),
-      walletActionProvider(),
-      erc20ActionProvider(),
-      safeActionProvider(),
-      alchemyActionProvider(process.env.ALCHEMY_API_KEY as string),
-      zoraActionProvider(),
-    ],
-  });
+  const agentKit = await setupAgentKit();
 
   const tools = agentKitToTools(agentKit);
-
-  console.log(messages);
 
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
         model: myProvider.languageModel(selectedChatModel),
-        system:
-          systemPrompt({ selectedChatModel }) + userProfile + attachmentsString,
+        system: generateSystemPrompt({ selectedChatModel }) + userProfile,
         messages,
         maxSteps: 10,
         // experimental_activeTools:
@@ -228,10 +166,6 @@ export async function POST(request: Request) {
               console.error("Failed to save chat");
             }
           }
-        },
-        experimental_telemetry: {
-          isEnabled: true,
-          functionId: "stream-text",
         },
       });
 

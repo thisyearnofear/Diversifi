@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/auth";
 import {
   createCharge,
   getChargeById,
-  updateChargeStatus,
   createStarterKit,
 } from "@/lib/db/queries";
 import type { CoinbaseChargeResponse } from "@/lib/types/coinbase";
