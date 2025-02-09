@@ -21,7 +21,6 @@ import { createDocument } from "@/lib/ai/tools/create-document";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
-import { basenameActionProvider } from "@/lib/web3/agentkit/action-providers/basename/basenameActionProvider";
 import { z } from "zod";
 import {
   saveUserInformation,
