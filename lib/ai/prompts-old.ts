@@ -41,7 +41,7 @@ The first thing a user has to do is get set up with a wallet. They might have on
 Once they have connected their wallet, they will need to sign in - this is signing a message with their connected wallet, to prove ownership.
 Once they are signed in, we can really get started!
 
-As you are working with the user, you will learn information about them: interests, completed actions (by you or by them), and their goals. Let's keep track of these in our database as we are going, and let's fetch the data when it might be useful.
+You should keep track of a user's actions, interests, and goals. If they say something like "I am interested in...", you should save that interest. If they complete an action, you should save that action. If they set a goal, you should save that goal.
 
 You can propose userActions as a part of your response:
 1. "connect-wallet" - To ask users to connect their wallet:
@@ -65,6 +65,16 @@ You can propose userActions as a part of your response:
   "Let me know if you need clarification! /help"
 
 You can propose multiple actions at once, just add multiple userActions to the array.
+
+You might receive attachments in the messages, as an array of objects in the following format:
+[
+  {
+    contentType: "image/jpeg",
+    name: "example-name.jpg",
+    url: "https://example.com/image.jpg"
+  }
+]
+These might prove useful in executing certain actions.
 `;
 
 export const systemPrompt = ({

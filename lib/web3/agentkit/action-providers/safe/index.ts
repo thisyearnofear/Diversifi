@@ -77,11 +77,16 @@ export class SafeActionProvider extends ActionProvider {
                 chain: baseSepolia
             });
 
+            if (!tx) {
+              throw new Error("Failed to prepare transaction request");
+            }
+
             const transactionHash = await walletProvider.sendTransaction(tx);
 
             await waitForTransactionReceipt(
-                client!,
-                { hash: transactionHash }
+              // biome-ignore lint: client is not null
+              client!,
+              { hash: transactionHash }
             );
 
             const newProtocolKit = await protocolKit.connect({

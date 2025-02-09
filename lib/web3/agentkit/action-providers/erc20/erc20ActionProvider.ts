@@ -2,9 +2,9 @@ import type { z } from "zod";
 import {
   ActionProvider,
   CreateAction,
-  type EvmWalletProvider,
+  EvmWalletProvider,
 } from "@coinbase/agentkit";
-import type { Network } from "./types";
+import type { Network } from "../types";
 import { GetBalanceSchema, TransferSchema } from "./schemas";
 import { abi } from "./constants";
 import { encodeFunctionData, type Hex } from "viem";

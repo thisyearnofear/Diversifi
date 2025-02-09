@@ -4,17 +4,19 @@ import { claimStarterKit, getCreatedStarterKits } from "@/lib/db/queries";
 
 export async function POST(
   request: Request,
-  { params }: { params: { kitId: string; recipientId: string } }
+  { params }: { params: Promise<{ kitId: string; recipientId: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { kitId, recipientId } = await params;
+
   try {
     // Verify ownership
     const kits = await getCreatedStarterKits(session.user.id);
-    const kit = kits.find((k) => k.id === params.kitId);
+    const kit = kits.find((k) => k.id === kitId);
 
     if (!kit) {
       return NextResponse.json(
@@ -24,8 +26,8 @@ export async function POST(
     }
 
     await claimStarterKit({
-      kitId: params.kitId,
-      userId: params.recipientId,
+      kitId,
+      userId: recipientId,
     });
     return NextResponse.json({ success: true });
   } catch (error) {

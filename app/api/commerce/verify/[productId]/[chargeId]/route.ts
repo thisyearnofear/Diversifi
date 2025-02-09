@@ -1,17 +1,17 @@
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/auth";
 import {
   createCharge,
   getChargeById,
-  updateChargeStatus,
   createStarterKit,
 } from "@/lib/db/queries";
+import type { CoinbaseChargeResponse } from "@/lib/types/coinbase";
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ chargeId: string }> }
-) {
-  const { chargeId } = await params;
+export const POST = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ chargeId: string; productId: string }> }
+) => {
+  const { chargeId, productId } = await params;
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -43,9 +43,15 @@ export async function POST(
       throw new Error("Failed to verify charge with Coinbase Commerce");
     }
 
-    const data = await response.json();
-    const latestStatus = data.timeline[0]?.status;
-    const successEvent = data.web3_data?.success_events?.[0];
+    const { data } = (await response.json()) as {
+      data: CoinbaseChargeResponse;
+    };
+
+    const amount = data.pricing?.settlement?.amount || "10";
+    const currency = data.pricing?.settlement?.currency || "USDC";
+
+    // const latestStatus = data?.timeline?.[data.timeline.length - 1]?.status;
+    // const successEvent = data?.web3_data?.success_events?.[0];
 
     // Check if charge exists in our database
     const existingCharge = await getChargeById(chargeId);
@@ -55,33 +61,18 @@ export async function POST(
       await createCharge({
         id: chargeId,
         userId: session.user.id,
-        amount: data.pricing.local.amount,
-        currency: data.pricing.local.currency,
+        amount,
+        currency,
         product: "STARTERKIT",
       });
-    }
 
-    // Update charge with latest status
-    await updateChargeStatus({
-      id: chargeId,
-      status: latestStatus,
-      payerAddress: successEvent?.sender,
-      transactionHash: successEvent?.tx_hash,
-      confirmedAt: data.confirmed_at ? new Date(data.confirmed_at) : undefined,
-      expiresAt: data.expires_at ? new Date(data.expires_at) : undefined,
-    });
-
-    // If charge is completed and it's a starter kit, create it
-    if (
-      latestStatus === "COMPLETED" &&
-      (!existingCharge || existingCharge[0]?.status !== "COMPLETED")
-    ) {
-      const value = Number.parseInt(data.pricing.local.amount, 10);
+      const value = Number.parseInt(amount, 10);
       const isGift =
-        data.pricing.product_id ===
+        productId ===
         process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT_GIFT;
 
       await createStarterKit({
+        id: chargeId,
         value,
         userId: session.user.id,
         chargeId,
@@ -89,7 +80,10 @@ export async function POST(
       });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json({
+      success: true,
+      message: "Charge verified successfully",
+    });
   } catch (error) {
     console.error("Error verifying charge:", error);
     return NextResponse.json(
@@ -97,4 +91,4 @@ export async function POST(
       { status: 500 }
     );
   }
-}
+};

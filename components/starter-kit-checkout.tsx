@@ -4,14 +4,22 @@ import {
   CheckoutStatus,
   type LifecycleStatus,
 } from "@coinbase/onchainkit/checkout";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import useSWRMutation from "swr/mutation";
+import { toast } from "sonner";
 
-async function verifyCharge(_url: string, { arg }: { arg: string }) {
-  const response = await fetch(`/api/commerce/verify/${arg}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-  });
+async function verifyCharge(
+  _url: string,
+  { arg }: { arg: { chargeId: string; productId: string } }
+) {
+  const response = await fetch(
+    `/api/commerce/verify/${arg.productId}/${arg.chargeId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    }
+  );
   if (!response.ok) throw new Error("Failed to verify charge");
   return response.json();
 }
@@ -27,51 +35,89 @@ export function StarterKitCheckout({
 }: StarterKitCheckoutProps) {
   const { trigger } = useSWRMutation("/api/commerce/verify", verifyCharge);
 
+  const productId = isGift
+    ? process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT_GIFT
+    : process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT;
+
+  // Add a ref to track the last processed charge status
+  const processedChargeRef = useRef<{
+    chargeId?: string;
+    status?: string;
+    lastProcessed?: number;
+  }>({});
+
   const statusHandler = useCallback(
     async (status: LifecycleStatus) => {
       const { statusName, statusData } = status;
 
       try {
-        if (statusData?.chargeId) {
-          const data = await trigger(statusData.chargeId);
+        if (statusName !== "error" && statusData?.chargeId && productId) {
+          // Check if we've recently processed this charge
+          const now = Date.now();
+          const minInterval = 2000; // 2 seconds between calls
+          const lastProcessed = processedChargeRef.current.lastProcessed || 0;
 
-          switch (statusName) {
-            case "success":
-              console.log("Payment successful!", data);
-              onSuccess?.();
-              break;
-            case "pending":
-              console.log("Payment pending...", data);
-              break;
-            case "error":
-              console.error("Payment failed:", data);
-              break;
-            default:
-              console.log("Payment initialized", data);
+          // Skip if:
+          // 1. It's the same charge we just processed within minInterval
+          // 2. Or if we've already seen this charge completed successfully
+          if (
+            (statusData.chargeId === processedChargeRef.current.chargeId &&
+              now - lastProcessed < minInterval) ||
+            (statusData.chargeId === processedChargeRef.current.chargeId &&
+              processedChargeRef.current.status === "success")
+          ) {
+            return;
           }
+
+          // Update our tracking ref
+          processedChargeRef.current = {
+            chargeId: statusData.chargeId,
+            status: statusName,
+            lastProcessed: now,
+          };
+
+          await trigger({
+            productId,
+            chargeId: statusData.chargeId,
+          });
+        }
+
+        switch (statusName) {
+          case "success":
+            toast.success("Payment successful!");
+            onSuccess?.();
+            break;
+          case "pending":
+            console.log("Payment pending...");
+            break;
+          case "error":
+            toast.error("Something went wrong");
+            break;
+          default:
+            console.log("Payment initialized");
         }
       } catch (error) {
         console.error("Error handling charge status:", error);
       }
     },
-    [trigger, onSuccess]
+    [trigger, onSuccess, productId]
   );
 
+  if (!productId) {
+    console.error("Product ID is not defined in environment variables");
+    return null;
+  }
+
   return (
-    <Checkout
-      productId={
-        isGift
-          ? process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT_GIFT
-          : process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT
-      }
-      onStatus={statusHandler}
-    >
-      <CheckoutButton
-        text={
-          isGift ? "Buy Starter Kit as Gift" : "Buy Starter Kit for Yourself"
-        }
-      />
-      <CheckoutStatus />
-    </Checkout>
+    <div>
+      <Checkout productId={productId} onStatus={statusHandler}>
+        <CheckoutButton
+          text={
+            isGift ? "Buy Starter Kit as Gift" : "Buy Starter Kit for Yourself"
+          }
+        />
+        <CheckoutStatus />
+      </Checkout>
+    </div>
   );
 }

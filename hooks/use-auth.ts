@@ -30,9 +30,8 @@ export function useAuth() {
   });
 
   async function login() {
-    if (!address) return;
-
     try {
+      console.log("Logging in...");
       setIsLoading(true);
 
       // Get challenge
