@@ -17,14 +17,15 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const { isAuthenticated } = useAuth();
   const suggestedActions = [
     {
-      title: "Tell me about your wallet",
-      label: "What is your balance?",
-      action: "Tell me about your wallet information, including your balance.",
+      title: "How can I get started on Ethereum?",
+      label: "I am new to web3",
+      action:
+        "I want to get started on Ethereum, what's the best way to do that?",
     },
     {
-      title: "What is the price of ETH?",
-      label: "And how can I buy it?",
-      action: `What is the current price of ETH? And how can I buy it?`,
+      title: "I want to help others get onchain",
+      label: "Can you help?",
+      action: `I want to help others get onchain, can I buy a starter kit as a gift?`,
     },
   ];
 
