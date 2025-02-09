@@ -1,9 +1,10 @@
 import { Button } from "./ui/button";
 import { FundButton } from "@coinbase/onchainkit/fund";
 import { ConnectButton } from "./connect-button";
-import { useState, useCallback, useRef } from "react";
+import { useCallback, } from "react";
 import type { UserAction } from "@/lib/utils/message-helpers";
 import { useChatContext } from "@/contexts/chat-context";
+import { StarterKitCheckout } from "./starter-kit-checkout";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -11,7 +12,7 @@ interface ActionButtonsProps {
 }
 
 function ActionButtons({ args, chatId }: ActionButtonsProps) {
-  const { setInput, submitForm, append } = useChatContext();
+  const { append } = useChatContext();
 
   const handleSelect = useCallback(
     (option: Record<string, any>) => {
@@ -55,17 +56,16 @@ export function InteractiveElement({
   actions,
   chatId,
 }: InteractiveElementProps) {
-  const { setInput, submitForm } = useChatContext();
+  const { append } = useChatContext();
 
   const handleAction = useCallback(
-    (action: UserAction) => {
-      setInput(action.label || action.action);
-
-      setTimeout(() => {
-        submitForm();
-      }, 100);
+    (message: string) => {
+      append({
+        role: "user",
+        content: message,
+      });
     },
-    [setInput, submitForm]
+    [append]
   );
 
   // Find the first action that matches each type
@@ -73,6 +73,12 @@ export function InteractiveElement({
     (a) => a.action === "connect-wallet"
   );
   const fundWalletAction = actions.find((a) => a.action === "fund-wallet");
+  const buyStarterKitAction = actions.find(
+    (a) => a.action === "buy-starter-kit"
+  );
+  const giftStarterKitAction = actions.find(
+    (a) => a.action === "gift-starter-kit"
+  );
   const transactionAction = actions.find((a) => a.action === "transaction");
   const optionsAction = actions.find((a) => a.action === "options");
   const helpAction = actions.find((a) => a.action === "help");
@@ -83,34 +89,44 @@ export function InteractiveElement({
 
       {fundWalletAction && <FundButton />}
 
-      {transactionAction && transactionAction.args && (
+      {buyStarterKitAction && (
+        <StarterKitCheckout
+          onSuccess={() => {
+            console.log("successfully bought a starter kit");
+          }}
+        />
+      )}
+
+      {giftStarterKitAction && (
+        <StarterKitCheckout
+          isGift={true}
+          onSuccess={() => {
+            console.log("successfully bought a starter kit as a gift");
+          }}
+        />
+      )}
+
+      {transactionAction?.args && (
         <div className="flex flex-col gap-2 p-4 border rounded-lg">
           <h3 className="font-medium">Transaction Details</h3>
           <div className="text-sm text-muted-foreground">
             <p>To: {transactionAction.args[0].to}</p>
             <p>Value: {transactionAction.args[0].value} ETH</p>
           </div>
-          <Button
-            onClick={() =>
-              handleAction({
-                ...transactionAction,
-                action: "confirm-transaction",
-              })
-            }
-          >
-            Confirm Transaction
-          </Button>
+          <Button>Confirm Transaction</Button>
         </div>
       )}
 
-      {optionsAction && optionsAction.args && (
+      {optionsAction?.args && (
         <ActionButtons args={optionsAction.args} chatId={chatId} />
       )}
 
       {helpAction && (
         <Button
           variant="outline"
-          onClick={() => handleAction({ action: "help" })}
+          onClick={() =>
+            handleAction(helpAction.label || "Help, I don't understand")
+          }
         >
           {helpAction.label || "Help, I don't understand"}
         </Button>

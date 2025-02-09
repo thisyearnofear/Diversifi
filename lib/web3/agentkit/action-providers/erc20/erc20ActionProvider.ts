@@ -1,13 +1,13 @@
-import { z } from "zod";
+import type { z } from "zod";
 import {
   ActionProvider,
   CreateAction,
   EvmWalletProvider,
 } from "@coinbase/agentkit";
-import { Network } from "./types";
+import type { Network } from "../types";
 import { GetBalanceSchema, TransferSchema } from "./schemas";
 import { abi } from "./constants";
-import { encodeFunctionData, Hex } from "viem";
+import { encodeFunctionData, type Hex } from "viem";
 
 /**
  * ERC20ActionProvider is an action provider for ERC20 tokens.

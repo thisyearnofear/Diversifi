@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { Attachment, ChatRequestOptions } from "ai";
+import type { Attachment, ChatRequestOptions } from "ai";
 import { useLocalStorage } from "usehooks-ts";
 
 interface UseChatFormProps {

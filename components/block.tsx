@@ -294,7 +294,7 @@ function PureBlock({
                 scale: 1,
                 transition: {
                   delay: 0.2,
-                  type: 'spring',
+                  type: "spring",
                   stiffness: 200,
                   damping: 30,
                 },
@@ -333,16 +333,10 @@ function PureBlock({
                   <MultimodalInput
                     chatId={chatId}
                     input={input}
-                    setInput={setInput}
-                    handleSubmit={handleSubmit}
                     isLoading={isLoading}
-                    stop={stop}
                     attachments={attachments}
                     setAttachments={setAttachments}
-                    messages={messages}
-                    append={append}
                     className="bg-background dark:bg-muted"
-                    setMessages={setMessages}
                   />
                 </form>
               </div>
@@ -377,11 +371,11 @@ function PureBlock({
                     x: 0,
                     y: 0,
                     height: windowHeight,
-                    width: windowWidth ? windowWidth : 'calc(100dvw)',
+                    width: windowWidth ? windowWidth : "calc(100dvw)",
                     borderRadius: 0,
                     transition: {
                       delay: 0,
-                      type: 'spring',
+                      type: "spring",
                       stiffness: 200,
                       damping: 30,
                       duration: 5000,
@@ -394,11 +388,11 @@ function PureBlock({
                     height: windowHeight,
                     width: windowWidth
                       ? windowWidth - 400
-                      : 'calc(100dvw-400px)',
+                      : "calc(100dvw-400px)",
                     borderRadius: 0,
                     transition: {
                       delay: 0,
-                      type: 'spring',
+                      type: "spring",
                       stiffness: 200,
                       damping: 30,
                       duration: 5000,
@@ -410,7 +404,7 @@ function PureBlock({
               scale: 0.5,
               transition: {
                 delay: 0.1,
-                type: 'spring',
+                type: "spring",
                 stiffness: 600,
                 damping: 30,
               },
@@ -434,7 +428,7 @@ function PureBlock({
                         new Date(),
                         {
                           addSuffix: true,
-                        },
+                        }
                       )}`}
                     </div>
                   ) : (

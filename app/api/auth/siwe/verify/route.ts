@@ -1,5 +1,4 @@
 import { verifySiwe } from "@/app/auth-actions";
-import { headers } from "next/headers";
 
 export async function POST(request: Request) {
   const { message, signature } = await request.json();

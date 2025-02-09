@@ -2,7 +2,7 @@
 
 import { ModelSelector } from "@/components/model-selector";
 import { memo } from "react";
-import { VisibilityType, VisibilitySelector } from "./visibility-selector";
+import { type VisibilityType, VisibilitySelector } from "./visibility-selector";
 function PureChatHeader({
   chatId,
   selectedModelId,

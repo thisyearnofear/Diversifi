@@ -1,19 +1,14 @@
-import {
-  type Message,
-  createDataStreamResponse,
-  smoothStream,
-  streamText,
-  Output,
-} from "ai";
+import { type Message, createDataStreamResponse, streamText, Output } from "ai";
 
 import { auth } from "@/app/auth";
 import { myProvider } from "@/lib/ai/models";
-import { systemPrompt } from "@/lib/ai/prompts";
+import { generateSystemPrompt } from "@/lib/ai/prompts";
 import {
   deleteChatById,
   getChatById,
   saveChat,
   saveMessages,
+  getUser,
 } from "@/lib/db/queries";
 import {
   generateUUID,
@@ -25,16 +20,16 @@ import { generateTitleFromUserMessage } from "../../actions";
 import { createDocument } from "@/lib/ai/tools/create-document";
 import { updateDocument } from "@/lib/ai/tools/update-document";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
-import {
-  pythActionProvider,
-  walletActionProvider,
-  AgentKit,
-} from "@coinbase/agentkit";
-import { erc20ActionProvider } from "@/lib/web3/agentkit/action-providers/erc20/erc20ActionProvider";
-import { PrivyWalletProvider } from "@/lib/web3/agentkit/wallet-providers/privyWalletProvider";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
 import { basenameActionProvider } from "@/lib/web3/agentkit/action-providers/basename/basenameActionProvider";
 import { z } from "zod";
+import {
+  saveUserInformation,
+  getUserInformation,
+  deleteUserInformationTool,
+} from "@/lib/ai/tools/user-information";
+import { setupAgentKit } from "@/lib/web3/agentkit/setup";
+import { generateUserProfile } from "@/lib/ai/prompts/user";
 
 export const maxDuration = 60;
 
@@ -46,6 +41,11 @@ export async function POST(request: Request) {
   }: { id: string; messages: Array<Message>; selectedChatModel: string } =
     await request.json();
 
+  const attachments = messages.flatMap(
+    (message) => message.experimental_attachments ?? []
+  );
+
+  let userProfile = "User is not signed in";
   const session = await auth();
   const userMessage = getMostRecentUserMessage(messages);
 
@@ -53,8 +53,13 @@ export async function POST(request: Request) {
     return new Response("No user message found", { status: 400 });
   }
 
-  // If user is authenticated, save chat history
   if (session?.user?.id) {
+    const userInfo = await getUser(session.user.id);
+    userProfile = generateUserProfile({
+      userInfo: userInfo[0],
+      attachments,
+    });
+
     const chat = await getChatById({ id });
     if (!chat) {
       const title = await generateTitleFromUserMessage({
@@ -67,23 +72,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const walletProvider = await PrivyWalletProvider.configureWithWallet({
-    appId: process.env.PRIVY_APP_ID as string,
-    appSecret: process.env.PRIVY_APP_SECRET as string,
-    networkId: "base-sepolia",
-    walletId: process.env.PRIVY_WALLET_ID as string,
-    authorizationKey: process.env.PRIVY_WALLET_AUTHORIZATION_KEY as string,
-  });
-
-  const agentKit = await AgentKit.from({
-    walletProvider,
-    actionProviders: [
-      pythActionProvider(),
-      walletActionProvider(),
-      erc20ActionProvider(),
-      basenameActionProvider(),
-    ],
-  });
+  const agentKit = await setupAgentKit();
 
   const tools = agentKitToTools(agentKit);
 
@@ -93,9 +82,9 @@ export async function POST(request: Request) {
     execute: (dataStream) => {
       const result = streamText({
         model: myProvider.languageModel(selectedChatModel),
-        system: systemPrompt({ selectedChatModel }),
+        system: generateSystemPrompt({ selectedChatModel }) + userProfile,
         messages,
-        maxSteps: 5,
+        maxSteps: 10,
         // experimental_activeTools:
         //   selectedChatModel === "chat-model-reasoning"
         //     ? []
@@ -113,7 +102,7 @@ export async function POST(request: Request) {
                   .describe(
                     "An additional label with more context about the action for the user"
                   ),
-                args: z.record(z.any()).optional(),
+                args: z.array(z.record(z.any())).optional(),
               })
             ),
           }),
@@ -128,6 +117,9 @@ export async function POST(request: Request) {
             session,
             dataStream,
           }),
+          saveUserInformation: saveUserInformation({ session }),
+          getUserInformation: getUserInformation({ session }),
+          deleteUserInformation: deleteUserInformationTool({ session }),
         },
         onFinish: async ({ response, reasoning, text }) => {
           // currently the content of the last message is truncated, so passing in the text as a partial fix
@@ -173,10 +165,6 @@ export async function POST(request: Request) {
             }
           }
         },
-        experimental_telemetry: {
-          isEnabled: true,
-          functionId: "stream-text",
-        },
       });
 
       result.mergeIntoDataStream(dataStream, {
@@ -184,7 +172,7 @@ export async function POST(request: Request) {
       });
     },
     onError: (error) => {
-      return "Oops, an error occured!";
+      return `Oops, an error occured! ${error}`;
     },
   });
 }

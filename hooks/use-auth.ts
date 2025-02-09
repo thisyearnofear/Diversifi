@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { useAccount, useAccountEffect, useSignMessage } from "wagmi";
-import {
-  auth,
-  generateSiweChallenge,
-  verifySiwe,
-  logout,
-} from "@/app/auth-actions";
+import { auth, logout } from "@/app/auth-actions";
 import useSWR, { useSWRConfig } from "swr";
 
 export function useAuth() {
@@ -35,9 +30,8 @@ export function useAuth() {
   });
 
   async function login() {
-    if (!address) return;
-
     try {
+      console.log("Logging in...");
       setIsLoading(true);
 
       // Get challenge
@@ -68,10 +62,6 @@ export function useAuth() {
       }
 
       const result = await verifyRes.json();
-      console.log("Verify response:", result);
-
-      // Check if cookie was set
-      console.log("Cookies after verify:", document.cookie);
 
       // Update both auth state and history
       await Promise.all([mutateSession(), globalMutate("/api/history")]);

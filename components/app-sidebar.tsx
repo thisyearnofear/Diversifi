@@ -1,14 +1,10 @@
 'use client';
 
-import type { User } from "next-auth";
-
 import { Plus, Sidebar as SidebarIcon } from "lucide-react";
 import { SidebarHistory } from "@/components/sidebar-history";
-import { SidebarUserNav } from "@/components/sidebar-user-nav";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,

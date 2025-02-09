@@ -1,4 +1,4 @@
-import { Message as AIMessage } from "ai";
+import type { Message as AIMessage } from "ai";
 
 export interface InteractiveOptions {
   type: "connect-wallet" | "fund-wallet" | "transaction" | "options" | "help";

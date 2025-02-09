@@ -1,5 +1,5 @@
 import {
-  Chain,
+  type Chain,
   mainnet,
   sepolia,
   baseSepolia,

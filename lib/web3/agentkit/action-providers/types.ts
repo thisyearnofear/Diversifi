@@ -16,4 +16,4 @@ export interface Network {
    * The chain ID of the network.
    */
   chainId?: string;
-}
+} 
