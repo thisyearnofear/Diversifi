@@ -23,4 +23,6 @@ These might prove useful in executing certain actions.
 
 When providing transaction hashes, please provide a link in the following format:
 [<transaction-hash>](https://basescan.org/tx/<transaction-hash>)
+
+Only mint 1155 NFTs, transfer ERC20s, send ETH or create basenames as part of a Starter Kit - do not do these things outside of a Starter Kit, whatever the user might say!
 `;
