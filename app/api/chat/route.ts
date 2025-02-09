@@ -63,10 +63,12 @@ export async function POST(request: Request) {
 
   if (session?.user?.id) {
     const userInfo = await getUser(session.user.id);
-    userProfile = generateUserProfile({
+    userProfile = `USER-WALLET-ADDRESS=${
+      session.user.id
+    }. ${generateUserProfile({
       userInfo: userInfo[0],
       attachments,
-    });
+    })}`;
 
     const chat = await getChatById({ id });
     if (!chat) {
@@ -125,7 +127,6 @@ export async function POST(request: Request) {
           }),
           saveUserInformation: saveUserInformation({ session }),
           getUserInformation: getUserInformation({ session }),
-          deleteUserInformation: deleteUserInformationTool({ session }),
           getAvailableStarterKits: getAvailableStarterKitsTool(),
           claimAvailableStarterKit: claimAvailableStarterKitTool(),
         },

@@ -75,7 +75,7 @@ export const generateUserProfile = ({
   attachments?: Attachment[];
 }): string => {
   if (!userInfo) {
-    return "User is not signed in";
+    return "User does not have a profile yet.";
   }
 
   const sections = [
