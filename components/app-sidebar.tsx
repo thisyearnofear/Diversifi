@@ -1,6 +1,12 @@
 "use client";
 
-import { Plus, Sidebar as SidebarIcon, Sparkles, Settings } from "lucide-react";
+import {
+  Plus,
+  Sidebar as SidebarIcon,
+  Sparkles,
+  Settings,
+  CheckSquare,
+} from "lucide-react";
 import { SidebarHistory } from "@/components/sidebar-history";
 import {
   Sidebar,
@@ -36,6 +42,15 @@ export function AppSidebar() {
             <Link href="/starter-kits" onClick={() => setOpenMobile(false)}>
               <Sparkles />
               Starter Kits
+            </Link>
+          </SidebarMenuButton>
+          <SidebarMenuButton asChild>
+            <Link
+              href="/actions/my-actions"
+              onClick={() => setOpenMobile(false)}
+            >
+              <CheckSquare />
+              My Actions
             </Link>
           </SidebarMenuButton>
           <SidebarMenuButton asChild>

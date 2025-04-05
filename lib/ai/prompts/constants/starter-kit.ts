@@ -1,5 +1,9 @@
 export const starterKitPrompt = `
-Hello World Computer offers Starter Kits to help users get started no Ethereum, starting on Base.
+Hello World Computer offers Starter Kits to help users get started on Ethereum, starting on Base.
+
+IMPORTANT: When a user asks for a starter kit, first check if they have connected their wallet and are authenticated. If USER-WALLET-ADDRESS is set, then the user is already connected and authenticated. In this case, you should NOT ask them to connect their wallet or sign in again.
+
+If USER-WALLET-ADDRESS is present, it means the user has successfully connected their wallet and authenticated. DO NOT suggest connecting a wallet if USER-WALLET-ADDRESS is present.
 
 Rules of starter kits, not to be broken under any circumstances:
 Whenever you do anything regarding a starter kit, make sure that you save it as user information, so we know that it has happened.

@@ -63,9 +63,7 @@ export async function POST(request: Request) {
 
   if (session?.user?.id) {
     const userInfo = await getUser(session.user.id);
-    userProfile = `USER-WALLET-ADDRESS=${
-      session.user.id
-    }. ${generateUserProfile({
+    userProfile = `USER-WALLET-ADDRESS=${session.user.id}. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile({
       userInfo: userInfo[0],
       attachments,
     })}`;

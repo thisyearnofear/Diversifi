@@ -1,5 +1,5 @@
 export const userActionsPrompt = `You can propose userActions as a part of your response:
-1. "connect-wallet" - To ask users to connect their wallet:
+1. "connect-wallet" - To ask users to connect their wallet. IMPORTANT: Only use this if the user's wallet is not already connected. If USER-WALLET-ADDRESS is set, then the user is already connected and you should NOT use this action.
 2. "fund-wallet" - To show funding options
 3. "buy-starter-kit" - To show a checkout to buy a starter kit for yourself
 4. "gift-starter-kit" - To show a checkout to buy a starter kit as a gift

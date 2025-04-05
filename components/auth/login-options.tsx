@@ -1,6 +1,6 @@
 "use client";
 
-import { ConnectKitButton } from "connectkit";
+import { CustomConnectButton } from "@/components/custom-connect-button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -27,7 +27,7 @@ export function LoginOptions() {
       <div className="space-y-4">
         <div>
           <h3 className="font-medium mb-2">Connect with Web3 Wallet</h3>
-          <ConnectKitButton />
+          <CustomConnectButton />
         </div>
 
         <p className="mt-4 text-sm text-gray-500">

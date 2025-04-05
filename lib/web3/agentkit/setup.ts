@@ -4,7 +4,7 @@ import {
   walletActionProvider,
 } from "@coinbase/agentkit";
 import { mockWalletProvider } from "./wallet-providers/mockWalletProvider";
-import { CdpWalletProvider } from "./wallet-providers/cdpWalletProvider";
+import { ConnectKitWalletProvider } from "./wallet-providers/connectKitWalletProvider";
 import { erc20ActionProvider } from "./action-providers/erc20";
 import { safeActionProvider } from "./action-providers/safe";
 import { alchemyActionProvider } from "./action-providers/alchemy";
@@ -20,21 +20,11 @@ export const setupAgentKit = async () => {
   let walletProvider;
 
   try {
-    // Try to use CDP wallet provider if credentials are available
-    if (process.env.COINBASE_CDP_API_KEY && process.env.COINBASE_CDP_API_SECRET) {
-      walletProvider = await CdpWalletProvider.configureWithWallet({
-        apiKeyName: process.env.COINBASE_CDP_API_KEY,
-        apiKeyPrivateKey: process.env.COINBASE_CDP_API_SECRET,
-        networkId: activeChain,
-      });
-      console.log("Using CDP wallet provider");
-    } else {
-      // Fall back to mock wallet provider
-      walletProvider = mockWalletProvider();
-      console.log("Using mock wallet provider");
-    }
+    // Try to use ConnectKit wallet provider
+    walletProvider = await ConnectKitWalletProvider.configureWithWallet(activeChain);
+    console.log("Using ConnectKit wallet provider");
   } catch (error) {
-    console.error("Failed to initialize wallet provider:", error);
+    console.error("Failed to initialize ConnectKit wallet provider:", error);
     // Fall back to mock wallet provider
     walletProvider = mockWalletProvider();
     console.log("Falling back to mock wallet provider");

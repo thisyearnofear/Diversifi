@@ -89,12 +89,10 @@ export default async function RootLayout({
               <div className="flex min-h-screen w-full">
                 <ActionSidebar />
                 <div className="flex-1 w-full">
-                  <main className="size-full">
-                    {children}
-                    <div className="fixed top-0 right-0 z-50 p-2">
-                      <ConnectButton />
-                    </div>
-                  </main>
+                  <div className="fixed top-0 right-0 z-50 p-2">
+                    <ConnectButton />
+                  </div>
+                  <main className="size-full">{children}</main>
                 </div>
               </div>
             </SidebarProvider>

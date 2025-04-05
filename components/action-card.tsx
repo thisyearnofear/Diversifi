@@ -1,10 +1,19 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Circle, Clock } from "lucide-react";
 import { type action } from "@/lib/db/schema";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useActions } from "@/hooks/use-actions";
+import { useAuth } from "@/hooks/use-auth";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface ActionCardProps {
   action: typeof action.$inferSelect;
+  userAction?: any;
 }
 
 interface Step {
@@ -18,9 +27,44 @@ interface Reward {
   description: string;
 }
 
-export function ActionCard({ action }: ActionCardProps) {
+export function ActionCard({ action, userAction }: ActionCardProps) {
   const steps = action.steps as Step[];
   const rewards = action.rewards as Reward[];
+  const { isAuthenticated } = useAuth();
+  const { startAction, completeAction } = useActions();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleStartAction = async () => {
+    if (!isAuthenticated) {
+      toast.error(
+        "Please connect your wallet and authenticate to start actions"
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await startAction(action.id);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCompleteAction = async () => {
+    if (!isAuthenticated) {
+      toast.error(
+        "Please connect your wallet and authenticate to complete actions"
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await completeAction(action.id);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -84,9 +128,48 @@ export function ActionCard({ action }: ActionCardProps) {
         </ul>
       </div>
 
-      <button className="mt-4 w-full rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600">
-        Start Action
-      </button>
+      {userAction ? (
+        <div className="mt-4 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <Badge
+              className={cn(
+                userAction.status === "COMPLETED"
+                  ? "bg-green-100 text-green-800 hover:bg-green-100"
+                  : "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+              )}
+            >
+              {userAction.status === "COMPLETED" ? (
+                <>
+                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                  Completed
+                </>
+              ) : (
+                <>
+                  <Clock className="mr-1 h-3 w-3" />
+                  In Progress
+                </>
+              )}
+            </Badge>
+            {userAction.status === "IN_PROGRESS" && (
+              <Button
+                size="sm"
+                onClick={handleCompleteAction}
+                disabled={isLoading}
+              >
+                {isLoading ? "Processing..." : "Complete Action"}
+              </Button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <Button
+          className="mt-4 w-full"
+          onClick={handleStartAction}
+          disabled={isLoading}
+        >
+          {isLoading ? "Processing..." : "Start Action"}
+        </Button>
+      )}
     </motion.div>
   );
 }
