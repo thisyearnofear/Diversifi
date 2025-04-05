@@ -4,17 +4,32 @@ import { useStarterKit } from "@/hooks/use-starter-kit";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { SparklesIcon } from "@/components/icons";
+import { AuthHelper } from "@/components/auth-helper";
+import { useAccount } from "wagmi";
 
 export default function StarterKitsPage() {
   const { isAuthenticated } = useAuth();
+  const { isConnected } = useAccount();
   const { claimedKits, createdKits, isLoading } = useStarterKit();
 
-  if (!isAuthenticated) {
+  if (!isConnected) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
+      <div className="flex min-h-[400px] items-center justify-center flex-col gap-4">
         <p className="text-muted-foreground">
           Please connect your wallet to view starter kits
         </p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="container p-8 space-y-8">
+        <h1 className="text-2xl font-bold">Starter Kits</h1>
+        <p className="text-muted-foreground mb-4">
+          Please authenticate with your wallet to access starter kits
+        </p>
+        <AuthHelper />
       </div>
     );
   }

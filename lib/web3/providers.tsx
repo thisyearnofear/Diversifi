@@ -18,9 +18,9 @@ export function Providers({ children }: { children: ReactNode }) {
         revalidateOnFocus: false,
       }}
     >
-      <AuthProvider>
-        <Web3Provider>{children}</Web3Provider>
-      </AuthProvider>
+      <Web3Provider>
+        <AuthProvider>{children}</AuthProvider>
+      </Web3Provider>
     </SWRConfig>
   );
 }

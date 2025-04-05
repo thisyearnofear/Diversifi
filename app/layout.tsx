@@ -77,31 +77,29 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Toaster position="top-center" />
-            <Providers>
-              <SidebarProvider>
-                <div className="flex min-h-screen w-full">
-                  <ActionSidebar />
-                  <div className="flex-1 w-full">
-                    <main className="size-full">
-                      {children}
-                      <div className="fixed top-0 right-0 z-50 p-2">
-                        <ConnectButton />
-                      </div>
-                    </main>
-                  </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster position="top-center" />
+          <Providers>
+            <SidebarProvider>
+              <div className="flex min-h-screen w-full">
+                <ActionSidebar />
+                <div className="flex-1 w-full">
+                  <main className="size-full">
+                    {children}
+                    <div className="fixed top-0 right-0 z-50 p-2">
+                      <ConnectButton />
+                    </div>
+                  </main>
                 </div>
-              </SidebarProvider>
-            </Providers>
-          </ThemeProvider>
-        </AuthProvider>
+              </div>
+            </SidebarProvider>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

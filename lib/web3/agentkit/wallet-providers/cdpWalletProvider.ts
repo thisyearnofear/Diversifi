@@ -27,16 +27,20 @@ export class CdpWalletProvider implements WalletProvider {
     config: CdpWalletConfig
   ): Promise<CdpWalletProvider> {
     const provider = new CdpWalletProvider(config);
-    
+
     // In a real implementation, we would initialize the wallet here
     // For now, we'll use a simplified approach
-    
+
     return provider;
+  }
+
+  getNetwork() {
+    return this.networkId;
   }
 
   async getWallet() {
     const chain = this.networkId === "base-mainnet" ? base : baseSepolia;
-    
+
     return {
       getDefaultAddress: async () => ({
         getId: () => this.address,
