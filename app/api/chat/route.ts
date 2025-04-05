@@ -27,6 +27,7 @@ import { updateDocument } from "@/lib/ai/tools/update-document";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
 import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
 import { z } from "zod";
+import { tool } from "ai";
 import {
   saveUserInformation,
   getUserInformation,
@@ -38,6 +39,7 @@ import {
   getAvailableStarterKitsTool,
   claimAvailableStarterKitTool,
 } from "@/lib/ai/tools/starter-kit";
+import { suggestActionsDefinition } from "@/lib/ai/tools/suggest-actions";
 
 export const maxDuration = 60;
 
@@ -135,6 +137,32 @@ export async function POST(request: Request) {
           getUserInformation: getUserInformation({ session }),
           getAvailableStarterKits: getAvailableStarterKitsTool(),
           claimAvailableStarterKit: claimAvailableStarterKitTool(),
+          suggestActions: tool({
+            description: suggestActionsDefinition.description,
+            parameters: suggestActionsDefinition.parameters,
+            execute: async ({ category, title, limit }) => {
+              console.log("Executing suggestActions with args:", { category, title, limit });
+              try {
+                const result = await suggestActionsDefinition.handler(category, title, limit);
+                console.log("suggestActions result:", result);
+                return result;
+              } catch (error) {
+                console.error("Error in suggestActions:", error);
+                // Return a default action if there's an error
+                return [{
+                  title: "Bridge to Base",
+                  description: "Bridge assets from Ethereum to Base",
+                  chain: category || "BASE",
+                  difficulty: "beginner",
+                  steps: ["Visit bridge.base.org", "Connect wallet", "Select amount"],
+                  reward: "0.1 ETH",
+                  actionUrl: "https://bridge.base.org",
+                  proofFieldLabel: "Transaction Hash",
+                  proofFieldPlaceholder: "0x..."
+                }];
+              }
+            },
+          }),
         },
         onFinish: async ({ response, reasoning, text }) => {
           // currently the content of the last message is truncated, so passing in the text as a partial fix

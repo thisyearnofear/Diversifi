@@ -41,4 +41,4 @@ ${currentContent}
 `
     : "";
 
-export { blocksPrompt, regularPrompt, codePrompt, sheetPrompt };
+export { blocksPrompt, regularPrompt, codePrompt, sheetPrompt, userActionsPrompt, starterKitPrompt };

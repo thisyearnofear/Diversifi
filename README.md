@@ -37,31 +37,25 @@ Hello World Computer is a chat-based onboarding experience for Web3. We've evolv
 
 ## Stack
 
-We used:
+We use:
 
 - OpenAI LLM
 - Vercel ai-sdk
 - Agentkit for action orchestration
 - Forked Vercel's AI Chatbot
-- Onchainkit for web3 login & displaying some components
-- Privy server wallets for agent onchain actions
+- Onchainkit for displaying web3 components
 - Drizzle ORM for database management
 - ConnectKit for wallet management
 - Framer Motion for animations
+- SIWE (Sign-In With Ethereum) for authentication
 
-We built:
+We've built:
 
 - Custom web3 login for Vercel's AI chatbot - next-auth compatible, powered by SIWE (backend session auth)
-- Leveraged the latest structured model outputs from the ai-sdk to provide interactive in-chat experiences
+- Interactive in-chat experiences using structured model outputs from the ai-sdk
 - AI-SDK <-> Agentkit tool wrapper
-- Privy Wallet provider for Agentkit https://github.com/coinbase/agentkit/pull/242
-- <Checkout/> component from onchainkit to support EOAs https://github.com/coinbase/onchainkit/pull/1937
-- Basename creation & transfer action provider
-- Gnosis safe creation & transaction action provider
-- Zora NFT minting provider
-- Custom Alchemy token balances action provider
-- Custom interactive components in-chat (options, asking for help, connecting wallet, checkout)
-- Coinbase Checkout lifecycle & backend purchase verification
+- ConnectKit wallet provider for Agentkit
+- Custom interactive components in-chat (options, asking for help, connecting wallet, action cards)
 - Simple memory solution for the agent across user chats
 - Action-based learning system with rewards
 - Multi-chain support (Base, Celo, Ethereum)
@@ -107,16 +101,71 @@ pnpm dev
 5. ✅ Category-based navigation
 6. ✅ Basic action display
 
+## Clean-Up and Refocusing Plan
+
+After encountering several challenges with the current implementation, we've decided to clean up the codebase and refocus our efforts on a more streamlined approach. Here's our plan:
+
+### Phase 1: Clean-Up (1-2 days)
+
+1. **Fix Critical Issues**
+
+   - Resolve the Zod schema error in the AI tools
+   - Fix the chat functionality to ensure it works reliably
+   - Address navigation issues with the sidebar buttons
+
+2. **Remove Unnecessary Complexity**
+
+   - Remove unused or problematic components
+   - Simplify the action integration approach
+   - Focus on a minimal viable implementation
+
+3. **Consolidate Wallet Integration**
+   - Standardize on ConnectKit for client-side wallet operations
+   - Document server-side limitations and workarounds
+
+### Phase 2: Core Implementation (1-2 weeks)
+
+1. **Chat-Based Action System**
+
+   - Implement a reliable way for the AI to suggest actions
+   - Create compact action cards that work within the chat
+   - Ensure actions can be completed without leaving the chat
+
+2. **Action Completion Flow**
+
+   - Implement a simple action completion tracking system
+   - Add basic reward distribution
+   - Provide clear feedback for completed actions
+
+3. **Mobile-Friendly Design**
+   - Optimize the UI for mobile devices
+   - Ensure the chat and action cards work well on small screens
+
+### Phase 3: Enhancement (2-4 weeks)
+
+1. **Expand Action Library**
+
+   - Add more actions for each blockchain
+   - Create guided learning paths
+   - Implement progressive difficulty levels
+
+2. **User Progress Tracking**
+
+   - Create a user dashboard
+   - Implement achievement badges
+   - Add leaderboards and social features
+
+3. **Advanced Features**
+   - Implement more interactive tutorials
+   - Add advanced action types
+   - Integrate with more protocols
+
 ## Next Steps
 
-1. Implement action completion tracking
-2. Add reward distribution system
-3. Create user progress dashboard
-4. Integrate with more protocols on each chain
-5. Add social features for sharing achievements
-6. Implement leaderboards and achievements
-7. Add more interactive tutorials
-8. Create a mobile-responsive design
+1. Begin Phase 1 clean-up
+2. Fix the chat functionality
+3. Implement a simplified action card system
+4. Test the core user flow
 
 ## SnelDAO Enhancement Plan 🐌
 

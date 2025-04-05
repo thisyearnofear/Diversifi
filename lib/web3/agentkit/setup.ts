@@ -3,7 +3,6 @@ import {
   pythActionProvider,
   walletActionProvider,
 } from "@coinbase/agentkit";
-import { mockWalletProvider } from "./wallet-providers/mockWalletProvider";
 import { ConnectKitWalletProvider } from "./wallet-providers/connectKitWalletProvider";
 import { erc20ActionProvider } from "./action-providers/erc20";
 import { safeActionProvider } from "./action-providers/safe";
@@ -19,16 +18,9 @@ export const setupAgentKit = async () => {
 
   let walletProvider;
 
-  try {
-    // Try to use ConnectKit wallet provider
-    walletProvider = await ConnectKitWalletProvider.configureWithWallet(activeChain);
-    console.log("Using ConnectKit wallet provider");
-  } catch (error) {
-    console.error("Failed to initialize ConnectKit wallet provider:", error);
-    // Fall back to mock wallet provider
-    walletProvider = mockWalletProvider();
-    console.log("Falling back to mock wallet provider");
-  }
+  // Configure ConnectKit wallet provider
+  walletProvider = await ConnectKitWalletProvider.configureWithWallet(activeChain);
+  console.log("Using ConnectKit wallet provider");
 
   // Create AgentKit instance
   return AgentKit.from({

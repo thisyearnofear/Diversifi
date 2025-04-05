@@ -1,12 +1,13 @@
 import { Button } from "./ui/button";
 import { FundButton } from "@coinbase/onchainkit/fund";
 import { ConnectButton } from "./connect-button";
-import { useCallback, } from "react";
-import type { UserAction } from "@/lib/utils/message-helpers";
+import { useCallback } from "react";
+import type { UserAction, ActionData } from "@/lib/utils/message-helpers";
 import { useChatContext } from "@/contexts/chat-context";
 import { StarterKitCheckout } from "./starter-kit-checkout";
 import { NFTCard } from "@coinbase/onchainkit/nft";
 import { NFTMedia, NFTNetwork, NFTTitle } from "@coinbase/onchainkit/nft/view";
+import { ActionMessage } from "./chat/action-message";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -85,6 +86,7 @@ export function InteractiveElement({
   const optionsAction = actions.find((a) => a.action === "options");
   const helpAction = actions.find((a) => a.action === "help");
   const showNftActions = actions.filter((a) => a.action === "show-nft");
+  const actionCardActions = actions.filter((a) => a.action === "action-card");
 
   return (
     <div className="flex flex-col gap-4">
@@ -149,6 +151,17 @@ export function InteractiveElement({
             </NFTCard>
           ))}
         </div>
+      )}
+
+      {actionCardActions.length > 0 && (
+        <ActionMessage
+          actions={actionCardActions.map(
+            (action) => action.args?.[0] as ActionData
+          )}
+          onComplete={() => {
+            handleAction("I've completed the action!");
+          }}
+        />
       )}
     </div>
   );

@@ -6,6 +6,18 @@ export interface UserAction {
   args?: Array<Record<string, any>>;
 }
 
+export interface ActionData {
+  title: string;
+  description: string;
+  chain: string;
+  difficulty: string;
+  steps: string[];
+  reward: string;
+  actionUrl: string;
+  proofFieldLabel?: string;
+  proofFieldPlaceholder?: string;
+}
+
 export const parseMessageContent = (message: Message) => {
   let textContent = message.content || "";
   let userActions: UserAction[] = [];
