@@ -24,6 +24,7 @@ export function useStarterKit() {
   const { data: availableData, error: availableError } =
     useSWR<AvailableResponse>("/api/starter-kit/available", fetcher, {
       refreshInterval: claimedData?.length ? 0 : REFRESH_INTERVAL,
+      fallbackData: { kits: [] },
     });
 
   const { data: createdData, error: createdError } = useSWR<CreatedResponse>(
@@ -31,6 +32,7 @@ export function useStarterKit() {
     fetcher,
     {
       refreshInterval: REFRESH_INTERVAL,
+      fallbackData: [],
     }
   );
 
@@ -41,13 +43,17 @@ export function useStarterKit() {
 
   const error = availableError || claimedError || createdError;
 
+  const kits = availableData?.kits || [];
+  const claimed = claimedData || [];
+  const created = createdData || [];
+
   return {
-    available: availableData?.kits.length ?? 0,
-    claimed: claimedData?.length ?? 0,
-    created: createdData?.length ?? 0,
-    availableKits: availableData?.kits ?? [],
-    claimedKits: claimedData ?? [],
-    createdKits: createdData ?? [],
+    available: kits.length,
+    claimed: claimed.length,
+    created: created.length,
+    availableKits: kits,
+    claimedKits: claimed,
+    createdKits: created,
     isLoading,
     error,
   };

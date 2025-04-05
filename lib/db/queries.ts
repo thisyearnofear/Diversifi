@@ -1,4 +1,3 @@
-import 'server-only';
 import { and, asc, desc, eq, gt, gte, inArray, isNull, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
@@ -18,6 +17,7 @@ import {
   type UserKnowledge,
   charge,
   type UserWithRelations,
+  action,
 } from "./schema";
 import type { BlockKind } from "@/components/block";
 
@@ -26,8 +26,15 @@ import type { BlockKind } from "@/components/block";
 // https://authjs.dev/reference/adapter/drizzle
 
 // biome-ignore lint: Forbidden non-null assertion.
-const client = postgres(process.env.POSTGRES_URL!);
-const db = drizzle(client, { schema });
+const client = postgres(
+  process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL!,
+  {
+    port: 5432,
+    ssl: { rejectUnauthorized: false },
+    max: 1,
+  }
+);
+export const db = drizzle(client, { schema });
 
 export type User = UserWithRelations;
 

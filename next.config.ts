@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["twitter-api-v2"],
@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         hostname: "avatar.vercel.sh",
       },
     ],
+  },
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    return config;
   },
 };
 

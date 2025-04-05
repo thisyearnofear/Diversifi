@@ -1,4 +1,4 @@
-import type { InferSelectModel } from 'drizzle-orm';
+import type { InferSelectModel } from "drizzle-orm";
 import {
   pgTable,
   varchar,
@@ -172,3 +172,61 @@ export type UserKnowledge = InferSelectModel<typeof userKnowledge>;
 export type StarterKit = InferSelectModel<typeof starterKit>;
 
 export type Charge = InferSelectModel<typeof charge>;
+
+export const action = pgTable("Action", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: varchar("category", {
+    enum: ["SOCIAL", "DEFI", "NFT", "STABLECOIN", "TRADING"],
+  }).notNull(),
+  chain: varchar("chain", {
+    enum: ["BASE", "CELO", "ETHEREUM"],
+  }).notNull(),
+  difficulty: varchar("difficulty", {
+    enum: ["BEGINNER", "INTERMEDIATE", "ADVANCED"],
+  }).notNull(),
+  prerequisites: json("prerequisites").array(),
+  steps: json("steps").array(),
+  rewards: json("rewards").array(),
+  createdAt: timestamp("createdAt").notNull(),
+  updatedAt: timestamp("updatedAt").notNull(),
+});
+
+export const userAction = pgTable("UserAction", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userId: varchar("userId", { length: 42 })
+    .notNull()
+    .references(() => user.id),
+  actionId: uuid("actionId")
+    .notNull()
+    .references(() => action.id),
+  status: varchar("status", {
+    enum: ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"],
+  })
+    .notNull()
+    .default("NOT_STARTED"),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  proof: json("proof"), // Store proof of completion (tx hashes, etc.)
+  createdAt: timestamp("createdAt").notNull(),
+  updatedAt: timestamp("updatedAt").notNull(),
+});
+
+export const userReward = pgTable("UserReward", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userId: varchar("userId", { length: 42 })
+    .notNull()
+    .references(() => user.id),
+  actionId: uuid("actionId")
+    .notNull()
+    .references(() => action.id),
+  type: varchar("type", {
+    enum: ["TOKEN", "NFT", "ENS", "SOCIAL", "OTHER"],
+  }).notNull(),
+  details: json("details").notNull(), // Store reward details (amount, token address, etc.)
+  claimed: boolean("claimed").notNull().default(false),
+  claimedAt: timestamp("claimedAt"),
+  createdAt: timestamp("createdAt").notNull(),
+  updatedAt: timestamp("updatedAt").notNull(),
+});

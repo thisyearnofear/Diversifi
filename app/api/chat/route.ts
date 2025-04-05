@@ -82,9 +82,17 @@ export async function POST(request: Request) {
     });
   }
 
-  const agentKit = await setupAgentKit();
+  let agentKit;
+  let tools = {};
 
-  const tools = agentKitToTools(agentKit);
+  try {
+    agentKit = await setupAgentKit();
+    tools = agentKitToTools(agentKit);
+    console.log("AgentKit setup successful");
+  } catch (error) {
+    console.error("Failed to setup AgentKit:", error);
+    // Continue without AgentKit tools
+  }
 
   return createDataStreamResponse({
     execute: (dataStream) => {
@@ -181,7 +189,8 @@ export async function POST(request: Request) {
       });
     },
     onError: (error) => {
-      return `Oops, an error occured! ${error}`;
+      console.error("Error in chat stream:", error);
+      return `I'm sorry, but I encountered an error while processing your request. Please try again or contact support if the issue persists.`;
     },
   });
 }

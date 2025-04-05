@@ -1,21 +1,27 @@
-import type { Metadata } from 'next';
-import { Toaster } from 'sonner';
+import type { Metadata } from "next";
+import { Toaster } from "sonner";
 import { cookies } from "next/headers";
 import Script from "next/script";
+import { Inter } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { AppSidebar } from "@/components/app-sidebar";
+import { ActionSidebar } from "@/components/action-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
 import { auth } from "@/app/auth";
+import { WalletConnect } from "./components/wallet-connect";
+import { AuthProvider } from "@/app/providers/auth-provider";
 
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
 import { ConnectButton } from "@/components/connect-button";
+
+const inter = Inter({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Next.js Chatbot Template",
-  description: "Next.js chatbot template using the AI SDK.",
+  title: "Hello World Computer",
+  description: "Learn about Ethereum and get started with Web3",
 };
 
 export const viewport = {
@@ -70,30 +76,32 @@ export default async function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className="antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster position="top-center" />
-          <Providers>
-            <SidebarProvider>
-              <div className="flex min-h-screen w-full">
-                <AppSidebar />
-                <div className="flex-1 w-full">
-                  <main className="size-full">
-                    {children}
-                    <div className="fixed top-0 right-0 z-50 p-2">
-                      <ConnectButton />
-                    </div>
-                  </main>
+      <body className={inter.className}>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster position="top-center" />
+            <Providers>
+              <SidebarProvider>
+                <div className="flex min-h-screen w-full">
+                  <ActionSidebar />
+                  <div className="flex-1 w-full">
+                    <main className="size-full">
+                      {children}
+                      <div className="fixed top-0 right-0 z-50 p-2">
+                        <ConnectButton />
+                      </div>
+                    </main>
+                  </div>
                 </div>
-              </div>
-            </SidebarProvider>
-          </Providers>
-        </ThemeProvider>
+              </SidebarProvider>
+            </Providers>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

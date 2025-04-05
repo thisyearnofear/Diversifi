@@ -1,5 +1,4 @@
-'use client';
-
+"use client";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -46,35 +45,37 @@ export function SidebarHistory() {
     );
   }
 
-  // Simple rendering first to debug
   return (
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu className="gap-2 px-2">
-          {history?.map((chat) => (
-            <SidebarMenuItem key={chat.id}>
-              <SidebarMenuButton asChild isActive={chat.id === id}>
-                <Tooltip delayDuration={300}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/chat/${chat.id}`}
-                      onClick={() => setOpenMobile(false)}
-                      className="w-full"
+          {history?.map((chat) => {
+            if (!chat.id) return null;
+            return (
+              <SidebarMenuItem key={chat.id}>
+                <SidebarMenuButton asChild isActive={chat.id === id}>
+                  <Tooltip delayDuration={300}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={`/chat/${chat.id}`}
+                        onClick={() => setOpenMobile(false)}
+                        className="w-full"
+                      >
+                        <span className="block truncate">{chat.title}</span>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="right"
+                      align="start"
+                      className="max-w-[200px] break-words"
                     >
-                      <span className="block truncate">{chat.title}</span>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    align="start"
-                    className="max-w-[200px] break-words"
-                  >
-                    {chat.title}
-                  </TooltipContent>
-                </Tooltip>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+                      {chat.title}
+                    </TooltipContent>
+                  </Tooltip>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

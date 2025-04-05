@@ -1,9 +1,10 @@
-import { PrivyWalletProvider } from "./wallet-providers/privyWalletProvider";
 import {
   AgentKit,
   pythActionProvider,
   walletActionProvider,
 } from "@coinbase/agentkit";
+import { mockWalletProvider } from "./wallet-providers/mockWalletProvider";
+import { CdpWalletProvider } from "./wallet-providers/cdpWalletProvider";
 import { erc20ActionProvider } from "./action-providers/erc20";
 import { safeActionProvider } from "./action-providers/safe";
 import { alchemyActionProvider } from "./action-providers/alchemy";
@@ -16,14 +17,30 @@ export const setupAgentKit = async () => {
       ? "base-mainnet"
       : "base-sepolia";
 
-  const walletProvider = await PrivyWalletProvider.configureWithWallet({
-    appId: process.env.PRIVY_APP_ID as string,
-    appSecret: process.env.PRIVY_APP_SECRET as string,
-    networkId: activeChain,
-    walletId: process.env.PRIVY_WALLET_ID as string,
-    authorizationKey: process.env.PRIVY_WALLET_AUTHORIZATION_KEY as string,
-  });
+  let walletProvider;
 
+  try {
+    // Try to use CDP wallet provider if credentials are available
+    if (process.env.COINBASE_CDP_API_KEY && process.env.COINBASE_CDP_API_SECRET) {
+      walletProvider = await CdpWalletProvider.configureWithWallet({
+        apiKeyName: process.env.COINBASE_CDP_API_KEY,
+        apiKeyPrivateKey: process.env.COINBASE_CDP_API_SECRET,
+        networkId: activeChain,
+      });
+      console.log("Using CDP wallet provider");
+    } else {
+      // Fall back to mock wallet provider
+      walletProvider = mockWalletProvider();
+      console.log("Using mock wallet provider");
+    }
+  } catch (error) {
+    console.error("Failed to initialize wallet provider:", error);
+    // Fall back to mock wallet provider
+    walletProvider = mockWalletProvider();
+    console.log("Falling back to mock wallet provider");
+  }
+
+  // Create AgentKit instance
   return AgentKit.from({
     walletProvider,
     actionProviders: [
@@ -32,7 +49,8 @@ export const setupAgentKit = async () => {
       erc20ActionProvider(),
       safeActionProvider(),
       basenameActionProvider(),
-      alchemyActionProvider(process.env.ALCHEMY_API_KEY as string),
+      // Only include Alchemy if API key is available
+      ...(process.env.ALCHEMY_API_KEY ? [alchemyActionProvider(process.env.ALCHEMY_API_KEY)] : []),
       zoraActionProvider(),
     ],
   });
