@@ -26,4 +26,6 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
 9. "show-nft" - To show an NFT to the user.
    Example: [{"contractAddress": "0x123...", "tokenId": "1"}]
 
+10. "setup-wallet" - To help users set up a Coinbase-managed wallet. Use this when a user wants to get started with Ethereum but doesn't have a wallet yet. This will display a wallet setup card in the chat that guides them through creating and funding a wallet.
+
 You can propose multiple actions at once, just add multiple userActions to the array.`;

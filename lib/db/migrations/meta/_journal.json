@@ -15,6 +15,13 @@
       "when": 1742931731259,
       "tag": "0001_nasty_ser_duncan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743986275326,
+      "tag": "0002_massive_shadow_king",
+      "breakpoints": true
     }
   ]
 }

@@ -32,6 +32,7 @@ export async function decrypt(session: string | undefined = "") {
 }
 
 export async function createSession(userId: string) {
+  console.log("Creating session for user ID:", userId);
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const session = await encrypt({
     user: {
@@ -41,11 +42,16 @@ export async function createSession(userId: string) {
   });
   const cookieStore = await cookies();
 
+  // In development, we need to set secure: false for localhost
+  const isLocalhost = process.env.NODE_ENV === 'development';
+
   cookieStore.set("session", session, {
     httpOnly: true,
-    secure: true,
+    secure: !isLocalhost, // Only use secure in production
     expires,
     sameSite: "lax",
     path: "/",
   });
+
+  console.log("Session cookie set, expires:", expires.toISOString());
 }

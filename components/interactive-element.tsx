@@ -8,6 +8,7 @@ import { StarterKitCheckout } from "./starter-kit-checkout";
 import { NFTCard } from "@coinbase/onchainkit/nft";
 import { NFTMedia, NFTNetwork, NFTTitle } from "@coinbase/onchainkit/nft/view";
 import { ActionMessage } from "./chat/action-message";
+import { WalletSetupCompact } from "./chat/wallet-setup-compact";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -87,6 +88,7 @@ export function InteractiveElement({
   const helpAction = actions.find((a) => a.action === "help");
   const showNftActions = actions.filter((a) => a.action === "show-nft");
   const actionCardActions = actions.filter((a) => a.action === "action-card");
+  const setupWalletAction = actions.find((a) => a.action === "setup-wallet");
 
   return (
     <div className="flex flex-col gap-4">
@@ -163,6 +165,8 @@ export function InteractiveElement({
           }}
         />
       )}
+
+      {setupWalletAction && <WalletSetupCompact />}
     </div>
   );
 }

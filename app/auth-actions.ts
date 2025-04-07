@@ -40,50 +40,76 @@ const publicClient = createPublicClient({
 
 export const verifySiwe = async (message: string, signature: `0x${string}`) => {
   try {
+    console.log("Verifying SIWE message:", { message, signature: signature.slice(0, 10) + '...' });
+
     const cookieStore = await cookies();
     const nonce = cookieStore.get("nonce");
     if (!nonce) {
-      return { status: "failed" };
+      console.error("SIWE verification failed: No nonce found in cookies");
+      return { status: "failed", error: "No nonce found" };
     }
+
     const parsedMessage = parseSiweMessage(message);
+    console.log("Parsed SIWE message:", parsedMessage);
+
     if (!parsedMessage.address) {
-      return { status: "failed" };
-    }
-    const verified = await verifySiweMessage(publicClient, {
-      message,
-      signature,
-    });
-    if (!verified) {
-      return { status: "failed" };
+      console.error("SIWE verification failed: No address in parsed message");
+      return { status: "failed", error: "No address in message" };
     }
 
-    // Create session and explicitly set cookie
-    await createSession(parsedMessage.address);
+    try {
+      const verified = await verifySiweMessage(publicClient, {
+        message,
+        signature,
+      });
 
-    return { status: "success" };
+      console.log("SIWE verification result:", verified);
+
+      if (!verified) {
+        console.error("SIWE verification failed: Signature verification failed");
+        return { status: "failed", error: "Signature verification failed" };
+      }
+
+      // Create session and explicitly set cookie
+      await createSession(parsedMessage.address);
+      console.log("Session created for address:", parsedMessage.address);
+
+      return { status: "success", address: parsedMessage.address };
+    } catch (verifyError) {
+      console.error("SIWE verification error:", verifyError);
+      return { status: "failed", error: "Verification error: " + (verifyError.message || "Unknown error") };
+    }
   } catch (error) {
     console.error("Error verifying SIWE:", error);
-    return { status: "failed" };
+    return { status: "failed", error: "General error: " + (error.message || "Unknown error") };
   }
 };
 
 export const auth = async () => {
+  console.log("Checking authentication state...");
   const cookieStore = await cookies();
   const session = cookieStore.get("session");
+
   if (!session) {
+    console.log("No session cookie found");
     return { user: undefined, expires: "" };
   }
 
+  console.log("Session cookie found, decrypting...");
   const payload = await decrypt(session.value);
+
   if (!payload || !isSessionPayload(payload)) {
+    console.log("Invalid session payload:", payload);
     return { user: undefined, expires: "" };
   }
 
   if (new Date(payload.expires) < new Date()) {
+    console.log("Session expired, logging out");
     await logout();
     return { user: undefined, expires: "" };
   }
 
+  console.log("Valid session found for user:", payload.user.id);
   return payload;
 };
 

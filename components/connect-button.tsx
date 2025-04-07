@@ -36,25 +36,58 @@ export function ConnectButton() {
 
     setIsAuthenticating(true);
     try {
+      // Add a small delay to ensure the browser recognizes this as a user action
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // Generate a SIWE challenge
+      console.log("Generating SIWE challenge for address:", address);
       const message = await generateSiweChallenge(address);
+      console.log("Generated SIWE message:", message);
 
-      // Sign the message
-      const signature = await signMessageAsync({ message });
+      // Sign the message with a try-catch to handle popup errors
+      try {
+        console.log("Requesting signature for message...");
+        const signature = await signMessageAsync({ message });
+        console.log("Signature received:", signature.slice(0, 10) + "...");
 
-      // Verify the signature
-      const result = await verifySiwe(message, signature);
+        // Verify the signature
+        console.log("Verifying signature...");
+        const result = await verifySiwe(message, signature);
+        console.log("Verification result:", result);
 
-      if (result.status === "success") {
-        toast.success("Authentication successful!");
-        // Refresh the page to update auth state
-        window.location.reload();
-      } else {
-        toast.error("Authentication failed");
+        if (result.status === "success") {
+          toast.success("Authentication successful!");
+          console.log("Authentication successful, redirecting...");
+
+          // Instead of reloading immediately, wait a moment for cookies to be set
+          setTimeout(() => {
+            // Navigate to home page first, then reload
+            window.location.href = "/";
+          }, 500);
+        } else {
+          console.error("Authentication failed:", result.error);
+          toast.error("Authentication failed: " + (result.error || ""));
+        }
+      } catch (signError: any) {
+        console.error("Signing error:", signError);
+        if (
+          signError.message?.includes("window") ||
+          signError.message?.includes("popup")
+        ) {
+          toast.error(
+            "Failed to open signature window. Please check if pop-ups are blocked."
+          );
+        } else {
+          toast.error(
+            "Failed to sign message: " + (signError.message || "Unknown error")
+          );
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Authentication error:", error);
-      toast.error("Authentication failed");
+      toast.error(
+        "Authentication failed: " + (error.message || "Unknown error")
+      );
     } finally {
       setIsAuthenticating(false);
     }
@@ -127,11 +160,15 @@ export function ConnectButton() {
             <Button
               variant="outline"
               size="icon"
-              className="relative animate-pulse"
+              className={`relative ${isAuthenticating ? "" : "animate-pulse"}`}
               onClick={handleAuthenticate}
               disabled={isAuthenticating}
             >
-              🔑
+              {isAuthenticating ? (
+                <span className="animate-spin">⌛</span>
+              ) : (
+                <span>🔑</span>
+              )}
             </Button>
           </TooltipTrigger>
           <TooltipContent>Sign in with your wallet</TooltipContent>

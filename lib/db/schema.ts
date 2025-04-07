@@ -16,6 +16,18 @@ export const user = pgTable("User", {
   id: varchar("id", { length: 42 }).primaryKey().notNull(), // Ethereum address
 });
 
+export const wallet = pgTable("Wallet", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userId: varchar("userId", { length: 42 })
+    .notNull()
+    .references(() => user.id),
+  walletId: text("walletId").notNull(),
+  address: varchar("address", { length: 42 }).notNull(),
+  network: varchar("network", { length: 50 }).notNull(),
+  createdAt: timestamp("createdAt").notNull(),
+  lastFundedAt: timestamp("lastFundedAt"),
+});
+
 export const userKnowledge = pgTable("UserKnowledge", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   userId: varchar("userId", { length: 42 })
