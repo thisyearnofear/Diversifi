@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 import { FundButton } from "@coinbase/onchainkit/fund";
-import { ConnectButton } from "./connect-button";
+import { ConnectButton } from "./connect-button-new";
 import { useCallback } from "react";
 import type { UserAction, ActionData } from "@/lib/utils/message-helpers";
 import { useChatContext } from "@/contexts/chat-context";

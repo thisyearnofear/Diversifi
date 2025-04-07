@@ -14,7 +14,7 @@ import { AuthProvider } from "@/app/providers/auth-provider";
 
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
-import { ConnectButton } from "@/components/connect-button";
+import { ConnectButton } from "@/components/connect-button-new";
 
 const inter = Inter({ subsets: ["latin"] });
 

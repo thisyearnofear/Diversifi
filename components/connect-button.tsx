@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useAccount, useSignMessage } from "wagmi";
+import { AuthHelper } from "./auth-helper";
 import { generateSiweChallenge, verifySiwe } from "@/app/auth-actions";
 
 export function ConnectButton() {
