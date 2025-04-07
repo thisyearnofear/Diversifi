@@ -9,6 +9,7 @@ import { NFTCard } from "@coinbase/onchainkit/nft";
 import { NFTMedia, NFTNetwork, NFTTitle } from "@coinbase/onchainkit/nft/view";
 import { ActionMessage } from "./chat/action-message";
 import { WalletSetupCompact } from "./chat/wallet-setup-compact";
+import { FarcasterActionCardCompact } from "./chat/farcaster-action-card-compact";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -89,6 +90,17 @@ export function InteractiveElement({
   const showNftActions = actions.filter((a) => a.action === "show-nft");
   const actionCardActions = actions.filter((a) => a.action === "action-card");
   const setupWalletAction = actions.find((a) => a.action === "setup-wallet");
+  const farcasterAction = actions.find((a) => a.action === "farcaster-action");
+  // Also check for Farcaster action in action-card format
+  // Remove any Farcaster actions from actionCardActions to avoid duplication
+  const farcasterActionCard = actionCardActions.find(
+    (a) => a.args?.[0]?.chain === "FARCASTER"
+  );
+
+  // Filter out Farcaster actions from actionCardActions to avoid duplication
+  const nonFarcasterActionCards = farcasterActionCard
+    ? actionCardActions.filter((a) => a !== farcasterActionCard)
+    : actionCardActions;
 
   return (
     <div className="flex flex-col gap-4">
@@ -155,9 +167,9 @@ export function InteractiveElement({
         </div>
       )}
 
-      {actionCardActions.length > 0 && (
+      {nonFarcasterActionCards.length > 0 && (
         <ActionMessage
-          actions={actionCardActions.map(
+          actions={nonFarcasterActionCards.map(
             (action) => action.args?.[0] as ActionData
           )}
           onComplete={() => {
@@ -167,6 +179,53 @@ export function InteractiveElement({
       )}
 
       {setupWalletAction && <WalletSetupCompact />}
+
+      {/* Handle both dedicated farcaster-action and action-card with FARCASTER chain */}
+      {(farcasterAction || farcasterActionCard) && (
+        <FarcasterActionCardCompact
+          title={
+            farcasterAction?.args?.[0]?.title ||
+            farcasterActionCard?.args?.[0]?.title ||
+            "Set up a Farcaster account"
+          }
+          description={
+            farcasterAction?.args?.[0]?.description ||
+            farcasterActionCard?.args?.[0]?.description ||
+            "Create a Farcaster account and join the decentralized social network"
+          }
+          steps={
+            farcasterAction?.args?.[0]?.steps ||
+            farcasterActionCard?.args?.[0]?.steps || [
+              "Go to https://www.farcaster.xyz on mobile and sign up",
+              "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
+              "Say hi to @papa as your first cast and he will send you starter packs",
+            ]
+          }
+          reward={
+            farcasterAction?.args?.[0]?.reward ||
+            farcasterActionCard?.args?.[0]?.reward ||
+            "Starter packs from @papa"
+          }
+          actionUrl={
+            farcasterAction?.args?.[0]?.actionUrl ||
+            farcasterActionCard?.args?.[0]?.actionUrl ||
+            "https://www.farcaster.xyz"
+          }
+          proofFieldLabel={
+            farcasterAction?.args?.[0]?.proofFieldLabel ||
+            farcasterActionCard?.args?.[0]?.proofFieldLabel ||
+            "Your Warpcast URL"
+          }
+          proofFieldPlaceholder={
+            farcasterAction?.args?.[0]?.proofFieldPlaceholder ||
+            farcasterActionCard?.args?.[0]?.proofFieldPlaceholder ||
+            "https://warpcast.com/yourusername/0x..."
+          }
+          onComplete={() => {
+            handleAction("I've completed the Farcaster action!");
+          }}
+        />
+      )}
     </div>
   );
 }

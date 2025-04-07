@@ -25,21 +25,42 @@ import type { BlockKind } from "@/components/block";
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 
-// biome-ignore lint: Forbidden non-null assertion.
-const client = postgres(
-  process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL!,
-  {
-    port: 5432,
-    ssl: { rejectUnauthorized: false },
-    max: 1,
+// Create a function to get the database connection
+const getDbClient = () => {
+  try {
+    const connectionString = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+
+    if (!connectionString) {
+      console.warn('⚠️ No database connection string found. Some features may not work.');
+      return null;
+    }
+
+    return postgres(connectionString, {
+      port: 5432,
+      ssl: { rejectUnauthorized: false },
+      max: 1,
+    });
+  } catch (error) {
+    console.error('Failed to create database client:', error);
+    return null;
   }
-);
-export const db = drizzle(client, { schema });
+};
+
+// Get the client
+const client = getDbClient();
+
+// Create the db object, handling the case where client might be null
+export const db = client ? drizzle(client, { schema }) : null;
 
 export type User = UserWithRelations;
 
 export async function getUser(id: string): Promise<User[]> {
   try {
+    if (!db) {
+      console.warn('⚠️ Database not available. Returning empty user array.');
+      return [];
+    }
+
     const users = await db.select().from(user).where(eq(user.id, id));
 
     if (users.length === 0) {
@@ -69,6 +90,11 @@ export async function getUser(id: string): Promise<User[]> {
 
 export async function createUserIfNotExists(address: string): Promise<void> {
   try {
+    if (!db) {
+      console.warn('⚠️ Database not available. Cannot create user.');
+      return;
+    }
+
     const existingUser = await getUser(address);
     if (existingUser.length === 0) {
       await db.insert(user).values({
@@ -77,7 +103,8 @@ export async function createUserIfNotExists(address: string): Promise<void> {
     }
   } catch (error) {
     console.error("Failed to create user");
-    throw error;
+    // Don't throw the error, just log it
+    console.error(error);
   }
 }
 
@@ -91,6 +118,11 @@ export async function saveChat({
   title: string;
 }) {
   try {
+    if (!db) {
+      console.warn('⚠️ Database not available. Cannot save chat.');
+      return null;
+    }
+
     await createUserIfNotExists(userId); // Ensure user exists
     return await db.insert(chat).values({
       id,
@@ -100,25 +132,38 @@ export async function saveChat({
     });
   } catch (error) {
     console.error("Failed to save chat");
-    throw error;
+    console.error(error);
+    return null;
   }
 }
 
 export async function deleteChatById({ id }: { id: string }) {
   try {
+    if (!db) {
+      console.warn('⚠️ Database not available. Cannot delete chat.');
+      return null;
+    }
+
     await db.delete(vote).where(eq(vote.chatId, id));
     await db.delete(message).where(eq(message.chatId, id));
 
     return await db.delete(chat).where(eq(chat.id, id));
   } catch (error) {
     console.error("Failed to delete chat by id from database");
-    throw error;
+    console.error(error);
+    return null;
   }
 }
 
 export async function getChatsByUserId({ userId }: { userId: string }) {
   try {
     console.log("Getting chats for user:", userId);
+
+    if (!db) {
+      console.warn('⚠️ Database not available. Returning empty chats array.');
+      return [];
+    }
+
     const chats = await db
       .select()
       .from(chat)
@@ -133,25 +178,41 @@ export async function getChatsByUserId({ userId }: { userId: string }) {
 
 export async function getChatById({ id }: { id: string }) {
   try {
+    if (!db) {
+      console.warn('⚠️ Database not available. Cannot get chat.');
+      return null;
+    }
+
     const [selectedChat] = await db.select().from(chat).where(eq(chat.id, id));
     return selectedChat;
   } catch (error) {
     console.error("Failed to get chat by id from database");
-    throw error;
+    console.error(error);
+    return null;
   }
 }
 
 export async function saveMessages({ messages }: { messages: Array<Message> }) {
   try {
+    if (!db) {
+      console.warn('⚠️ Database not available. Cannot save messages.');
+      return null;
+    }
+
     return await db.insert(message).values(messages);
   } catch (error) {
     console.error("Failed to save messages in database", error);
-    throw error;
+    return null;
   }
 }
 
 export async function getMessagesByChatId({ id }: { id: string }) {
   try {
+    if (!db) {
+      console.warn('⚠️ Database not available. Returning empty messages array.');
+      return [];
+    }
+
     return await db
       .select()
       .from(message)
@@ -159,7 +220,7 @@ export async function getMessagesByChatId({ id }: { id: string }) {
       .orderBy(asc(message.createdAt));
   } catch (error) {
     console.error("Failed to get messages by chat id from database", error);
-    throw error;
+    return [];
   }
 }
 

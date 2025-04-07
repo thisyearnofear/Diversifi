@@ -49,6 +49,33 @@ We use:
 - Framer Motion for animations
 - SIWE (Sign-In With Ethereum) for authentication
 
+## Deployment
+
+### Netlify Deployment
+
+To deploy this project on Netlify:
+
+1. Connect your GitHub repository to Netlify
+2. Set the build command to `pnpm install --no-frozen-lockfile && pnpm build`
+3. Set the publish directory to `.next`
+4. Add the following environment variables:
+   - `OPENAI_API_KEY`: Your OpenAI API key
+   - `POSTGRES_URL`: Your PostgreSQL connection string (if using database features)
+   - `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`: Your WalletConnect project ID
+   - Other environment variables as needed
+
+The build process is configured to skip database migrations during the Netlify build process to avoid connection issues. Instead, you should run migrations manually after deployment using one of these methods:
+
+1. **Run migrations locally against your production database:**
+
+   ```bash
+   POSTGRES_URL=your_production_db_url pnpm db:migrate
+   ```
+
+2. **Set up a separate CI/CD step or scheduled task to run migrations**
+
+This approach ensures your database schema stays up-to-date without causing build failures.
+
 We've built:
 
 - Custom web3 login for Vercel's AI chatbot - next-auth compatible, powered by SIWE (backend session auth)

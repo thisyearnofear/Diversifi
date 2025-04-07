@@ -9,21 +9,21 @@ const actions: Omit<ActionInsert, "id" | "createdAt" | "updatedAt">[] = [
   // Based Actions (BASE)
   {
     title: "Set up Farcaster Account",
-    description: "Create a Farcaster account and connect it to your wallet",
+    description: "Create a Farcaster account and join the decentralized social network",
     category: "SOCIAL",
     chain: "BASE",
     difficulty: "BEGINNER",
     prerequisites: ["Wallet with BASE"],
     steps: [
-      "Visit farcaster.xyz",
-      "Connect your wallet",
-      "Create your account",
-      "Set up your profile",
+      "Go to https://www.farcaster.xyz on mobile and sign up",
+      "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
+      "Say hi to @papa as your first cast",
+      "Copy your profile URL (e.g. https://warpcast.com/papa)",
     ],
     rewards: [
       {
-        type: "TOKEN",
-        description: "0.1 ETH",
+        type: "SOCIAL",
+        description: "Starter packs from the community",
       },
     ],
   },

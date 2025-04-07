@@ -100,6 +100,18 @@ export function AppSidebar() {
           <SidebarMenuButton
             onClick={() =>
               triggerActionPrompt(
+                "FARCASTER",
+                "I want to set up a Farcaster account. Can you help me with that directly in this chat?"
+              )
+            }
+          >
+            <Globe />
+            Farcaster Setup
+          </SidebarMenuButton>
+
+          <SidebarMenuButton
+            onClick={() =>
+              triggerActionPrompt(
                 "CELO",
                 "I'd like to see action cards for Celo blockchain directly in this chat."
               )

@@ -28,4 +28,23 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
 
 10. "setup-wallet" - To help users set up a Coinbase-managed wallet. Use this when a user wants to get started with Ethereum but doesn't have a wallet yet. This will display a wallet setup card in the chat that guides them through creating and funding a wallet.
 
+11. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
+   Example args: {
+     "title": "Set up a Farcaster account",
+     "description": "Create a Farcaster account and join the decentralized social network",
+     "chain": "FARCASTER",
+     "difficulty": "beginner",
+     "steps": [
+       "Go to https://www.farcaster.xyz on mobile and sign up",
+       "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
+       "Say hi to @papa as your first cast and he will send you starter packs"
+     ],
+     "reward": "Starter packs from @papa",
+     "actionUrl": "https://www.farcaster.xyz",
+     "proofFieldLabel": "Your Warpcast URL",
+     "proofFieldPlaceholder": "https://warpcast.com/yourusername/0x..."
+   }
+
+   You can also use "action-card" with chain="FARCASTER" to achieve the same result.
+
 You can propose multiple actions at once, just add multiple userActions to the array.`;

@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Globe, Coins, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { eventBus, EVENTS } from "@/lib/events";
+import { toast } from "sonner";
 
 const actionCategories = [
   {
@@ -70,6 +72,25 @@ const actionCategories = [
 
 export function ActionSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const triggerActionPrompt = (category: string, message: string) => {
+    // If we're not on the home page, navigate there first
+    if (window.location.pathname !== "/") {
+      // Navigate to home page
+      router.push("/");
+
+      // Wait for navigation to complete before sending the message
+      setTimeout(() => {
+        eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, message);
+        toast.success(`Looking for ${category} actions...`);
+      }, 500);
+    } else {
+      // Already on home page, just send the message immediately
+      eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, message);
+      toast.success(`Looking for ${category} actions...`);
+    }
+  };
 
   return (
     <Sidebar collapsible="icon" side="left">
@@ -100,20 +121,44 @@ export function ActionSidebar() {
                 </div>
               </div>
               <div className="space-y-2">
-                {category.actions.map((action) => (
-                  <Link
-                    key={action.href}
-                    href={action.href}
-                    className={cn(
-                      "block px-3 py-2 rounded-md text-sm transition-colors",
-                      pathname === action.href
-                        ? "bg-white text-gray-900"
-                        : "text-gray-600 hover:bg-white/50"
-                    )}
-                  >
-                    {action.name}
-                  </Link>
-                ))}
+                {category.actions.map((action) => {
+                  // Special handling for Farcaster action
+                  if (action.name === "Set up Farcaster Account") {
+                    return (
+                      <button
+                        key={action.name}
+                        onClick={() =>
+                          triggerActionPrompt(
+                            "FARCASTER",
+                            "I want to set up a Farcaster account. Can you help me with that directly in this chat?"
+                          )
+                        }
+                        className={cn(
+                          "block px-3 py-2 rounded-md text-sm transition-colors text-left w-full",
+                          "text-gray-600 hover:bg-white/50"
+                        )}
+                      >
+                        {action.name}
+                      </button>
+                    );
+                  }
+
+                  // Default handling for other actions
+                  return (
+                    <Link
+                      key={action.href}
+                      href={action.href}
+                      className={cn(
+                        "block px-3 py-2 rounded-md text-sm transition-colors",
+                        pathname === action.href
+                          ? "bg-white text-gray-900"
+                          : "text-gray-600 hover:bg-white/50"
+                      )}
+                    >
+                      {action.name}
+                    </Link>
+                  );
+                })}
               </div>
             </motion.div>
           ))}

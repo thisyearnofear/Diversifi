@@ -1,0 +1,18 @@
+[build]
+  command = "pnpm install --no-frozen-lockfile && pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NETLIFY = "true"
+
+# Add a post-processing step to ensure the app works without database migrations
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirect all API requests to the Next.js API routes
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/nextjs-server/api/:splat"
+  status = 200
+  force = true
