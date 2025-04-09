@@ -30,10 +30,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json(actions[0]);
   } catch (error) {
-    console.error("Failed to get action by title:", error);
-    return NextResponse.json(
-      { error: "Failed to get action by title" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to get action by title";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

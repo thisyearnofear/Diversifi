@@ -59,9 +59,8 @@ export async function POST() {
     );
   } catch (error) {
     console.error("Error funding wallet:", error);
-    return NextResponse.json(
-      { error: "Failed to fund wallet" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fund wallet";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

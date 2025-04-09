@@ -11,6 +11,8 @@ export async function POST(request: Request) {
     const message = await generateSiweChallenge(address as `0x${string}`);
     return new Response(JSON.stringify({ message }));
   } catch (error) {
-    return new Response("Failed to generate challenge", { status: 400 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to generate challenge";
+    return new Response(errorMessage, { status: 400 });
   }
 }

@@ -263,8 +263,8 @@ export async function DELETE(request: Request) {
 
     return new Response("Chat deleted", { status: 200 });
   } catch (error) {
-    return new Response("An error occurred while processing your request", {
-      status: 500,
-    });
+    const errorMessage =
+      error instanceof Error ? error.message : "An error occurred";
+    return new Response(errorMessage, { status: 500 });
   }
 }

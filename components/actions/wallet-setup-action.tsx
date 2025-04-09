@@ -21,7 +21,7 @@ export function WalletSetupAction() {
   const createWallet = async () => {
     setIsCreating(true);
     setError("");
-    
+
     try {
       const response = await fetch("/api/wallet/create", {
         method: "POST",
@@ -29,22 +29,24 @@ export function WalletSetupAction() {
           "Content-Type": "application/json",
         },
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || "Failed to create wallet");
       }
-      
+
       setWalletCreated(true);
       setWalletAddress(data.wallet.address);
       toast.success("Wallet created successfully!");
-      
+
       // Check if the wallet already has a balance
       await checkBalance();
     } catch (error) {
       console.error("Error creating wallet:", error);
-      setError(error.message || "Failed to create wallet");
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create wallet";
+      setError(errorMessage);
       toast.error("Failed to create wallet");
     } finally {
       setIsCreating(false);
@@ -54,7 +56,7 @@ export function WalletSetupAction() {
   const fundWallet = async () => {
     setIsFunding(true);
     setError("");
-    
+
     try {
       const response = await fetch("/api/wallet/fund", {
         method: "POST",
@@ -62,21 +64,23 @@ export function WalletSetupAction() {
           "Content-Type": "application/json",
         },
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || "Failed to fund wallet");
       }
-      
+
       setWalletFunded(true);
       toast.success("Wallet funded successfully!");
-      
+
       // Check the updated balance
       await checkBalance();
     } catch (error) {
       console.error("Error funding wallet:", error);
-      setError(error.message || "Failed to fund wallet");
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fund wallet";
+      setError(errorMessage);
       toast.error("Failed to fund wallet");
     } finally {
       setIsFunding(false);
@@ -86,18 +90,18 @@ export function WalletSetupAction() {
   const checkBalance = async () => {
     setIsLoading(true);
     setError("");
-    
+
     try {
       const response = await fetch("/api/wallet/balance");
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || "Failed to get wallet balance");
       }
-      
+
       setWalletBalance(data.balance);
-      
+
       if (parseFloat(data.balance) > 0) {
         setWalletFunded(true);
       }
@@ -114,24 +118,24 @@ export function WalletSetupAction() {
       toast.error("Please connect your wallet first");
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       // First, check if the user already has a wallet
       const response = await fetch("/api/wallet/balance");
       const data = await response.json();
-      
+
       if (response.ok) {
         // User already has a wallet
         setWalletCreated(true);
         setWalletAddress(data.address);
         setWalletBalance(data.balance);
-        
+
         if (parseFloat(data.balance) > 0) {
           setWalletFunded(true);
         }
-        
+
         toast.success("Found your existing wallet!");
       } else {
         // User doesn't have a wallet, create one
@@ -139,7 +143,9 @@ export function WalletSetupAction() {
       }
     } catch (error) {
       console.error("Error starting wallet setup:", error);
-      setError(error.message || "Failed to start wallet setup");
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to start wallet setup";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -147,11 +153,13 @@ export function WalletSetupAction() {
 
   return (
     <Card className="p-4 w-full max-w-md mx-auto my-2">
-      <h3 className="text-xl font-semibold mb-4">Set Up Your Ethereum Wallet</h3>
+      <h3 className="text-xl font-semibold mb-4">
+        Set Up Your Ethereum Wallet
+      </h3>
       <p className="text-gray-600 mb-6">
         Create a secure Coinbase-managed wallet to get started with Ethereum.
       </p>
-      
+
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
           {walletCreated ? (
@@ -164,11 +172,12 @@ export function WalletSetupAction() {
           <span className="font-medium">Create Wallet</span>
           {walletCreated && walletAddress && (
             <span className="text-xs text-gray-500 truncate">
-              ({walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)})
+              ({walletAddress.substring(0, 6)}...
+              {walletAddress.substring(walletAddress.length - 4)})
             </span>
           )}
         </div>
-        
+
         <div className="flex items-center space-x-2">
           {walletFunded ? (
             <CheckCircle className="h-5 w-5 text-green-500" />
@@ -184,14 +193,14 @@ export function WalletSetupAction() {
             </span>
           )}
         </div>
-        
+
         {error && (
           <div className="flex items-center space-x-2 text-red-500 text-sm">
             <AlertCircle className="h-4 w-4" />
             <span>{error}</span>
           </div>
         )}
-        
+
         {!walletCreated ? (
           <Button
             onClick={handleStart}
@@ -227,7 +236,7 @@ export function WalletSetupAction() {
             Wallet setup complete! You're ready to use Ethereum.
           </div>
         )}
-        
+
         {!address && (
           <p className="mt-2 text-sm text-gray-500">
             Please connect your wallet to continue

@@ -122,10 +122,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json(actionData);
   } catch (error) {
-    console.error("Failed to get chat actions:", error);
-    return NextResponse.json(
-      { error: "Failed to get chat actions" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to get chat actions";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

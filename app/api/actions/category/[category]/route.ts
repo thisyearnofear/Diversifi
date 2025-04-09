@@ -33,10 +33,10 @@ export async function GET(request: Request, context: any) {
 
     return NextResponse.json(actions);
   } catch (error) {
-    console.error("Failed to get actions by category:", error);
-    return NextResponse.json(
-      { error: "Failed to get actions by category" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Failed to get actions by category";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

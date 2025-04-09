@@ -13,7 +13,8 @@ export async function POST(request: Request) {
     // Return response with the original Set-Cookie header
     return new Response(JSON.stringify({ ok: true }), {});
   } catch (error) {
-    console.error("Verification error:", error);
-    return new Response("Verification failed", { status: 400 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Verification failed";
+    return new Response(errorMessage, { status: 400 });
   }
 }

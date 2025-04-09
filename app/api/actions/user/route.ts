@@ -55,10 +55,8 @@ export async function GET() {
 
     return NextResponse.json(formattedActions);
   } catch (error) {
-    console.error("Failed to get user actions:", error);
-    return NextResponse.json(
-      { error: "Failed to get user actions" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to get user actions";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

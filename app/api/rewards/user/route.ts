@@ -52,10 +52,8 @@ export async function GET() {
 
     return NextResponse.json(formattedRewards);
   } catch (error) {
-    console.error("Failed to get user rewards:", error);
-    return NextResponse.json(
-      { error: "Failed to get user rewards" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to get user rewards";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

@@ -100,10 +100,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to complete action:", error);
-    return NextResponse.json(
-      { error: "Failed to complete action" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to complete action";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
