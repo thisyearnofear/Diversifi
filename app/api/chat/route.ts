@@ -1,9 +1,4 @@
-import {
-  type Message,
-  createDataStreamResponse,
-  streamText,
-  Output,
-} from "ai";
+import { type Message, createDataStreamResponse, streamText, Output } from "ai";
 
 import { auth } from "@/app/auth";
 import { myProvider } from "@/lib/ai/models";
@@ -65,10 +60,14 @@ export async function POST(request: Request) {
 
   if (session?.user?.id) {
     const userInfo = await getUser(session.user.id);
-    userProfile = `USER-WALLET-ADDRESS=${session.user.id}. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile({
-      userInfo: userInfo[0],
-      attachments,
-    })}`;
+    userProfile = `USER-WALLET-ADDRESS=${
+      session.user.id
+    }. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile(
+      {
+        userInfo: userInfo[0],
+        attachments,
+      }
+    )}`;
 
     const chat = await getChatById({ id });
     if (!chat) {
@@ -141,25 +140,39 @@ export async function POST(request: Request) {
             description: suggestActionsDefinition.description,
             parameters: suggestActionsDefinition.parameters,
             execute: async ({ category, title, limit }) => {
-              console.log("Executing suggestActions with args:", { category, title, limit });
+              console.log("Executing suggestActions with args:", {
+                category,
+                title,
+                limit,
+              });
               try {
-                const result = await suggestActionsDefinition.handler(category, title, limit);
+                const result = await suggestActionsDefinition.handler(
+                  category,
+                  title,
+                  limit
+                );
                 console.log("suggestActions result:", result);
                 return result;
               } catch (error) {
                 console.error("Error in suggestActions:", error);
                 // Return a default action if there's an error
-                return [{
-                  title: "Bridge to Base",
-                  description: "Bridge assets from Ethereum to Base",
-                  chain: category || "BASE",
-                  difficulty: "beginner",
-                  steps: ["Visit bridge.base.org", "Connect wallet", "Select amount"],
-                  reward: "0.1 ETH",
-                  actionUrl: "https://bridge.base.org",
-                  proofFieldLabel: "Transaction Hash",
-                  proofFieldPlaceholder: "0x..."
-                }];
+                return [
+                  {
+                    title: "Bridge to Base",
+                    description: "Bridge assets from Ethereum to Base",
+                    chain: category || "BASE",
+                    difficulty: "beginner",
+                    steps: [
+                      "Visit bridge.base.org",
+                      "Connect wallet",
+                      "Select amount",
+                    ],
+                    reward: "0.1 ETH",
+                    actionUrl: "https://bridge.base.org",
+                    proofFieldLabel: "Transaction Hash",
+                    proofFieldPlaceholder: "0x...",
+                  },
+                ];
               }
             },
           }),
@@ -237,6 +250,10 @@ export async function DELETE(request: Request) {
 
   try {
     const chat = await getChatById({ id });
+
+    if (!chat) {
+      return new Response("Not Found", { status: 404 });
+    }
 
     if (chat.userId !== session.user.id) {
       return new Response("Unauthorized", { status: 401 });
