@@ -1,8 +1,8 @@
-import Link from 'next/link';
-import React, { memo } from 'react';
-import ReactMarkdown, { type Components } from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { CodeBlock } from './code-block';
+import Link from "next/link";
+import React, { memo } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { CodeBlock } from "./code-block";
 
 const components: Partial<Components> = {
   // @ts-expect-error
@@ -37,13 +37,14 @@ const components: Partial<Components> = {
     );
   },
   a: ({ node, children, ...props }) => {
+    // Extract href from props since it's required for Next.js Link
+    const { href } = props;
     return (
-      // @ts-expect-error
       <Link
+        href={href || "#"}
         className="text-blue-500 hover:underline"
         target="_blank"
         rel="noreferrer"
-        {...props}
       >
         {children}
       </Link>
@@ -105,5 +106,5 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
 
 export const Markdown = memo(
   NonMemoizedMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children,
+  (prevProps, nextProps) => prevProps.children === nextProps.children
 );

@@ -26,7 +26,6 @@ const categoryToChain = {
 } as const;
 
 // Use the correct Next.js app router typing pattern
-// @ts-ignore - Next.js 15 Canary has a typing issue with client components
 export default function CategoryPage({
   params,
 }: {
