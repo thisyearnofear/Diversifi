@@ -49,11 +49,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           Boolean(session?.user?.id) ||
           (Boolean(web3Address) &&
             Boolean(session?.user?.id) &&
-            web3Address.toLowerCase() === session?.user?.id.toLowerCase());
+            typeof web3Address === "string" &&
+            typeof session?.user?.id === "string" &&
+            web3Address.toLowerCase() === session?.user?.id?.toLowerCase());
 
         setAuthState({
           isAuthenticated: isAuthenticated,
-          activeAddress: web3Address,
+          activeAddress: web3Address ?? undefined,
           isWeb3User: Boolean(web3Address),
         });
 
