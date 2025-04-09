@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/app/auth";
 import { db } from "@/lib/db/queries";
-import { userAction, userReward } from "@/lib/db/schema";
+import { userAction, userReward, action } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function POST(request: Request) {
@@ -20,6 +20,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Check if the user has already completed this action
     const existingUserAction = await db
       .select()
@@ -32,7 +39,10 @@ export async function POST(request: Request) {
       )
       .limit(1);
 
-    if (existingUserAction.length > 0 && existingUserAction[0].status === "COMPLETED") {
+    if (
+      existingUserAction.length > 0 &&
+      existingUserAction[0].status === "COMPLETED"
+    ) {
       return NextResponse.json(
         { error: "Action already completed" },
         { status: 400 }
@@ -66,15 +76,15 @@ export async function POST(request: Request) {
     }
 
     // Get the action to determine rewards
-    const action = await db
+    const actionDetails = await db
       .select()
-      .from(userAction)
-      .where(eq(userAction.id, actionId))
+      .from(action)
+      .where(eq(action.id, actionId))
       .limit(1);
 
     // Create rewards for the user
-    if (action.length > 0 && action[0].rewards) {
-      const rewards = action[0].rewards as any[];
+    if (actionDetails.length > 0 && actionDetails[0].rewards) {
+      const rewards = actionDetails[0].rewards as any[];
       for (const reward of rewards) {
         await db.insert(userReward).values({
           userId: session.user.id,

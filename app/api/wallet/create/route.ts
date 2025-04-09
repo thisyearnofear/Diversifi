@@ -17,6 +17,13 @@ export async function POST() {
       );
     }
 
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Check if the user already has a wallet
     const existingWallets = await db
       .select()
@@ -28,7 +35,7 @@ export async function POST() {
       return NextResponse.json(
         {
           message: "User already has a wallet",
-          wallet: existingWallets[0]
+          wallet: existingWallets[0],
         },
         { status: 200 }
       );
@@ -41,20 +48,23 @@ export async function POST() {
     console.log("Wallet created:", newWallet);
 
     // Save the wallet to the database
-    const savedWallet = await db.insert(wallet).values({
-      userId: session.user.id,
-      walletId: newWallet.walletId,
-      address: newWallet.address,
-      network: newWallet.networkId,
-      createdAt: new Date(),
-    }).returning();
+    const savedWallet = await db
+      .insert(wallet)
+      .values({
+        userId: session.user.id,
+        walletId: newWallet.walletId,
+        address: newWallet.address,
+        network: newWallet.networkId,
+        createdAt: new Date(),
+      })
+      .returning();
 
     console.log("Wallet saved to database:", savedWallet[0]);
 
     return NextResponse.json(
       {
         message: "Wallet created successfully",
-        wallet: savedWallet[0]
+        wallet: savedWallet[0],
       },
       { status: 201 }
     );

@@ -11,6 +11,13 @@ export async function GET() {
   }
 
   try {
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Get all user rewards
     const userRewards = await db
       .select({
@@ -31,14 +38,16 @@ export async function GET() {
       claimedAt: userReward.claimedAt,
       createdAt: userReward.createdAt,
       updatedAt: userReward.updatedAt,
-      action: action ? {
-        id: action.id,
-        title: action.title,
-        description: action.description,
-        category: action.category,
-        chain: action.chain,
-        difficulty: action.difficulty,
-      } : null,
+      action: action
+        ? {
+            id: action.id,
+            title: action.title,
+            description: action.description,
+            category: action.category,
+            chain: action.chain,
+            difficulty: action.difficulty,
+          }
+        : null,
     }));
 
     return NextResponse.json(formattedRewards);

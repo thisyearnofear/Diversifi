@@ -17,6 +17,13 @@ export async function POST() {
       );
     }
 
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Get the user's wallet
     const userWallets = await db
       .select()
@@ -46,7 +53,7 @@ export async function POST() {
     return NextResponse.json(
       {
         message: "Wallet funded successfully",
-        transaction: fundingResult
+        transaction: fundingResult,
       },
       { status: 200 }
     );

@@ -20,15 +20,19 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Check if the reward exists and belongs to the user
     const existingReward = await db
       .select()
       .from(userReward)
       .where(
-        and(
-          eq(userReward.id, rewardId),
-          eq(userReward.userId, session.user.id)
-        )
+        and(eq(userReward.id, rewardId), eq(userReward.userId, session.user.id))
       )
       .limit(1);
 

@@ -11,6 +11,13 @@ export async function GET() {
   }
 
   try {
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Get all user actions
     const userActions = await db
       .select({
@@ -31,17 +38,19 @@ export async function GET() {
       proof: userAction.proof,
       createdAt: userAction.createdAt,
       updatedAt: userAction.updatedAt,
-      action: action ? {
-        id: action.id,
-        title: action.title,
-        description: action.description,
-        category: action.category,
-        chain: action.chain,
-        difficulty: action.difficulty,
-        prerequisites: action.prerequisites,
-        steps: action.steps,
-        rewards: action.rewards,
-      } : null,
+      action: action
+        ? {
+            id: action.id,
+            title: action.title,
+            description: action.description,
+            category: action.category,
+            chain: action.chain,
+            difficulty: action.difficulty,
+            prerequisites: action.prerequisites,
+            steps: action.steps,
+            rewards: action.rewards,
+          }
+        : null,
     }));
 
     return NextResponse.json(formattedActions);

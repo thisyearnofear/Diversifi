@@ -8,9 +8,13 @@ export async function POST(request: Request) {
     const { title } = await request.json();
 
     if (!title) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+
+    if (!db) {
       return NextResponse.json(
-        { error: "Title is required" },
-        { status: 400 }
+        { error: "Database connection not available" },
+        { status: 500 }
       );
     }
 
@@ -21,10 +25,7 @@ export async function POST(request: Request) {
       .limit(1);
 
     if (actions.length === 0) {
-      return NextResponse.json(
-        { error: "Action not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Action not found" }, { status: 404 });
     }
 
     return NextResponse.json(actions[0]);
