@@ -25,13 +25,12 @@ const categoryToChain = {
   "global-actions": "ETHEREUM",
 } as const;
 
-type CategoryPageProps = {
-  params: {
-    category: string;
-  };
-};
-
-export default function CategoryPage({ params }: CategoryPageProps) {
+// Use the correct Next.js app router typing pattern
+export default function CategoryPage({
+  params,
+}: {
+  params: { category: string };
+}) {
   const chain =
     categoryToChain[params.category as keyof typeof categoryToChain];
 
