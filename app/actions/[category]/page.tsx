@@ -8,17 +8,30 @@ import { useAuth } from "@/hooks/use-auth";
 import { AuthHelper } from "@/components/auth-helper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+// Define types for user actions
+interface UserAction {
+  actionId: string;
+  status: "IN_PROGRESS" | "COMPLETED" | string;
+  action?: {
+    chain: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
 const categoryToChain = {
   "based-actions": "BASE",
   "stable-actions": "CELO",
   "global-actions": "ETHEREUM",
 } as const;
 
-export default function CategoryPage({
-  params,
-}: {
-  params: { category: string };
-}) {
+type CategoryPageProps = {
+  params: {
+    category: string;
+  };
+};
+
+export default function CategoryPage({ params }: CategoryPageProps) {
   const chain =
     categoryToChain[params.category as keyof typeof categoryToChain];
 
@@ -41,19 +54,21 @@ export default function CategoryPage({
 
   // Find user actions for this chain
   const userActionsForChain =
-    userActions?.filter((ua) => ua.action?.chain === chain) || [];
+    userActions?.filter((ua: UserAction) => ua.action?.chain === chain) || [];
 
   // Filter actions based on active tab
   const filteredActions = actions.filter((action) => {
     if (activeTab === "all") return true;
     if (activeTab === "in-progress") {
       return userActionsForChain.some(
-        (ua) => ua.actionId === action.id && ua.status === "IN_PROGRESS"
+        (ua: UserAction) =>
+          ua.actionId === action.id && ua.status === "IN_PROGRESS"
       );
     }
     if (activeTab === "completed") {
       return userActionsForChain.some(
-        (ua) => ua.actionId === action.id && ua.status === "COMPLETED"
+        (ua: UserAction) =>
+          ua.actionId === action.id && ua.status === "COMPLETED"
       );
     }
     return true;
@@ -62,7 +77,7 @@ export default function CategoryPage({
   // Map actions to include user action status
   const actionsWithStatus = filteredActions.map((action) => {
     const userAction = userActionsForChain.find(
-      (ua) => ua.actionId === action.id
+      (ua: UserAction) => ua.actionId === action.id
     );
     return { action, userAction };
   });
