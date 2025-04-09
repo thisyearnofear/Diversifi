@@ -111,7 +111,9 @@ export function FarcasterActionCardCompact({
       }
     } catch (error) {
       console.error("Error completing Farcaster action:", error);
-      setError(error.message || "Failed to complete action");
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to complete action";
+      setError(errorMessage);
       toast.error("Failed to complete action");
     } finally {
       setIsCompleting(false);
