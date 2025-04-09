@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db/queries";
 import { action } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { ActionData } from "@/lib/utils/message-helpers";
 
 // Map of action titles to their URLs
@@ -51,18 +51,33 @@ export async function GET(request: Request) {
 
     console.log("Chat actions request:", { category, title, limit });
 
-    let query = db.select().from(action);
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
+    const conditions = [];
 
     if (category) {
-      query = query.where(eq(action.chain, category.toUpperCase()));
+      const validChain = category.toUpperCase() as "BASE" | "CELO" | "ETHEREUM";
+      conditions.push(eq(action.chain, validChain));
     }
 
     if (title) {
-      query = query.where(eq(action.title, title));
+      conditions.push(eq(action.title, title));
     }
 
-    const actions = await query.limit(limit);
-    console.log(`Found ${actions.length} actions for category: ${category || 'all'}`);
+    const actions = await db
+      .select()
+      .from(action)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .limit(limit);
+
+    console.log(
+      `Found ${actions.length} actions for category: ${category || "all"}`
+    );
 
     // If no actions found, return some default actions
     if (actions.length === 0) {
@@ -77,16 +92,17 @@ export async function GET(request: Request) {
           reward: "0.1 ETH",
           actionUrl: "https://bridge.base.org",
           proofFieldLabel: "Transaction Hash",
-          proofFieldPlaceholder: "0x..."
-        }
+          proofFieldPlaceholder: "0x...",
+        },
       ]);
     }
 
     // Convert to ActionData format
     const actionData: ActionData[] = actions.map((a) => {
-      const steps = (a.steps as any[])?.map((step) =>
-        typeof step === 'string' ? step : step.title || step.description || ''
-      ) || [];
+      const steps =
+        (a.steps as any[])?.map((step) =>
+          typeof step === "string" ? step : step.title || step.description || ""
+        ) || [];
 
       const reward = (a.rewards as any[])?.[0]?.description || "Rewards";
 
@@ -99,7 +115,8 @@ export async function GET(request: Request) {
         reward,
         actionUrl: actionUrls[a.title] || "#",
         proofFieldLabel: proofFields[a.title]?.label || "Proof",
-        proofFieldPlaceholder: proofFields[a.title]?.placeholder || "Provide proof of completion",
+        proofFieldPlaceholder:
+          proofFields[a.title]?.placeholder || "Provide proof of completion",
       };
     });
 
