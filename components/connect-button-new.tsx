@@ -39,7 +39,9 @@ export function ConnectButton() {
             disabled={isRequesting}
             onClick={async () => {
               if (!isAuthenticated) {
-                toast.error("Please connect and authenticate your wallet first");
+                toast.error(
+                  "Please connect and authenticate your wallet first"
+                );
                 return;
               }
 
@@ -88,13 +90,13 @@ export function ConnectButton() {
             : "Ask the agent for a starter kit!"}
         </TooltipContent>
       </Tooltip>
-      
+
       {isConnected && !isAuthenticated && (
         <Tooltip>
           <TooltipTrigger asChild>
             <div>
-              <AuthHelper 
-                variant="compact" 
+              <AuthHelper
+                variant="compact"
                 onAuthenticated={() => window.location.reload()}
               />
             </div>
@@ -103,7 +105,7 @@ export function ConnectButton() {
         </Tooltip>
       )}
 
-      {!isConnected && <CustomConnectButton />}
+      <CustomConnectButton />
     </div>
   );
 }
