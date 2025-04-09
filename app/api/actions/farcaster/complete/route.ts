@@ -16,6 +16,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Get the request body
     const body = await request.json();
     const { proofUrl } = body;
@@ -44,7 +51,8 @@ export async function POST(request: Request) {
         .insert(action)
         .values({
           title: "Set up Farcaster Account",
-          description: "Create a Farcaster account and join the decentralized social network",
+          description:
+            "Create a Farcaster account and join the decentralized social network",
           category: "SOCIAL",
           chain: "BASE",
           difficulty: "BEGINNER",
@@ -53,13 +61,13 @@ export async function POST(request: Request) {
             "Go to https://www.farcaster.xyz on mobile and sign up",
             "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
             "Say hi to @papa as your first cast",
-            "Copy your profile URL (e.g. https://warpcast.com/papa)"
+            "Copy your profile URL (e.g. https://warpcast.com/papa)",
           ],
           rewards: [
             {
               type: "SOCIAL",
-              description: "Starter packs from the community"
-            }
+              description: "Starter packs from the community",
+            },
           ],
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -138,6 +146,13 @@ export async function GET() {
       );
     }
 
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Find the Farcaster action
     const farcasterActions = await db
       .select()
@@ -155,7 +170,8 @@ export async function GET() {
         .insert(action)
         .values({
           title: "Set up Farcaster Account",
-          description: "Create a Farcaster account and join the decentralized social network",
+          description:
+            "Create a Farcaster account and join the decentralized social network",
           category: "SOCIAL",
           chain: "BASE",
           difficulty: "BEGINNER",
@@ -164,13 +180,13 @@ export async function GET() {
             "Go to https://www.farcaster.xyz on mobile and sign up",
             "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
             "Say hi to @papa as your first cast",
-            "Copy your profile URL (e.g. https://warpcast.com/papa)"
+            "Copy your profile URL (e.g. https://warpcast.com/papa)",
           ],
           rewards: [
             {
               type: "SOCIAL",
-              description: "Starter packs from the community"
-            }
+              description: "Starter packs from the community",
+            },
           ],
           createdAt: new Date(),
           updatedAt: new Date(),

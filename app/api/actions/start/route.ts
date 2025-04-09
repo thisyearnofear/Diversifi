@@ -20,6 +20,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Check if the user has already started this action
     const existingUserAction = await db
       .select()
