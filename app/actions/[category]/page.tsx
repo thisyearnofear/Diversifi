@@ -19,18 +19,21 @@ interface UserAction {
   [key: string]: any;
 }
 
+interface CategoryPageProps {
+  params: {
+    category: string;
+  };
+}
+
 const categoryToChain = {
   "based-actions": "BASE",
   "stable-actions": "CELO",
   "global-actions": "ETHEREUM",
 } as const;
 
-// Use the correct Next.js app router typing pattern
-export default function CategoryPage({
-  params,
-}: {
-  params: { category: string };
-}) {
+// Avoid using type annotations directly in the component signature/export
+export default function CategoryPage(props: any) {
+  const { params } = props as CategoryPageProps;
   const chain =
     categoryToChain[params.category as keyof typeof categoryToChain];
 
@@ -87,7 +90,7 @@ export default function CategoryPage({
         <h1 className="mb-8 text-3xl font-bold">
           {params.category
             .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ")}
         </h1>
         <div className="mb-8">
@@ -98,7 +101,7 @@ export default function CategoryPage({
           <AuthHelper />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {actions.map((action) => (
+          {actions.map((action: any) => (
             <ActionCard key={action.id} action={action} />
           ))}
         </div>
@@ -111,7 +114,7 @@ export default function CategoryPage({
       <h1 className="mb-8 text-3xl font-bold">
         {params.category
           .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(" ")}
       </h1>
 
