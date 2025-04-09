@@ -2,14 +2,11 @@ import { auth } from "@/app/auth";
 import { getChatById, getMessagesByChatId } from "@/lib/db/queries";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, context: any) {
   console.log("GET /api/chats/[id] - Checking authentication...");
-  const resolvedParams = await params;
+  const params = context.params;
+  const { id } = params;
   const session = await auth();
-  const { id } = resolvedParams;
 
   try {
     if (!session?.user?.id) {
@@ -32,8 +29,15 @@ export async function GET(
 
     if (chat.visibility === "private") {
       if (session.user.id !== chat.userId) {
-        console.log("GET /api/chats/[id] - Unauthorized: Chat belongs to different user");
-        console.log("Chat user ID:", chat.userId, "Session user ID:", session.user.id);
+        console.log(
+          "GET /api/chats/[id] - Unauthorized: Chat belongs to different user"
+        );
+        console.log(
+          "Chat user ID:",
+          chat.userId,
+          "Session user ID:",
+          session.user.id
+        );
         return new NextResponse("Unauthorized", { status: 401 });
       }
     }

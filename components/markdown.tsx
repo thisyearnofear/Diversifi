@@ -37,15 +37,24 @@ const components: Partial<Components> = {
     );
   },
   a: ({ node, children, ...props }) => {
-    // Extract href from props since it's required for Next.js Link
     const { href } = props;
+    const isExternal = href?.startsWith("http") || href?.startsWith("mailto:");
+
+    if (isExternal) {
+      return (
+        <a
+          href={href || "#"}
+          className="text-blue-500 hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </a>
+      );
+    }
+
     return (
-      <Link
-        href={href || "#"}
-        className="text-blue-500 hover:underline"
-        target="_blank"
-        rel="noreferrer"
-      >
+      <Link href={href || "#"} className="text-blue-500 hover:underline">
         {children}
       </Link>
     );

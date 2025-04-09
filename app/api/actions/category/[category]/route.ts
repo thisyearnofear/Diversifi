@@ -9,16 +9,21 @@ const categoryToChain = {
   "global-actions": "ETHEREUM",
 } as const;
 
-export async function GET(
-  request: Request,
-  { params }: { params: { category: string } }
-) {
+export async function GET(request: Request, context: any) {
   try {
+    const { params } = context;
     const chain =
       categoryToChain[params.category as keyof typeof categoryToChain];
 
     if (!chain) {
       return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+    }
+
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
     }
 
     const actions = await db

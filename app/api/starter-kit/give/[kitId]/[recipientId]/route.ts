@@ -2,16 +2,14 @@ import { NextResponse } from "next/server";
 import { auth } from "@/app/auth";
 import { claimStarterKit, getCreatedStarterKits } from "@/lib/db/queries";
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ kitId: string; recipientId: string }> }
-) {
+export async function POST(request: Request, context: any) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { kitId, recipientId } = await params;
+  const params = context.params;
+  const { kitId, recipientId } = params;
 
   try {
     // Verify ownership

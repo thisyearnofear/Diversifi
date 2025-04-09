@@ -7,11 +7,9 @@ import {
 } from "@/lib/db/queries";
 import type { CoinbaseChargeResponse } from "@/lib/types/coinbase";
 
-export const POST = async (
-  request: NextRequest,
-  { params }: { params: Promise<{ chargeId: string; productId: string }> }
-) => {
-  const { chargeId, productId } = await params;
+export const POST = async (request: NextRequest, context: any) => {
+  const params = context.params;
+  const { chargeId, productId } = params;
   const session = await auth();
 
   if (!session?.user?.id) {
