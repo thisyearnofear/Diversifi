@@ -15,6 +15,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if the database connection is available
+    if (!db) {
+      return NextResponse.json(
+        { error: "Database connection not available" },
+        { status: 500 }
+      );
+    }
+
     // Create a new starter kit
     const newKit = await db
       .insert(starterKit)

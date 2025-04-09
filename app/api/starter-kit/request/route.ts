@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/app/auth";
 import { db } from "@/lib/db/queries";
 import { starterKit, user } from "@/lib/db/schema";
-
+import { eq } from "drizzle-orm";
 export async function POST(request: Request) {
   const session = await auth();
 
@@ -13,12 +13,20 @@ export async function POST(request: Request) {
     );
   }
 
+  // Check if the database connection is available
+  if (!db) {
+    return NextResponse.json(
+      { error: "Database connection not available" },
+      { status: 500 }
+    );
+  }
+
   try {
     // Check if the user already has a claimed starter kit
     const existingKits = await db
       .select()
       .from(starterKit)
-      .where({ claimerId: session.user.id });
+      .where(eq(starterKit.claimerId, session.user.id));
 
     if (existingKits.length > 0) {
       return NextResponse.json(
@@ -32,9 +40,12 @@ export async function POST(request: Request) {
 
     try {
       // Try to create the user first (will fail silently if user already exists)
-      await db.insert(user).values({
-        id: session.user.id,
-      }).onConflictDoNothing();
+      await db
+        .insert(user)
+        .values({
+          id: session.user.id,
+        })
+        .onConflictDoNothing();
 
       // Create a new starter kit for the user
       // Use the user's own address as both creator and claimer
