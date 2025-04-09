@@ -42,7 +42,7 @@ export function ConnectButton() {
 
       // Generate a SIWE challenge
       console.log("Generating SIWE challenge for address:", address);
-      const message = await generateSiweChallenge(address);
+      const message = await generateSiweChallenge(address as `0x${string}`);
       console.log("Generated SIWE message:", message);
 
       // Sign the message with a try-catch to handle popup errors

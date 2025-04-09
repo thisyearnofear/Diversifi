@@ -9,7 +9,8 @@ const actions: Omit<ActionInsert, "id" | "createdAt" | "updatedAt">[] = [
   // Based Actions (BASE)
   {
     title: "Set up Farcaster Account",
-    description: "Create a Farcaster account and join the decentralized social network",
+    description:
+      "Create a Farcaster account and join the decentralized social network",
     category: "SOCIAL",
     chain: "BASE",
     difficulty: "BEGINNER",
@@ -136,6 +137,11 @@ const actions: Omit<ActionInsert, "id" | "createdAt" | "updatedAt">[] = [
 export async function seedActions() {
   console.log("Seeding actions...");
   console.log("Database URL:", process.env.POSTGRES_URL);
+
+  if (!db) {
+    console.warn("⚠️ Database not available. Cannot seed actions.");
+    return;
+  }
 
   for (const actionData of actions) {
     const existingAction = await db

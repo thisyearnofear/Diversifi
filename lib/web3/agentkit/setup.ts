@@ -2,6 +2,7 @@ import {
   AgentKit,
   pythActionProvider,
   walletActionProvider,
+  WalletProvider,
 } from "@coinbase/agentkit";
 import { ConnectKitWalletProvider } from "./wallet-providers/connectKitWalletProvider";
 import { erc20ActionProvider } from "./action-providers/erc20";
@@ -16,10 +17,12 @@ export const setupAgentKit = async () => {
       ? "base-mainnet"
       : "base-sepolia";
 
-  let walletProvider;
+  let walletProvider: WalletProvider;
 
   // Configure ConnectKit wallet provider
-  walletProvider = await ConnectKitWalletProvider.configureWithWallet(activeChain);
+  walletProvider = (await ConnectKitWalletProvider.configureWithWallet(
+    activeChain
+  )) as unknown as WalletProvider;
   console.log("Using ConnectKit wallet provider");
 
   // Create AgentKit instance
@@ -32,7 +35,9 @@ export const setupAgentKit = async () => {
       safeActionProvider(),
       basenameActionProvider(),
       // Only include Alchemy if API key is available
-      ...(process.env.ALCHEMY_API_KEY ? [alchemyActionProvider(process.env.ALCHEMY_API_KEY)] : []),
+      ...(process.env.ALCHEMY_API_KEY
+        ? [alchemyActionProvider(process.env.ALCHEMY_API_KEY)]
+        : []),
       zoraActionProvider(),
     ],
   });

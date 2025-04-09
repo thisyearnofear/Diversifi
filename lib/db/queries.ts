@@ -28,10 +28,13 @@ import type { BlockKind } from "@/components/block";
 // Create a function to get the database connection
 const getDbClient = () => {
   try {
-    const connectionString = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+    const connectionString =
+      process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
 
     if (!connectionString) {
-      console.warn('⚠️ No database connection string found. Some features may not work.');
+      console.warn(
+        "⚠️ No database connection string found. Some features may not work."
+      );
       return null;
     }
 
@@ -41,7 +44,7 @@ const getDbClient = () => {
       max: 1,
     });
   } catch (error) {
-    console.error('Failed to create database client:', error);
+    console.error("Failed to create database client:", error);
     return null;
   }
 };
@@ -57,7 +60,7 @@ export type User = UserWithRelations;
 export async function getUser(id: string): Promise<User[]> {
   try {
     if (!db) {
-      console.warn('⚠️ Database not available. Returning empty user array.');
+      console.warn("⚠️ Database not available. Returning empty user array.");
       return [];
     }
 
@@ -91,7 +94,7 @@ export async function getUser(id: string): Promise<User[]> {
 export async function createUserIfNotExists(address: string): Promise<void> {
   try {
     if (!db) {
-      console.warn('⚠️ Database not available. Cannot create user.');
+      console.warn("⚠️ Database not available. Cannot create user.");
       return;
     }
 
@@ -119,7 +122,7 @@ export async function saveChat({
 }) {
   try {
     if (!db) {
-      console.warn('⚠️ Database not available. Cannot save chat.');
+      console.warn("⚠️ Database not available. Cannot save chat.");
       return null;
     }
 
@@ -140,7 +143,7 @@ export async function saveChat({
 export async function deleteChatById({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn('⚠️ Database not available. Cannot delete chat.');
+      console.warn("⚠️ Database not available. Cannot delete chat.");
       return null;
     }
 
@@ -160,7 +163,7 @@ export async function getChatsByUserId({ userId }: { userId: string }) {
     console.log("Getting chats for user:", userId);
 
     if (!db) {
-      console.warn('⚠️ Database not available. Returning empty chats array.');
+      console.warn("⚠️ Database not available. Returning empty chats array.");
       return [];
     }
 
@@ -179,7 +182,7 @@ export async function getChatsByUserId({ userId }: { userId: string }) {
 export async function getChatById({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn('⚠️ Database not available. Cannot get chat.');
+      console.warn("⚠️ Database not available. Cannot get chat.");
       return null;
     }
 
@@ -195,7 +198,7 @@ export async function getChatById({ id }: { id: string }) {
 export async function saveMessages({ messages }: { messages: Array<Message> }) {
   try {
     if (!db) {
-      console.warn('⚠️ Database not available. Cannot save messages.');
+      console.warn("⚠️ Database not available. Cannot save messages.");
       return null;
     }
 
@@ -209,7 +212,9 @@ export async function saveMessages({ messages }: { messages: Array<Message> }) {
 export async function getMessagesByChatId({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn('⚠️ Database not available. Returning empty messages array.');
+      console.warn(
+        "⚠️ Database not available. Returning empty messages array."
+      );
       return [];
     }
 
@@ -234,6 +239,11 @@ export async function voteMessage({
   type: "up" | "down";
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot vote on message.");
+      return null;
+    }
+
     const [existingVote] = await db
       .select()
       .from(vote)
@@ -258,6 +268,10 @@ export async function voteMessage({
 
 export async function getVotesByChatId({ id }: { id: string }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get votes.");
+      return [];
+    }
     return await db.select().from(vote).where(eq(vote.chatId, id));
   } catch (error) {
     console.error("Failed to get votes by chat id from database", error);
@@ -279,6 +293,10 @@ export async function saveDocument({
   userId: string;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot save document.");
+      return null;
+    }
     return await db.insert(document).values({
       id,
       title,
@@ -295,6 +313,10 @@ export async function saveDocument({
 
 export async function getDocumentsById({ id }: { id: string }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get documents.");
+      return [];
+    }
     const documents = await db
       .select()
       .from(document)
@@ -310,6 +332,10 @@ export async function getDocumentsById({ id }: { id: string }) {
 
 export async function getDocumentById({ id }: { id: string }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get document.");
+      return null;
+    }
     const [selectedDocument] = await db
       .select()
       .from(document)
@@ -331,6 +357,10 @@ export async function deleteDocumentsByIdAfterTimestamp({
   timestamp: Date;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot delete documents.");
+      return null;
+    }
     await db
       .delete(suggestion)
       .where(
@@ -357,6 +387,10 @@ export async function saveSuggestions({
   suggestions: Array<Suggestion>;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot save suggestions.");
+      return null;
+    }
     return await db.insert(suggestion).values(suggestions);
   } catch (error) {
     console.error("Failed to save suggestions in database");
@@ -370,6 +404,10 @@ export async function getSuggestionsByDocumentId({
   documentId: string;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get suggestions.");
+      return [];
+    }
     return await db
       .select()
       .from(suggestion)
@@ -384,6 +422,10 @@ export async function getSuggestionsByDocumentId({
 
 export async function getMessageById({ id }: { id: string }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get message.");
+      return [];
+    }
     return await db.select().from(message).where(eq(message.id, id));
   } catch (error) {
     console.error("Failed to get message by id from database");
@@ -399,6 +441,10 @@ export async function deleteMessagesByChatIdAfterTimestamp({
   timestamp: Date;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot delete messages.");
+      return null;
+    }
     const messagesToDelete = await db
       .select({ id: message.id })
       .from(message)
@@ -421,6 +467,7 @@ export async function deleteMessagesByChatIdAfterTimestamp({
           and(eq(message.chatId, chatId), inArray(message.id, messageIds))
         );
     }
+    return null;
   } catch (error) {
     console.error(
       "Failed to delete messages by id after timestamp from database"
@@ -437,6 +484,10 @@ export async function updateChatVisiblityById({
   visibility: "private" | "public";
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot update chat visibility.");
+      return null;
+    }
     return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
   } catch (error) {
     console.error("Failed to update chat visibility in database");
@@ -448,6 +499,10 @@ export async function saveUserInformation(
   data: Omit<UserKnowledge, "id" | "createdAt" | "deletedAt">
 ) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot save user information.");
+      return null;
+    }
     return await db.insert(userKnowledge).values({
       ...data,
       createdAt: new Date(),
@@ -461,6 +516,10 @@ export async function saveUserInformation(
 
 export async function getUserInformation(userId: string) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get user information.");
+      return [];
+    }
     return await db
       .select()
       .from(userKnowledge)
@@ -488,6 +547,10 @@ export async function createStarterKit({
   claimerId?: string;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot create starter kit.");
+      return null;
+    }
     if (id) {
       // If id is provided, do an upsert
       return await db
@@ -536,6 +599,10 @@ export async function claimStarterKit({
   userId: string;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot claim starter kit.");
+      return null;
+    }
     return await db
       .update(starterKit)
       .set({
@@ -551,6 +618,12 @@ export async function claimStarterKit({
 
 export async function getClaimedStarterKits(userId: string) {
   try {
+    if (!db) {
+      console.warn(
+        "⚠️ Database not available. Cannot get claimed starter kits."
+      );
+      return [];
+    }
     return await db
       .select()
       .from(starterKit)
@@ -564,6 +637,12 @@ export async function getClaimedStarterKits(userId: string) {
 
 export async function getCreatedStarterKits(userId: string) {
   try {
+    if (!db) {
+      console.warn(
+        "⚠️ Database not available. Cannot get created starter kits."
+      );
+      return [];
+    }
     return await db
       .select()
       .from(starterKit)
@@ -583,6 +662,10 @@ export async function useStarterKit({
   amount: number;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot use starter kit.");
+      return null;
+    }
     return await db
       .update(starterKit)
       .set({
@@ -597,6 +680,12 @@ export async function useStarterKit({
 
 export async function getUnclaimedStarterKits(userId: string) {
   try {
+    if (!db) {
+      console.warn(
+        "⚠️ Database not available. Cannot get unclaimed starter kits."
+      );
+      return [];
+    }
     return await db
       .select()
       .from(starterKit)
@@ -612,6 +701,12 @@ export async function getUnclaimedStarterKits(userId: string) {
 
 export async function deleteUserInformation(id: string) {
   try {
+    if (!db) {
+      console.warn(
+        "⚠️ Database not available. Cannot delete user information."
+      );
+      return null;
+    }
     return await db
       .update(userKnowledge)
       .set({ deletedAt: new Date() })
@@ -636,6 +731,10 @@ export async function createCharge({
   product?: "STARTERKIT";
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot create charge.");
+      return null;
+    }
     return await db.insert(charge).values({
       id,
       userId,
@@ -666,6 +765,10 @@ export async function updateChargeStatus({
   expiresAt?: Date;
 }) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot update charge status.");
+      return null;
+    }
     return await db
       .update(charge)
       .set({
@@ -684,6 +787,10 @@ export async function updateChargeStatus({
 
 export async function getChargeById(id: string) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get charge.");
+      return null;
+    }
     return await db.select().from(charge).where(eq(charge.id, id));
   } catch (error) {
     console.error("Failed to get charge");
@@ -693,6 +800,10 @@ export async function getChargeById(id: string) {
 
 export async function getUserCharges(userId: string) {
   try {
+    if (!db) {
+      console.warn("⚠️ Database not available. Cannot get user charges.");
+      return [];
+    }
     return await db
       .select()
       .from(charge)
@@ -706,6 +817,12 @@ export async function getUserCharges(userId: string) {
 
 export async function getAvailableStarterKits() {
   try {
+    if (!db) {
+      console.warn(
+        "⚠️ Database not available. Cannot get available starter kits."
+      );
+      return [];
+    }
     return await db
       .select()
       .from(starterKit)
@@ -719,6 +836,12 @@ export async function getAvailableStarterKits() {
 
 export async function claimAvailableStarterKit(userId: string) {
   try {
+    if (!db) {
+      console.warn(
+        "⚠️ Database not available. Cannot claim available starter kit."
+      );
+      return null;
+    }
     // First get the oldest available starter kit
     const [availableKit] = await db
       .select()

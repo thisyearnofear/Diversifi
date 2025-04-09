@@ -24,16 +24,16 @@ import { useAuth } from "@/hooks/use-auth";
 export function SidebarHistory() {
   const { setOpenMobile } = useSidebar();
   const { id } = useParams();
-  const { sessionAddress } = useAuth();
+  const { activeAddress } = useAuth();
   const { data: history } = useSWR<Array<Chat>>(
-    sessionAddress ? "/api/history" : null,
+    activeAddress ? "/api/history" : null,
     fetcher,
     {
       fallbackData: [],
     }
   );
 
-  if (!sessionAddress) {
+  if (!activeAddress) {
     return (
       <SidebarGroup>
         <SidebarGroupContent>
