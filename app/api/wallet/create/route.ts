@@ -68,18 +68,18 @@ export async function POST() {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating wallet:", error);
-    console.error("Error details:", {
-      message: error.message,
-      stack: error.stack,
-      name: error.name,
-      code: error.code,
-    });
 
-    return NextResponse.json(
-      { error: error.message || "Failed to create wallet" },
-      { status: 500 }
-    );
+    // Properly type check the error
+    const errorDetails = {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+    };
+
+    console.error("Error details:", errorDetails);
+
+    return NextResponse.json({ error: errorDetails.message }, { status: 500 });
   }
 }

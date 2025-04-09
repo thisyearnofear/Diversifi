@@ -11,7 +11,11 @@ import {
   generateSiweNonce,
   parseSiweMessage,
 } from "viem/siwe";
-import { createSession, decrypt, type SessionPayload } from "@/lib/auth/session";
+import {
+  createSession,
+  decrypt,
+  type SessionPayload,
+} from "@/lib/auth/session";
 
 const chain =
   process.env.NEXT_PUBLIC_ACTIVE_CHAIN === "base" ? base : baseSepolia;
@@ -40,7 +44,10 @@ const publicClient = createPublicClient({
 
 export const verifySiwe = async (message: string, signature: `0x${string}`) => {
   try {
-    console.log("Verifying SIWE message:", { message, signature: signature.slice(0, 10) + '...' });
+    console.log("Verifying SIWE message:", {
+      message,
+      signature: signature.slice(0, 10) + "...",
+    });
 
     const cookieStore = await cookies();
     const nonce = cookieStore.get("nonce");
@@ -66,7 +73,9 @@ export const verifySiwe = async (message: string, signature: `0x${string}`) => {
       console.log("SIWE verification result:", verified);
 
       if (!verified) {
-        console.error("SIWE verification failed: Signature verification failed");
+        console.error(
+          "SIWE verification failed: Signature verification failed"
+        );
         return { status: "failed", error: "Signature verification failed" };
       }
 
@@ -77,11 +86,15 @@ export const verifySiwe = async (message: string, signature: `0x${string}`) => {
       return { status: "success", address: parsedMessage.address };
     } catch (verifyError) {
       console.error("SIWE verification error:", verifyError);
-      return { status: "failed", error: "Verification error: " + (verifyError.message || "Unknown error") };
+      const errorMessage =
+        verifyError instanceof Error ? verifyError.message : "Unknown error";
+      return { status: "failed", error: "Verification error: " + errorMessage };
     }
   } catch (error) {
     console.error("Error verifying SIWE:", error);
-    return { status: "failed", error: "General error: " + (error.message || "Unknown error") };
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return { status: "failed", error: "General error: " + errorMessage };
   }
 };
 
