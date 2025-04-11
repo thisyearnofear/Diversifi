@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import type { ChatRequestOptions } from "ai";
 import type { Message } from "@/types/message";
@@ -9,10 +9,7 @@ import { memo, useState } from "react";
 import type { Vote } from "@/lib/db/schema";
 
 import { DocumentToolCall, DocumentToolResult } from "./document";
-import {
-  PencilEditIcon,
-  SparklesIcon,
-} from "./icons";
+import { PencilEditIcon, SparklesIcon } from "./icons";
 import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
@@ -122,7 +119,9 @@ const PurePreviewMessage = ({
                     const { text, interactive } = parseMessageContent(message);
                     return (
                       <>
-                        <Markdown>{text}</Markdown>
+                        <div className="markdown-content">
+                          <Markdown>{text}</Markdown>
+                        </div>
                         {interactive && (
                           <div className="mt-4">
                             <InteractiveElement
@@ -233,18 +232,18 @@ export const PreviewMessage = memo(
     if (
       !equal(
         prevProps.message.toolInvocations,
-        nextProps.message.toolInvocations,
+        nextProps.message.toolInvocations
       )
     )
       return false;
     if (!equal(prevProps.vote, nextProps.vote)) return false;
 
     return true;
-  },
+  }
 );
 
 export const ThinkingMessage = () => {
-  const role = 'assistant';
+  const role = "assistant";
 
   return (
     <motion.div
@@ -255,10 +254,10 @@ export const ThinkingMessage = () => {
     >
       <div
         className={cx(
-          'flex gap-4 group-data-[role=user]/message:px-3 w-full group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:py-2 rounded-xl',
+          "flex gap-4 group-data-[role=user]/message:px-3 w-full group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:py-2 rounded-xl",
           {
-            'group-data-[role=user]/message:bg-muted': true,
-          },
+            "group-data-[role=user]/message:bg-muted": true,
+          }
         )}
       >
         <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">

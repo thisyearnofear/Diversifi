@@ -96,7 +96,7 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
         <ul className="space-y-2">
           {steps.map((step: Step, index: number) => (
             <li key={index} className="flex items-start gap-2">
-              <Circle className="mt-1 h-4 w-4 flex-shrink-0 text-gray-400" />
+              <Circle className="mt-1 size-4 shrink-0 text-gray-400" />
               <div>
                 <p className="text-sm font-medium">{step.title}</p>
                 <p className="text-sm text-gray-600">{step.description}</p>

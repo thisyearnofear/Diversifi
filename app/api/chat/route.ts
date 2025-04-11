@@ -1,6 +1,7 @@
 import { type Message, createDataStreamResponse, streamText, Output } from "ai";
 
 import { auth } from "@/app/auth";
+import { Session } from "next-auth";
 import { myProvider } from "@/lib/ai/models";
 import { generateSystemPrompt } from "@/lib/ai/prompts";
 import {
@@ -39,28 +40,37 @@ import { suggestActionsDefinition } from "@/lib/ai/tools/suggest-actions";
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
-  const {
-    id,
-    messages,
-    selectedChatModel,
-  }: { id: string; messages: Array<Message>; selectedChatModel: string } =
-    await request.json();
+  try {
+    const {
+      id,
+      messages,
+      selectedChatModel,
+    }: { id: string; messages: Array<Message>; selectedChatModel: string } =
+      await request.json();
 
-  const attachments = messages.flatMap(
-    (message) => message.experimental_attachments ?? []
-  );
+    const attachments = messages.flatMap(
+      (message) => message.experimental_attachments ?? []
+    );
 
-  let userProfile = "User is not signed in";
-  const session = await auth();
-  const userMessage = getMostRecentUserMessage(messages);
+    let userProfile = "User is not signed in";
+    let session: Session | null = null;
 
-  if (!userMessage) {
-    return new Response("No user message found", { status: 400 });
-  }
+    try {
+      session = await auth();
+    } catch (authError) {
+      console.error('Authentication error in chat API:', authError);
+      // Continue without authentication
+    }
 
-  if (session?.user?.id) {
-    const userInfo = await getUser(session.user.id);
-    userProfile = `USER-WALLET-ADDRESS=${
+    const userMessage = getMostRecentUserMessage(messages);
+
+    if (!userMessage) {
+      return new Response("No user message found", { status: 400 });
+    }
+
+    if (session?.user?.id) {
+      const userInfo = await getUser(session.user.id);
+      userProfile = `USER-WALLET-ADDRESS=${
       session.user.id
     }. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile(
       {
@@ -124,7 +134,7 @@ export async function POST(request: Request) {
         }),
         // experimental_transform: smoothStream({ chunking: "word" }),
         experimental_generateMessageId: generateUUID,
-        tools: {
+        tools: session ? {
           ...tools,
           createDocument: createDocument({ session, dataStream }),
           updateDocument: updateDocument({ session, dataStream }),
@@ -176,6 +186,45 @@ export async function POST(request: Request) {
               }
             },
           }),
+        } : {
+          ...tools,
+          // Provide limited tools when no session is available
+          getAvailableStarterKits: getAvailableStarterKitsTool(),
+          suggestActions: tool({
+            description: suggestActionsDefinition.description,
+            parameters: suggestActionsDefinition.parameters,
+            execute: async ({ category, title, limit }) => {
+              try {
+                const result = await suggestActionsDefinition.handler(
+                  category,
+                  title,
+                  limit
+                );
+                return result;
+              } catch (error) {
+                console.error("Error in suggestActions:", error);
+                // Return a default action if there's an error
+                return [
+                  {
+                    title: "Set up Lens Account",
+                    description: "Create a Lens account and join the decentralized social network",
+                    chain: category || "BASE",
+                    difficulty: "beginner",
+                    steps: [
+                      "Go to https://onboarding.lens.xyz and sign up",
+                      "Connect your wallet",
+                      "Create your profile",
+                      "Copy your profile URL (e.g. https://hey.xyz/u/username)",
+                    ],
+                    reward: "Access to the Lens ecosystem",
+                    actionUrl: "https://onboarding.lens.xyz",
+                    proofFieldLabel: "Lens Profile URL",
+                    proofFieldPlaceholder: "https://hey.xyz/u/yourusername",
+                  },
+                ];
+              }
+            },
+          }),
         },
         onFinish: async ({ response, reasoning, text }) => {
           // currently the content of the last message is truncated, so passing in the text as a partial fix
@@ -195,7 +244,7 @@ export async function POST(request: Request) {
               ],
             };
           }
-          if (session.user?.id) {
+          if (session?.user?.id) {
             try {
               const sanitizedResponseMessages = sanitizeResponseMessages({
                 messages: response.messages,
@@ -219,6 +268,8 @@ export async function POST(request: Request) {
             } catch (error) {
               console.error("Failed to save chat");
             }
+          } else {
+            console.log("No session available, skipping chat save");
           }
         },
       });
@@ -232,6 +283,16 @@ export async function POST(request: Request) {
       return `I'm sorry, but I encountered an error while processing your request. Please try again or contact support if the issue persists.`;
     },
   });
+  } catch (error) {
+    console.error('Unhandled error in chat API:', error);
+    return new Response(
+      JSON.stringify({
+        error: 'An unexpected error occurred',
+        message: 'Please try again later',
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }
 
 export async function DELETE(request: Request) {

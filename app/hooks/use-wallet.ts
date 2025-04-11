@@ -1,8 +1,6 @@
 "use client";
 
-import { useAccount, useBalance } from "wagmi";
-import { useConnect } from "wagmi";
-import { useChainId, useSwitchChain } from "wagmi";
+import { useAccount, useBalance, useConnect, useChainId, useSwitchChain } from "wagmi";
 
 export function useWallet() {
   const { address, isConnected } = useAccount();

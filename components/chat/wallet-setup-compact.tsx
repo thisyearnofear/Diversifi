@@ -54,11 +54,11 @@ export function WalletSetupCompact() {
       <div className="space-y-2">
         <div className="flex items-center space-x-2">
           {isConnected ? (
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="size-4 text-green-500" />
           ) : isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+            <Loader2 className="size-4 animate-spin text-blue-500" />
           ) : (
-            <div className="h-4 w-4 rounded-full border border-gray-300" />
+            <div className="size-4 rounded-full border border-gray-300" />
           )}
           <span className="text-xs font-medium">Connect Wallet</span>
           {isConnected && address && (
@@ -71,7 +71,7 @@ export function WalletSetupCompact() {
 
         {error && (
           <div className="flex items-center space-x-2 text-red-500 text-xs">
-            <AlertCircle className="h-3 w-3" />
+            <AlertCircle className="size-3" />
             <span>{error}</span>
           </div>
         )}

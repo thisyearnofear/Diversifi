@@ -20,6 +20,22 @@
     .text-balance {
         text-wrap: balance;
     }
+
+    /* Fix for code blocks in markdown */
+    .markdown-content p > pre,
+    .markdown-content p > div[data-code-block="true"] {
+        display: block;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    /* Ensure code blocks are properly displayed */
+    pre[data-code-block="true"] {
+        display: block;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        white-space: pre-wrap;
+    }
 }
 
 @layer base {

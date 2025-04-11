@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { memo } from "react";
+import { memo, Children, isValidElement } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { CodeBlock } from "./code-block";
@@ -9,11 +9,12 @@ const components: Partial<Components> = {
   code: CodeBlock,
   pre: ({ children }) => <>{children}</>,
   // Override paragraph to prevent nesting invalid elements
+  // Override paragraph rendering to handle code blocks properly
   p: ({ node, children, ...props }) => {
     // Check if children contains a pre or div element
-    const hasInvalidChild = React.Children.toArray(children).some(
+    const hasInvalidChild = Children.toArray(children).some(
       (child) =>
-        React.isValidElement(child) &&
+        isValidElement(child) &&
         (child.type === "pre" ||
           child.props?.node?.tagName === "pre" ||
           child.props?.node?.tagName === "div" ||
