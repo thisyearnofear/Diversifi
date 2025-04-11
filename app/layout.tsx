@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
-import { cookies } from "next/headers";
 import Script from "next/script";
 import { Inter } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { ActionSidebar } from "@/components/action-sidebar";
+import { LeftSidebar } from "@/components/left-sidebar";
+import { RightSidebar } from "@/components/right-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
-import { auth } from "@/app/auth";
-import { WalletConnect } from "./components/wallet-connect";
-import { AuthProvider } from "@/app/providers/auth-provider";
+import { MobileNavigation } from "@/components/mobile-navigation";
 
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
@@ -48,14 +46,11 @@ const THEME_COLOR_SCRIPT = `\
   updateThemeColor();
 })();`;
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [session, cookieStore] = await Promise.all([auth(), cookies()]);
-  const isCollapsed = cookieStore.get("sidebar:state")?.value !== "true";
-
   return (
     <html
       lang="en"
@@ -86,14 +81,16 @@ export default async function RootLayout({
           <Toaster position="top-center" />
           <Providers>
             <SidebarProvider>
-              <div className="flex min-h-screen w-full">
-                <ActionSidebar />
-                <div className="flex-1 w-full">
+              <div className="grid grid-cols-[auto,1fr,auto] min-h-screen w-full">
+                <LeftSidebar />
+                <div className="flex justify-center items-start">
                   <div className="fixed top-0 right-0 z-50 p-4 m-4 bg-background/80 backdrop-blur-sm border rounded-md shadow-sm">
                     <ConnectButton />
                   </div>
-                  <main className="size-full">{children}</main>
+                  <main className="w-full max-w-3xl mx-auto">{children}</main>
+                  <MobileNavigation />
                 </div>
+                <RightSidebar />
               </div>
             </SidebarProvider>
           </Providers>

@@ -88,54 +88,56 @@ export function Chat({
 
   return (
     <ChatProvider value={{ ...chatMethods, submitForm }}>
-      <div className="flex flex-col min-w-0 h-dvh bg-background">
-        <ChatHeader
-          chatId={id}
-          selectedModelId={selectedChatModel}
-          selectedVisibilityType={selectedVisibilityType}
-          isReadonly={isReadonly}
-        />
+      <div className="flex justify-center w-full h-dvh bg-background">
+        <div className="flex flex-col w-full max-w-4xl relative">
+          <ChatHeader
+            chatId={id}
+            selectedModelId={selectedChatModel}
+            selectedVisibilityType={selectedVisibilityType}
+            isReadonly={isReadonly}
+          />
 
-        <Messages
-          chatId={id}
-          isLoading={chatMethods.isLoading}
-          votes={votes}
-          messages={chatMethods.messages}
-          setMessages={chatMethods.setMessages}
-          reload={chatMethods.reload}
-          isReadonly={isReadonly}
-          isBlockVisible={isBlockVisible}
-        />
+          <Messages
+            chatId={id}
+            isLoading={chatMethods.isLoading}
+            votes={votes}
+            messages={chatMethods.messages}
+            setMessages={chatMethods.setMessages}
+            reload={chatMethods.reload}
+            isReadonly={isReadonly}
+            isBlockVisible={isBlockVisible}
+          />
 
-        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
-          {!isReadonly && (
-            <MultimodalInput
-              chatId={id}
-              input={chatMethods.input}
-              isLoading={chatMethods.isLoading}
-              attachments={attachments}
-              setAttachments={setAttachments}
-            />
-          )}
-        </form>
+          <form className="flex w-full px-4 bg-background pb-4 md:pb-6 gap-2">
+            {!isReadonly && (
+              <MultimodalInput
+                chatId={id}
+                input={chatMethods.input}
+                isLoading={chatMethods.isLoading}
+                attachments={attachments}
+                setAttachments={setAttachments}
+              />
+            )}
+          </form>
+
+          <Block
+            chatId={id}
+            input={chatMethods.input}
+            setInput={chatMethods.setInput}
+            handleSubmit={chatMethods.handleSubmit}
+            isLoading={chatMethods.isLoading}
+            stop={chatMethods.stop}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            append={chatMethods.append}
+            messages={chatMethods.messages}
+            setMessages={chatMethods.setMessages}
+            reload={chatMethods.reload}
+            votes={votes}
+            isReadonly={isReadonly}
+          />
+        </div>
       </div>
-
-      <Block
-        chatId={id}
-        input={chatMethods.input}
-        setInput={chatMethods.setInput}
-        handleSubmit={chatMethods.handleSubmit}
-        isLoading={chatMethods.isLoading}
-        stop={chatMethods.stop}
-        attachments={attachments}
-        setAttachments={setAttachments}
-        append={chatMethods.append}
-        messages={chatMethods.messages}
-        setMessages={chatMethods.setMessages}
-        reload={chatMethods.reload}
-        votes={votes}
-        isReadonly={isReadonly}
-      />
     </ChatProvider>
   );
 }

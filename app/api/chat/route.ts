@@ -85,6 +85,16 @@ export async function POST(request: Request) {
         message: userMessage,
       });
       await saveChat({ id, userId: session.user.id, title });
+
+      // Enforce chat limit after creating a new chat
+      try {
+        await fetch('/api/chat/enforce-limit', {
+          method: 'POST',
+        });
+      } catch (error) {
+        console.error('Error enforcing chat limit:', error);
+        // Continue even if limit enforcement fails
+      }
     }
     await saveMessages({
       messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
