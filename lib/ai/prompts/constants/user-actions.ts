@@ -28,7 +28,27 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
 
 10. "setup-wallet" - To help users set up a Coinbase-managed wallet. Use this when a user wants to get started with Ethereum but doesn't have a wallet yet. This will display a wallet setup card in the chat that guides them through creating and funding a wallet.
 
-11. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
+11. "base-action" - To help users swap to USDbC on Aerodrome. Use this when a user wants to get stablecoins on Base or asks about USDbC. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping ETH for USDbC, and verifying their transaction with a transaction hash.
+   Example args: {
+     "title": "Swap to USDbC on Aerodrome",
+     "description": "Get stablecoins on Base and earn rewards",
+     "chain": "BASE",
+     "difficulty": "beginner",
+     "steps": [
+       "Click 'Start Swap' to register for rewards and open Aerodrome",
+       "Connect your wallet to Aerodrome",
+       "Swap ETH for USDbC (already pre-selected)",
+       "Confirm the transaction",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete Action'"
+     ],
+     "reward": "Earn rewards through Divvi Protocol",
+     "actionUrl": "https://aerodrome.finance/swap?inputCurrency=ETH&outputCurrency=0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+12. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
    Example args: {
      "title": "Set up a Farcaster account",
      "description": "Create a Farcaster account and join the decentralized social network",

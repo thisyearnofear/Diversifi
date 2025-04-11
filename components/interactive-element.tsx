@@ -11,6 +11,8 @@ import { ActionMessage } from "./chat/action-message";
 import { WalletSetupCompact } from "./chat/wallet-setup-compact";
 import { FarcasterActionCardCompact } from "./chat/farcaster-action-card-compact";
 import { LensActionCardCompact } from "./chat/lens-action-card-compact";
+import { AerodromeSwapCardCompact } from "./chat/aerodrome-swap-card-compact";
+import { BaseActionMessage } from "./chat/base-action-message";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -91,6 +93,7 @@ export function InteractiveElement({
   const showNftActions = actions.filter((a) => a.action === "show-nft");
   const actionCardActions = actions.filter((a) => a.action === "action-card");
   const setupWalletAction = actions.find((a) => a.action === "setup-wallet");
+  const baseAction = actions.find((a) => a.action === "base-action");
   const farcasterAction = actions.find((a) => a.action === "farcaster-action");
   const lensAction = actions.find((a) => a.action === "lens-action");
   // Also check for Farcaster/Lens actions in action-card format
@@ -102,9 +105,15 @@ export function InteractiveElement({
     (a) => a.args?.[0]?.title === "Set up Lens Account"
   );
 
-  // Filter out Farcaster and Lens actions from actionCardActions to avoid duplication
+  // Find Base action card
+  const baseActionCard = actionCardActions.find(
+    (a) => a.args?.[0]?.title === "Swap to USDbC on Aerodrome"
+  );
+
+  // Filter out Farcaster, Lens, and Base actions from actionCardActions to avoid duplication
   const filteredActionCards = actionCardActions.filter(
-    (a) => a !== farcasterActionCard && a !== lensActionCard
+    (a) =>
+      a !== farcasterActionCard && a !== lensActionCard && a !== baseActionCard
   );
 
   return (
@@ -228,6 +237,15 @@ export function InteractiveElement({
           }
           onComplete={() => {
             handleAction("I've completed the Farcaster action!");
+          }}
+        />
+      )}
+
+      {/* Handle both dedicated base-action and action-card for Base */}
+      {(baseAction || baseActionCard) && (
+        <BaseActionMessage
+          onComplete={() => {
+            handleAction("I've completed the USDbC swap action!");
           }}
         />
       )}

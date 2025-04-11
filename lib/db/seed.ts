@@ -3,6 +3,7 @@ import { action } from "./schema";
 import { eq } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { seedLensAction } from "./seeds/lens-action";
+import { seedBaseAction } from "./seeds/base-action";
 
 type ActionInsert = InferInsertModel<typeof action>;
 
@@ -165,6 +166,9 @@ export async function seedActions() {
 
   // Seed the Lens action
   await seedLensAction();
+
+  // Seed the Base action
+  await seedBaseAction();
 
   console.log("Seeding complete!");
 }

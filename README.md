@@ -48,6 +48,8 @@ We use:
 - ConnectKit for wallet management
 - Framer Motion for animations
 - SIWE (Sign-In With Ethereum) for authentication
+- CoinGecko API for real-time token pricing
+- Custom smart contracts for in-app swaps
 
 ## Deployment
 
@@ -127,6 +129,8 @@ pnpm dev
 4. ✅ Action sidebar UI
 5. ✅ Category-based navigation
 6. ✅ Basic action display
+7. ✅ In-app token swaps with BaseAerodromeSwap contract
+8. ✅ Real-time token pricing with CoinGecko API
 
 ## Clean-Up and Refocusing Plan
 
@@ -186,6 +190,23 @@ After encountering several challenges with the current implementation, we've dec
    - Implement more interactive tutorials
    - Add advanced action types
    - Integrate with more protocols
+
+## Deployed Contracts
+
+### BaseAerodromeSwap
+
+We've deployed a custom smart contract on Base to facilitate in-app token swaps:
+
+- **Contract Address**: `0xc5dcc68069add8a7055234f23ec40a1d469693f8`
+- **Network**: Base Mainnet
+- **Features**:
+  - Direct ETH to USDbC swaps
+  - ERC20 token to USDbC swaps
+  - Optimized gas usage
+  - Transaction fee mechanism (0.25% default)
+  - Security features (reentrancy protection, ownership controls)
+
+The contract provides a simplified interface for swapping tokens directly within our application, eliminating the need to redirect users to external DEXs. It leverages Aerodrome's liquidity pools on Base for efficient swaps.
 
 ## Next Steps
 
