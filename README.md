@@ -1,8 +1,8 @@
-# Hello World Computer
+# Stable Station
 
 ## Description
 
-Hello World Computer is a chat-based onboarding experience for Web3. We've evolved from a kit-based model to an action-based learning platform where users can:
+Stable Station is a chat-based onboarding experience for Web3. We've evolved from a kit-based model to an action-based learning platform where users can:
 
 - Complete specific actions on different chains (Base, Celo, Ethereum)
 - Earn rewards for completing actions
@@ -33,7 +33,7 @@ Hello World Computer is a chat-based onboarding experience for Web3. We've evolv
 
 ## How it's made
 
-[hello-world-computer.vercel.app/](https://hello-world-computer.vercel.app/)
+[stables-station.vercel.app/](https://stables-station.vercel.app/)
 
 ## Stack
 
@@ -198,7 +198,7 @@ After encountering several challenges with the current implementation, we've dec
 
 ### Overview
 
-SnelDAO is a data-driven learning optimization system focused on Ethereum education, particularly stablecoins. It enhances the existing Hello World Computer platform by tracking anonymized user journeys and optimizing learning paths.
+SnelDAO is a data-driven learning optimization system focused on Ethereum education, particularly stablecoins. It enhances the existing Stable Station platform by tracking anonymized user journeys and optimizing learning paths.
 
 ### Core Components
 

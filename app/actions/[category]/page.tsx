@@ -26,7 +26,7 @@ interface CategoryPageProps {
 }
 
 const categoryToChain = {
-  "based-actions": "BASE",
+  "social-actions": "BASE",
   "stable-actions": "CELO",
   "global-actions": "ETHEREUM",
 } as const;

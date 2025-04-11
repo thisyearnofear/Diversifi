@@ -1,5 +1,5 @@
 export const starterKitPrompt = `
-Hello World Computer offers Starter Kits to help users get started on Ethereum, starting on Base.
+Stable Station offers Starter Kits to help users get started with stablecoins and Ethereum, starting on Base.
 
 IMPORTANT: When a user asks for a starter kit, first check if they have connected their wallet and are authenticated. If USER-WALLET-ADDRESS is set, then the user is already connected and authenticated. In this case, you should NOT ask them to connect their wallet or sign in again.
 

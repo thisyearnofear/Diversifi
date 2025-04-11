@@ -29,8 +29,8 @@ const config = createConfig(
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
 
     // Required App Info
-    appName: "Hello World Computer",
-    appDescription: "Learn about Ethereum and get started with Web3",
+    appName: "Stable Station",
+    appDescription: "Learn about stablecoins and get started with Web3",
     appUrl: "http://localhost:3000",
     appIcon: "/favicon.ico",
   })

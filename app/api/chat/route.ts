@@ -158,19 +158,19 @@ export async function POST(request: Request) {
                 // Return a default action if there's an error
                 return [
                   {
-                    title: "Bridge to Base",
-                    description: "Bridge assets from Ethereum to Base",
+                    title: "Set up Lens Account",
+                    description: "Create a Lens account and join the decentralized social network",
                     chain: category || "BASE",
                     difficulty: "beginner",
                     steps: [
-                      "Visit bridge.base.org",
+                      "Go to onboarding.lens.xyz",
                       "Connect wallet",
-                      "Select amount",
+                      "Create profile",
                     ],
-                    reward: "0.1 ETH",
-                    actionUrl: "https://bridge.base.org",
-                    proofFieldLabel: "Transaction Hash",
-                    proofFieldPlaceholder: "0x...",
+                    reward: "Access to the Lens ecosystem",
+                    actionUrl: "https://onboarding.lens.xyz",
+                    proofFieldLabel: "Lens Profile URL",
+                    proofFieldPlaceholder: "https://hey.xyz/u/yourusername",
                   },
                 ];
               }

@@ -10,6 +10,7 @@ import { safeActionProvider } from "./action-providers/safe";
 import { alchemyActionProvider } from "./action-providers/alchemy";
 import { zoraActionProvider } from "./action-providers/zora";
 import { basenameActionProvider } from "./action-providers/basename";
+import { lensActionProvider } from "./action-providers/lens";
 
 export const setupAgentKit = async () => {
   const activeChain =
@@ -34,6 +35,7 @@ export const setupAgentKit = async () => {
       erc20ActionProvider(),
       safeActionProvider(),
       basenameActionProvider(),
+      lensActionProvider(),
       // Only include Alchemy if API key is available
       ...(process.env.ALCHEMY_API_KEY
         ? [alchemyActionProvider(process.env.ALCHEMY_API_KEY)]

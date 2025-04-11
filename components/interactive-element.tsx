@@ -10,6 +10,7 @@ import { NFTMedia, NFTNetwork, NFTTitle } from "@coinbase/onchainkit/nft/view";
 import { ActionMessage } from "./chat/action-message";
 import { WalletSetupCompact } from "./chat/wallet-setup-compact";
 import { FarcasterActionCardCompact } from "./chat/farcaster-action-card-compact";
+import { LensActionCardCompact } from "./chat/lens-action-card-compact";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -91,16 +92,20 @@ export function InteractiveElement({
   const actionCardActions = actions.filter((a) => a.action === "action-card");
   const setupWalletAction = actions.find((a) => a.action === "setup-wallet");
   const farcasterAction = actions.find((a) => a.action === "farcaster-action");
-  // Also check for Farcaster action in action-card format
-  // Remove any Farcaster actions from actionCardActions to avoid duplication
+  const lensAction = actions.find((a) => a.action === "lens-action");
+  // Also check for Farcaster/Lens actions in action-card format
+  // Remove any Farcaster/Lens actions from actionCardActions to avoid duplication
   const farcasterActionCard = actionCardActions.find(
     (a) => a.args?.[0]?.chain === "FARCASTER"
   );
+  const lensActionCard = actionCardActions.find(
+    (a) => a.args?.[0]?.title === "Set up Lens Account"
+  );
 
-  // Filter out Farcaster actions from actionCardActions to avoid duplication
-  const nonFarcasterActionCards = farcasterActionCard
-    ? actionCardActions.filter((a) => a !== farcasterActionCard)
-    : actionCardActions;
+  // Filter out Farcaster and Lens actions from actionCardActions to avoid duplication
+  const filteredActionCards = actionCardActions.filter(
+    (a) => a !== farcasterActionCard && a !== lensActionCard
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -167,9 +172,9 @@ export function InteractiveElement({
         </div>
       )}
 
-      {nonFarcasterActionCards.length > 0 && (
+      {filteredActionCards.length > 0 && (
         <ActionMessage
-          actions={nonFarcasterActionCards.map(
+          actions={filteredActionCards.map(
             (action) => action.args?.[0] as ActionData
           )}
           onComplete={() => {
@@ -223,6 +228,54 @@ export function InteractiveElement({
           }
           onComplete={() => {
             handleAction("I've completed the Farcaster action!");
+          }}
+        />
+      )}
+
+      {/* Handle both dedicated lens-action and action-card for Lens */}
+      {(lensAction || lensActionCard) && (
+        <LensActionCardCompact
+          title={
+            lensAction?.args?.[0]?.title ||
+            lensActionCard?.args?.[0]?.title ||
+            "Set up a Lens account"
+          }
+          description={
+            lensAction?.args?.[0]?.description ||
+            lensActionCard?.args?.[0]?.description ||
+            "Create a Lens account and join the decentralized social network"
+          }
+          steps={
+            lensAction?.args?.[0]?.steps ||
+            lensActionCard?.args?.[0]?.steps || [
+              "Go to https://onboarding.lens.xyz and sign up",
+              "Connect your wallet",
+              "Create your profile",
+              "Copy your profile URL (e.g. https://hey.xyz/u/username)",
+            ]
+          }
+          reward={
+            lensAction?.args?.[0]?.reward ||
+            lensActionCard?.args?.[0]?.reward ||
+            "Access to the Lens ecosystem"
+          }
+          actionUrl={
+            lensAction?.args?.[0]?.actionUrl ||
+            lensActionCard?.args?.[0]?.actionUrl ||
+            "https://onboarding.lens.xyz"
+          }
+          proofFieldLabel={
+            lensAction?.args?.[0]?.proofFieldLabel ||
+            lensActionCard?.args?.[0]?.proofFieldLabel ||
+            "Your Lens Profile URL"
+          }
+          proofFieldPlaceholder={
+            lensAction?.args?.[0]?.proofFieldPlaceholder ||
+            lensActionCard?.args?.[0]?.proofFieldPlaceholder ||
+            "https://hey.xyz/u/yourusername"
+          }
+          onComplete={() => {
+            handleAction("I've completed the Lens action!");
           }}
         />
       )}

@@ -55,7 +55,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarGroupLabel className="text-md font-bold">
-            Hello World Computer
+            Stable Station
           </SidebarGroupLabel>
           <SidebarMenuButton onClick={toggleSidebar}>
             <SidebarIcon /> Toggle Sidebar
@@ -107,6 +107,18 @@ export function AppSidebar() {
           >
             <Globe />
             Farcaster Setup
+          </SidebarMenuButton>
+
+          <SidebarMenuButton
+            onClick={() =>
+              triggerActionPrompt(
+                "LENS",
+                "I want to set up a Lens account. Can you help me with that directly in this chat?"
+              )
+            }
+          >
+            <Globe />
+            Lens Setup
           </SidebarMenuButton>
 
           <SidebarMenuButton

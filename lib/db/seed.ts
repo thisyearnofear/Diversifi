@@ -2,11 +2,12 @@ import { db } from "./queries";
 import { action } from "./schema";
 import { eq } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
+import { seedLensAction } from "./seeds/lens-action";
 
 type ActionInsert = InferInsertModel<typeof action>;
 
 const actions: Omit<ActionInsert, "id" | "createdAt" | "updatedAt">[] = [
-  // Based Actions (BASE)
+  // Social Actions
   {
     title: "Set up Farcaster Account",
     description:
@@ -29,22 +30,22 @@ const actions: Omit<ActionInsert, "id" | "createdAt" | "updatedAt">[] = [
     ],
   },
   {
-    title: "Bridge to Base",
-    description: "Bridge assets from Ethereum to Base",
-    category: "DEFI",
+    title: "Set up Lens Account",
+    description: "Create a Lens account and join the decentralized social network",
+    category: "SOCIAL",
     chain: "BASE",
-    difficulty: "INTERMEDIATE",
+    difficulty: "BEGINNER",
     prerequisites: ["Wallet with ETH"],
     steps: [
-      "Visit bridge.base.org",
+      "Go to https://onboarding.lens.xyz and sign up",
       "Connect your wallet",
-      "Select amount to bridge",
-      "Confirm transaction",
+      "Create your profile",
+      "Copy your profile URL (e.g. https://hey.xyz/u/username)",
     ],
     rewards: [
       {
-        type: "TOKEN",
-        description: "0.2 ETH",
+        type: "SOCIAL",
+        description: "Access to the Lens ecosystem",
       },
     ],
   },
@@ -161,6 +162,9 @@ export async function seedActions() {
       console.log(`Action already exists: ${actionData.title}`);
     }
   }
+
+  // Seed the Lens action
+  await seedLensAction();
 
   console.log("Seeding complete!");
 }

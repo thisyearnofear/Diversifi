@@ -4,7 +4,7 @@ import { action } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 const categoryToChain = {
-  "based-actions": "BASE",
+  "social-actions": "BASE",
   "stable-actions": "CELO",
   "global-actions": "ETHEREUM",
 } as const;

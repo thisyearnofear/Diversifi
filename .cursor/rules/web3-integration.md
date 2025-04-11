@@ -2,21 +2,24 @@
 
 ## Purpose
 
-The Web3 integration system connects the Hello World Computer application with blockchain networks, allowing users to interact with smart contracts, manage wallets, and perform on-chain actions.
+The Web3 integration system connects the Stable Station application with blockchain networks, allowing users to interact with smart contracts, manage wallets, and perform on-chain actions.
 
 ## Core Components
 
 1. **Wallet Connection**
+
    - ConnectKit for wallet connection UI
    - Wagmi hooks for wallet interaction
    - Support for multiple wallet providers
 
 2. **Authentication**
+
    - Sign-In with Ethereum (SIWE) for Web3 authentication
    - Session management with cookies
    - Protected routes and API endpoints
 
 3. **Blockchain Interaction**
+
    - AgentKit for AI-powered blockchain interactions
    - Support for multiple chains (Base, Ethereum, Celo)
    - Transaction management and status tracking
@@ -29,18 +32,21 @@ The Web3 integration system connects the Hello World Computer application with b
 ## Implementation Guidelines
 
 1. **Wallet Connection**
+
    - Use the `Web3Provider` component to wrap the application
    - Use the `useAccount` hook to access wallet information
    - Handle connection errors gracefully
    - Provide clear instructions for users
 
 2. **Authentication**
+
    - Use the `auth()` function to get the current session
    - Use the `generateSiweChallenge` and `verifySiwe` functions for authentication
    - Store session data in cookies
    - Handle authentication errors gracefully
 
 3. **Blockchain Interaction**
+
    - Use the `setupAgentKit` function to initialize AgentKit
    - Use the appropriate wallet provider based on the environment
    - Handle blockchain interaction errors gracefully
@@ -55,18 +61,21 @@ The Web3 integration system connects the Hello World Computer application with b
 ## Best Practices
 
 1. **Error Handling**
+
    - Handle network errors gracefully
    - Provide clear error messages for users
    - Implement retry mechanisms for failed transactions
    - Log errors with appropriate context
 
 2. **Performance**
+
    - Minimize blockchain calls
    - Use caching for frequently accessed data
    - Optimize gas usage for transactions
    - Use batching for multiple operations
 
 3. **Security**
+
    - Never expose private keys or sensitive information
    - Validate all user input
    - Use secure RPC endpoints
@@ -87,11 +96,13 @@ The Web3 integration system connects the Hello World Computer application with b
 ## Future Enhancements
 
 1. **Multi-chain Support**
+
    - Add support for additional chains
    - Implement cross-chain operations
    - Provide chain-specific features
 
 2. **Enhanced Wallet Integration**
+
    - Support for hardware wallets
    - Multi-signature wallet support
    - Social recovery options

@@ -15,8 +15,8 @@ import { toast } from "sonner";
 
 const actionCategories = [
   {
-    name: "Based Actions",
-    description: "Explore the Base ecosystem",
+    name: "Social Actions",
+    description: "Connect with decentralized social networks",
     icon: Globe,
     color: "text-blue-500",
     bgColor: "bg-blue-50",
@@ -24,11 +24,11 @@ const actionCategories = [
     actions: [
       {
         name: "Set up Farcaster Account",
-        href: "/actions/based-actions/farcaster",
+        href: "/actions/social-actions/farcaster",
       },
       {
-        name: "Bridge to Base",
-        href: "/actions/based-actions/bridge",
+        name: "Set up Lens Account",
+        href: "#",
       },
     ],
   },
@@ -122,7 +122,7 @@ export function ActionSidebar() {
               </div>
               <div className="space-y-2">
                 {category.actions.map((action) => {
-                  // Special handling for Farcaster action
+                  // Special handling for Farcaster and Lens actions
                   if (action.name === "Set up Farcaster Account") {
                     return (
                       <button
@@ -131,6 +131,26 @@ export function ActionSidebar() {
                           triggerActionPrompt(
                             "FARCASTER",
                             "I want to set up a Farcaster account. Can you help me with that directly in this chat?"
+                          )
+                        }
+                        className={cn(
+                          "block px-3 py-2 rounded-md text-sm transition-colors text-left w-full",
+                          "text-gray-600 hover:bg-white/50"
+                        )}
+                      >
+                        {action.name}
+                      </button>
+                    );
+                  }
+
+                  if (action.name === "Set up Lens Account") {
+                    return (
+                      <button
+                        key={action.name}
+                        onClick={() =>
+                          triggerActionPrompt(
+                            "LENS",
+                            "I want to set up a Lens account. Can you help me with that directly in this chat?"
                           )
                         }
                         className={cn(

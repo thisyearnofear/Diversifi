@@ -7,7 +7,7 @@ import { ActionData } from "@/lib/utils/message-helpers";
 // Map of action titles to their URLs
 const actionUrls: Record<string, string> = {
   "Set up Farcaster Account": "https://farcaster.xyz",
-  "Bridge to Base": "https://bridge.base.org",
+  "Set up Lens Account": "https://onboarding.lens.xyz",
   "Mint Celo NFT": "https://nft.celo.org",
   "Swap on Ubeswap": "https://ubeswap.org",
   "Deploy Smart Contract": "https://remix.ethereum.org",
@@ -17,12 +17,12 @@ const actionUrls: Record<string, string> = {
 // Map of action titles to their proof field labels and placeholders
 const proofFields: Record<string, { label: string; placeholder: string }> = {
   "Set up Farcaster Account": {
-    label: "Farcaster Username",
-    placeholder: "Your Farcaster username",
+    label: "Farcaster Profile URL",
+    placeholder: "https://warpcast.com/yourusername",
   },
-  "Bridge to Base": {
-    label: "Transaction Hash",
-    placeholder: "0x...",
+  "Set up Lens Account": {
+    label: "Lens Profile URL",
+    placeholder: "https://hey.xyz/u/yourusername",
   },
   "Mint Celo NFT": {
     label: "NFT URL or ID",
@@ -84,15 +84,15 @@ export async function GET(request: Request) {
       console.log("No actions found, returning default actions");
       return NextResponse.json([
         {
-          title: "Bridge to Base",
-          description: "Bridge assets from Ethereum to Base",
+          title: "Set up Lens Account",
+          description: "Create a Lens account and join the decentralized social network",
           chain: category || "BASE",
           difficulty: "beginner",
-          steps: ["Visit bridge.base.org", "Connect wallet", "Select amount"],
-          reward: "0.1 ETH",
-          actionUrl: "https://bridge.base.org",
-          proofFieldLabel: "Transaction Hash",
-          proofFieldPlaceholder: "0x...",
+          steps: ["Go to onboarding.lens.xyz", "Connect wallet", "Create profile"],
+          reward: "Access to the Lens ecosystem",
+          actionUrl: "https://onboarding.lens.xyz",
+          proofFieldLabel: "Lens Profile URL",
+          proofFieldPlaceholder: "https://hey.xyz/u/yourusername",
         },
       ]);
     }

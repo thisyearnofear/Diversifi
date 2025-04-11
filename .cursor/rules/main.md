@@ -1,6 +1,6 @@
-# Hello World Computer Development Guidelines
+# Stable Station Development Guidelines
 
-This document serves as the main entry point for the development guidelines for the Hello World Computer application. It references all the specific guideline documents for different aspects of the application.
+This document serves as the main entry point for the development guidelines for the Stable Station application. It references all the specific guideline documents for different aspects of the application.
 
 ## Architecture
 
@@ -25,23 +25,27 @@ This document serves as the main entry point for the development guidelines for 
 ## General Development Workflow
 
 1. **Understanding Requirements**
+
    - Understand the feature or bug fix requirements
    - Identify the affected components
    - Plan the implementation approach
 
 2. **Implementation**
+
    - Follow the architecture and code style guidelines
    - Write clean, maintainable code
    - Add appropriate error handling
    - Add comments for complex logic
 
 3. **Testing**
+
    - Test the implementation thoroughly
    - Write unit tests for critical functionality
    - Test edge cases and error scenarios
    - Ensure backward compatibility
 
 4. **Documentation**
+
    - Update documentation as needed
    - Add JSDoc comments for functions
    - Update README files

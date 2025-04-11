@@ -20,8 +20,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Hello World Computer",
-  description: "Learn about Ethereum and get started with Web3",
+  title: "Stable Station",
+  description: "Learn about stablecoins and get started with Web3",
 };
 
 export const viewport = {
