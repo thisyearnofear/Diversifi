@@ -1,14 +1,20 @@
 import { db } from "@/lib/db/queries";
 import { action } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function seedLensAction() {
   console.log("Seeding Lens action...");
+
+  if (!db) {
+    console.warn("⚠️ Database not available. Cannot seed Lens action.");
+    return;
+  }
 
   // Check if the Lens action already exists
   const existingActions = await db
     .select()
     .from(action)
-    .where((action) => action.title.equals("Set up Lens Account"));
+    .where(eq(action.title, "Set up Lens Account"));
 
   if (existingActions.length > 0) {
     console.log("Lens action already exists, skipping seed");

@@ -8,6 +8,26 @@ const components: Partial<Components> = {
   // @ts-expect-error
   code: CodeBlock,
   pre: ({ children }) => <>{children}</>,
+  // Override paragraph to prevent nesting invalid elements
+  p: ({ node, children, ...props }) => {
+    // Check if children contains a pre or div element
+    const hasInvalidChild = React.Children.toArray(children).some(
+      (child) =>
+        React.isValidElement(child) &&
+        (child.type === "pre" ||
+          child.props?.node?.tagName === "pre" ||
+          child.props?.node?.tagName === "div" ||
+          child.props?.className?.includes("not-prose"))
+    );
+
+    // If it has an invalid child, render without the paragraph wrapper
+    if (hasInvalidChild) {
+      return <>{children}</>;
+    }
+
+    // Otherwise, render as a normal paragraph
+    return <p {...props}>{children}</p>;
+  },
   ol: ({ node, children, ...props }) => {
     return (
       <ol className="list-decimal list-outside ml-4" {...props}>

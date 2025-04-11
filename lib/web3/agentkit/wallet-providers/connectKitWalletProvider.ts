@@ -1,5 +1,4 @@
-import { WalletProvider } from "@coinbase/agentkit";
-import { Network } from "@coinbase/agentkit";
+import { WalletProvider, Network } from "@coinbase/agentkit";
 import { createWalletClient, http } from "viem";
 import { baseSepolia, base } from "viem/chains";
 import {

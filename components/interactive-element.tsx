@@ -237,16 +237,25 @@ export function InteractiveElement({
         <LensActionCardCompact
           title={
             lensAction?.args?.[0]?.title ||
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+              ? JSON.parse(lensAction.args[0]).title
+              : undefined) ||
             lensActionCard?.args?.[0]?.title ||
             "Set up a Lens account"
           }
           description={
             lensAction?.args?.[0]?.description ||
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+              ? JSON.parse(lensAction.args[0]).description
+              : undefined) ||
             lensActionCard?.args?.[0]?.description ||
             "Create a Lens account and join the decentralized social network"
           }
           steps={
             lensAction?.args?.[0]?.steps ||
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+              ? JSON.parse(lensAction.args[0]).steps
+              : undefined) ||
             lensActionCard?.args?.[0]?.steps || [
               "Go to https://onboarding.lens.xyz and sign up",
               "Connect your wallet",
@@ -256,21 +265,33 @@ export function InteractiveElement({
           }
           reward={
             lensAction?.args?.[0]?.reward ||
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+              ? JSON.parse(lensAction.args[0]).reward
+              : undefined) ||
             lensActionCard?.args?.[0]?.reward ||
             "Access to the Lens ecosystem"
           }
           actionUrl={
             lensAction?.args?.[0]?.actionUrl ||
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+              ? JSON.parse(lensAction.args[0]).actionUrl
+              : undefined) ||
             lensActionCard?.args?.[0]?.actionUrl ||
             "https://onboarding.lens.xyz"
           }
           proofFieldLabel={
             lensAction?.args?.[0]?.proofFieldLabel ||
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+              ? JSON.parse(lensAction.args[0]).proofFieldLabel
+              : undefined) ||
             lensActionCard?.args?.[0]?.proofFieldLabel ||
             "Your Lens Profile URL"
           }
           proofFieldPlaceholder={
             lensAction?.args?.[0]?.proofFieldPlaceholder ||
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+              ? JSON.parse(lensAction.args[0]).proofFieldPlaceholder
+              : undefined) ||
             lensActionCard?.args?.[0]?.proofFieldPlaceholder ||
             "https://hey.xyz/u/yourusername"
           }
