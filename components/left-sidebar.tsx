@@ -105,7 +105,7 @@ export function LeftSidebar() {
             onClick={() =>
               triggerActionPrompt(
                 "BASE",
-                "I want to get USD-backed stablecoins on Base. Can you help me set up my Base account and get USDbC directly in this chat?"
+                "I want to get USD-backed stablecoins on Base. Can you help me directly in this chat?"
               )
             }
             className="bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/30"

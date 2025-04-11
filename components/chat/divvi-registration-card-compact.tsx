@@ -68,7 +68,7 @@ export function DivviRegistrationCardCompact({
           <div>
             <h3 className="font-medium">Registration Complete</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              You're now registered on Stable Station with enhanced features!
+              You're now registered with Stable Station on base!
             </p>
           </div>
         </div>
@@ -83,7 +83,7 @@ export function DivviRegistrationCardCompact({
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-medium">Register on Stable Station</h3>
+                <h3 className="font-medium">Register</h3>
                 <Badge
                   variant="outline"
                   className="text-xs bg-green-100 dark:bg-green-900 border-green-200"
@@ -129,13 +129,10 @@ export function DivviRegistrationCardCompact({
         {isExpanded && (
           <div className="mt-4 space-y-4">
             <div>
-              <h4 className="text-sm font-medium mb-2">
-                Why register on Stable Station:
-              </h4>
+              <h4 className="text-sm font-medium mb-2">Unlock Features:</h4>
               <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                This one-time registration unlocks enhanced access to stablecoin
-                tools, portfolio management, and insights. It's required before
-                getting USDbC stablecoins.
+                This one-time registration unlocks access to stablecoin tools,
+                portfolio management, and insights on base.
               </p>
               <div className="flex items-center text-xs text-blue-600">
                 <a
@@ -144,7 +141,7 @@ export function DivviRegistrationCardCompact({
                   rel="noopener noreferrer"
                   className="flex items-center hover:underline"
                 >
-                  Learn more about Stable Station
+                  Learn about base.
                   <ExternalLink className="ml-1 h-3 w-3" />
                 </a>
               </div>

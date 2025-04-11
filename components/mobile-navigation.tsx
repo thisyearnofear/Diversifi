@@ -1,6 +1,13 @@
 "use client";
 
-import { Menu, MessageSquare, Sparkles, Coins, Globe } from "lucide-react";
+import {
+  Menu,
+  MessageSquare,
+  Sparkles,
+  Coins,
+  Globe,
+  Rocket,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -41,17 +48,26 @@ export function MobileNavigation() {
       name: "Menu",
       icon: Menu,
       action: () => setOpenMobile(true),
-      primary: true
+      primary: true,
     },
     {
       name: "New Chat",
       icon: MessageSquare,
-      action: () => router.push("/")
+      action: () => router.push("/"),
     },
     {
       name: "Starter Kits",
       icon: Sparkles,
-      action: () => router.push("/starter-kits")
+      action: () => router.push("/starter-kits"),
+    },
+    {
+      name: "Get USDbC",
+      icon: Rocket,
+      action: () =>
+        triggerActionPrompt(
+          "BASE",
+          "I want to get USD-backed stablecoins on Base. Can you help me directly in this chat?"
+        ),
     },
     {
       name: "Celo Actions",
@@ -60,7 +76,7 @@ export function MobileNavigation() {
         triggerActionPrompt(
           "CELO",
           "I'd like to see action cards for Celo blockchain directly in this chat."
-        )
+        ),
     },
     {
       name: "Social",
@@ -69,8 +85,8 @@ export function MobileNavigation() {
         triggerActionPrompt(
           "SOCIAL",
           "Show me social actions like Farcaster and Lens that I can set up directly in this chat."
-        )
-    }
+        ),
+    },
   ];
 
   return (

@@ -579,27 +579,29 @@ export function DivviRegistrationAction() {
 
   return (
     <Card className="p-6">
-      <h3 className="text-xl font-semibold mb-4">Register with Divvi V0</h3>
+      <h3 className="text-xl font-semibold mb-4">
+        Register with Stable Station
+      </h3>
       <p className="text-gray-600 mb-6">
-        Register with Divvi V0 to earn rewards when you swap on Aerodrome and
-        other protocols.
+        Register to unlock features on base you swap on Aerodrome and other
+        protocols.
       </p>
 
       <div className="mb-6">
         <h4 className="font-medium mb-2">About Divvi V0:</h4>
         <p className="text-sm text-gray-600 mb-2">
-          Divvi V0 is a protocol that allows you to earn rewards when you use
-          supported protocols like Aerodrome. Registration requires a one-time
+          Stable Station is a platform that enables portfolio management,
+          stables swaps, insights and analysis. Registration requires a one-time
           on-chain transaction.
         </p>
         <div className="flex items-center text-sm text-blue-600">
           <a
-            href="https://divvi.xyz"
+            href="https://stable-station.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center hover:underline"
           >
-            Learn more about Divvi V0
+            Learn more about Stable Station
             <ExternalLink className="ml-1 h-3 w-3" />
           </a>
         </div>
@@ -618,8 +620,7 @@ export function DivviRegistrationAction() {
           <div>
             <h3 className="font-medium">Successfully Registered!</h3>
             <p className="text-sm text-gray-600">
-              You are now registered with Divvi V0 and will earn rewards when
-              you use Aerodrome.
+              You are now registered with Stable Station.
             </p>
           </div>
         </div>
@@ -636,7 +637,7 @@ export function DivviRegistrationAction() {
                 Processing...
               </>
             ) : (
-              "Register with Divvi V0"
+              "Register with Stable Station"
             )}
           </Button>
 

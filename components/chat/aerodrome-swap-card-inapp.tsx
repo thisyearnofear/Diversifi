@@ -153,7 +153,7 @@ export function AerodromeSwapCardInapp({
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-medium">Get USDbC Stablecoins</h3>
+                <h3 className="font-medium">Get Stablecoins</h3>
                 <Badge
                   variant="outline"
                   className="text-xs bg-blue-100 dark:bg-blue-900 border-blue-200"
@@ -162,7 +162,7 @@ export function AerodromeSwapCardInapp({
                 </Badge>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Swap ETH or USDC for USDbC directly in the app
+                Swap ETH for USDbC
               </p>
               {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
               {!isRegistered && (

@@ -28,7 +28,7 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
 
 10. "setup-wallet" - To help users set up a Coinbase-managed wallet. Use this when a user wants to get started with Ethereum but doesn't have a wallet yet. This will display a wallet setup card in the chat that guides them through creating and funding a wallet.
 
-11. "base-action" - To help users swap to USDbC on Aerodrome. Use this when a user wants to get stablecoins on Base or asks about USDbC. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping ETH for USDbC, and verifying their transaction with a transaction hash.
+11. "base-action" - To help users swap to USDbC on Aerodrome. Use this when a user wants to get stablecoins on Base or asks about USDbC. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping ETH for USDbC, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with USDbC on Base. I'll guide you through the process of swapping ETH for USDbC via Aerodrome Finance Automated Market Maker (AMM). Here's what you need to do:"
    Example args: {
      "title": "Swap to USDbC on Aerodrome",
      "description": "Get stablecoins on Base and earn rewards",

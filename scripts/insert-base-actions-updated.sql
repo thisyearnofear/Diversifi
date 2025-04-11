@@ -8,7 +8,7 @@ INSERT INTO "Action" (
 ) VALUES (
   gen_random_uuid(), 
   'Register on Stable Station',
-  'Activate your account on the Base ecosystem for enhanced features',
+  'Activate on the Base ecosystem for enhanced features',
   'STABLECOIN',
   'BASE',
   'BEGINNER',
