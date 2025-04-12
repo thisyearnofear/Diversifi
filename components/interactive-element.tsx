@@ -11,9 +11,10 @@ import { ActionMessage } from "./chat/action-message";
 import { WalletSetupCompact } from "./chat/wallet-setup-compact";
 import { FarcasterActionCardCompact } from "./chat/farcaster-action-card-compact";
 import { LensActionCardCompact } from "./chat/lens-action-card-compact";
-import { AerodromeSwapCardCompact } from "./chat/aerodrome-swap-card-compact";
+// Removed import for unused component
 import { BaseActionMessage } from "./chat/base-action-message";
 import { OptimismActionHandler } from "./chat/optimism-action-handler";
+import { CeloActionHandler } from "./chat/celo-action-handler";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -117,13 +118,22 @@ export function InteractiveElement({
     (a) => a.args?.[0]?.title === "Swap to EURA on Velodrome"
   );
 
-  // Filter out Farcaster, Lens, Base, and Optimism actions from actionCardActions to avoid duplication
+  // Find Celo action card
+  const celoActionCard = actionCardActions.find(
+    (a) => a.args?.[0]?.chain === "CELO"
+  );
+
+  // Find dedicated Celo action
+  const celoAction = actions.find((a) => a.action === "celo-action");
+
+  // Filter out Farcaster, Lens, Base, Optimism, and Celo actions from actionCardActions to avoid duplication
   const filteredActionCards = actionCardActions.filter(
     (a) =>
       a !== farcasterActionCard &&
       a !== lensActionCard &&
       a !== baseActionCard &&
-      a !== optimismActionCard
+      a !== optimismActionCard &&
+      a !== celoActionCard
   );
 
   return (
@@ -255,7 +265,7 @@ export function InteractiveElement({
       {(baseAction || baseActionCard) && (
         <BaseActionMessage
           onComplete={() => {
-            handleAction("I've completed the USDbC swap action!");
+            // No additional message needed
           }}
         />
       )}
@@ -264,6 +274,13 @@ export function InteractiveElement({
       {(optimismAction || optimismActionCard) && (
         <OptimismActionHandler
           args={optimismAction?.args || optimismActionCard?.args || []}
+        />
+      )}
+
+      {/* Handle both dedicated celo-action and action-card for Celo */}
+      {(celoAction || celoActionCard) && (
+        <CeloActionHandler
+          args={celoAction?.args || celoActionCard?.args || []}
         />
       )}
 

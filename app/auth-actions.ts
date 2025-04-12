@@ -123,6 +123,11 @@ export const verifySiwe = async (message: string, signature: `0x${string}`) => {
       }
 
       // Create session and explicitly set cookie
+      // Clear any existing session first to avoid conflicts
+      const cookieStore = await cookies();
+      cookieStore.delete("session");
+
+      // Create a new session
       await createSession(parsedMessage.address);
       console.log("Session created for address:", parsedMessage.address);
 

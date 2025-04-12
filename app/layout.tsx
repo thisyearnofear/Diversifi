@@ -9,6 +9,7 @@ import { RightSidebar } from "@/components/right-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
 import { MobileNavigation } from "@/components/mobile-navigation";
+import { MobileAuthComponent } from "@/components/mobile-auth-component";
 
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
@@ -89,6 +90,7 @@ export default function RootLayout({
                   </div>
                   <main className="w-full max-w-3xl mx-auto">{children}</main>
                   <MobileNavigation />
+                  <MobileAuthComponent />
                 </div>
                 <RightSidebar />
               </div>

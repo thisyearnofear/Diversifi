@@ -15,10 +15,12 @@ import { Badge } from "@/components/ui/badge";
 import { useDivviRegistration } from "@/hooks/use-divvi-registration";
 
 interface DivviRegistrationCardCompactProps {
+  chain?: string;
   onComplete?: () => void;
 }
 
 export function DivviRegistrationCardCompact({
+  chain = "aerodrome",
   onComplete,
 }: DivviRegistrationCardCompactProps) {
   const { address } = useAccount();
@@ -28,9 +30,12 @@ export function DivviRegistrationCardCompact({
     error,
     txHash,
     isRegistered,
+    isCorrectNetwork,
+    isSwitchingChain,
+    switchToCorrectNetwork,
     register,
     completeRegistration,
-  } = useDivviRegistration();
+  } = useDivviRegistration(chain);
 
   // Determine if we're in a loading state
   const isLoading = [
@@ -47,7 +52,17 @@ export function DivviRegistrationCardCompact({
   // Handle registration
   const handleRegister = async () => {
     if (!address) return;
-    await register();
+
+    try {
+      // First check if we're on the correct network
+      if (!isCorrectNetwork) {
+        await switchToCorrectNetwork();
+      }
+
+      await register();
+    } catch (error) {
+      console.error("Error registering:", error);
+    }
   };
 
   // Handle completion
@@ -68,7 +83,9 @@ export function DivviRegistrationCardCompact({
           <div>
             <h3 className="font-medium">Registration Complete</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              You're now registered with Stable Station on base!
+              {chain === "celo"
+                ? "You're now registered with Stable Station on Celo!"
+                : "You're now registered with Stable Station on Base!"}
             </p>
           </div>
         </div>
@@ -77,8 +94,18 @@ export function DivviRegistrationCardCompact({
   }
 
   return (
-    <Card className="overflow-hidden border-green-200">
-      <div className="p-4 bg-green-50 dark:bg-green-900/20">
+    <Card
+      className={`overflow-hidden ${
+        chain === "celo" ? "border-yellow-200" : "border-green-200"
+      }`}
+    >
+      <div
+        className={`p-4 ${
+          chain === "celo"
+            ? "bg-yellow-50 dark:bg-yellow-900/20"
+            : "bg-green-50 dark:bg-green-900/20"
+        }`}
+      >
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
             <div>
@@ -86,13 +113,18 @@ export function DivviRegistrationCardCompact({
                 <h3 className="font-medium">Register</h3>
                 <Badge
                   variant="outline"
-                  className="text-xs bg-green-100 dark:bg-green-900 border-green-200"
+                  className={`text-xs ${
+                    chain === "celo"
+                      ? "bg-yellow-100 dark:bg-yellow-900 border-yellow-200"
+                      : "bg-green-100 dark:bg-green-900 border-green-200"
+                  }`}
                 >
                   Step 1
                 </Badge>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Activate your account on the Base ecosystem
+                Activate your account on the{" "}
+                {chain === "celo" ? "Celo" : "Base"} ecosystem
               </p>
               {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
               {status === "transaction-pending" && (
@@ -132,27 +164,52 @@ export function DivviRegistrationCardCompact({
               <h4 className="text-sm font-medium mb-2">Unlock Features:</h4>
               <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
                 This one-time registration unlocks access to stablecoin tools,
-                portfolio management, and insights on base.
+                portfolio management, and insights on{" "}
+                {chain === "celo" ? "Celo" : "Base"}.
               </p>
               <div className="flex items-center text-xs text-blue-600">
                 <a
-                  href="https://base.org"
+                  href={
+                    chain === "celo" ? "https://celo.org" : "https://base.org"
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center hover:underline"
                 >
-                  Learn about base.
+                  Learn about {chain === "celo" ? "Celo" : "Base"}.
                   <ExternalLink className="ml-1 h-3 w-3" />
                 </a>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-green-100 dark:border-green-800">
+            <div
+              className={`pt-3 border-t ${
+                chain === "celo"
+                  ? "border-yellow-100 dark:border-yellow-800"
+                  : "border-green-100 dark:border-green-800"
+              }`}
+            >
               <div className="flex gap-2">
-                {status === "not-registered" ||
-                status === "error" ||
-                status === "idle" ||
-                status === "transaction-failed" ? (
+                {!isCorrectNetwork ? (
+                  <Button
+                    onClick={switchToCorrectNetwork}
+                    disabled={isLoading || !address || isSwitchingChain}
+                    size="sm"
+                    className="flex-1"
+                  >
+                    {isSwitchingChain ? (
+                      <>
+                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        Switching Network...
+                      </>
+                    ) : (
+                      `Switch to ${chain === "celo" ? "Celo" : "Base"}`
+                    )}
+                  </Button>
+                ) : status === "not-registered" ||
+                  status === "error" ||
+                  status === "idle" ||
+                  status === "transaction-failed" ? (
                   <Button
                     onClick={handleRegister}
                     disabled={isLoading || !address}

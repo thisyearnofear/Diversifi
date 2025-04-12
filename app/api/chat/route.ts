@@ -88,7 +88,12 @@ export async function POST(request: Request) {
 
       // Enforce chat limit after creating a new chat
       try {
-        await fetch('/api/chat/enforce-limit', {
+        // Use absolute URL for server-side fetch
+        const baseUrl = process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:4000";
+
+        await fetch(`${baseUrl}/api/chat/enforce-limit`, {
           method: 'POST',
         });
       } catch (error) {

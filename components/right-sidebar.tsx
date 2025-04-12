@@ -61,9 +61,6 @@ export function RightSidebar() {
       <div className="pt-20">
         {" "}
         {/* Add padding to push content below wallet UI */}
-        <SidebarHeader>
-          <h2 className="text-lg font-semibold px-4">Your Profile</h2>
-        </SidebarHeader>
         <SidebarContent>
           <div className="flex flex-col gap-4 p-4">
             {/* Wallet Info Section */}

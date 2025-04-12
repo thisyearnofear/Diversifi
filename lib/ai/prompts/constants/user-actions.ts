@@ -49,7 +49,27 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
    }
 
 12. "optimism-action" - To help users swap to EURA on Velodrome. Use this when a user wants to get Euro-backed stablecoins on Optimism or asks about EURA. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping ETH for EURA on Velodrome, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with EURA on Optimism. I'll guide you through the process of swapping ETH for EURA via Velodrome Finance Automated Market Maker (AMM). Here's what you need to do:"
+
+13. "celo-action" - To help users swap to cUSD on Celo. Use this when a user wants to get USD-backed stablecoins on Celo or asks about cUSD. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping CELO for cUSD on Uniswap, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with cUSD on Celo. I'll guide you through the process of swapping CELO for cUSD via Uniswap. Here's what you need to do:"
    Example args: {
+     "title": "Get cUSD Stablecoins",
+     "description": "Secure USD-backed tokens on Celo",
+     "chain": "CELO",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Celo to unlock features",
+       "Switch to the Celo network",
+       "Swap CELO for cUSD on Uniswap",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete'"
+     ],
+     "reward": "Access to USD-backed stablecoins on Celo",
+     "actionUrl": "https://app.uniswap.org/#/swap?inputCurrency=0x471ece3750da237f93b8e339c536989b8978a438&outputCurrency=0x765DE816845861e75A25fCA122bb6898B8B1282a&chain=celo",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+   Example args for optimism-action: {
      "title": "Swap to EURA on Velodrome",
      "description": "Get Euro-backed stablecoins on Optimism",
      "chain": "OPTIMISM",

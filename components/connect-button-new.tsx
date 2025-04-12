@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useAccount } from "wagmi";
-import { IntegratedConnectButton } from "./integrated-connect-button";
+import { SeparateAuthButtons } from "./separate-auth-buttons";
 
 export function ConnectButton() {
   const { claimed } = useStarterKit();
@@ -89,7 +89,7 @@ export function ConnectButton() {
         </TooltipContent>
       </Tooltip>
 
-      <IntegratedConnectButton />
+      <SeparateAuthButtons />
     </div>
   );
 }

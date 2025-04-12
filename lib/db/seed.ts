@@ -5,6 +5,7 @@ import type { InferInsertModel } from "drizzle-orm";
 import { seedLensAction } from "./seeds/lens-action";
 import { seedBaseAction } from "./seeds/base-action";
 import { seedOptimismActions } from "./seeds/optimism-action";
+import { seedCeloActions } from "./seeds/celo-action";
 
 type ActionInsert = InferInsertModel<typeof action>;
 
@@ -173,6 +174,9 @@ export async function seedActions() {
 
   // Seed the Optimism actions
   await seedOptimismActions();
+
+  // Seed the Celo actions
+  await seedCeloActions();
 
   console.log("Seeding complete!");
 }

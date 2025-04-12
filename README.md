@@ -4,36 +4,14 @@
 
 Stable Station is a chat-based onboarding experience for Web3. We've evolved from a kit-based model to an action-based learning platform where users can:
 
-- Complete specific actions on different chains (Base, Celo, Ethereum)
-- Earn rewards for completing actions
-- Track their progress across different categories
-- Learn through hands-on experience
-
-## Categories
-
-1. **Based Actions**
-
-   - Explore the Base ecosystem
-   - Social actions (Farcaster)
-   - DeFi activities
-   - NFT interactions
-
-2. **Stable Actions**
-
-   - Build on Celo's stable ecosystem
-   - NFT creation and minting
-   - DeFi trading
-   - Stablecoin interactions
-
-3. **Global Actions**
-   - Connect with Ethereum's global network
-   - Smart contract deployment
-   - DAO participation
-   - Advanced DeFi activities
+- Complete specific actions
+- Unlock features aligned with portfolio management, rebalancing, diversification & stablecoin procurement
+- Track progress across different categories
+- Learn through hands-on experience & ai assistance powered by agentkit
 
 ## How it's made
 
-[stables-station.vercel.app/](https://stables-station.vercel.app/)
+[stable-station.netlify.app/](https://stable-station.netlify.app/)
 
 ## Stack
 
@@ -224,14 +202,22 @@ We've deployed a custom smart contract on Optimism to facilitate in-app token sw
 
 The contract provides a simplified interface for swapping tokens directly within our application, eliminating the need to redirect users to external DEXs. It leverages Velodrome's liquidity pools on Optimism for efficient swaps. EURA (formerly agEUR) is an all-weather, multi-audited Euro stablecoin developed by Angle Protocol.
 
-## Next Steps
+### SimpleCeloSwap
 
-1. Begin Phase 1 clean-up
-2. Fix the chat functionality
-3. Implement a simplified action card system
-4. Test the core user flow
+We've deployed a simplified smart contract on Celo to facilitate in-app token swaps for cUSD:
 
-## SnelDAO Enhancement Plan 🐌
+- **Contract Address**: `0xa27D6E9091778896FBf34bC36A3A2ef22d06F804`
+- **Network**: Celo Mainnet
+- **Features**:
+  - Direct CELO to cUSD swaps
+  - Simplified interface with minimal parameters
+  - Optimized for reliability
+  - Transaction fee mechanism (0.25% default)
+  - Security features (reentrancy protection, ownership controls)
+
+The contract provides a straightforward interface for swapping CELO tokens to cUSD directly within our application. It leverages Uniswap V3's liquidity pools on Celo for efficient swaps. The contract is designed to be simple and reliable, with a focus on user experience.
+
+## SnelDAO Idea 🐌
 
 ### Overview
 

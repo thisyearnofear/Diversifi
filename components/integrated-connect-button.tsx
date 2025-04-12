@@ -16,15 +16,29 @@ export function IntegratedConnectButton() {
   const { isAuthenticated } = useAuth();
 
   // Reset auth attempt flag when wallet is disconnected
+  // Also set hasAttemptedAuth to true if already authenticated
   useEffect(() => {
     if (!isConnected) {
       setHasAttemptedAuth(false);
+    } else if (isAuthenticated) {
+      // If already authenticated, mark as attempted to prevent loops
+      setHasAttemptedAuth(true);
     }
-  }, [isConnected]);
+  }, [isConnected, isAuthenticated]);
 
   // Auto-trigger SIWE when wallet is connected but not authenticated
   useEffect(() => {
+    // Log authentication state for debugging
+    console.log("Auth state:", {
+      isConnected,
+      hasAddress: !!address,
+      isAuthenticated,
+      isAuthenticating,
+      hasAttemptedAuth,
+    });
+
     // Only attempt authentication once per connection session
+    // and only if not already authenticated
     if (
       isConnected &&
       address &&
@@ -45,7 +59,17 @@ export function IntegratedConnectButton() {
   ]);
 
   const handleAuthenticate = async () => {
-    if (!address || !isConnected) return;
+    // Skip if already authenticated
+    if (isAuthenticated) {
+      console.log("Already authenticated, skipping authentication");
+      return;
+    }
+
+    // Skip if no address or not connected
+    if (!address || !isConnected) {
+      console.log("No address or not connected, skipping authentication");
+      return;
+    }
 
     try {
       setIsAuthenticating(true);
@@ -63,18 +87,25 @@ export function IntegratedConnectButton() {
       );
 
       // Generate SIWE message
+      console.log("Generating SIWE challenge...");
       const message = await generateSiweChallenge(address as `0x${string}`);
+      console.log("SIWE challenge generated");
 
       // Request signature from wallet
+      console.log("Requesting signature from wallet...");
       const signature = await signMessageAsync({
         message,
         account: address as `0x${string}`,
       });
+      console.log("Signature received");
 
       // Verify signature
+      console.log("Verifying signature...");
       const result = await verifySiwe(message, signature as `0x${string}`);
+      console.log("Verification result:", result);
 
       if (result.status === "failed") {
+        console.error("Authentication failed:", result.error);
         if (result.error?.includes("Domain mismatch")) {
           toast.error(
             "Authentication failed: The domain in the signature request doesn't match the site you're using. This could be due to a misconfiguration."
@@ -89,9 +120,11 @@ export function IntegratedConnectButton() {
           setHasAttemptedAuth(false);
         }
       } else {
+        console.log("Authentication successful");
         toast.success("Successfully authenticated!");
 
         // Reload the page to update auth state
+        console.log("Reloading page to update auth state...");
         setTimeout(() => {
           window.location.reload();
         }, 500);

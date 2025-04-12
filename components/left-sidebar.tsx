@@ -144,13 +144,13 @@ export function LeftSidebar() {
             onClick={() =>
               triggerActionPrompt(
                 "CELO",
-                "I'd like to see action cards for Celo blockchain directly in this chat."
+                "I want to get USD-backed stablecoins on Celo. Can you help me directly in this chat?"
               )
             }
             className="bg-yellow-50 dark:bg-yellow-950/30 hover:bg-yellow-100 dark:hover:bg-yellow-900/30"
           >
             <Coins className="text-yellow-600 dark:text-yellow-400" />
-            Celo Actions
+            Get cUSD
           </SidebarMenuButton>
 
           <SidebarMenuButton

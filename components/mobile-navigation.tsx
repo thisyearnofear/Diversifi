@@ -79,12 +79,12 @@ export function MobileNavigation() {
         ),
     },
     {
-      name: "Celo Actions",
+      name: "Get cUSD",
       icon: Coins,
       action: () =>
         triggerActionPrompt(
           "CELO",
-          "I'd like to see action cards for Celo blockchain directly in this chat."
+          "I want to get USD-backed stablecoins on Celo. Can you help me directly in this chat?"
         ),
     },
     {

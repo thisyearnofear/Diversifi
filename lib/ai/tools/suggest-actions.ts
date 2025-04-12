@@ -8,9 +8,10 @@ export async function suggestActions(
 ): Promise<ActionData[]> {
   try {
     // Build the URL with query parameters
+    // Use absolute URL for server-side fetch
     const baseUrl = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
+      : "http://localhost:4000";
 
     const url = new URL("/api/actions/chat-actions", baseUrl);
 

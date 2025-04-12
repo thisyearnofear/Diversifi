@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { base } from "wagmi/chains";
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useChainId, useSwitchChain } from "wagmi";
+import { base, celo } from "wagmi/chains";
 import { stringToHex } from "viem";
 import { toast } from "sonner";
 import { useActions } from "@/hooks/use-actions";
@@ -28,7 +28,17 @@ export type DivviRegistrationStatus =
   | "completed"
   | "error";
 
-export function useDivviRegistration() {
+export function useDivviRegistration(chainName: string = "aerodrome") {
+  // Determine which chain to use based on the chainName parameter
+  const targetChain = chainName === "celo" ? celo : base;
+  const targetChainId = targetChain.id;
+
+  // Get current chain ID
+  const currentChainId = useChainId();
+  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
+
+  // Check if we're on the correct network
+  const isCorrectNetwork = currentChainId === targetChainId;
   const { address } = useAccount();
   const [status, setStatus] = useState<DivviRegistrationStatus>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -36,14 +46,32 @@ export function useDivviRegistration() {
   // We'll use hasAttemptedCompletion instead of isCompleted
   const { completeAction } = useActions();
 
-  // Check if user is registered with Aerodrome protocol
+  // Check if user is registered with the protocol
   const { data: registrationStatus, refetch: refetchRegistrationStatus, isLoading: isCheckingRegistration } = useReadContract({
     address: REGISTRY_CONTRACT_ADDRESS,
     abi: registryContractAbi,
     functionName: "isUserRegistered",
-    args: address ? [address, [stringToHex("aerodrome", { size: 32 })]] : undefined,
-    chainId: base.id,
+    args: address ? [address, [stringToHex(chainName, { size: 32 })]] : undefined,
+    chainId: targetChainId,
   });
+
+  // Function to switch to the correct network
+  const switchToCorrectNetwork = async () => {
+    if (!isCorrectNetwork && address) {
+      try {
+        setStatus("checking");
+        setError(null);
+        await switchChain({ chainId: targetChainId });
+        return true;
+      } catch (error) {
+        console.error("Error switching network:", error);
+        setError(error instanceof Error ? error.message : "Failed to switch network");
+        setStatus("error");
+        return false;
+      }
+    }
+    return isCorrectNetwork; // Already on correct network
+  };
 
   // Register user with Divvi Protocol
   const { writeContract, data: writeData, isPending: isWritePending, isError: isWriteError, error: writeError } = useWriteContract();
@@ -122,6 +150,13 @@ export function useDivviRegistration() {
       setStatus("registering");
       setError(null);
 
+      // First, check if we're on the correct network
+      const networkSwitched = await switchToCorrectNetwork();
+      if (!networkSwitched) {
+        toast.error(`Please switch to the ${chainName === "celo" ? "Celo" : "Base"} network first`);
+        return;
+      }
+
       console.log("Checking if user is already registered...");
       // First check if the user is already registered
       const isRegisteredResult = await refetchRegistrationStatus();
@@ -140,7 +175,7 @@ export function useDivviRegistration() {
 
       // Format the arguments correctly
       const referrerIdHex = stringToHex(REFERRER_ID, { size: 32 });
-      const protocolsToRegister = [stringToHex("aerodrome", { size: 32 })];
+      const protocolsToRegister = [stringToHex(chainName, { size: 32 })];
 
       console.log("Referrer ID hex:", referrerIdHex);
       console.log("Protocols to register:", protocolsToRegister);
@@ -154,7 +189,7 @@ export function useDivviRegistration() {
           referrerIdHex,
           protocolsToRegister,
         ],
-        chainId: base.id,
+        chainId: targetChainId,
       });
 
       console.log("Registration transaction submitted");
@@ -174,12 +209,15 @@ export function useDivviRegistration() {
 
       try {
         // Get the action ID from the database
+        // Determine the action title based on the chain
+        const actionTitle = chainName === "celo" ? "Register on Celo" : "Register on Stable Station";
+
         const response = await fetch("/api/actions/by-title", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ title: "Register on Stable Station" }),
+          body: JSON.stringify({ title: actionTitle }),
         });
 
         if (!response.ok) {
@@ -188,7 +226,8 @@ export function useDivviRegistration() {
           // We'll handle this gracefully by marking the action as completed anyway
           if (response.status === 404) {
             setStatus("completed");
-            toast.success("Registration on Stable Station completed!");
+            const platform = chainName === "celo" ? "Celo" : "Stable Station";
+            toast.success(`Registration on ${platform} completed!`);
             return;
           } else {
             throw new Error("Failed to get action ID");
@@ -213,7 +252,8 @@ export function useDivviRegistration() {
       }
 
       setStatus("completed");
-      toast.success("Registration on Stable Station completed!");
+      const platform = chainName === "celo" ? "Celo" : "Stable Station";
+      toast.success(`Registration on ${platform} completed!`);
     } catch (error) {
       console.error("Error completing registration:", error);
       setStatus("error");
@@ -226,6 +266,9 @@ export function useDivviRegistration() {
     error,
     txHash,
     isRegistered: status === "already-registered" || status === "completed",
+    isCorrectNetwork,
+    isSwitchingChain,
+    switchToCorrectNetwork,
     register,
     completeRegistration,
   };
