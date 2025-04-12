@@ -41,7 +41,7 @@ const config = createConfig(
     // Required App Info
     appName: "Stable Station",
     appDescription: "Learn about stablecoins and get started with Web3",
-    appUrl: "http://localhost:3000",
+    appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
     appIcon: "/favicon.ico",
   })
 );
@@ -52,7 +52,28 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider>{children}</ConnectKitProvider>
+        <ConnectKitProvider
+          // Custom ConnectKit options
+          customTheme={{
+            // Match your app's color scheme
+            "--ck-connectbutton-color": "var(--foreground)",
+            "--ck-connectbutton-background": "var(--background)",
+            "--ck-connectbutton-hover-color": "var(--foreground)",
+            "--ck-connectbutton-hover-background": "var(--muted)",
+          }}
+          options={{
+            // Show wallet image in the modal
+            walletConnectCTA: "both",
+            // Hide the ConnectKit branding
+            hideQuestionMarkCTA: true,
+            // Customize the disclaimer
+            disclaimer:
+              "By connecting your wallet, you agree to the Terms of Service and Privacy Policy",
+          }}
+          mode="dark"
+        >
+          {children}
+        </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

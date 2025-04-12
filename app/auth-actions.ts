@@ -19,22 +19,43 @@ import {
 
 const chain =
   process.env.NEXT_PUBLIC_ACTIVE_CHAIN === "base" ? base : baseSepolia;
-const domain = process.env.NEXT_PUBLIC_APP_URL || "localhost:3000";
-const uri = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+// Ensure we have a properly formatted domain and URI for SIWE
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const domain = appUrl.replace(/^https?:\/\//, "");
+const uri = appUrl;
+
+console.log("SIWE configuration:", { domain, uri, chainId: chain.id });
 
 export const generateSiweChallenge = async (address: `0x${string}`) => {
-  const nonce = generateSiweNonce();
-  const cookieStore = await cookies();
-  cookieStore.set("nonce", nonce);
-  const message = createSiweMessage({
-    nonce,
-    address,
-    domain,
-    uri,
-    version: "1",
-    chainId: chain.id,
-  });
-  return message;
+  try {
+    console.log(`Generating SIWE challenge for address: ${address}`);
+    const nonce = generateSiweNonce();
+    const cookieStore = await cookies();
+    cookieStore.set("nonce", nonce);
+
+    const message = createSiweMessage({
+      nonce,
+      address,
+      domain,
+      uri,
+      version: "1",
+      chainId: chain.id,
+      statement: "Sign in to Stable Station",
+    });
+
+    console.log("Generated SIWE message:", {
+      domain,
+      uri,
+      address: address.slice(0, 6) + '...' + address.slice(-4),
+      chainId: chain.id,
+      messageLength: message.length,
+    });
+
+    return message;
+  } catch (error) {
+    console.error("Error generating SIWE challenge:", error);
+    throw error;
+  }
 };
 
 const publicClient = createPublicClient({
@@ -45,7 +66,7 @@ const publicClient = createPublicClient({
 export const verifySiwe = async (message: string, signature: `0x${string}`) => {
   try {
     console.log("Verifying SIWE message:", {
-      message,
+      messagePreview: message.substring(0, 50) + "...",
       signature: signature.slice(0, 10) + "...",
     });
 
@@ -56,8 +77,29 @@ export const verifySiwe = async (message: string, signature: `0x${string}`) => {
       return { status: "failed", error: "No nonce found" };
     }
 
+    // Parse the SIWE message to extract domain and other details
     const parsedMessage = parseSiweMessage(message);
-    console.log("Parsed SIWE message:", parsedMessage);
+
+    // Log the parsed message details for debugging
+    console.log("Parsed SIWE message:", {
+      domain: parsedMessage.domain,
+      uri: parsedMessage.uri,
+      address: parsedMessage.address ?
+        parsedMessage.address.slice(0, 6) + '...' + parsedMessage.address.slice(-4) : 'undefined',
+      chainId: parsedMessage.chainId,
+      nonce: parsedMessage.nonce,
+      issuedAt: parsedMessage.issuedAt,
+      version: parsedMessage.version,
+    });
+
+    // Check if the domain in the message matches our expected domain
+    if (parsedMessage.domain !== domain) {
+      console.error(`SIWE domain mismatch: Expected '${domain}', got '${parsedMessage.domain}'`);
+      return {
+        status: "failed",
+        error: `Domain mismatch: Expected '${domain}', got '${parsedMessage.domain}'`
+      };
+    }
 
     if (!parsedMessage.address) {
       console.error("SIWE verification failed: No address in parsed message");
@@ -65,6 +107,7 @@ export const verifySiwe = async (message: string, signature: `0x${string}`) => {
     }
 
     try {
+      // Verify the signature
       const verified = await verifySiweMessage(publicClient, {
         message,
         signature,

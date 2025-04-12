@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { CustomConnectButton } from "./custom-connect-button";
 import { useStarterKit } from "@/hooks/use-starter-kit";
 import { SparklesIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
@@ -11,12 +10,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { eventBus, EVENTS } from "@/lib/events";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useAccount } from "wagmi";
-import { AuthHelper } from "./auth-helper";
+import { IntegratedConnectButton } from "./integrated-connect-button";
 
 export function ConnectButton() {
   const { claimed } = useStarterKit();
@@ -91,21 +89,7 @@ export function ConnectButton() {
         </TooltipContent>
       </Tooltip>
 
-      {isConnected && !isAuthenticated && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <AuthHelper
-                variant="compact"
-                onAuthenticated={() => window.location.reload()}
-              />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>Sign in with your wallet</TooltipContent>
-        </Tooltip>
-      )}
-
-      <CustomConnectButton />
+      <IntegratedConnectButton />
     </div>
   );
 }
