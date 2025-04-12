@@ -13,6 +13,7 @@ import { FarcasterActionCardCompact } from "./chat/farcaster-action-card-compact
 import { LensActionCardCompact } from "./chat/lens-action-card-compact";
 import { AerodromeSwapCardCompact } from "./chat/aerodrome-swap-card-compact";
 import { BaseActionMessage } from "./chat/base-action-message";
+import { OptimismActionHandler } from "./chat/optimism-action-handler";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -94,6 +95,7 @@ export function InteractiveElement({
   const actionCardActions = actions.filter((a) => a.action === "action-card");
   const setupWalletAction = actions.find((a) => a.action === "setup-wallet");
   const baseAction = actions.find((a) => a.action === "base-action");
+  const optimismAction = actions.find((a) => a.action === "optimism-action");
   const farcasterAction = actions.find((a) => a.action === "farcaster-action");
   const lensAction = actions.find((a) => a.action === "lens-action");
   // Also check for Farcaster/Lens actions in action-card format
@@ -110,10 +112,18 @@ export function InteractiveElement({
     (a) => a.args?.[0]?.title === "Swap to USDbC on Aerodrome"
   );
 
-  // Filter out Farcaster, Lens, and Base actions from actionCardActions to avoid duplication
+  // Find Optimism action card
+  const optimismActionCard = actionCardActions.find(
+    (a) => a.args?.[0]?.title === "Swap to EURA on Velodrome"
+  );
+
+  // Filter out Farcaster, Lens, Base, and Optimism actions from actionCardActions to avoid duplication
   const filteredActionCards = actionCardActions.filter(
     (a) =>
-      a !== farcasterActionCard && a !== lensActionCard && a !== baseActionCard
+      a !== farcasterActionCard &&
+      a !== lensActionCard &&
+      a !== baseActionCard &&
+      a !== optimismActionCard
   );
 
   return (
@@ -247,6 +257,13 @@ export function InteractiveElement({
           onComplete={() => {
             handleAction("I've completed the USDbC swap action!");
           }}
+        />
+      )}
+
+      {/* Handle both dedicated optimism-action and action-card for Optimism */}
+      {(optimismAction || optimismActionCard) && (
+        <OptimismActionHandler
+          args={optimismAction?.args || optimismActionCard?.args || []}
         />
       )}
 

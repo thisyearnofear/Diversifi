@@ -208,6 +208,22 @@ We've deployed a custom smart contract on Base to facilitate in-app token swaps:
 
 The contract provides a simplified interface for swapping tokens directly within our application, eliminating the need to redirect users to external DEXs. It leverages Aerodrome's liquidity pools on Base for efficient swaps.
 
+### OptimismVelodromeSwap
+
+We've deployed a custom smart contract on Optimism to facilitate in-app token swaps for EURA:
+
+- **Contract Address**: `0xD4fE775b3221769D8AC2cd52D5b1Cb50fB4B91A2`
+- **Network**: Optimism Mainnet
+- **Features**:
+  - Direct ETH to EURA swaps
+  - ERC20 token to EURA swaps
+  - Support for both Velodrome V1 and V2 factories
+  - Optimized gas usage
+  - Transaction fee mechanism (0.25% default)
+  - Security features (reentrancy protection, ownership controls)
+
+The contract provides a simplified interface for swapping tokens directly within our application, eliminating the need to redirect users to external DEXs. It leverages Velodrome's liquidity pools on Optimism for efficient swaps. EURA (formerly agEUR) is an all-weather, multi-audited Euro stablecoin developed by Angle Protocol.
+
 ## Next Steps
 
 1. Begin Phase 1 clean-up

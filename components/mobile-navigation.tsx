@@ -70,6 +70,15 @@ export function MobileNavigation() {
         ),
     },
     {
+      name: "Get EURA",
+      icon: Rocket,
+      action: () =>
+        triggerActionPrompt(
+          "OPTIMISM",
+          "I want to get Euro-backed stablecoins on Optimism. Can you help me directly in this chat?"
+        ),
+    },
+    {
       name: "Celo Actions",
       icon: Coins,
       action: () =>

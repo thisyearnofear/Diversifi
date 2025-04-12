@@ -1,0 +1,113 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "id": "0007_add_optimism_chain",
+  "prevId": "0002_massive_shadow_king",
+  "tables": {
+    "Action": {
+      "name": "Action",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'SOCIAL'::character varying",
+          "enumValues": [
+            "SOCIAL",
+            "DEFI",
+            "NFT",
+            "STABLECOIN",
+            "TRADING"
+          ]
+        },
+        "chain": {
+          "name": "chain",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'BASE'::character varying",
+          "enumValues": [
+            "BASE",
+            "CELO",
+            "ETHEREUM",
+            "OPTIMISM"
+          ]
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'BEGINNER'::character varying",
+          "enumValues": [
+            "BEGINNER",
+            "INTERMEDIATE",
+            "ADVANCED"
+          ]
+        },
+        "prerequisites": {
+          "name": "prerequisites",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "steps": {
+          "name": "steps",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rewards": {
+          "name": "rewards",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

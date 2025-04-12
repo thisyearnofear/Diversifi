@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 // Divvi V0 Registry Contract on Base
 const REGISTRY_CONTRACT_ADDRESS = "0xBa9655677f4E42DD289F5b7888170bC0c7dA8Cdc";
-const REFERRER_ID = "Papa"; // Your referral ID
+const REFERRER_ID = "papa"; // Your referral ID
 
 // Full Registry Contract ABI
 const registryContractAbi = [

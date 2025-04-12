@@ -89,16 +89,16 @@ export function LeftSidebar() {
           </SidebarGroupLabel>
 
           <SidebarMenuButton
-            asChild
-            className="bg-green-50 dark:bg-green-950/30 hover:bg-green-100 dark:hover:bg-green-900/30"
+            onClick={() =>
+              triggerActionPrompt(
+                "OPTIMISM",
+                "I want to get Euro-backed stablecoins on Optimism. Can you help me directly in this chat?"
+              )
+            }
+            className="bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-900/30"
           >
-            <Link
-              href="/actions/my-actions"
-              onClick={() => setOpenMobile(false)}
-            >
-              <CheckSquare className="text-green-600 dark:text-green-400" />
-              My Actions
-            </Link>
+            <Rocket className="text-purple-600 dark:text-purple-400" />
+            Get EURA
           </SidebarMenuButton>
 
           <SidebarMenuButton

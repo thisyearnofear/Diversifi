@@ -1,7 +1,7 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { base, mainnet, celo } from "wagmi/chains";
+import { base, mainnet, celo, optimism } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
@@ -11,18 +11,28 @@ if (!process.env.NEXT_PUBLIC_ETHEREUM_RPC)
   throw new Error("NEXT_PUBLIC_ETHEREUM_RPC is required");
 if (!process.env.NEXT_PUBLIC_CELO_RPC)
   throw new Error("NEXT_PUBLIC_CELO_RPC is required");
+if (!process.env.NEXT_PUBLIC_OPTIMISM_RPC)
+  throw new Error("NEXT_PUBLIC_OPTIMISM_RPC is required");
+
+// Optional API keys
+if (!process.env.NEXT_PUBLIC_MORALIS_API_KEY) {
+  console.warn(
+    "NEXT_PUBLIC_MORALIS_API_KEY is not set. Moralis price fallback will not work."
+  );
+}
 if (!process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID)
   throw new Error("NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID is required");
 
 const config = createConfig(
   getDefaultConfig({
     // Your dApps chains
-    chains: [base, mainnet, celo],
+    chains: [base, mainnet, celo, optimism],
     transports: {
       // RPC URL for each chain
       [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC),
       [mainnet.id]: http(process.env.NEXT_PUBLIC_ETHEREUM_RPC),
       [celo.id]: http(process.env.NEXT_PUBLIC_CELO_RPC),
+      [optimism.id]: http(process.env.NEXT_PUBLIC_OPTIMISM_RPC),
     },
 
     // Required API Keys
