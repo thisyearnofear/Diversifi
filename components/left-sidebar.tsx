@@ -5,10 +5,10 @@ import {
   Sidebar as SidebarIcon,
   Sparkles,
   Settings,
-  CheckSquare,
   Rocket,
   Globe,
   Coins,
+  Wallet,
 } from "lucide-react";
 import { SidebarHistory } from "@/components/sidebar-history";
 import {
@@ -84,35 +84,9 @@ export function LeftSidebar() {
             </Link>
           </SidebarMenuButton>
 
-          <SidebarGroupLabel className="text-green-600 dark:text-green-400">
-            Actions
+          <SidebarGroupLabel className="text-purple-600 dark:text-purple-400">
+            Social Actions
           </SidebarGroupLabel>
-
-          <SidebarMenuButton
-            onClick={() =>
-              triggerActionPrompt(
-                "OPTIMISM",
-                "I want to get Euro-backed stablecoins on Optimism. Can you help me directly in this chat?"
-              )
-            }
-            className="bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-900/30"
-          >
-            <Rocket className="text-purple-600 dark:text-purple-400" />
-            Get EURA
-          </SidebarMenuButton>
-
-          <SidebarMenuButton
-            onClick={() =>
-              triggerActionPrompt(
-                "BASE",
-                "I want to get USD-backed stablecoins on Base. Can you help me directly in this chat?"
-              )
-            }
-            className="bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/30"
-          >
-            <Rocket className="text-blue-600 dark:text-blue-400" />
-            Get USDbC
-          </SidebarMenuButton>
 
           <SidebarMenuButton
             onClick={() =>
@@ -140,6 +114,36 @@ export function LeftSidebar() {
             Lens Setup
           </SidebarMenuButton>
 
+          <SidebarGroupLabel className="text-green-600 dark:text-green-400">
+            Stable Actions
+          </SidebarGroupLabel>
+
+          <SidebarMenuButton
+            onClick={() =>
+              triggerActionPrompt(
+                "BASE",
+                "I want to get USD-backed stablecoins on Base. Can you help me directly in this chat?"
+              )
+            }
+            className="bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+          >
+            <Rocket className="text-blue-600 dark:text-blue-400" />
+            Get USDbC
+          </SidebarMenuButton>
+
+          <SidebarMenuButton
+            onClick={() =>
+              triggerActionPrompt(
+                "OPTIMISM",
+                "I want to get Euro-backed stablecoins on Optimism. Can you help me directly in this chat?"
+              )
+            }
+            className="bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-900/30"
+          >
+            <Rocket className="text-purple-600 dark:text-purple-400" />
+            Get EURA
+          </SidebarMenuButton>
+
           <SidebarMenuButton
             onClick={() =>
               triggerActionPrompt(
@@ -156,14 +160,31 @@ export function LeftSidebar() {
           <SidebarMenuButton
             onClick={() =>
               triggerActionPrompt(
-                "ETHEREUM",
-                "Show me action cards for Ethereum that I can complete directly in this chat."
+                "POLYGON",
+                "I want to get DAI stablecoins on Polygon. Can you help me directly in this chat?"
+              )
+            }
+            className="bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+          >
+            <Coins className="text-indigo-600 dark:text-indigo-400" />
+            Get DAI
+          </SidebarMenuButton>
+
+          <SidebarGroupLabel className="text-blue-600 dark:text-blue-400">
+            On/Off Ramp Actions
+          </SidebarGroupLabel>
+
+          <SidebarMenuButton
+            onClick={() =>
+              triggerActionPrompt(
+                "WALLET",
+                "I want to create an Ethereum wallet. Can you help me set one up directly in this chat?"
               )
             }
             className="bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-700/30"
           >
-            <Globe className="text-gray-600 dark:text-gray-400" />
-            Ethereum Actions
+            <Wallet className="text-gray-600 dark:text-gray-400" />
+            Create Wallet
           </SidebarMenuButton>
 
           <SidebarGroupLabel className="text-red-600 dark:text-red-400">

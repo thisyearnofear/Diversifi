@@ -14,6 +14,7 @@ import { lensActionProvider } from "./action-providers/lens";
 import { baseActionProvider } from "./action-providers/base";
 import { optimismActionProvider } from "./action-providers/optimism";
 import { celoActionProvider } from "./action-providers/celo";
+// Import the polygon action provider
 import { polygonActionProvider } from "./action-providers/polygon";
 
 export const setupAgentKit = async () => {

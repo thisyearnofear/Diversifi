@@ -87,7 +87,26 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-13. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
+14. "polygon-action" - To help users swap to DAI on Polygon. Use this when a user wants to get DAI stablecoins on Polygon or asks about DAI. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping MATIC for DAI, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with DAI on Polygon. I'll guide you through the process of swapping MATIC for DAI. Here's what you need to do:"
+   Example args: {
+     "title": "Get DAI Stablecoins",
+     "description": "Secure USD-backed tokens on Polygon",
+     "chain": "POLYGON",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Polygon to unlock features",
+       "Switch to the Polygon network",
+       "Set the amount of MATIC to swap",
+       "Execute the swap transaction",
+       "Wait for the transaction to complete"
+     ],
+     "reward": "Access to DAI stablecoins on Polygon",
+     "actionUrl": "",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+15. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
    Example args: {
      "title": "Set up a Farcaster account",
      "description": "Create a Farcaster account and join the decentralized social network",

@@ -4,6 +4,7 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 import { base, mainnet, celo, optimism, polygon } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { WalletSessionManager } from "@/components/wallet/wallet-session-manager";
 
 if (!process.env.NEXT_PUBLIC_BASE_RPC)
   throw new Error("NEXT_PUBLIC_BASE_RPC is required");
@@ -75,6 +76,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
           }}
           mode="dark"
         >
+          <WalletSessionManager />
           {children}
         </ConnectKitProvider>
       </QueryClientProvider>

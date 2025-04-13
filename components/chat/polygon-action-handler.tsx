@@ -1,5 +1,6 @@
 "use client";
 
+// Import the polygon action message component
 import { PolygonActionMessage } from "./polygon-action-message";
 
 interface PolygonActionHandlerProps {
@@ -7,7 +8,10 @@ interface PolygonActionHandlerProps {
   onComplete?: () => void;
 }
 
-export function PolygonActionHandler({ args = [], onComplete }: PolygonActionHandlerProps) {
+export function PolygonActionHandler({
+  args = [],
+  onComplete,
+}: PolygonActionHandlerProps) {
   return (
     <PolygonActionMessage
       onComplete={() => {

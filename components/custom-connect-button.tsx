@@ -7,6 +7,25 @@ import { toast } from "sonner";
 export function CustomConnectButton() {
   const [isConnecting, setIsConnecting] = useState(false);
 
+  // Function to clean up WalletConnect sessions
+  const cleanupWalletConnectSessions = useCallback(() => {
+    try {
+      // Clear any stored WalletConnect sessions from localStorage
+      Object.keys(localStorage).forEach((key) => {
+        if (
+          key.startsWith("wc@2:") ||
+          key.startsWith("wagmi.") ||
+          key.startsWith("walletconnect:")
+        ) {
+          console.log(`Cleaning up WalletConnect session: ${key}`);
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      console.error("Error cleaning up WalletConnect sessions:", error);
+    }
+  }, []);
+
   // Custom render function to fix the empty href issue
   const customButtonRender = useCallback(
     ({ show, isConnected, address, ensName }: any) => {
@@ -15,6 +34,9 @@ export function CustomConnectButton() {
 
         setIsConnecting(true);
         try {
+          // Clean up any existing WalletConnect sessions before connecting
+          cleanupWalletConnectSessions();
+
           // Add a small delay to ensure the browser recognizes this as a user action
           await new Promise((resolve) => setTimeout(resolve, 50));
           await show();

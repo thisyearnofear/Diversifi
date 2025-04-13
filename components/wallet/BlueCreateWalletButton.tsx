@@ -1,40 +1,65 @@
 "use client";
 
-import React, { useCallback } from 'react';
-import { useConnect } from 'wagmi';
-import { CoinbaseWalletLogo } from './CoinbaseWalletLogo';
-import { toast } from 'sonner';
+import React, { useCallback } from "react";
+import { useConnect } from "wagmi";
+import { CoinbaseWalletLogo } from "./CoinbaseWalletLogo";
+import { toast } from "sonner";
 
 const buttonStyles = {
-  background: 'transparent',
-  border: '1px solid transparent',
-  boxSizing: 'border-box' as const,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  background: "transparent",
+  border: "1px solid transparent",
+  boxSizing: "border-box" as const,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   width: 200,
-  fontFamily: 'Arial, sans-serif',
-  fontWeight: 'bold',
+  fontFamily: "Arial, sans-serif",
+  fontWeight: "bold",
   fontSize: 18,
-  backgroundColor: '#0052FF',
+  backgroundColor: "#0052FF",
   paddingLeft: 15,
   paddingRight: 30,
   borderRadius: 10,
-  color: 'white',
+  color: "white",
   height: 48,
-  cursor: 'pointer',
+  cursor: "pointer",
 };
 
 export function BlueCreateWalletButton() {
   const { connectors, connect } = useConnect();
 
+  // Function to clean up WalletConnect sessions
+  const cleanupWalletConnectSessions = useCallback(() => {
+    try {
+      // Clear any stored WalletConnect sessions from localStorage
+      Object.keys(localStorage).forEach((key) => {
+        if (
+          key.startsWith("wc@2:") ||
+          key.startsWith("wagmi.") ||
+          key.startsWith("walletconnect:")
+        ) {
+          console.log(`Cleaning up WalletConnect session: ${key}`);
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      console.error("Error cleaning up WalletConnect sessions:", error);
+    }
+  }, []);
+
   const createWallet = useCallback(() => {
     try {
-      console.log("Available connectors:", connectors.map(c => c.id));
-      const coinbaseWalletConnector = connectors.find(
-        (connector) => connector.id === 'coinbaseWalletSDK'
+      // Clean up any existing WalletConnect sessions before connecting
+      cleanupWalletConnectSessions();
+
+      console.log(
+        "Available connectors:",
+        connectors.map((c) => c.id)
       );
-      
+      const coinbaseWalletConnector = connectors.find(
+        (connector) => connector.id === "coinbaseWalletSDK"
+      );
+
       if (coinbaseWalletConnector) {
         console.log("Found Coinbase Wallet connector, connecting...");
         connect({ connector: coinbaseWalletConnector });
@@ -47,7 +72,7 @@ export function BlueCreateWalletButton() {
       console.error("Error connecting to Coinbase Wallet:", error);
       toast.error("Error connecting to Coinbase Wallet");
     }
-  }, [connectors, connect]);
+  }, [connectors, connect, cleanupWalletConnectSessions]);
 
   return (
     <button style={buttonStyles} onClick={createWallet}>
