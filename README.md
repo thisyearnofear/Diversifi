@@ -42,6 +42,7 @@ To deploy this project on Netlify:
    - `OPENAI_API_KEY`: Your OpenAI API key
    - `POSTGRES_URL`: Your PostgreSQL connection string (if using database features)
    - `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`: Your WalletConnect project ID
+   - `BRIAN_API_KEY`: Your Brian API key for Polygon DAI swaps
    - Other environment variables as needed
 
 The build process is configured to skip database migrations during the Netlify build process to avoid connection issues. Instead, you should run migrations manually after deployment using one of these methods:
@@ -65,7 +66,7 @@ We've built:
 - Custom interactive components in-chat (options, asking for help, connecting wallet, action cards)
 - Simple memory solution for the agent across user chats
 - Action-based learning system with rewards
-- Multi-chain support (Base, Celo, Ethereum)
+- Multi-chain support (Base, Celo, Ethereum, Polygon, Optimism)
 
 ## Development
 
@@ -109,6 +110,7 @@ pnpm dev
 6. ✅ Basic action display
 7. ✅ In-app token swaps with BaseAerodromeSwap contract
 8. ✅ Real-time token pricing with CoinGecko API
+9. ✅ Polygon DAI swap integration with Brian API
 
 ## Clean-Up and Refocusing Plan
 
@@ -216,6 +218,20 @@ We've deployed a simplified smart contract on Celo to facilitate in-app token sw
   - Security features (reentrancy protection, ownership controls)
 
 The contract provides a straightforward interface for swapping CELO tokens to cUSD directly within our application. It leverages Uniswap V3's liquidity pools on Celo for efficient swaps. The contract is designed to be simple and reliable, with a focus on user experience.
+
+### Polygon DAI Integration
+
+We've integrated the Brian API to facilitate in-app token swaps for DAI on Polygon:
+
+- **Network**: Polygon Mainnet
+- **Features**:
+  - Direct MATIC to DAI swaps
+  - Transaction preparation via Brian API
+  - User-friendly confirmation flow
+  - Detailed transaction information
+  - Wallet-based transaction execution
+
+The integration provides a seamless experience for swapping MATIC tokens to DAI directly within our application. It leverages the Brian API to prepare transactions and the user's wallet to execute them, ensuring a secure and transparent process.
 
 ## SnelDAO Idea 🐌
 
