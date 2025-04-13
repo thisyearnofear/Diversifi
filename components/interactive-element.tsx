@@ -15,6 +15,7 @@ import { LensActionCardCompact } from "./chat/lens-action-card-compact";
 import { BaseActionMessage } from "./chat/base-action-message";
 import { OptimismActionHandler } from "./chat/optimism-action-handler";
 import { CeloActionHandler } from "./chat/celo-action-handler";
+import { PolygonActionHandler } from "./chat/polygon-action-handler";
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -123,17 +124,24 @@ export function InteractiveElement({
     (a) => a.args?.[0]?.chain === "CELO"
   );
 
+  // Find Polygon action card
+  const polygonActionCard = actionCardActions.find(
+    (a) => a.args?.[0]?.chain === "POLYGON"
+  );
+
   // Find dedicated Celo action
   const celoAction = actions.find((a) => a.action === "celo-action");
+  const polygonAction = actions.find((a) => a.action === "polygon-action");
 
-  // Filter out Farcaster, Lens, Base, Optimism, and Celo actions from actionCardActions to avoid duplication
+  // Filter out Farcaster, Lens, Base, Optimism, Celo, and Polygon actions from actionCardActions to avoid duplication
   const filteredActionCards = actionCardActions.filter(
     (a) =>
       a !== farcasterActionCard &&
       a !== lensActionCard &&
       a !== baseActionCard &&
       a !== optimismActionCard &&
-      a !== celoActionCard
+      a !== celoActionCard &&
+      a !== polygonActionCard
   );
 
   return (
@@ -281,6 +289,13 @@ export function InteractiveElement({
       {(celoAction || celoActionCard) && (
         <CeloActionHandler
           args={celoAction?.args || celoActionCard?.args || []}
+        />
+      )}
+
+      {/* Handle both dedicated polygon-action and action-card for Polygon */}
+      {(polygonAction || polygonActionCard) && (
+        <PolygonActionHandler
+          args={polygonAction?.args || polygonActionCard?.args || []}
         />
       )}
 

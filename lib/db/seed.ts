@@ -6,6 +6,7 @@ import { seedLensAction } from "./seeds/lens-action";
 import { seedBaseAction } from "./seeds/base-action";
 import { seedOptimismActions } from "./seeds/optimism-action";
 import { seedCeloActions } from "./seeds/celo-action";
+import { seedPolygonActions } from "./seeds/polygon-action";
 
 type ActionInsert = InferInsertModel<typeof action>;
 
@@ -177,6 +178,9 @@ export async function seedActions() {
 
   // Seed the Celo actions
   await seedCeloActions();
+
+  // Seed the Polygon actions
+  await seedPolygonActions();
 
   console.log("Seeding complete!");
 }

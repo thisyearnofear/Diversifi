@@ -14,6 +14,7 @@ import { lensActionProvider } from "./action-providers/lens";
 import { baseActionProvider } from "./action-providers/base";
 import { optimismActionProvider } from "./action-providers/optimism";
 import { celoActionProvider } from "./action-providers/celo";
+import { polygonActionProvider } from "./action-providers/polygon";
 
 export const setupAgentKit = async () => {
   const activeChain =
@@ -42,6 +43,7 @@ export const setupAgentKit = async () => {
       baseActionProvider(),
       optimismActionProvider(),
       celoActionProvider(),
+      polygonActionProvider(),
       // Only include Alchemy if API key is available
       ...(process.env.ALCHEMY_API_KEY
         ? [alchemyActionProvider(process.env.ALCHEMY_API_KEY)]

@@ -193,7 +193,7 @@ export const action = pgTable("Action", {
     enum: ["SOCIAL", "DEFI", "NFT", "STABLECOIN", "TRADING"],
   }).notNull(),
   chain: varchar("chain", {
-    enum: ["BASE", "CELO", "ETHEREUM", "OPTIMISM"],
+    enum: ["BASE", "CELO", "ETHEREUM", "OPTIMISM", "POLYGON"],
   }).notNull(),
   difficulty: varchar("difficulty", {
     enum: ["BEGINNER", "INTERMEDIATE", "ADVANCED"],

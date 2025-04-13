@@ -1,7 +1,7 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { base, mainnet, celo, optimism } from "wagmi/chains";
+import { base, mainnet, celo, optimism, polygon } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
@@ -13,6 +13,8 @@ if (!process.env.NEXT_PUBLIC_CELO_RPC)
   throw new Error("NEXT_PUBLIC_CELO_RPC is required");
 if (!process.env.NEXT_PUBLIC_OPTIMISM_RPC)
   throw new Error("NEXT_PUBLIC_OPTIMISM_RPC is required");
+if (!process.env.NEXT_PUBLIC_POLYGON_RPC)
+  throw new Error("NEXT_PUBLIC_POLYGON_RPC is required");
 
 // Optional API keys
 if (!process.env.NEXT_PUBLIC_MORALIS_API_KEY) {
@@ -26,13 +28,14 @@ if (!process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID)
 const config = createConfig(
   getDefaultConfig({
     // Your dApps chains
-    chains: [base, mainnet, celo, optimism],
+    chains: [base, mainnet, celo, optimism, polygon],
     transports: {
       // RPC URL for each chain
       [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC),
       [mainnet.id]: http(process.env.NEXT_PUBLIC_ETHEREUM_RPC),
       [celo.id]: http(process.env.NEXT_PUBLIC_CELO_RPC),
       [optimism.id]: http(process.env.NEXT_PUBLIC_OPTIMISM_RPC),
+      [polygon.id]: http(process.env.NEXT_PUBLIC_POLYGON_RPC),
     },
 
     // Required API Keys
