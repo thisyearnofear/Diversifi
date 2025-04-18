@@ -16,7 +16,8 @@
     "db:pull": "drizzle-kit pull",
     "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
-    "db:seed": "pnpm tsx scripts/seed.ts"
+    "db:seed": "pnpm tsx scripts/seed.ts",
+    "db:seed:stable": "pnpm tsx scripts/seed-stable-station.ts"
   },
   "dependencies": {
     "@ai-sdk/fireworks": "^0.1.8",

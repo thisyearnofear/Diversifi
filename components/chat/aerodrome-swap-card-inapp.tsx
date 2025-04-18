@@ -37,8 +37,17 @@ export function AerodromeSwapCardInapp({
   // Set expanded state based on registration status - only expand if registered
   const [isExpanded, setIsExpanded] = useState(false);
   const { isRegistered } = useDivviRegistration();
-  const { status, error, txHash, isCompleted, canSwap, swap } =
-    useAerodromeSwap();
+  const {
+    status,
+    error,
+    txHash,
+    isCompleted,
+    canSwap,
+    isCorrectNetwork,
+    isSwitchingChain,
+    swap,
+    switchToBase,
+  } = useAerodromeSwap();
 
   // State for the swap form
   const [sourceToken, setSourceToken] = useState("ETH");
@@ -107,6 +116,18 @@ export function AerodromeSwapCardInapp({
       if (!address) {
         toast.error("Please connect your wallet first");
         return;
+      }
+
+      // Double-check network before proceeding
+      if (!isCorrectNetwork) {
+        toast.info("Switching to Base network...");
+        await switchToBase();
+
+        // Verify the switch was successful
+        if (!isCorrectNetwork) {
+          toast.error("Please switch to the Base network to continue");
+          return;
+        }
       }
 
       if (!amount || parseFloat(amount) <= 0) {
@@ -198,6 +219,16 @@ export function AerodromeSwapCardInapp({
                   Complete registration in Step 1 to unlock this step
                 </p>
               )}
+              {isRegistered && status === "wrong-network" && (
+                <p className="text-xs text-amber-600 mt-1">
+                  You need to switch to the Base network to continue
+                </p>
+              )}
+              {status === "switching-network" && (
+                <p className="text-xs text-amber-600 mt-1">
+                  Switching to Base network...
+                </p>
+              )}
               {status === "transaction-pending" && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction pending...
@@ -258,7 +289,24 @@ export function AerodromeSwapCardInapp({
       </div>
 
       <div className="p-4 space-y-4">
-        {!isReviewing ? (
+        {status === "wrong-network" ? (
+          <div className="space-y-3">
+            <Button
+              onClick={switchToBase}
+              disabled={isLoading}
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Switching Network...
+                </>
+              ) : (
+                "Switch to Base Network"
+              )}
+            </Button>
+          </div>
+        ) : !isReviewing ? (
           <>
             <div className="space-y-3">
               <div>
@@ -268,7 +316,7 @@ export function AerodromeSwapCardInapp({
                 <Select
                   value={sourceToken}
                   onValueChange={setSourceToken}
-                  disabled={isLoading || !isRegistered}
+                  disabled={isLoading || !isRegistered || !isCorrectNetwork}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select token" />

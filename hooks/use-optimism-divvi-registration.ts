@@ -6,6 +6,7 @@ import { optimism } from "wagmi/chains";
 import { stringToHex } from "viem";
 import { toast } from "sonner";
 import { useActions } from "@/hooks/use-actions";
+import { parseContractError } from "@/lib/utils/error-helpers";
 
 // Divvi V0 Registry Contract on Optimism
 const REGISTRY_CONTRACT_ADDRESS = "0xBa9655677f4E42DD289F5b7888170bC0c7dA8Cdc";
@@ -128,7 +129,7 @@ export function useOptimismDivviRegistration() {
       refetchRegistrationStatus();
     } else if ((isWriteError || isConfirmError) && writeError) {
       setStatus("transaction-failed");
-      setError(writeError.message || "Transaction failed");
+      setError(parseContractError(writeError));
     }
   }, [isWritePending, isConfirming, isConfirmed, isWriteError, isConfirmError, writeData, writeError, refetchRegistrationStatus]);
 
@@ -173,7 +174,7 @@ export function useOptimismDivviRegistration() {
     } catch (error) {
       console.error("Error switching to Optimism:", error);
       setStatus("error");
-      setError(error instanceof Error ? error.message : "Failed to switch to Optimism network");
+      setError(parseContractError(error));
     }
   };
 
@@ -232,7 +233,7 @@ export function useOptimismDivviRegistration() {
     } catch (error) {
       console.error("Error registering with Divvi V0:", error);
       setStatus("error");
-      setError(error instanceof Error ? error.message : "Failed to register with Divvi V0");
+      setError(parseContractError(error));
     }
   };
 
@@ -254,14 +255,17 @@ export function useOptimismDivviRegistration() {
         });
 
         if (!response.ok) {
-          console.error("Failed to get action ID:", await response.text());
           // If we get a 404, it means the action doesn't exist in the database yet
           // We'll handle this gracefully by marking the action as completed anyway
           if (response.status === 404) {
+            // Log a more informative message at debug level
+            console.debug("Action 'Register on Optimism' not found in database, marking as completed anyway");
             setStatus("completed");
             toast.success("Registration on Optimism completed!");
             return;
           } else {
+            // Only log as error for non-404 responses
+            console.error("Failed to get action ID:", await response.text());
             throw new Error("Failed to get action ID");
           }
         }
@@ -275,7 +279,8 @@ export function useOptimismDivviRegistration() {
           completedAt: new Date().toISOString(),
         });
       } catch (error) {
-        console.error("Error completing registration:", error);
+        // Log at debug level instead of error since we're handling it gracefully
+        console.debug("Non-critical error completing registration:", error);
         // Even if there's an error with the database, we'll still mark it as completed
         // This ensures the user can proceed to the next step
         setStatus("completed");
@@ -288,7 +293,7 @@ export function useOptimismDivviRegistration() {
     } catch (error) {
       console.error("Error completing registration:", error);
       setStatus("error");
-      setError(error instanceof Error ? error.message : "Failed to complete registration");
+      setError(parseContractError(error));
     }
   };
 

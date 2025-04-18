@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -61,6 +61,15 @@ export function VelodromeSwapCardCompact({
     source: priceSource,
   } = useTokenPrice(["ETH", "USDC", "EURA"], "usd", "0xa"); // 0xa is Optimism
 
+  // Update expanded state when registration status changes
+  useEffect(() => {
+    if (isRegistered) {
+      setIsExpanded(true);
+    } else {
+      setIsExpanded(false);
+    }
+  }, [isRegistered]);
+
   // Calculate estimated EURA output
   const calculateEstimatedOutput = () => {
     if (!amount || parseFloat(amount) <= 0) return "0";
@@ -104,9 +113,16 @@ export function VelodromeSwapCardCompact({
         return;
       }
 
+      // Double-check network before proceeding
       if (!isCorrectNetwork) {
-        toast.error("Please switch to the Optimism network first");
-        return;
+        toast.info("Switching to Optimism network...");
+        await switchToOptimism();
+
+        // Verify the switch was successful
+        if (!isCorrectNetwork) {
+          toast.error("Please switch to the Optimism network to continue");
+          return;
+        }
       }
 
       if (!amount || parseFloat(amount) <= 0) {
@@ -136,10 +152,21 @@ export function VelodromeSwapCardCompact({
         <div className="flex items-center gap-3">
           <CheckCircle className="h-5 w-5 text-purple-600" />
           <div>
-            <h3 className="font-medium">Swap Complete</h3>
+            <h3 className="font-medium">Swap Complete ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               You've successfully swapped for EURA on Optimism!
             </p>
+            {txHash && (
+              <a
+                href={`https://optimistic.etherscan.io/tx/${txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
+              >
+                View transaction
+                <ExternalLink className="h-3 w-3 ml-1" />
+              </a>
+            )}
           </div>
         </div>
       </Card>
@@ -151,6 +178,24 @@ export function VelodromeSwapCardCompact({
       <div className="p-4 bg-purple-50 dark:bg-purple-900/20">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
+            <div className="flex-shrink-0">
+              {/* Status indicator icon */}
+              {isRegistered ? (
+                status === "swapping" ||
+                status === "completing" ||
+                status === "switching-network" ? (
+                  <Loader2 className="h-5 w-5 text-purple-500 animate-spin" />
+                ) : (
+                  <div className="h-5 w-5 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
+                    2
+                  </div>
+                )
+              ) : (
+                <div className="h-5 w-5 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
+                  2
+                </div>
+              )}
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-medium">Swap to EURA</h3>
@@ -158,14 +203,19 @@ export function VelodromeSwapCardCompact({
                   variant="outline"
                   className="text-xs bg-purple-100 dark:bg-purple-900 border-purple-200"
                 >
-                  Step 2
+                  Step 2 of 2
                 </Badge>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Get Euro-backed stablecoins on Optimism
               </p>
               {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
-              {status === "wrong-network" && (
+              {!isRegistered && (
+                <p className="text-xs text-amber-600 mt-1">
+                  Complete registration in Step 1 to unlock this step
+                </p>
+              )}
+              {isRegistered && status === "wrong-network" && (
                 <p className="text-xs text-amber-600 mt-1">
                   You need to switch to the Optimism network to continue
                 </p>
@@ -182,6 +232,7 @@ export function VelodromeSwapCardCompact({
             size="sm"
             className="h-8 w-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
+            disabled={!isRegistered}
           >
             {isExpanded ? (
               <ChevronUp className="h-3 w-3" />

@@ -6,6 +6,7 @@ import { seedLensAction } from "./seeds/lens-action";
 import { seedBaseAction } from "./seeds/base-action";
 import { seedOptimismActions } from "./seeds/optimism-action";
 import { seedCeloActions } from "./seeds/celo-action";
+import { seedStableStationActions } from "./seeds/stable-station-action";
 // Temporarily comment out the Polygon actions import to fix build
 // import { seedPolygonActions } from "./seeds/polygon-action";
 
@@ -179,6 +180,9 @@ export async function seedActions() {
 
   // Seed the Celo actions
   await seedCeloActions();
+
+  // Seed the Stable Station actions
+  await seedStableStationActions();
 
   // Temporarily comment out the Polygon actions seeding to fix build
   // await seedPolygonActions();

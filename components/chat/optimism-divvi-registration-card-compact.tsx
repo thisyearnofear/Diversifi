@@ -22,7 +22,6 @@ export function OptimismDivviRegistrationCardCompact({
   onComplete,
 }: OptimismDivviRegistrationCardCompactProps) {
   const { address } = useAccount();
-  const [isExpanded, setIsExpanded] = useState(false);
   const {
     status,
     error,
@@ -34,6 +33,9 @@ export function OptimismDivviRegistrationCardCompact({
     completeRegistration,
     switchToOptimism,
   } = useOptimismDivviRegistration();
+
+  // Set expanded state based on registration status
+  const [isExpanded, setIsExpanded] = useState(!isRegistered);
 
   // Determine if we're in a loading state
   const isLoading = [
@@ -70,7 +72,7 @@ export function OptimismDivviRegistrationCardCompact({
         <div className="flex items-center gap-3">
           <CheckCircle className="h-5 w-5 text-purple-600" />
           <div>
-            <h3 className="font-medium">Registration Complete</h3>
+            <h3 className="font-medium">Registration Complete ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               You're now registered with Stable Station on Optimism!
             </p>
@@ -85,6 +87,18 @@ export function OptimismDivviRegistrationCardCompact({
       <div className="p-4 bg-purple-50 dark:bg-purple-900/20">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
+            <div className="flex-shrink-0">
+              {/* Status indicator icon */}
+              {status === "transaction-success" ||
+              status === "transaction-confirming" ||
+              status === "transaction-pending" ? (
+                <Loader2 className="h-5 w-5 text-amber-500 animate-spin" />
+              ) : (
+                <div className="h-5 w-5 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
+                  !
+                </div>
+              )}
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-medium">Register on Optimism</h3>
@@ -92,7 +106,7 @@ export function OptimismDivviRegistrationCardCompact({
                   variant="outline"
                   className="text-xs bg-purple-100 dark:bg-purple-900 border-purple-200"
                 >
-                  Step 1
+                  Step 1 of 2
                 </Badge>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">

@@ -218,15 +218,18 @@ export function useDivviRegistration(chainName: string = "aerodrome") {
         });
 
         if (!response.ok) {
-          console.error("Failed to get action ID:", await response.text());
           // If we get a 404, it means the action doesn't exist in the database yet
           // We'll handle this gracefully by marking the action as completed anyway
           if (response.status === 404) {
+            // Log a more informative message at debug level
+            console.debug(`Action '${actionTitle}' not found in database, marking as completed anyway`);
             setStatus("completed");
             const platform = chainName === "celo" ? "Celo" : "Stable Station";
             toast.success(`Registration on ${platform} completed!`);
             return;
           } else {
+            // Only log as error for non-404 responses
+            console.error("Failed to get action ID:", await response.text());
             throw new Error("Failed to get action ID");
           }
         }
@@ -240,11 +243,13 @@ export function useDivviRegistration(chainName: string = "aerodrome") {
           completedAt: new Date().toISOString(),
         });
       } catch (error) {
-        console.error("Error completing registration:", error);
+        // Log at debug level instead of error since we're handling it gracefully
+        console.debug("Non-critical error completing registration:", error);
         // Even if there's an error with the database, we'll still mark it as completed
         // This ensures the user can proceed to the next step
         setStatus("completed");
-        toast.success("Registration on Stable Station completed!");
+        const platform = chainName === "celo" ? "Celo" : "Stable Station";
+        toast.success(`Registration on ${platform} completed!`);
         return;
       }
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAccount, useBalance, useWriteContract, useWaitForTransactionReceipt, useReadContract, usePublicClient } from "wagmi";
+import { useAccount, useBalance, useWriteContract, useWaitForTransactionReceipt, useReadContract, usePublicClient, useChainId, useSwitchChain } from "wagmi";
+import { base } from "wagmi/chains";
 import { parseEther, parseUnits, formatUnits } from "viem";
 import { toast } from "sonner";
 import { useActions } from "@/hooks/use-actions";
@@ -77,6 +78,8 @@ export type AerodromeSwapStatus =
   | "transaction-success"
   | "completing"
   | "completed"
+  | "wrong-network"
+  | "switching-network"
   | "error";
 
 type SwapParams = {
@@ -86,11 +89,16 @@ type SwapParams = {
 
 export function useAerodromeSwap() {
   const { address } = useAccount();
+  const chainId = useChainId();
+  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
   const [status, setStatus] = useState<AerodromeSwapStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const { completeAction } = useActions();
   const { isRegistered } = useDivviRegistration();
+
+  // Check if we're on the correct network (Base)
+  const isCorrectNetwork = chainId === base.id;
 
   // Get token prices from CoinGecko
   const { prices, isLoading: isPriceLoading } = useTokenPrice(["ETH", "USDC"]);
@@ -120,14 +128,34 @@ export function useAerodromeSwap() {
     hash: writeData,
   });
 
-  // Update status based on registration status
+  // Update status based on registration status and network
   useEffect(() => {
+    if (!isCorrectNetwork) {
+      setStatus("wrong-network");
+      return;
+    }
+
     if (!isRegistered) {
       setStatus("waiting-for-registration");
-    } else if (status === "waiting-for-registration" || status === "idle") {
+    } else if (status === "waiting-for-registration" || status === "idle" || status === "wrong-network") {
       setStatus("ready");
     }
-  }, [isRegistered, status]);
+  }, [isRegistered, status, isCorrectNetwork]);
+
+  // Update status when switching networks
+  useEffect(() => {
+    if (isSwitchingChain) {
+      setStatus("switching-network");
+    } else if (status === "switching-network" && isCorrectNetwork) {
+      // If we were switching networks and now we're on the correct network,
+      // update the status based on registration status
+      if (!isRegistered) {
+        setStatus("waiting-for-registration");
+      } else {
+        setStatus("ready");
+      }
+    }
+  }, [isSwitchingChain, status, isCorrectNetwork, isRegistered]);
 
   // Update status based on transaction state
   useEffect(() => {
@@ -349,13 +377,42 @@ export function useAerodromeSwap() {
     }
   };
 
+  // Function to switch to Base network
+  const switchToBase = async () => {
+    try {
+      setStatus("switching-network");
+      switchChain({ chainId: base.id });
+      toast.success("Switched to Base network");
+
+      // Add a small delay to ensure the chain ID has been updated
+      await new Promise((resolve) => { setTimeout(resolve, 1000); });
+
+      // Manually update the status after switching networks
+      if (chainId === base.id) {
+        if (!isRegistered) {
+          setStatus("waiting-for-registration");
+        } else {
+          setStatus("ready");
+        }
+      }
+      // If we're not on the correct network yet, the useEffect will handle it
+    } catch (error) {
+      console.error("Error switching to Base:", error);
+      setStatus("error");
+      setError(error instanceof Error ? error.message : "Failed to switch to Base network");
+    }
+  };
+
   return {
     status,
     error,
     txHash,
     isCompleted: status === "completed",
-    canSwap: isRegistered && status !== "completed",
+    canSwap: isRegistered && isCorrectNetwork && status !== "completed",
+    isCorrectNetwork,
+    isSwitchingChain,
     swap,
+    switchToBase,
     setTxHash,
   };
 }
