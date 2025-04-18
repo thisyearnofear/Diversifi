@@ -6,6 +6,7 @@ import { base, celo } from "wagmi/chains";
 import { stringToHex } from "viem";
 import { toast } from "sonner";
 import { useActions } from "@/hooks/use-actions";
+import { parseContractError } from "@/lib/utils/error-helpers";
 
 // Divvi V0 Registry Contract on Base
 const REGISTRY_CONTRACT_ADDRESS = "0xBa9655677f4E42DD289F5b7888170bC0c7dA8Cdc";
@@ -65,7 +66,7 @@ export function useDivviRegistration(chainName: string = "aerodrome") {
         return true;
       } catch (error) {
         console.error("Error switching network:", error);
-        setError(error instanceof Error ? error.message : "Failed to switch network");
+        setError(parseContractError(error));
         setStatus("error");
         return false;
       }
@@ -130,12 +131,8 @@ export function useDivviRegistration(chainName: string = "aerodrome") {
     } else if ((isWriteError || isConfirmError) && writeError) {
       setStatus("transaction-failed");
 
-      // Handle user rejection more gracefully
-      if (writeError.message?.includes("User rejected")) {
-        setError("Transaction was declined. You can try again when ready.");
-      } else {
-        setError(writeError.message || "Transaction failed");
-      }
+      // Use the error parser to get a user-friendly message
+      setError(parseContractError(writeError));
     }
   }, [isWritePending, isConfirming, isConfirmed, isWriteError, isConfirmError, writeData, writeError]);
 
@@ -196,7 +193,7 @@ export function useDivviRegistration(chainName: string = "aerodrome") {
     } catch (error) {
       console.error("Error registering with Divvi V0:", error);
       setStatus("error");
-      setError(error instanceof Error ? error.message : "Failed to register with Divvi V0");
+      setError(parseContractError(error));
     }
   };
 
@@ -257,7 +254,7 @@ export function useDivviRegistration(chainName: string = "aerodrome") {
     } catch (error) {
       console.error("Error completing registration:", error);
       setStatus("error");
-      setError(error instanceof Error ? error.message : "Failed to complete registration");
+      setError(parseContractError(error));
     }
   };
 

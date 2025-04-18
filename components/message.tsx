@@ -4,7 +4,7 @@ import type { ChatRequestOptions } from "ai";
 import type { Message } from "@/types/message";
 import cx from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 
 import type { Vote } from "@/lib/db/schema";
 
@@ -153,66 +153,10 @@ const PurePreviewMessage = ({
 
             {message.toolInvocations && message.toolInvocations.length > 0 && (
               <div className="flex flex-col gap-4">
-                {message.toolInvocations.map((toolInvocation) => {
-                  const { toolName, toolCallId, state, args } = toolInvocation;
-
-                  if (state === "result") {
-                    const { result } = toolInvocation;
-
-                    return (
-                      <div key={toolCallId}>
-                        {toolName === "getWeather" ? (
-                          <Weather weatherAtLocation={result} />
-                        ) : toolName === "createDocument" ? (
-                          <DocumentPreview
-                            isReadonly={isReadonly}
-                            result={result}
-                          />
-                        ) : toolName === "updateDocument" ? (
-                          <DocumentToolResult
-                            type="update"
-                            result={result}
-                            isReadonly={isReadonly}
-                          />
-                        ) : toolName === "requestSuggestions" ? (
-                          <DocumentToolResult
-                            type="request-suggestions"
-                            result={result}
-                            isReadonly={isReadonly}
-                          />
-                        ) : (
-                          <ToolCallOutput toolName={toolName} result={result} />
-                        )}
-                      </div>
-                    );
-                  }
-                  return (
-                    <div
-                      key={toolCallId}
-                      className={cx({
-                        skeleton: ["getWeather"].includes(toolName),
-                      })}
-                    >
-                      {toolName === "getWeather" ? (
-                        <Weather />
-                      ) : toolName === "createDocument" ? (
-                        <DocumentPreview isReadonly={isReadonly} args={args} />
-                      ) : toolName === "updateDocument" ? (
-                        <DocumentToolCall
-                          type="update"
-                          args={args}
-                          isReadonly={isReadonly}
-                        />
-                      ) : toolName === "requestSuggestions" ? (
-                        <DocumentToolCall
-                          type="request-suggestions"
-                          args={args}
-                          isReadonly={isReadonly}
-                        />
-                      ) : null}
-                    </div>
-                  );
-                })}
+                <CompactToolCalls
+                  toolInvocations={message.toolInvocations}
+                  isReadonly={isReadonly}
+                />
               </div>
             )}
           </div>
@@ -274,31 +218,203 @@ export const ThinkingMessage = () => {
   );
 };
 
+// Component to handle and display tool calls in a compact way
+const CompactToolCalls = ({
+  toolInvocations,
+  isReadonly,
+}: {
+  toolInvocations: any[];
+  isReadonly: boolean;
+}) => {
+  // Filter and group tool calls to reduce repetition
+  const [groupedCalls, setGroupedCalls] = useState<Record<string, any[]>>({});
+  const [showAllCalls, setShowAllCalls] = useState(false);
+
+  useEffect(() => {
+    // Group tool calls by name and filter out repetitive ones
+    const grouped: Record<string, any[]> = {};
+
+    toolInvocations.forEach((invocation) => {
+      const { toolName, state, result } = invocation;
+
+      // Skip non-result states
+      if (state !== "result") return;
+
+      // Skip saveUserInformation calls unless showing all
+      if (toolName === "saveUserInformation" && !showAllCalls) {
+        // Only keep the first one for display
+        if (!grouped[toolName]) {
+          grouped[toolName] = [invocation];
+        }
+        return;
+      }
+
+      // Group by tool name
+      if (!grouped[toolName]) {
+        grouped[toolName] = [];
+      }
+      grouped[toolName].push(invocation);
+    });
+
+    setGroupedCalls(grouped);
+  }, [toolInvocations, showAllCalls]);
+
+  // Count total and filtered calls
+  const totalCalls = toolInvocations.filter(
+    (inv) => inv.state === "result"
+  ).length;
+  const displayedCalls = Object.values(groupedCalls).flat().length;
+
+  // If no calls to display, return null
+  if (Object.keys(groupedCalls).length === 0) return null;
+
+  return (
+    <div className="flex flex-col gap-2">
+      {/* Display compact tool call summary */}
+      <div className="text-xs text-muted-foreground">
+        {displayedCalls < totalCalls && (
+          <div className="flex justify-between items-center mb-1">
+            <span>
+              Showing {displayedCalls} of {totalCalls} tool calls
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs h-6 px-2"
+              onClick={() => setShowAllCalls(!showAllCalls)}
+            >
+              {showAllCalls ? "Hide repetitive calls" : "Show all calls"}
+            </Button>
+          </div>
+        )}
+
+        {/* Render each group of tool calls */}
+        {Object.entries(groupedCalls).map(([toolName, invocations]) => (
+          <div key={toolName}>
+            {invocations.map((invocation, index) => {
+              const { toolCallId, result } = invocation;
+
+              // Special handling for specific tool types
+              if (toolName === "getWeather") {
+                return <Weather key={toolCallId} weatherAtLocation={result} />;
+              } else if (toolName === "createDocument") {
+                return (
+                  <DocumentPreview
+                    key={toolCallId}
+                    isReadonly={isReadonly}
+                    result={result}
+                  />
+                );
+              } else if (toolName === "updateDocument") {
+                return (
+                  <DocumentToolResult
+                    key={toolCallId}
+                    type="update"
+                    result={result}
+                    isReadonly={isReadonly}
+                  />
+                );
+              } else if (toolName === "requestSuggestions") {
+                return (
+                  <DocumentToolResult
+                    key={toolCallId}
+                    type="request-suggestions"
+                    result={result}
+                    isReadonly={isReadonly}
+                  />
+                );
+              } else {
+                // Default compact display for other tool calls
+                return (
+                  <ToolCallOutput
+                    key={toolCallId}
+                    toolName={toolName}
+                    result={result}
+                    index={index}
+                    total={invocations.length}
+                  />
+                );
+              }
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Compact tool call output component
 const ToolCallOutput = ({
   toolName,
   result,
+  index,
+  total,
 }: {
   toolName: string;
   result: any;
+  index: number;
+  total: number;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // For saveUserInformation, show a simplified version
+  if (toolName === "saveUserInformation") {
+    return (
+      <div className="bg-muted/50 p-1.5 rounded-md text-xs flex justify-between items-center">
+        <span className="text-muted-foreground">
+          {index === 0 && total > 1
+            ? `Saved user information (${total} updates)`
+            : "Saved user information"}
+        </span>
+        {isExpanded ? (
+          <div className="flex flex-col gap-1 mt-1">
+            <div className="text-xs text-muted-foreground">
+              {result.message}
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsExpanded(false)}
+              className="text-xs h-5 self-end"
+            >
+              Hide details
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(true)}
+            className="text-xs h-5"
+          >
+            Details
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  // For other tool calls
   return (
-    <pre className="bg-muted p-2 rounded-md text-xs">
-      <p>{`Tool call: ${toolName}`}</p>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="text-xs h-6 my-1"
-      >
-        {isExpanded ? "Show less" : "Show more information"}
-      </Button>
+    <div className="bg-muted/50 p-1.5 rounded-md text-xs">
+      <div className="flex justify-between items-center">
+        <span>{`Tool: ${toolName}`}</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-xs h-5"
+        >
+          {isExpanded ? "Hide" : "Details"}
+        </Button>
+      </div>
       {isExpanded && (
-        <div className="mt-1 overflow-auto">
-          {JSON.stringify(result, null, 2)}
+        <div className="mt-1 overflow-auto text-muted-foreground">
+          {typeof result === "object"
+            ? JSON.stringify(result, null, 2)
+            : result}
         </div>
       )}
-    </pre>
+    </div>
   );
 };

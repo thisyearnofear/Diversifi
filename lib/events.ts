@@ -2,6 +2,12 @@
 type EventCallback = (data?: any) => void;
 type EventMap = Record<string, EventCallback[]>;
 
+// Define the structure for chat message events
+export interface ChatMessageEvent {
+  message: string;
+  category: string;
+}
+
 class EventBus {
   private events: EventMap = {};
 

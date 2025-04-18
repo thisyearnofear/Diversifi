@@ -24,7 +24,7 @@ export function DivviRegistrationCardCompact({
   onComplete,
 }: DivviRegistrationCardCompactProps) {
   const { address } = useAccount();
-  const [isExpanded, setIsExpanded] = useState(false);
+  // Initialize isExpanded to true by default if not registered
   const {
     status,
     error,
@@ -36,6 +36,9 @@ export function DivviRegistrationCardCompact({
     register,
     completeRegistration,
   } = useDivviRegistration(chain);
+
+  // Set expanded state based on registration status
+  const [isExpanded, setIsExpanded] = useState(!isRegistered);
 
   // Determine if we're in a loading state
   const isLoading = [
@@ -81,7 +84,7 @@ export function DivviRegistrationCardCompact({
         <div className="flex items-center gap-3">
           <CheckCircle className="h-5 w-5 text-green-600" />
           <div>
-            <h3 className="font-medium">Registration Complete</h3>
+            <h3 className="font-medium">Registration Complete ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {chain === "celo"
                 ? "You're now registered with Stable Station on Celo!"
@@ -108,6 +111,18 @@ export function DivviRegistrationCardCompact({
       >
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
+            <div className="flex-shrink-0">
+              {/* Status indicator icon */}
+              {status === "transaction-success" ||
+              status === "transaction-confirming" ||
+              status === "transaction-pending" ? (
+                <Loader2 className="h-5 w-5 text-amber-500 animate-spin" />
+              ) : (
+                <div className="h-5 w-5 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
+                  !
+                </div>
+              )}
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-medium">Register</h3>
@@ -119,12 +134,12 @@ export function DivviRegistrationCardCompact({
                       : "bg-green-100 dark:bg-green-900 border-green-200"
                   }`}
                 >
-                  Step 1
+                  Step 1 of 2
                 </Badge>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Activate your account on the{" "}
-                {chain === "celo" ? "Celo" : "Base"} ecosystem
+                Activate your Stable Station account on{" "}
+                {chain === "celo" ? "Celo" : "Base"}
               </p>
               {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
               {status === "transaction-pending" && (

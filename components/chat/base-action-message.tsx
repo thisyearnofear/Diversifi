@@ -11,11 +11,14 @@ interface BaseActionMessageProps {
 }
 
 export function BaseActionMessage({ onComplete }: BaseActionMessageProps) {
-  const [showAll, setShowAll] = useState(false);
-
   // Get registration and swap status
   const { isRegistered } = useDivviRegistration();
   const { isCompleted: isSwapCompleted } = useAerodromeSwap();
+
+  // Calculate overall progress
+  const totalSteps = 2;
+  const completedSteps = (isRegistered ? 1 : 0) + (isSwapCompleted ? 1 : 0);
+  const progressPercentage = (completedSteps / totalSteps) * 100;
 
   // Actions for getting USDbC on Base
   const actions = [
@@ -31,16 +34,28 @@ export function BaseActionMessage({ onComplete }: BaseActionMessageProps) {
     },
   ];
 
-  // Always show all actions since they're sequential steps
-  const visibleActions = actions;
-
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-sm text-gray-500 mb-1">
-        Follow these steps to get USD-backed stablecoins on Base:
+      <div className="flex flex-col gap-2 mb-2">
+        <div className="flex justify-between items-center">
+          <div className="text-sm font-medium">
+            Get USD-backed stablecoins on Base
+          </div>
+          <div className="text-xs text-gray-500">
+            {completedSteps}/{totalSteps} steps completed
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-green-500 rounded-full transition-all duration-300 ease-in-out"
+            style={{ width: `${progressPercentage}%` }}
+          ></div>
+        </div>
       </div>
 
-      {visibleActions.map((action) => (
+      {actions.map((action) => (
         <div key={action.id}>{action.component}</div>
       ))}
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -34,6 +34,7 @@ export function AerodromeSwapCardInapp({
   onComplete,
 }: AerodromeSwapCardInappProps) {
   const { address } = useAccount();
+  // Set expanded state based on registration status - only expand if registered
   const [isExpanded, setIsExpanded] = useState(false);
   const { isRegistered } = useDivviRegistration();
   const { status, error, txHash, isCompleted, canSwap, swap } =
@@ -61,6 +62,15 @@ export function AerodromeSwapCardInapp({
     }
     // For USDC to USDbC, keep the 1:1 rate since both are stablecoins
   }
+
+  // Update expanded state when registration status changes
+  useEffect(() => {
+    if (isRegistered) {
+      setIsExpanded(true);
+    } else {
+      setIsExpanded(false);
+    }
+  }, [isRegistered]);
 
   const estimatedOutput = parseFloat(amount || "0") * exchangeRate;
 
@@ -125,7 +135,7 @@ export function AerodromeSwapCardInapp({
         <div className="flex items-center gap-3">
           <CheckCircle className="h-5 w-5 text-green-600" />
           <div>
-            <h3 className="font-medium">USDbC Acquired</h3>
+            <h3 className="font-medium">USDbC Acquired ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               You now have USD-backed stablecoins on Base!
             </p>
@@ -151,6 +161,24 @@ export function AerodromeSwapCardInapp({
       <div className="p-4 bg-blue-50 dark:bg-blue-900/20">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
+            <div className="flex-shrink-0">
+              {/* Status indicator icon */}
+              {isRegistered ? (
+                status === "transaction-pending" ||
+                status === "transaction-submitted" ||
+                status === "transaction-confirming" ? (
+                  <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+                ) : (
+                  <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                    2
+                  </div>
+                )
+              ) : (
+                <div className="h-5 w-5 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
+                  2
+                </div>
+              )}
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-medium">Get Stablecoins</h3>
@@ -158,7 +186,7 @@ export function AerodromeSwapCardInapp({
                   variant="outline"
                   className="text-xs bg-blue-100 dark:bg-blue-900 border-blue-200"
                 >
-                  Step 2
+                  Step 2 of 2
                 </Badge>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -167,7 +195,7 @@ export function AerodromeSwapCardInapp({
               {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
               {!isRegistered && (
                 <p className="text-xs text-amber-600 mt-1">
-                  Please complete Step 1 first
+                  Complete registration in Step 1 to unlock this step
                 </p>
               )}
               {status === "transaction-pending" && (
@@ -192,6 +220,7 @@ export function AerodromeSwapCardInapp({
             size="sm"
             className="h-8 w-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
+            disabled={!isRegistered}
           >
             {isExpanded ? (
               <ChevronUp className="h-3 w-3" />

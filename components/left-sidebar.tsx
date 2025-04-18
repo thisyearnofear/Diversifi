@@ -41,13 +41,11 @@ export function LeftSidebar() {
 
       // Wait for navigation to complete before sending the message
       setTimeout(() => {
-        eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, message);
-        toast.success(`Looking for ${category} actions...`);
+        eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, { message, category });
       }, 500);
     } else {
       // Already in a chat or on home page, just send the message immediately
-      eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, message);
-      toast.success(`Looking for ${category} actions...`);
+      eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, { message, category });
     }
 
     // Close mobile sidebar

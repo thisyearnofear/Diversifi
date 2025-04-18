@@ -2,9 +2,8 @@
 
 import type { Attachment, Message } from "ai";
 import { useChat } from "ai/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
-import { eventBus, EVENTS } from "@/lib/events";
 
 import { ChatHeader } from "@/components/chat-header";
 import type { Vote } from "@/lib/db/schema";
@@ -13,6 +12,7 @@ import { fetcher, generateUUID } from "@/lib/utils";
 import { Block } from "./block";
 import { MultimodalInput } from "./multimodal-input";
 import { Messages } from "./messages";
+import { ActionHandler } from "./action-handler";
 import type { VisibilityType } from "./visibility-selector";
 import { useBlockSelector } from "@/hooks/use-block";
 import { toast } from "sonner";
@@ -52,24 +52,7 @@ export function Chat({
     },
   });
 
-  // Listen for events to send messages
-  useEffect(() => {
-    const unsubscribe = eventBus.on(
-      EVENTS.SEND_CHAT_MESSAGE,
-      (message: string) => {
-        if (message && !isReadonly) {
-          chatMethods.setInput(message);
-          setTimeout(() => {
-            chatMethods.handleSubmit(new Event("submit") as any);
-          }, 100);
-        }
-      }
-    );
-
-    return () => {
-      unsubscribe();
-    };
-  }, [isReadonly, chatMethods]);
+  // We now handle the SEND_CHAT_MESSAGE event in the ActionHandler component
 
   const { data: votes } = useSWR<Array<Vote>>(
     isAuthenticated ? `/api/vote?chatId=${id}` : null,
@@ -136,6 +119,9 @@ export function Chat({
             votes={votes}
             isReadonly={isReadonly}
           />
+
+          {/* Handler for direct action processing */}
+          {!isReadonly && <ActionHandler />}
         </div>
       </div>
     </ChatProvider>

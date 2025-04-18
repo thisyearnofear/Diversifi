@@ -33,13 +33,11 @@ export function MobileNavigation() {
 
       // Wait for navigation to complete before sending the message
       setTimeout(() => {
-        eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, message);
-        toast.success(`Looking for ${category} actions...`);
+        eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, { message, category });
       }, 500);
     } else {
       // Already on home page, just send the message immediately
-      eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, message);
-      toast.success(`Looking for ${category} actions...`);
+      eventBus.emit(EVENTS.SEND_CHAT_MESSAGE, { message, category });
     }
   };
 
