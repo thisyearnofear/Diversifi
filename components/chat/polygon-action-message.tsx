@@ -10,12 +10,17 @@ interface PolygonActionMessageProps {
   onComplete?: () => void;
 }
 
-export function PolygonActionMessage({ onComplete }: PolygonActionMessageProps) {
-  const [showAll, setShowAll] = useState(false);
-
+export function PolygonActionMessage({
+  onComplete,
+}: PolygonActionMessageProps) {
   // Get registration and swap status
   const { isRegistered } = usePolygonDivviRegistration();
   const { isCompleted: isSwapCompleted } = usePolygonDaiSwap();
+
+  // Calculate overall progress
+  const totalSteps = 2;
+  const completedSteps = (isRegistered ? 1 : 0) + (isSwapCompleted ? 1 : 0);
+  const progressPercentage = (completedSteps / totalSteps) * 100;
 
   // Actions for getting DAI on Polygon
   const actions = [
@@ -23,37 +28,46 @@ export function PolygonActionMessage({ onComplete }: PolygonActionMessageProps) 
       id: "polygon-divvi-registration",
       component: <PolygonDivviRegistrationCardCompact onComplete={() => {}} />,
       isCompleted: isRegistered,
-      title: "Step 1: Register with Divvi",
-      description:
-        "Register with Divvi to unlock portfolio tracking & rebalancing features.",
     },
     {
       id: "polygon-swap",
       component: <PolygonSwapCardCompact onComplete={onComplete} />,
       isCompleted: isSwapCompleted,
-      title: "Step 2: Get DAI",
-      description:
-        "Swap MATIC for DAI stablecoins on Polygon.",
     },
   ];
 
-  // Always show all actions since they're sequential steps
-  const visibleActions = actions;
+  // Filter actions based on completion status
+  // Only show the next uncompleted step and all completed steps
+  const visibleActions = actions.filter((action, index) => {
+    // Always show completed steps
+    if (action.isCompleted) return true;
+
+    // Show the first uncompleted step
+    const previousCompleted = index === 0 || actions[index - 1].isCompleted;
+    return previousCompleted;
+  });
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-sm text-gray-500 mb-1">
-        Follow these steps to get DAI stablecoins on Polygon:
+      <div className="flex flex-col gap-2 mb-2">
+        <div className="flex justify-between items-center">
+          <div className="text-sm font-medium">
+            Get DAI stablecoins on Polygon
+          </div>
+          <div className="text-xs text-gray-500">
+            {completedSteps}/{totalSteps} steps completed
+          </div>
+        </div>
+        <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-purple-500 rounded-full transition-all duration-300 ease-in-out"
+            style={{ width: `${progressPercentage}%` }}
+          ></div>
+        </div>
       </div>
 
       {visibleActions.map((action) => (
-        <div key={action.id} className="flex flex-col gap-2">
-          <div className="flex flex-col">
-            <h3 className="text-sm font-medium">{action.title}</h3>
-            <p className="text-xs text-gray-500">{action.description}</p>
-          </div>
-          {action.component}
-        </div>
+        <div key={action.id}>{action.component}</div>
       ))}
     </div>
   );

@@ -22,7 +22,9 @@ interface CeloApproveCardCompactProps {
   onComplete?: (amount: number) => void;
 }
 
-export function CeloApproveCardCompact({ onComplete }: CeloApproveCardCompactProps) {
+export function CeloApproveCardCompact({
+  onComplete,
+}: CeloApproveCardCompactProps) {
   const { address } = useAccount();
   const [isExpanded, setIsExpanded] = useState(false);
   const {
@@ -57,14 +59,16 @@ export function CeloApproveCardCompact({ onComplete }: CeloApproveCardCompactPro
 
   // Determine if we're in a loading state
   const isLoading =
-    ["approving", "transaction-pending", "transaction-submitted", "transaction-confirming"].includes(status) || 
-    isSwitchingChain;
+    [
+      "approving",
+      "transaction-pending",
+      "transaction-submitted",
+      "transaction-confirming",
+    ].includes(status) || isSwitchingChain;
 
   // Determine if the approval is completed
-  const isApprovalCompleted = 
-    isApproved || 
-    status === "approved" || 
-    status === "completed";
+  const isApprovalCompleted =
+    isApproved || status === "approved" || status === "completed";
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -85,11 +89,26 @@ export function CeloApproveCardCompact({ onComplete }: CeloApproveCardCompactPro
     setIsReviewing(false);
   };
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     try {
       if (!address) {
         toast.error("Please connect your wallet first");
         return;
+      }
+
+      // Double-check network before proceeding
+      if (!isCorrectNetwork) {
+        toast.info("Switching to Celo network...");
+        await switchToCelo();
+
+        // Add a small delay to ensure the chain ID has been updated
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Verify the switch was successful
+        if (!isCorrectNetwork) {
+          toast.error("Please switch to the Celo network to continue");
+          return;
+        }
       }
 
       if (!amount || parseFloat(amount) <= 0) {
@@ -188,7 +207,8 @@ export function CeloApproveCardCompact({ onComplete }: CeloApproveCardCompactPro
                       <div className="flex items-center text-xs text-amber-600 mt-1">
                         <Info className="h-3 w-3 mr-1" />
                         <span>
-                          This requires two transactions: first approve, then swap
+                          This requires two transactions: first approve, then
+                          swap
                         </span>
                       </div>
                     </div>

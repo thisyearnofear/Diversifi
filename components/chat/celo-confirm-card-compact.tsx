@@ -22,7 +22,10 @@ interface CeloConfirmCardCompactProps {
   onComplete?: () => void;
 }
 
-export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCompactProps) {
+export function CeloConfirmCardCompact({
+  amount,
+  onComplete,
+}: CeloConfirmCardCompactProps) {
   const { address } = useAccount();
   const [isExpanded, setIsExpanded] = useState(false);
   const {
@@ -53,8 +56,12 @@ export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCo
 
   // Determine if we're in a loading state
   const isLoading =
-    ["swapping", "transaction-pending", "transaction-submitted", "transaction-confirming"].includes(status) || 
-    isSwitchingChain;
+    [
+      "swapping",
+      "transaction-pending",
+      "transaction-submitted",
+      "transaction-confirming",
+    ].includes(status) || isSwitchingChain;
 
   // Call onComplete when the swap is completed
   useEffect(() => {
@@ -63,7 +70,7 @@ export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCo
     }
   }, [isCompleted, onComplete]);
 
-  const handleConfirmSwap = () => {
+  const handleConfirmSwap = async () => {
     try {
       if (!address) {
         toast.error("Please connect your wallet first");
@@ -78,6 +85,21 @@ export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCo
       if (!isApproved) {
         toast.error("Please approve CELO tokens in the previous step");
         return;
+      }
+
+      // Double-check network before proceeding
+      if (!isCorrectNetwork) {
+        toast.info("Switching to Celo network...");
+        await switchToCelo();
+
+        // Add a small delay to ensure the chain ID has been updated
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Verify the switch was successful
+        if (!isCorrectNetwork) {
+          toast.error("Please switch to the Celo network to continue");
+          return;
+        }
       }
 
       // Call the swap function from the hook
@@ -99,9 +121,7 @@ export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCo
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  Confirm & Swap
-                </span>
+                <span className="text-sm font-medium">Confirm & Swap</span>
               </div>
             </div>
           </div>
@@ -116,33 +136,56 @@ export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCo
   return (
     <Card className="w-full overflow-hidden">
       <div className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="flex flex-col">
-              {isCompleted ? (
-                <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  <span className="text-sm font-medium">Swap Completed</span>
-                </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="flex flex-col">
+                {isCompleted ? (
+                  <div className="flex items-center text-green-600">
+                    <CheckCircle className="h-4 w-4 mr-1" />
+                    <span className="text-sm font-medium">Swap Completed</span>
+                  </div>
+                ) : (
+                  <span className="text-sm font-medium">Confirm & Swap</span>
+                )}
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4" />
               ) : (
-                <span className="text-sm font-medium">
-                  Confirm & Swap
-                </span>
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+
+          {/* Show success details even when collapsed */}
+          {isCompleted && (
+            <div className="flex flex-col gap-1">
+              <div className="text-sm text-gray-600">
+                Successfully swapped {amount} CELO for approximately{" "}
+                {estimatedOutput.toFixed(2)} cUSD
+              </div>
+              {txHash && (
+                <div className="flex items-center text-xs">
+                  <a
+                    href={`https://celoscan.io/tx/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center hover:underline text-blue-600"
+                  >
+                    View transaction
+                    <ExternalLink className="h-3 w-3 ml-1" />
+                  </a>
+                </div>
               )}
             </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
+          )}
         </div>
 
         {(isExpanded || !isCompleted) && (
@@ -154,9 +197,7 @@ export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCo
                   <div className="mt-2 space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-500">Amount:</span>
-                      <span className="text-sm font-medium">
-                        {amount} CELO
-                      </span>
+                      <span className="text-sm font-medium">{amount} CELO</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-500">
@@ -232,26 +273,9 @@ export function CeloConfirmCardCompact({ amount, onComplete }: CeloConfirmCardCo
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  <span className="text-sm">
-                    Successfully swapped {amount} CELO for approximately{" "}
-                    {estimatedOutput.toFixed(2)} cUSD
-                  </span>
+                <div className="text-sm text-gray-600">
+                  Additional details about your swap are shown above.
                 </div>
-                {txHash && (
-                  <div className="flex items-center text-xs text-gray-500">
-                    <a
-                      href={`https://celoscan.io/tx/${txHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center hover:underline"
-                    >
-                      View transaction
-                      <ExternalLink className="h-3 w-3 ml-1" />
-                    </a>
-                  </div>
-                )}
               </div>
             )}
           </div>

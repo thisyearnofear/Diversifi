@@ -47,12 +47,28 @@ export async function POST(request: Request) {
 
     // Format the transaction data for frontend execution
     // The Brian API response has a specific structure we need to handle
+    console.log("Formatting transaction data for frontend execution");
+
+    // Validate the transaction data structure
+    if (!transactionData.result || !Array.isArray(transactionData.result) || transactionData.result.length === 0) {
+      console.error("Invalid transaction data structure:", transactionData);
+      return NextResponse.json(
+        { error: "Invalid transaction data structure" },
+        { status: 400 }
+      );
+    }
+
+    // Extract the first transaction from the result array
+    const transaction = transactionData.result[0];
+    console.log("Transaction details:", JSON.stringify(transaction, null, 2));
+
+    // Format the response for the frontend
     let formattedData = {
       success: true,
       requestId,
       message: "Transaction prepared for frontend execution",
-      // Extract the first result from the array
-      transaction: transactionData.result && transactionData.result.length > 0 ? transactionData.result[0] : null,
+      // Include the transaction details
+      transaction: transaction,
       // Include the full response for debugging
       fullResponse: transactionData,
       // Include estimated DAI amount if available

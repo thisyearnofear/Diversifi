@@ -151,8 +151,22 @@ export function usePolygonDaiSwap() {
     } catch (error) {
       console.error("Error preparing swap:", error);
       setStatus("error");
-      setError(error instanceof Error ? error.message : "Failed to prepare swap");
-      toast.error("Failed to prepare swap transaction");
+
+      // Provide a user-friendly error message
+      let errorMessage = "Failed to prepare swap";
+      if (error instanceof Error) {
+        // Check for common error patterns
+        if (error.message.includes("Internal Server Error")) {
+          errorMessage = "The Brian API is currently unavailable. Please try again later.";
+        } else if (error.message.includes("Failed to fetch")) {
+          errorMessage = "Network error. Please check your connection and try again.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -187,20 +201,55 @@ export function usePolygonDaiSwap() {
       const data = await response.json();
       console.log("Transaction data for execution:", data);
 
-      // Check if we have a valid transaction from the Brian API
-      if (data.transaction && data.transaction.data && data.transaction.data.steps && data.transaction.data.steps.length > 0) {
+      // Check if we have a valid transaction from the API (either Brian API or 0xProtocol)
+      if (data.transaction) {
         setStatus("transaction-pending");
+        console.log("Transaction data structure:", JSON.stringify(data.transaction, null, 2));
 
-        // Execute the first step using the user's wallet
-        const step = data.transaction.data.steps[0];
+        // Extract the transaction details from the response
+        // Handle different API formats
+        let txDetails;
+        let apiType = "unknown";
 
-        console.log("Executing transaction step:", step);
+        // First check if we have steps in the data property (Brian API format)
+        if (data.transaction.data && data.transaction.data.steps && data.transaction.data.steps.length > 0) {
+          console.log("Found steps in data property - using Brian API format");
+          txDetails = data.transaction.data.steps[0];
+          apiType = "brian";
+        }
+        // Then check if we have a direct transaction property (alternative format)
+        else if (data.transaction.transaction) {
+          console.log("Found direct transaction property - using alternative format");
+          txDetails = data.transaction.transaction;
+          apiType = "alternative";
+        }
+        // Check for 0xProtocol format
+        else if (data.transaction.to && data.transaction.data && data.transaction.value !== undefined) {
+          console.log("Found 0xProtocol format");
+          txDetails = data.transaction;
+          apiType = "0xprotocol";
+        }
+        // Finally check if the transaction itself is the details (fallback)
+        else if (data.transaction.to && data.transaction.data) {
+          console.log("Transaction itself contains details - using fallback format");
+          txDetails = data.transaction;
+          apiType = "fallback";
+        }
+        else {
+          // No recognizable format
+          console.error("Unexpected transaction format:", data.transaction);
+          throw new Error("Invalid transaction format. The API response doesn't contain the expected transaction details.");
+        }
+
+        console.log(`Using API type: ${apiType} for transaction execution`);
+
+        console.log("Executing transaction:", txDetails);
 
         // Send the transaction using wagmi's useSendTransaction hook
         const txResult = await sendTransactionAsync({
-          to: step.to as `0x${string}`,
-          value: BigInt(step.value || 0),
-          data: step.data as `0x${string}`,
+          to: txDetails.to as `0x${string}`,
+          value: BigInt(txDetails.value || 0),
+          data: txDetails.data as `0x${string}`,
           chainId: polygon.id,
         });
 
@@ -232,6 +281,9 @@ export function usePolygonDaiSwap() {
       return;
     }
 
+    // Make sure we have the transaction hash stored
+    setTxHash(hash);
+
     try {
       setStatus("completing");
 
@@ -251,6 +303,10 @@ export function usePolygonDaiSwap() {
             // Mark the action as completed
             await completeAction(actionData.id, hash);
           }
+        } else {
+          // Handle the case where the action is not found
+          console.warn("Action not found in database, marking as completed anyway");
+          // We'll still mark the swap as completed in the local state
         }
       } catch (error) {
         console.error("Error completing action:", error);

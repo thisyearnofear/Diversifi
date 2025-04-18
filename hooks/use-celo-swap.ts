@@ -23,6 +23,7 @@ type CeloSwapStatus =
   | "transaction-success"
   | "completing"
   | "completed"
+  | "switching-network"
   | "error";
 
 // Contract address for SimpleCeloSwap
@@ -138,8 +139,29 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
         }
       } catch (error) {
         console.error("Error checking Celo swap status:", error);
+
+        // Handle specific error cases more gracefully
+        if (error instanceof Error) {
+          // Check for network-related errors
+          if (error.message.includes("allowance") && !isCorrectNetwork) {
+            // This is likely because we're not on the Celo network
+            console.debug("Allowance check failed due to wrong network");
+            // Don't set error status, just indicate we need to switch networks
+            setStatus("not-swapped");
+            return;
+          }
+
+          // For other errors, provide a user-friendly message
+          if (error.message.includes("returned no data")) {
+            setError("Please switch to the Celo network to continue");
+          } else {
+            setError(error.message);
+          }
+        } else {
+          setError("Failed to check status");
+        }
+
         setStatus("error");
-        setError(error instanceof Error ? error.message : "Failed to check status");
       }
     };
 
@@ -208,14 +230,40 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
   };
 
   // Switch to Celo network
-  const switchToCelo = () => {
+  const switchToCelo = async () => {
     if (!address) return;
 
     try {
-      switchChain({ chainId: celo.id });
+      setStatus("switching-network");
+      await switchChain({ chainId: celo.id });
+      toast.success("Switched to Celo network");
+
+      // Add a small delay to ensure the chain ID has been updated
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Clear any previous errors
+      setError(null);
+
+      // Update status based on approval state
+      if (isApproved) {
+        setStatus("approved");
+      } else {
+        setStatus("not-swapped");
+      }
     } catch (error) {
       console.error("Error switching to Celo:", error);
-      setError(error instanceof Error ? error.message : "Failed to switch to Celo network");
+      let errorMessage = "Failed to switch to Celo network";
+
+      if (error instanceof Error) {
+        if (error.message.includes("user rejected")) {
+          errorMessage = "Network switch was rejected. Please try again.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -267,20 +315,27 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
       }
 
       // Check if the contract is already approved
-      const allowance = await publicClient.readContract({
-        address: celoTokenAddress as `0x${string}`,
-        abi: [
-          {
-            inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }],
-            name: "allowance",
-            outputs: [{ name: "", type: "uint256" }],
-            stateMutability: "view",
-            type: "function"
-          }
-        ],
-        functionName: "allowance",
-        args: [address, CELO_UNISWAP_V3_SWAP],
-      });
+      let allowance = BigInt(0);
+      try {
+        allowance = await publicClient.readContract({
+          address: celoTokenAddress as `0x${string}`,
+          abi: [
+            {
+              inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }],
+              name: "allowance",
+              outputs: [{ name: "", type: "uint256" }],
+              stateMutability: "view",
+              type: "function"
+            }
+          ],
+          functionName: "allowance",
+          args: [address, CELO_UNISWAP_V3_SWAP],
+        });
+      } catch (error) {
+        // If this fails, it's likely because we're not on the Celo network
+        console.debug("Allowance check failed, likely due to wrong network", error);
+        // We'll continue with allowance = 0, which will trigger the approval flow
+      }
 
       const amountInWei = parseEther(amount.toString());
 

@@ -22,7 +22,7 @@ export function PolygonDivviRegistrationCardCompact({
   onComplete,
 }: PolygonDivviRegistrationCardCompactProps) {
   const { address } = useAccount();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const {
     status,
     error,
@@ -119,7 +119,7 @@ export function PolygonDivviRegistrationCardCompact({
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-medium">Register on Polygon</h3>
+                <h3 className="font-medium">Register with Stable Station</h3>
                 <Badge
                   variant="outline"
                   className="text-xs bg-purple-100 dark:bg-purple-900 border-purple-200"
@@ -128,7 +128,7 @@ export function PolygonDivviRegistrationCardCompact({
                 </Badge>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Activate your account on the Polygon ecosystem
+                Activate your Stable Station account on Polygon
               </p>
               {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
               {status === "wrong-network" && (

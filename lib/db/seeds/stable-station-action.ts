@@ -110,4 +110,57 @@ export async function seedStableStationActions() {
   } else {
     console.log("Celo registration action already exists");
   }
+
+  // Check if the Polygon DAI action already exists
+  const existingPolygonDaiAction = await db
+    .select()
+    .from(action)
+    .where(eq(action.title, "Get DAI Stablecoins"))
+    .limit(1);
+
+  if (existingPolygonDaiAction.length === 0) {
+    // Create the Polygon DAI action
+    await db.insert(action).values({
+      title: "Get DAI Stablecoins",
+      description: "Secure USD-backed tokens on Polygon",
+      category: "STABLECOIN",
+      chain: "POLYGON",
+      difficulty: "BEGINNER",
+      prerequisites: [],
+      steps: [
+        {
+          title: "Connect wallet",
+          description: "Connect your wallet to continue",
+        },
+        {
+          title: "Register on Polygon",
+          description: "Click 'Register' to enable portfolio tracking",
+        },
+        {
+          title: "Get DAI",
+          description: "Click 'Prepare Swap' to prepare the transaction",
+        },
+        {
+          title: "Confirm transaction",
+          description: "Confirm the transaction in your wallet",
+        },
+        {
+          title: "Complete swap",
+          description: "Click 'Complete Swap' to finish",
+        },
+      ],
+      rewards: [
+        {
+          type: "FEATURE",
+          description: "Access to DAI stablecoins on Polygon",
+        },
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log("Created Polygon DAI action");
+  } else {
+    console.log("Polygon DAI action already exists");
+  }
 }

@@ -25,7 +25,7 @@ export function PolygonSwapCardCompact({
   onComplete,
 }: PolygonSwapCardCompactProps) {
   const { address } = useAccount();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [amount, setAmount] = useState("0.1");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const {
@@ -62,7 +62,14 @@ export function PolygonSwapCardCompact({
     try {
       // First check if we're on the correct network
       if (!isCorrectNetwork) {
+        toast.info("Switching to Polygon network...");
         await switchToPolygon();
+
+        // Verify the switch was successful
+        if (!isCorrectNetwork) {
+          toast.error("Please switch to the Polygon network to continue");
+          return;
+        }
       }
 
       await prepareSwap(amount);
@@ -71,18 +78,42 @@ export function PolygonSwapCardCompact({
       setShowConfirmation(true);
     } catch (error) {
       console.error("Error preparing swap:", error);
+      toast.error("Failed to prepare swap. Please try again.");
     }
   };
+
+  // Determine if we're using 0xProtocol API (one-stage swap) or Brian API (two-stage swap)
+  const [isUsingZeroX, setIsUsingZeroX] = useState(false);
 
   // Handle swap execution
   const handleExecute = async () => {
     if (!address) return;
     try {
+      // First check if we're on the correct network
+      if (!isCorrectNetwork) {
+        toast.info("Switching to Polygon network...");
+        await switchToPolygon();
+
+        // Verify the switch was successful
+        if (!isCorrectNetwork) {
+          toast.error("Please switch to the Polygon network to continue");
+          return;
+        }
+      }
+
       // Hide confirmation before executing
       setShowConfirmation(false);
 
       // Execute the swap using the user's wallet
       await executeSwap();
+
+      // Check if we're using 0xProtocol API (transaction-success status and txHash present)
+      if (status === "transaction-success" && txHash) {
+        console.log("Using 0xProtocol API, completing swap immediately");
+        setIsUsingZeroX(true);
+        // Auto-complete the swap for 0xProtocol API
+        await completeSwap(txHash);
+      }
     } catch (error) {
       console.error("Error executing swap:", error);
       toast.error("Failed to execute swap. Please try again.");
@@ -116,28 +147,119 @@ export function PolygonSwapCardCompact({
     }
   }, [status, onComplete, hasCalledOnComplete]);
 
+  // Auto-complete for 0xProtocol API when transaction is successful
+  useEffect(() => {
+    const autoCompleteZeroXSwap = async () => {
+      if (status === "transaction-success" && txHash && isUsingZeroX) {
+        console.log("Auto-completing 0xProtocol swap");
+        await completeSwap(txHash);
+      }
+    };
+
+    autoCompleteZeroXSwap();
+  }, [status, txHash, isUsingZeroX, completeSwap]);
+
   if (isCompleted) {
     return (
-      <Card className="p-4 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
-        <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-blue-600" />
-          <div>
-            <h3 className="font-medium">Swap Complete</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              You've successfully swapped for DAI on Polygon!
-            </p>
-            {txHash && (
-              <a
-                href={`https://polygonscan.com/tx/${txHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
+      <Card className="overflow-hidden border-blue-200">
+        <div className="p-4 bg-blue-50 dark:bg-blue-900/20">
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium">Get DAI on Polygon</h3>
+                    <Badge
+                      variant="outline"
+                      className="text-xs bg-blue-100 dark:bg-blue-900 border-blue-200"
+                    >
+                      Step 2/2 Complete
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-1 mt-1">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      You've successfully swapped for DAI on Polygon!
+                    </p>
+                  </div>
+                  {txHash && (
+                    <a
+                      href={`https://polygonscan.com/tx/${txHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
+                    >
+                      View transaction
+                      <ExternalLink className="h-3 w-3 ml-1" />
+                    </a>
+                  )}
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 rounded-full"
+                onClick={() => setIsExpanded(!isExpanded)}
               >
-                View transaction
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </a>
-            )}
+                {isExpanded ? (
+                  <ChevronUp className="h-3 w-3" />
+                ) : (
+                  <ChevronDown className="h-3 w-3" />
+                )}
+              </Button>
+            </div>
           </div>
+
+          {isExpanded && (
+            <div className="mt-4 space-y-4">
+              <div>
+                <h4 className="text-sm font-medium mb-2">Swap Again:</h4>
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs text-gray-600">
+                      Amount (MATIC)
+                    </label>
+                    <Input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="h-8 text-sm"
+                      placeholder="0.1"
+                    />
+                  </div>
+                  {estimatedDai && (
+                    <p className="text-xs text-gray-600">
+                      Estimated DAI: ~{estimatedDai}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center text-xs text-blue-600 mt-2">
+                  <a
+                    href="https://polygon.technology"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center hover:underline"
+                  >
+                    Learn about Polygon
+                    <ExternalLink className="ml-1 h-3 w-3" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-blue-100 dark:border-blue-800">
+                <Button
+                  onClick={() => {
+                    setStatus("idle");
+                    setShowConfirmation(false);
+                  }}
+                  size="sm"
+                  className="flex-1"
+                >
+                  Prepare New Swap
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
     );
@@ -146,56 +268,73 @@ export function PolygonSwapCardCompact({
   return (
     <Card className="overflow-hidden border-blue-200">
       <div className="p-4 bg-blue-50 dark:bg-blue-900/20">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-medium">Get DAI on Polygon</h3>
-                <Badge
-                  variant="outline"
-                  className="text-xs bg-blue-100 dark:bg-blue-900 border-blue-200"
-                >
-                  Step 2
-                </Badge>
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-medium">Get DAI on Polygon</h3>
+                  <Badge
+                    variant="outline"
+                    className="text-xs bg-blue-100 dark:bg-blue-900 border-blue-200"
+                  >
+                    {status === "transaction-success" || status === "completed"
+                      ? "Step 2/2 Complete"
+                      : "Step 2/2"}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Swap MATIC for DAI stablecoins
+                </p>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Swap MATIC for DAI stablecoins
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 rounded-full"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-3 w-3" />
+              ) : (
+                <ChevronDown className="h-3 w-3" />
+              )}
+            </Button>
+          </div>
+
+          {/* Show status messages */}
+          {error && <p className="text-xs text-red-600">{error}</p>}
+          {status === "wrong-network" && (
+            <p className="text-xs text-amber-600">
+              You need to switch to the Polygon network to continue
+            </p>
+          )}
+          {status === "transaction-pending" && (
+            <p className="text-xs text-amber-600">Transaction pending...</p>
+          )}
+          {status === "transaction-confirming" && (
+            <p className="text-xs text-amber-600">Transaction confirming...</p>
+          )}
+          {status === "transaction-success" && (
+            <div className="flex flex-col gap-1">
+              <p className="text-xs text-green-600">
+                Transaction successful! Processing...
               </p>
-              {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
-              {status === "wrong-network" && (
-                <p className="text-xs text-amber-600 mt-1">
-                  You need to switch to the Polygon network to continue
-                </p>
-              )}
-              {status === "transaction-pending" && (
-                <p className="text-xs text-amber-600 mt-1">
-                  Transaction pending...
-                </p>
-              )}
-              {status === "transaction-confirming" && (
-                <p className="text-xs text-amber-600 mt-1">
-                  Transaction confirming...
-                </p>
-              )}
-              {status === "transaction-success" && (
-                <p className="text-xs text-green-600 mt-1">
-                  Transaction successful! Click "Complete Swap"
-                </p>
+              {txHash && (
+                <div className="flex items-center text-xs">
+                  <a
+                    href={`https://polygonscan.com/tx/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center hover:underline text-blue-600"
+                  >
+                    View transaction
+                    <ExternalLink className="h-3 w-3 ml-1" />
+                  </a>
+                </div>
               )}
             </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 rounded-full"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? (
-              <ChevronUp className="h-3 w-3" />
-            ) : (
-              <ChevronDown className="h-3 w-3" />
-            )}
-          </Button>
+          )}
         </div>
 
         {isExpanded && (
@@ -256,6 +395,20 @@ export function PolygonSwapCardCompact({
                         <p>
                           <span className="font-medium">Estimated DAI:</span> ~
                           {estimatedDai}
+                        </p>
+                      )}
+                      {transactionDetails?.data?.protocol && (
+                        <p>
+                          <span className="font-medium">Protocol:</span>{" "}
+                          {transactionDetails.data.protocol.name ||
+                            transactionDetails.data.protocol.key ||
+                            "Unknown"}
+                        </p>
+                      )}
+                      {transactionDetails?.solver && (
+                        <p>
+                          <span className="font-medium">Solver:</span>{" "}
+                          {transactionDetails.solver}
                         </p>
                       )}
                       <p className="text-amber-600 text-[10px] mt-1">
@@ -361,7 +514,7 @@ export function PolygonSwapCardCompact({
                 ) : status === "transaction-success" ? (
                   <Button
                     onClick={handleComplete}
-                    disabled={isLoading}
+                    disabled={isLoading || isUsingZeroX}
                     size="sm"
                     className="flex-1"
                   >
@@ -370,8 +523,13 @@ export function PolygonSwapCardCompact({
                         <Loader2 className="mr-2 h-3 w-3 animate-spin" />
                         Processing...
                       </>
+                    ) : isUsingZeroX ? (
+                      <>
+                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        Auto-completing...
+                      </>
                     ) : (
-                      "Complete Swap"
+                      "Finalize Swap"
                     )}
                   </Button>
                 ) : null}
