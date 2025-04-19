@@ -111,6 +111,89 @@ pnpm dev
 7. ✅ In-app token swaps with BaseAerodromeSwap contract
 8. ✅ Real-time token pricing with CoinGecko API
 9. ✅ Polygon DAI swap integration with Brian API
+10. ✅ Consistent UI/UX for all stablecoin actions
+11. 🔄 Regional token selector implementation
+
+## Regional Token Selector Implementation
+
+### Current Implementation
+
+We've implemented a regional token selector in the right sidebar that filters the stablecoin options displayed in the left sidebar. This feature helps users discover stablecoins relevant to their region of interest.
+
+### DiversiFi Feature
+
+We've also added a simplified DiversiFi teaser in the right sidebar that shows users their geographical portfolio diversification. This serves as a preview of the full DiversiFi feature that will be developed as a separate mini-app.
+
+### Future DiversiFi Mini-App Plans
+
+The full DiversiFi feature will include:
+
+1. **Advanced Visualization Options**
+
+   - World map visualization with highlighted regions based on user holdings
+   - Circular visualization showing portfolio distribution
+   - Geographical heatmap showing concentration of holdings
+   - 3D globe representation of geographical exposure
+
+2. **Comprehensive Diversification Metrics**
+
+   - Herfindahl-Hirschman Index (HHI) for measuring concentration
+   - Shannon Entropy for measuring information diversity
+   - Geographic Spread Ratio for measuring regional allocation
+   - Custom diversification scores and recommendations
+
+3. **Portfolio Rebalancing Insights**
+
+   - Recommendations for improving geographical diversification
+   - Suggested trades to achieve optimal diversification
+   - Risk analysis based on geographical exposure
+   - Historical performance analysis by region
+
+4. **Interactive User Experience**
+   - Ability to simulate portfolio changes and see impact on diversification
+   - Customizable visualization options
+   - Detailed token information and regional context
+   - Educational content about the benefits of geographical diversification
+
+### Implementation Plan
+
+1. **Create Region Context**
+
+   - Implement a React context to manage the selected region state
+   - Define region types (Africa, Europe, USA, LatAm, Asia, RWA)
+   - Provide a hook for components to access and update the selected region
+
+2. **Define Token Data Structure**
+
+   - Organize tokens by geographical regions
+   - Include metadata like symbol, name, chain, and action prompts
+   - Create helper functions to filter tokens by region
+
+3. **Update Right Sidebar**
+
+   - Replace social links section with region selector
+   - Design intuitive UI for region selection
+   - Implement visual indicators for the active region
+
+4. **Update Left Sidebar**
+
+   - Filter displayed tokens based on selected region
+   - Maintain core navigation elements
+   - Add visual indicators for available vs. coming soon tokens
+
+5. **Optimize Performance**
+   - Ensure efficient rendering when switching regions
+   - Implement proper memoization for filtered token lists
+   - Maintain responsive design across all screen sizes
+
+### Token Categories by Region
+
+- **Africa**: cKES, ZAR, NGN, cGHS, eXOF
+- **Europe**: EURA, EURC, CEUR, EURt
+- **USA**: USDC, USDT, cUSD, USDbC, DAI
+- **LatAm**: cREAL, cCOP, MXNT, BRZ
+- **Asia**: PUSO, IDRT, XSGD, JPYC
+- **RWA**: XAUT, PAXG, $KAU, $KAG
 
 ## Clean-Up and Refocusing Plan
 

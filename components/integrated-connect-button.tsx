@@ -240,7 +240,7 @@ export function IntegratedConnectButton() {
           ) : isConnecting ? (
             <span>Connecting...</span>
           ) : (
-            <span>Connect Wallet</span>
+            <span>Connect</span>
           )}
         </button>
       );

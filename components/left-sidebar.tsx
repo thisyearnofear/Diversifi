@@ -9,6 +9,7 @@ import {
   Globe,
   Coins,
   Wallet,
+  Clock,
 } from "lucide-react";
 import { SidebarHistory } from "@/components/sidebar-history";
 import {
@@ -24,11 +25,24 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { eventBus, EVENTS } from "@/lib/events";
 import { toast } from "sonner";
+import { useRegion } from "@/contexts/region-context";
+import {
+  getTokensByRegion,
+  getAvailableTokensByRegion,
+  getComingSoonTokensByRegion,
+} from "@/lib/tokens/token-data";
 
 export function LeftSidebar() {
   const { setOpenMobile, toggleSidebar } = useSidebar();
   const router = useRouter();
   const pathname = usePathname();
+  const { selectedRegion } = useRegion();
+
+  // Get tokens filtered by the selected region
+  const availableTokens = getAvailableTokensByRegion(selectedRegion);
+  // Only show coming soon tokens if a specific region is selected (not "All")
+  const comingSoonTokens =
+    selectedRegion === "All" ? [] : getComingSoonTokensByRegion(selectedRegion);
 
   // Check if we're in a chat
   const isInChat = pathname?.startsWith("/chat/");
@@ -116,57 +130,79 @@ export function LeftSidebar() {
             Stable Actions
           </SidebarGroupLabel>
 
-          <SidebarMenuButton
-            onClick={() =>
-              triggerActionPrompt(
-                "BASE",
-                "I want to get USD-backed stablecoins on Base. Can you help me directly in this chat?"
-              )
-            }
-            className="bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/30"
-          >
-            <Rocket className="text-blue-600 dark:text-blue-400" />
-            Get USDbC
-          </SidebarMenuButton>
+          {/* Available Tokens */}
+          {availableTokens.map((token) => {
+            // Determine the color based on the chain
+            let bgColor =
+              "bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/30";
+            let textColor = "text-blue-600 dark:text-blue-400";
 
-          <SidebarMenuButton
-            onClick={() =>
-              triggerActionPrompt(
-                "OPTIMISM",
-                "I want to get Euro-backed stablecoins on Optimism. Can you help me directly in this chat?"
-              )
+            if (token.chain === "OPTIMISM") {
+              bgColor =
+                "bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-900/30";
+              textColor = "text-purple-600 dark:text-purple-400";
+            } else if (token.chain === "CELO") {
+              bgColor =
+                "bg-yellow-50 dark:bg-yellow-950/30 hover:bg-yellow-100 dark:hover:bg-yellow-900/30";
+              textColor = "text-yellow-600 dark:text-yellow-400";
+            } else if (token.chain === "POLYGON") {
+              bgColor =
+                "bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/30";
+              textColor = "text-indigo-600 dark:text-indigo-400";
             }
-            className="bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-900/30"
-          >
-            <Rocket className="text-purple-600 dark:text-purple-400" />
-            Get EURA
-          </SidebarMenuButton>
 
-          <SidebarMenuButton
-            onClick={() =>
-              triggerActionPrompt(
-                "CELO",
-                "I want to get USD-backed stablecoins on Celo. Can you help me directly in this chat?"
-              )
-            }
-            className="bg-yellow-50 dark:bg-yellow-950/30 hover:bg-yellow-100 dark:hover:bg-yellow-900/30"
-          >
-            <Coins className="text-yellow-600 dark:text-yellow-400" />
-            Get cUSD
-          </SidebarMenuButton>
+            return (
+              <SidebarMenuButton
+                key={token.id}
+                onClick={() =>
+                  triggerActionPrompt(
+                    token.chain,
+                    token.actionPrompt ||
+                      `I want to get ${token.symbol} stablecoins. Can you help me directly in this chat?`
+                  )
+                }
+                className={bgColor}
+              >
+                <Coins className={textColor} />
+                Get {token.symbol}
+              </SidebarMenuButton>
+            );
+          })}
 
-          <SidebarMenuButton
-            onClick={() =>
-              triggerActionPrompt(
-                "POLYGON",
-                "I want to get DAI stablecoins on Polygon. Can you help me directly in this chat?"
-              )
+          {/* Coming Soon Tokens - No label, just grayed out */}
+
+          {comingSoonTokens.map((token) => {
+            // Determine a muted color based on the region
+            let bgColor = "bg-gray-50 dark:bg-gray-800/20";
+            let textColor = "text-gray-400 dark:text-gray-500";
+
+            // Add a slight hint of the original color
+            if (token.region === "Europe") {
+              bgColor = "bg-blue-50/30 dark:bg-blue-950/10";
+            } else if (token.region === "Africa") {
+              bgColor = "bg-green-50/30 dark:bg-green-950/10";
+            } else if (token.region === "USA") {
+              bgColor = "bg-red-50/30 dark:bg-red-950/10";
+            } else if (token.region === "LatAm") {
+              bgColor = "bg-yellow-50/30 dark:bg-yellow-950/10";
+            } else if (token.region === "Asia") {
+              bgColor = "bg-purple-50/30 dark:bg-purple-950/10";
+            } else if (token.region === "RWA") {
+              bgColor = "bg-amber-50/30 dark:bg-amber-950/10";
             }
-            className="bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
-          >
-            <Coins className="text-indigo-600 dark:text-indigo-400" />
-            Get DAI
-          </SidebarMenuButton>
+
+            return (
+              <SidebarMenuButton
+                key={token.id}
+                disabled
+                className={`${bgColor} ${textColor} cursor-not-allowed opacity-70`}
+                tooltip={`${token.name} - Coming Soon`}
+              >
+                <Clock className="text-gray-400 dark:text-gray-500" />
+                Get {token.symbol}
+              </SidebarMenuButton>
+            );
+          })}
 
           <SidebarGroupLabel className="text-blue-600 dark:text-blue-400">
             On/Off Ramp Actions

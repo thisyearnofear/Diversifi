@@ -187,8 +187,8 @@ export function SeparateAuthButtons() {
     <div className="flex flex-col gap-3 w-full">
       <div className="flex items-center gap-2">
         <div className="flex-1">
-          <h3 className="text-sm font-medium">Connect</h3>
-          <p className="text-xs text-muted-foreground">wallet to get started</p>
+          <h3 className="text-sm font-medium">Start</h3>
+          <p className="text-xs text-muted-foreground">here</p>
         </div>
         <div className="flex items-center gap-2">
           {isConnected ? (
@@ -199,7 +199,7 @@ export function SeparateAuthButtons() {
             <ConnectKitButton.Custom>
               {({ show }) => (
                 <Button onClick={show} size="sm">
-                  Connect Wallet
+                  Connect
                 </Button>
               )}
             </ConnectKitButton.Custom>
@@ -209,8 +209,8 @@ export function SeparateAuthButtons() {
 
       <div className="flex items-center gap-2">
         <div className="flex-1">
-          <h3 className="text-sm font-medium">Sign In</h3>
-          <p className="text-xs text-muted-foreground">SIWE to authenticate</p>
+          <h3 className="text-sm font-medium">SIWE</h3>
+          <p className="text-xs text-muted-foreground">authenticate</p>
         </div>
         <div className="flex items-center gap-2">
           {isAuthenticated ? (

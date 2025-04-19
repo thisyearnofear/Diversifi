@@ -55,7 +55,7 @@ export function PolygonActionMessage({
             Get DAI stablecoins on Polygon
           </div>
           <div className="text-xs text-gray-500">
-            {completedSteps}/{totalSteps} steps completed
+            {completedSteps} of {totalSteps} steps completed
           </div>
         </div>
         <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">

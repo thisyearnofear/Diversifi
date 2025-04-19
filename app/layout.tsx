@@ -10,6 +10,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
 import { MobileNavigation } from "@/components/mobile-navigation";
 import { MobileAuthComponent } from "@/components/mobile-auth-component";
+import { RegionProvider } from "@/contexts/region-context";
 
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
@@ -81,20 +82,22 @@ export default function RootLayout({
         >
           <Toaster position="top-center" />
           <Providers>
-            <SidebarProvider>
-              <div className="grid grid-cols-[auto,1fr,auto] min-h-screen w-full">
-                <LeftSidebar />
-                <div className="flex justify-center items-start">
-                  <div className="fixed top-0 right-0 z-50 p-4 m-4 bg-background/80 backdrop-blur-sm border rounded-md shadow-sm">
-                    <ConnectButton />
+            <RegionProvider>
+              <SidebarProvider>
+                <div className="grid grid-cols-[auto,1fr,auto] min-h-screen w-full">
+                  <LeftSidebar />
+                  <div className="flex justify-center items-start">
+                    <div className="fixed top-0 right-0 z-50 p-4 m-4 bg-background/80 backdrop-blur-sm border rounded-md shadow-sm">
+                      <ConnectButton />
+                    </div>
+                    <main className="w-full max-w-3xl mx-auto">{children}</main>
+                    <MobileNavigation />
+                    <MobileAuthComponent />
                   </div>
-                  <main className="w-full max-w-3xl mx-auto">{children}</main>
-                  <MobileNavigation />
-                  <MobileAuthComponent />
+                  <RightSidebar />
                 </div>
-                <RightSidebar />
-              </div>
-            </SidebarProvider>
+              </SidebarProvider>
+            </RegionProvider>
           </Providers>
         </ThemeProvider>
       </body>

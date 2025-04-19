@@ -259,6 +259,12 @@ export function usePolygonDaiSwap() {
         setTxHash(txResult);
         setStatus("transaction-success");
         toast.success("Swap transaction executed successfully!");
+
+        // For 0xProtocol API, we can auto-complete the swap
+        if (apiType === "0xprotocol") {
+          console.log("Using 0xProtocol API, will auto-complete the swap");
+          // We'll let the component handle the auto-completion
+        }
       } else {
         console.error("Invalid transaction data:", data);
         throw new Error("No valid transaction steps found in the response. Please try again.");
@@ -334,7 +340,7 @@ export function usePolygonDaiSwap() {
       setIsCompleted(true);
       setStatus("completed");
       console.log("Swap completed, isCompleted set to true");
-      toast.success("DAI swap on Polygon completed!");
+      toast.success("DAI swap on Polygon completed successfully!");
     } catch (error) {
       console.error("Error completing swap:", error);
       setStatus("error");

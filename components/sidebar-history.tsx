@@ -92,7 +92,7 @@ export function SidebarHistory() {
   const [showAllChats, setShowAllChats] = useState(false);
 
   // Enforce maximum number of chats and limit initial display
-  const visibleChats = history?.slice(0, showAllChats ? MAX_CHATS : 3);
+  const visibleChats = history?.slice(0, showAllChats ? MAX_CHATS : 1);
 
   if (!activeAddress) {
     return (
@@ -237,7 +237,7 @@ export function SidebarHistory() {
           })}
 
           {/* Show more/less button */}
-          {history && history.length > 3 && (
+          {history && history.length > 1 && (
             <button
               onClick={() => setShowAllChats(!showAllChats)}
               className="flex items-center justify-center w-full mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
@@ -250,7 +250,7 @@ export function SidebarHistory() {
               ) : (
                 <>
                   <ChevronDown className="h-3 w-3 mr-1" />
-                  Show More ({Math.min(history.length - 3, MAX_CHATS - 3)} more)
+                  Show More ({Math.min(history.length - 1, MAX_CHATS - 1)} more)
                 </>
               )}
             </button>
