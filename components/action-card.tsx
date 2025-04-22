@@ -121,7 +121,7 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
         <ul className="mt-2 space-y-1">
           {rewards.map((reward: Reward, index: number) => (
             <li key={index} className="flex items-center gap-2 text-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              <CheckCircle2 className="size-4 text-green-500" />
               <span>{reward.description}</span>
             </li>
           ))}
@@ -140,12 +140,12 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
             >
               {userAction.status === "COMPLETED" ? (
                 <>
-                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                  <CheckCircle2 className="mr-1 size-3" />
                   Completed
                 </>
               ) : (
                 <>
-                  <Clock className="mr-1 h-3 w-3" />
+                  <Clock className="mr-1 size-3" />
                   In Progress
                 </>
               )}

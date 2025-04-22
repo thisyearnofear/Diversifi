@@ -130,7 +130,7 @@ export function SidebarHistory() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7"
+                      className="size-7"
                       onClick={async () => {
                         if (newTitle.trim()) {
                           const success = await updateChatTitle(
@@ -146,15 +146,15 @@ export function SidebarHistory() {
                         setEditingChatId(null);
                       }}
                     >
-                      <Check className="h-4 w-4" />
+                      <Check className="size-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7"
+                      className="size-7"
                       onClick={() => setEditingChatId(null)}
                     >
-                      <X className="h-4 w-4" />
+                      <X className="size-4" />
                     </Button>
                   </div>
                 </SidebarMenuItem>
@@ -194,7 +194,7 @@ export function SidebarHistory() {
                       variant="ghost"
                       size="icon"
                       className={cn(
-                        "h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity",
+                        "size-7 opacity-0 group-hover:opacity-100 transition-opacity",
                         chat.id === id ? "opacity-100" : ""
                       )}
                       onClick={() => {
@@ -202,13 +202,13 @@ export function SidebarHistory() {
                         setNewTitle(chat.title);
                       }}
                     >
-                      <Pencil className="h-3 w-3" />
+                      <Pencil className="size-3" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
                       className={cn(
-                        "h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700",
+                        "size-7 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700",
                         chat.id === id ? "opacity-100" : ""
                       )}
                       onClick={async () => {
@@ -228,7 +228,7 @@ export function SidebarHistory() {
                         }
                       }}
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="size-3" />
                     </Button>
                   </div>
                 </div>
@@ -244,12 +244,12 @@ export function SidebarHistory() {
             >
               {showAllChats ? (
                 <>
-                  <ChevronUp className="h-3 w-3 mr-1" />
+                  <ChevronUp className="size-3 mr-1" />
                   Show Less
                 </>
               ) : (
                 <>
-                  <ChevronDown className="h-3 w-3 mr-1" />
+                  <ChevronDown className="size-3 mr-1" />
                   Show More ({Math.min(history.length - 1, MAX_CHATS - 1)} more)
                 </>
               )}

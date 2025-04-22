@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, gt, gte, inArray, isNull } from "drizzle-orm";
-import { getDb, sql } from "./connection";
+import { getDb } from "./connection";
 
 import {
   user,
@@ -640,7 +640,7 @@ export async function useStarterKit({
     return await db
       .update(starterKit)
       .set({
-        balance: sql`${starterKit.balance} + ${amount}`,
+        balance: Number(starterKit.balance) + Number(amount),
       })
       .where(eq(starterKit.id, kitId));
   } catch (error) {

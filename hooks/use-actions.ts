@@ -113,7 +113,9 @@ export function useActions() {
       }
 
       // Check if the action is completed in the API data
-      return userActions?.some(ua => ua.action?.title === title && ua.status === "completed") || false;
+      return userActions?.some((ua: { action?: { title?: string }, status?: string }) =>
+        ua.action?.title === title && ua.status === "completed"
+      ) || false;
     }
   };
 }

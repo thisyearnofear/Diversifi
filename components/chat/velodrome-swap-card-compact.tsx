@@ -150,7 +150,7 @@ export function VelodromeSwapCardCompact({
     return (
       <Card className="p-4 border-purple-200 bg-purple-50 dark:bg-purple-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-purple-600" />
+          <CheckCircle className="size-5 text-purple-600" />
           <div>
             <h3 className="font-medium">Swap Complete ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -164,7 +164,7 @@ export function VelodromeSwapCardCompact({
                 className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
               >
                 View transaction
-                <ExternalLink className="h-3 w-3 ml-1" />
+                <ExternalLink className="size-3 ml-1" />
               </a>
             )}
           </div>
@@ -178,20 +178,20 @@ export function VelodromeSwapCardCompact({
       <div className="p-4 bg-purple-50 dark:bg-purple-900/20">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               {/* Status indicator icon */}
               {isRegistered ? (
                 status === "swapping" ||
                 status === "completing" ||
                 status === "switching-network" ? (
-                  <Loader2 className="h-5 w-5 text-purple-500 animate-spin" />
+                  <Loader2 className="size-5 text-purple-500 animate-spin" />
                 ) : (
-                  <div className="h-5 w-5 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
+                  <div className="size-5 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
                     2
                   </div>
                 )
               ) : (
-                <div className="h-5 w-5 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
+                <div className="size-5 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
                   2
                 </div>
               )}
@@ -230,14 +230,14 @@ export function VelodromeSwapCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full"
+            className="size-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
             disabled={!isRegistered}
           >
             {isExpanded ? (
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="size-3" />
             ) : (
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="size-3" />
             )}
           </Button>
         </div>
@@ -259,7 +259,7 @@ export function VelodromeSwapCardCompact({
                   className="flex items-center hover:underline"
                 >
                   Learn about EURA
-                  <ExternalLink className="ml-1 h-3 w-3" />
+                  <ExternalLink className="ml-1 size-3" />
                 </a>
               </div>
             </div>
@@ -274,7 +274,7 @@ export function VelodromeSwapCardCompact({
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                      <Loader2 className="mr-2 size-3 animate-spin" />
                       Switching Network...
                     </>
                   ) : (
@@ -317,7 +317,7 @@ export function VelodromeSwapCardCompact({
                       : "Fallback"}
                     {isPriceLoading && (
                       <span className="ml-1">
-                        <Loader2 className="inline h-3 w-3 animate-spin" />
+                        <Loader2 className="inline size-3 animate-spin" />
                       </span>
                     )}
                   </p>
@@ -335,7 +335,7 @@ export function VelodromeSwapCardCompact({
                     </span>
                   </div>
                   <div className="flex items-center mt-1 text-xs text-amber-600">
-                    <Info className="h-3 w-3 mr-1" />
+                    <Info className="size-3 mr-1" />
                     <span>Includes 0.25% platform fee</span>
                   </div>
                 </div>
@@ -387,7 +387,7 @@ export function VelodromeSwapCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : (

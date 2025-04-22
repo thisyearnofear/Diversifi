@@ -53,7 +53,7 @@ export const isDatabaseAvailable = async () => {
     if (!db) return false;
 
     // Try a simple query to check if the database is available
-    await db.execute(sql`SELECT 1`);
+    await db.execute("SELECT 1");
     return true;
   } catch (error) {
     console.error("Database availability check failed:", error);
@@ -61,5 +61,4 @@ export const isDatabaseAvailable = async () => {
   }
 };
 
-// SQL tag for raw SQL queries
-export const sql = postgres.sql;
+// Note: We don't need to export sql tag as we're using drizzle's API
