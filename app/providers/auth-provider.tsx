@@ -55,17 +55,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // We no longer try to match wallet address with session ID to avoid confusion
         const isAuthenticated = Boolean(session?.user?.id);
 
+        // Check if the wallet address matches the session ID
+        const addressMatchesSession =
+          Boolean(web3Address) &&
+          Boolean(session?.user?.id) &&
+          typeof web3Address === "string" &&
+          typeof session?.user?.id === "string" &&
+          web3Address.toLowerCase() === session?.user?.id?.toLowerCase();
+
         // Log the authentication decision logic
         console.log("AuthProvider: Authentication decision:", {
           hasSessionUserId: Boolean(session?.user?.id),
-          web3AddressMatchesSession:
-            Boolean(web3Address) &&
-            Boolean(session?.user?.id) &&
-            typeof web3Address === "string" &&
-            typeof session?.user?.id === "string" &&
-            web3Address.toLowerCase() === session?.user?.id?.toLowerCase(),
+          web3AddressMatchesSession: addressMatchesSession,
           finalDecision: isAuthenticated,
         });
+
+        // If the wallet address doesn't match the session ID, we should log out
+        // This prevents issues where a user connects a different wallet than the one they signed in with
+        if (isAuthenticated && !addressMatchesSession) {
+          console.log(
+            "AuthProvider: Wallet address doesn't match session ID, logging out"
+          );
+          // We'll handle this by setting isAuthenticated to false
+          // The user will need to sign in again with the new wallet
+          setAuthState({
+            isAuthenticated: false,
+            activeAddress: web3Address ?? undefined,
+            isWeb3User: Boolean(web3Address),
+          });
+          return;
+        }
 
         setAuthState({
           isAuthenticated: isAuthenticated,

@@ -5,7 +5,8 @@ import { Loader2, CheckCircle } from "lucide-react";
 import { useCkesSwap } from "@/hooks/use-celo-ckes";
 
 export function CeloCkesBalanceCard() {
-  const { status, error, balance, isCorrectNetwork, isSwitchingChain } = useCkesSwap();
+  const { status, error, balance, isCorrectNetwork, isSwitchingChain } =
+    useCkesSwap();
 
   if (!isCorrectNetwork) {
     return (
@@ -15,7 +16,8 @@ export function CeloCkesBalanceCard() {
           <div>
             <h3 className="font-medium">Switch to Celo Network</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Please switch your wallet to the Celo network to view your cKES balance.
+              Please switch your wallet to the Celo network to view your cKES
+              balance.
             </p>
           </div>
         </div>

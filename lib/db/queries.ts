@@ -1,7 +1,5 @@
-import { and, asc, desc, eq, gt, gte, inArray, isNull, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import * as schema from "./schema";
+import { and, asc, desc, eq, gt, gte, inArray, isNull } from "drizzle-orm";
+import { getDb, sql } from "./connection";
 
 import {
   user,
@@ -25,35 +23,8 @@ import type { BlockKind } from "@/components/block";
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 
-// Create a function to get the database connection
-const getDbClient = () => {
-  try {
-    const connectionString =
-      process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
-
-    if (!connectionString) {
-      console.warn(
-        "⚠️ No database connection string found. Some features may not work."
-      );
-      return null;
-    }
-
-    return postgres(connectionString, {
-      port: 5432,
-      ssl: { rejectUnauthorized: false },
-      max: 1,
-    });
-  } catch (error) {
-    console.error("Failed to create database client:", error);
-    return null;
-  }
-};
-
-// Get the client
-const client = getDbClient();
-
-// Create the db object, handling the case where client might be null
-export const db = client ? drizzle(client, { schema }) : null;
+// Export the db object for backward compatibility
+export const db = getDb();
 
 export type User = UserWithRelations;
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
+import { getDb } from "@/lib/db/connection";
 import { userAction, action } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -11,6 +11,7 @@ export async function GET() {
   }
 
   try {
+    const db = getDb();
     if (!db) {
       return NextResponse.json(
         { error: "Database connection not available" },

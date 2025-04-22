@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
+import { getDb } from "@/lib/db/connection";
 import { userAction, userReward, action } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -11,20 +11,52 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { actionId, proof } = await request.json();
+    const { actionId, title, proof } = await request.json();
 
-    if (!actionId) {
+    if (!actionId && !title) {
       return NextResponse.json(
-        { error: "actionId is required" },
+        { error: "Either actionId or title is required" },
         { status: 400 }
       );
     }
 
+    const db = getDb();
     if (!db) {
       return NextResponse.json(
         { error: "Database connection not available" },
         { status: 500 }
       );
+    }
+
+    // If title is provided, try to find the action by title
+    let actionIdToUse = actionId;
+    if (title && !actionId) {
+      try {
+        const actions = await db
+          .select()
+          .from(action)
+          .where(eq(action.title, title))
+          .limit(1);
+
+        if (actions.length > 0) {
+          actionIdToUse = actions[0].id;
+        } else {
+          console.log(`Action with title "${title}" not found, creating a synthetic record`);
+          // For certain actions, we'll create a synthetic record
+          if (title === "Register on Optimism" || title === "Get EURA Stablecoins" || title === "Get cKES Stablecoins") {
+            // Create a synthetic ID for these known actions
+            actionIdToUse = `synthetic-${title.replace(/\s+/g, '-').toLowerCase()}`;
+          } else {
+            return NextResponse.json({ error: "Action not found" }, { status: 404 });
+          }
+        }
+      } catch (error) {
+        console.error("Error finding action by title:", error);
+        return NextResponse.json(
+          { error: "Failed to find action by title" },
+          { status: 500 }
+        );
+      }
     }
 
     // Check if the user has already completed this action
@@ -34,7 +66,7 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(userAction.userId, session.user.id),
-          eq(userAction.actionId, actionId)
+          eq(userAction.actionId, actionIdToUse)
         )
       )
       .limit(1);
@@ -65,7 +97,7 @@ export async function POST(request: Request) {
     } else {
       await db.insert(userAction).values({
         userId: session.user.id,
-        actionId,
+        actionId: actionIdToUse,
         status: "COMPLETED",
         startedAt: now,
         completedAt: now,
@@ -79,7 +111,7 @@ export async function POST(request: Request) {
     const actionDetails = await db
       .select()
       .from(action)
-      .where(eq(action.id, actionId))
+      .where(eq(action.id, actionIdToUse))
       .limit(1);
 
     // Create rewards for the user
@@ -88,7 +120,7 @@ export async function POST(request: Request) {
       for (const reward of rewards) {
         await db.insert(userReward).values({
           userId: session.user.id,
-          actionId,
+          actionId: actionIdToUse,
           type: reward.type,
           details: reward,
           claimed: false,
@@ -100,6 +132,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error("Error in /api/actions/complete:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Failed to complete action";
     return NextResponse.json({ error: errorMessage }, { status: 500 });

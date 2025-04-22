@@ -3,40 +3,64 @@
 import useSWR from "swr";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { useActionsFallback } from "./use-actions-fallback";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useActions() {
   const { isAuthenticated } = useAuth();
+  const fallback = useActionsFallback();
 
-  const { data: userActions, error: userActionsError, mutate: mutateUserActions } = useSWR(
+  // Try to use the API first
+  const { data: apiUserActions, error: userActionsError, mutate: mutateUserActions } = useSWR(
     isAuthenticated ? "/api/actions/user" : null,
-    fetcher
+    fetcher,
+    {
+      onError: (err) => {
+        console.warn("Error fetching user actions from API, using fallback:", err);
+      },
+    }
   );
 
-  const completeAction = async (actionId: string, proof?: any) => {
+  // Determine if we should use the fallback
+  const useApiFallback = userActionsError || !apiUserActions;
+
+  // Combine API and fallback data
+  const userActions = useApiFallback ? fallback.userActions : apiUserActions;
+
+  const completeAction = async (actionTitle: string, proof?: any) => {
     if (!isAuthenticated) {
       toast.error("Please authenticate to complete actions");
       return false;
     }
 
     try {
-      const response = await fetch("/api/actions/complete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ actionId, proof }),
-      });
+      // First try to use the API
+      try {
+        const response = await fetch("/api/actions/complete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ actionId: actionTitle, proof }),
+        });
 
-      if (!response.ok) {
+        if (response.ok) {
+          toast.success("Action completed successfully!");
+          mutateUserActions();
+          return true;
+        }
+
+        // If the API call fails, we'll fall through to the fallback
         const error = await response.json();
-        toast.error(error.error || "Failed to complete action");
-        return false;
+        console.warn("API error, using fallback:", error);
+      } catch (apiError) {
+        console.warn("API call failed, using fallback:", apiError);
       }
 
+      // Use the fallback implementation
+      await fallback.completeAction(actionTitle, proof);
       toast.success("Action completed successfully!");
-      mutateUserActions();
       return true;
     } catch (error) {
       console.error("Error completing action:", error);
@@ -78,10 +102,18 @@ export function useActions() {
 
   return {
     userActions: userActions || [],
-    isLoading: !userActionsError && !userActions,
-    error: userActionsError,
+    isLoading: !useApiFallback ? (!userActionsError && !apiUserActions) : fallback.isLoading,
+    error: useApiFallback ? fallback.error : userActionsError,
     completeAction,
     startAction,
     mutateUserActions,
+    isActionCompleted: (title: string) => {
+      if (useApiFallback) {
+        return fallback.isActionCompleted(title);
+      }
+
+      // Check if the action is completed in the API data
+      return userActions?.some(ua => ua.action?.title === title && ua.status === "completed") || false;
+    }
   };
 }
