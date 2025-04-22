@@ -33,7 +33,7 @@ export function MobileAuthComponent() {
         <div className="bg-background/80 backdrop-blur-sm p-2 rounded-lg shadow-md flex items-center justify-center">
           {isAuthenticated && showSuccess ? (
             <div className="flex items-center gap-2 px-2 py-1">
-              <UserCheck className="h-5 w-5 text-green-500" />
+              <UserCheck className="size-5 text-green-500" />
               <span className="text-xs font-medium text-green-600">
                 Authenticated
               </span>
@@ -41,7 +41,7 @@ export function MobileAuthComponent() {
           ) : (
             <div className="flex items-center gap-2 px-1">
               {isAuthenticated ? null : (
-                <User className="h-5 w-5 text-amber-500" />
+                <User className="size-5 text-amber-500" />
               )}
               <MobileAuthButtons />
             </div>

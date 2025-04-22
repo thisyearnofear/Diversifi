@@ -154,7 +154,7 @@ export function AerodromeSwapCardInapp({
     return (
       <Card className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+          <CheckCircle className="size-5 text-green-600" />
           <div>
             <h3 className="font-medium">USDbC Acquired ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -168,7 +168,7 @@ export function AerodromeSwapCardInapp({
                 className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
               >
                 View transaction
-                <ExternalLink className="h-3 w-3 ml-1" />
+                <ExternalLink className="size-3 ml-1" />
               </a>
             )}
           </div>
@@ -188,14 +188,14 @@ export function AerodromeSwapCardInapp({
                 status === "transaction-pending" ||
                 status === "transaction-submitted" ||
                 status === "transaction-confirming" ? (
-                  <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+                  <Loader2 className="size-5 text-blue-500 animate-spin" />
                 ) : (
-                  <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                  <div className="size-5 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
                     2
                   </div>
                 )
               ) : (
-                <div className="h-5 w-5 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
+                <div className="size-5 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
                   2
                 </div>
               )}
@@ -254,9 +254,9 @@ export function AerodromeSwapCardInapp({
             disabled={!isRegistered}
           >
             {isExpanded ? (
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="size-3" />
             ) : (
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="size-3" />
             )}
           </Button>
         </div>
@@ -280,7 +280,7 @@ export function AerodromeSwapCardInapp({
                   className="flex items-center hover:underline"
                 >
                   Learn more about USDbC
-                  <ExternalLink className="ml-1 h-3 w-3" />
+                  <ExternalLink className="ml-1 size-3" />
                 </a>
               </div>
             </div>
@@ -298,7 +298,7 @@ export function AerodromeSwapCardInapp({
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                   Switching Network...
                 </>
               ) : (
@@ -409,7 +409,7 @@ export function AerodromeSwapCardInapp({
                         rel="noopener noreferrer"
                         className="flex items-center hover:underline"
                       >
-                        <Info className="h-3 w-3 mr-1" />
+                        <Info className="size-3 mr-1" />
                         CoinGecko
                       </a>
                     )}
@@ -449,31 +449,31 @@ export function AerodromeSwapCardInapp({
               >
                 {status === "transaction-pending" && (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Preparing Transaction...
                   </>
                 )}
                 {status === "transaction-submitted" && (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Waiting for Confirmation...
                   </>
                 )}
                 {status === "transaction-confirming" && (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Confirming Transaction...
                   </>
                 )}
                 {status === "swapping" && (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Processing Swap...
                   </>
                 )}
                 {status === "completing" && (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Completing Swap...
                   </>
                 )}

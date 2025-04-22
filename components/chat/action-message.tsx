@@ -22,27 +22,23 @@ interface ActionMessageProps {
 
 export function ActionMessage({ actions, onComplete }: ActionMessageProps) {
   const [showAll, setShowAll] = useState(false);
-  
+
   // If there's only one action or showAll is true, show all actions
   // Otherwise, show only the first action
   const visibleActions = showAll ? actions : actions.slice(0, 1);
-  
+
   return (
     <div className="flex flex-col w-full">
       <div className="mb-2 text-sm font-medium">
-        {actions.length === 1 
-          ? "I recommend this action:" 
+        {actions.length === 1
+          ? "I recommend this action:"
           : "I recommend these actions:"}
       </div>
-      
+
       {visibleActions.map((action, index) => (
-        <ActionCardCompact
-          key={index}
-          {...action}
-          onComplete={onComplete}
-        />
+        <ActionCardCompact key={index} {...action} onComplete={onComplete} />
       ))}
-      
+
       {actions.length > 1 && (
         <Button
           variant="ghost"
@@ -52,13 +48,14 @@ export function ActionMessage({ actions, onComplete }: ActionMessageProps) {
         >
           {showAll ? (
             <>
-              <ChevronUp className="mr-1 h-4 w-4" />
+              <ChevronUp className="mr-1 size-4" />
               Show fewer actions
             </>
           ) : (
             <>
-              <ChevronDown className="mr-1 h-4 w-4" />
-              Show {actions.length - 1} more {actions.length - 1 === 1 ? "action" : "actions"}
+              <ChevronDown className="mr-1 size-4" />
+              Show {actions.length - 1} more{" "}
+              {actions.length - 1 === 1 ? "action" : "actions"}
             </>
           )}
         </Button>

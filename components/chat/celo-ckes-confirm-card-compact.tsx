@@ -133,7 +133,7 @@ export function CeloCkesConfirmCardCompact({
     return (
       <Card className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+          <CheckCircle className="size-5 text-green-600" />
           <div>
             <h3 className="font-medium">cKES Acquired</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -147,7 +147,7 @@ export function CeloCkesConfirmCardCompact({
                 className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
               >
                 View transaction
-                <ExternalLink className="h-3 w-3 ml-1" />
+                <ExternalLink className="size-3 ml-1" />
               </a>
             )}
           </div>
@@ -171,13 +171,13 @@ export function CeloCkesConfirmCardCompact({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0"
+              className="size-8 p-0"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
+                <ChevronUp className="size-4" />
               ) : (
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="size-4" />
               )}
             </Button>
           </div>
@@ -222,7 +222,7 @@ export function CeloCkesConfirmCardCompact({
             {!isCorrectNetwork ? (
               <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-md">
                 <div className="flex items-center text-amber-600 dark:text-amber-400 text-sm">
-                  <Info className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <Info className="size-4 mr-2 flex-shrink-0" />
                   <span>
                     You need to switch to the Celo network to proceed.
                   </span>
@@ -235,7 +235,7 @@ export function CeloCkesConfirmCardCompact({
                 >
                   {isSwitchingChain ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className="size-4 mr-2 animate-spin" />
                       Switching to Celo...
                     </>
                   ) : (
@@ -261,7 +261,7 @@ export function CeloCkesConfirmCardCompact({
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                       {isSwitchingChain
                         ? "Switching Network..."
                         : status === "completing"
@@ -285,7 +285,7 @@ export function CeloCkesConfirmCardCompact({
               <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3">
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <Info className="h-5 w-5 text-red-400" aria-hidden="true" />
+                    <Info className="size-5 text-red-400" aria-hidden="true" />
                   </div>
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-red-800 dark:text-red-200">

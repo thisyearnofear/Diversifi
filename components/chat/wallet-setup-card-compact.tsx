@@ -166,11 +166,11 @@ export function WalletSetupCardCompact() {
       <div className="space-y-2">
         <div className="flex items-center space-x-2">
           {walletCreated ? (
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="size-4 text-green-500" />
           ) : isCreating ? (
-            <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+            <Loader2 className="size-4 animate-spin text-blue-500" />
           ) : (
-            <div className="h-4 w-4 rounded-full border border-gray-300" />
+            <div className="size-4 rounded-full border border-gray-300" />
           )}
           <span className="text-xs font-medium">Create Wallet</span>
           {walletCreated && walletAddress && (
@@ -183,11 +183,11 @@ export function WalletSetupCardCompact() {
 
         <div className="flex items-center space-x-2">
           {walletFunded ? (
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="size-4 text-green-500" />
           ) : isFunding ? (
-            <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+            <Loader2 className="size-4 animate-spin text-blue-500" />
           ) : (
-            <div className="h-4 w-4 rounded-full border border-gray-300" />
+            <div className="size-4 rounded-full border border-gray-300" />
           )}
           <span className="text-xs font-medium">Fund Wallet</span>
           {walletBalance && (
@@ -199,7 +199,7 @@ export function WalletSetupCardCompact() {
 
         {error && (
           <div className="flex items-center space-x-2 text-red-500 text-xs">
-            <AlertCircle className="h-3 w-3" />
+            <AlertCircle className="size-3" />
             <span>{error}</span>
           </div>
         )}
@@ -213,7 +213,7 @@ export function WalletSetupCardCompact() {
             >
               {isLoading || isCreating ? (
                 <>
-                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  <Loader2 className="mr-1 size-3 animate-spin" />
                   Creating...
                 </>
               ) : (
@@ -228,7 +228,7 @@ export function WalletSetupCardCompact() {
             >
               {isLoading || isFunding ? (
                 <>
-                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                  <Loader2 className="mr-1 size-3 animate-spin" />
                   Funding...
                 </>
               ) : (

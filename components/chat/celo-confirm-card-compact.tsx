@@ -142,7 +142,7 @@ export function CeloConfirmCardCompact({
               <div className="flex flex-col">
                 {isCompleted ? (
                   <div className="flex items-center text-green-600">
-                    <CheckCircle className="h-4 w-4 mr-1" />
+                    <CheckCircle className="size-4 mr-1" />
                     <span className="text-sm font-medium">Swap Completed</span>
                   </div>
                 ) : (
@@ -153,13 +153,13 @@ export function CeloConfirmCardCompact({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0"
+              className="size-8 p-0"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? (
-                <ChevronUp className="h-4 w-4" />
+                <ChevronUp className="size-4" />
               ) : (
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="size-4" />
               )}
             </Button>
           </div>
@@ -180,7 +180,7 @@ export function CeloConfirmCardCompact({
                     className="flex items-center hover:underline text-blue-600"
                   >
                     View transaction
-                    <ExternalLink className="h-3 w-3 ml-1" />
+                    <ExternalLink className="size-3 ml-1" />
                   </a>
                 </div>
               )}
@@ -225,7 +225,7 @@ export function CeloConfirmCardCompact({
                 {!isCorrectNetwork && (
                   <div className="bg-amber-50 p-2 rounded-md">
                     <div className="flex items-center text-amber-600 text-sm">
-                      <Info className="h-4 w-4 mr-1" />
+                      <Info className="size-4 mr-1" />
                       <span>
                         You need to switch to the Celo network to proceed.
                       </span>
@@ -238,7 +238,7 @@ export function CeloConfirmCardCompact({
                     >
                       {isSwitchingChain ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          <Loader2 className="size-4 mr-2 animate-spin" />
                           Switching...
                         </>
                       ) : (
@@ -262,7 +262,7 @@ export function CeloConfirmCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        <Loader2 className="size-4 mr-2 animate-spin" />
                         Swapping...
                       </>
                     ) : (

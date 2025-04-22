@@ -166,7 +166,7 @@ export function PolygonSwapCardCompact({
     return (
       <Card className="p-4 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+          <CheckCircle className="size-5 text-green-600" />
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-medium">DAI Acquired ✓</h3>
@@ -188,7 +188,7 @@ export function PolygonSwapCardCompact({
                 className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
               >
                 View transaction
-                <ExternalLink className="h-3 w-3 ml-1" />
+                <ExternalLink className="size-3 ml-1" />
               </a>
             )}
           </div>
@@ -221,13 +221,13 @@ export function PolygonSwapCardCompact({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0 rounded-full"
+              className="size-8 p-0 rounded-full"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? (
-                <ChevronUp className="h-3 w-3" />
+                <ChevronUp className="size-3" />
               ) : (
-                <ChevronDown className="h-3 w-3" />
+                <ChevronDown className="size-3" />
               )}
             </Button>
           </div>
@@ -248,7 +248,7 @@ export function PolygonSwapCardCompact({
           {status === "transaction-success" && (
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1">
-                <CheckCircle className="h-4 w-4 text-green-600" />
+                <CheckCircle className="size-4 text-green-600" />
                 <p className="text-xs text-green-600">
                   Transaction successful!
                 </p>
@@ -262,7 +262,7 @@ export function PolygonSwapCardCompact({
                     className="flex items-center hover:underline text-blue-600"
                   >
                     View transaction
-                    <ExternalLink className="h-3 w-3 ml-1" />
+                    <ExternalLink className="size-3 ml-1" />
                   </a>
                 </div>
               )}
@@ -360,7 +360,7 @@ export function PolygonSwapCardCompact({
                   className="flex items-center hover:underline"
                 >
                   Learn about Polygon
-                  <ExternalLink className="ml-1 h-3 w-3" />
+                  <ExternalLink className="ml-1 size-3" />
                 </a>
               </div>
             </div>
@@ -376,7 +376,7 @@ export function PolygonSwapCardCompact({
                   >
                     {isSwitchingChain ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Switching Network...
                       </>
                     ) : (
@@ -392,7 +392,7 @@ export function PolygonSwapCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Preparing...
                       </>
                     ) : (
@@ -419,7 +419,7 @@ export function PolygonSwapCardCompact({
                       >
                         {isLoading ? (
                           <>
-                            <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                            <Loader2 className="mr-2 size-3 animate-spin" />
                             Confirming...
                           </>
                         ) : (
@@ -436,7 +436,7 @@ export function PolygonSwapCardCompact({
                     >
                       {isLoading ? (
                         <>
-                          <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                          <Loader2 className="mr-2 size-3 animate-spin" />
                           Executing...
                         </>
                       ) : (
@@ -453,12 +453,12 @@ export function PolygonSwapCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : isUsingZeroX ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Completing...
                       </>
                     ) : (

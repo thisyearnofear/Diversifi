@@ -163,11 +163,11 @@ export function WalletSetupAction() {
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
           {walletCreated ? (
-            <CheckCircle className="h-5 w-5 text-green-500" />
+            <CheckCircle className="size-5 text-green-500" />
           ) : isCreating ? (
-            <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+            <Loader2 className="size-5 animate-spin text-blue-500" />
           ) : (
-            <div className="h-5 w-5 rounded-full border border-gray-300" />
+            <div className="size-5 rounded-full border border-gray-300" />
           )}
           <span className="font-medium">Create Wallet</span>
           {walletCreated && walletAddress && (
@@ -180,11 +180,11 @@ export function WalletSetupAction() {
 
         <div className="flex items-center space-x-2">
           {walletFunded ? (
-            <CheckCircle className="h-5 w-5 text-green-500" />
+            <CheckCircle className="size-5 text-green-500" />
           ) : isFunding ? (
-            <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+            <Loader2 className="size-5 animate-spin text-blue-500" />
           ) : (
-            <div className="h-5 w-5 rounded-full border border-gray-300" />
+            <div className="size-5 rounded-full border border-gray-300" />
           )}
           <span className="font-medium">Fund Wallet</span>
           {walletBalance && (
@@ -196,7 +196,7 @@ export function WalletSetupAction() {
 
         {error && (
           <div className="flex items-center space-x-2 text-red-500 text-sm">
-            <AlertCircle className="h-4 w-4" />
+            <AlertCircle className="size-4" />
             <span>{error}</span>
           </div>
         )}
@@ -209,7 +209,7 @@ export function WalletSetupAction() {
           >
             {isLoading || isCreating ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 size-4 animate-spin" />
                 Creating Wallet...
               </>
             ) : (
@@ -224,7 +224,7 @@ export function WalletSetupAction() {
           >
             {isLoading || isFunding ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 size-4 animate-spin" />
                 Funding Wallet...
               </>
             ) : (

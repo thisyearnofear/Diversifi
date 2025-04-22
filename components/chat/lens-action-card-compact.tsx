@@ -99,8 +99,7 @@ export function LensActionCardCompact({
           duration: 10000,
           action: {
             label: "View Packs",
-            onClick: () =>
-              window.open("https://hey.xyz/explore", "_blank"),
+            onClick: () => window.open("https://hey.xyz/explore", "_blank"),
           },
         }
       );
@@ -161,9 +160,9 @@ export function LensActionCardCompact({
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="size-4" />
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="size-4" />
             )}
           </Button>
         </div>
@@ -178,7 +177,7 @@ export function LensActionCardCompact({
               <li key={index}>{step}</li>
             ))}
           </ol>
-          
+
           <h4 className="text-xs font-medium mt-2 mb-1">Reward:</h4>
           <p className="text-xs text-green-600 font-medium">{reward}</p>
         </div>

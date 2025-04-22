@@ -140,7 +140,7 @@ export function CeloApproveCardCompact({
             <div className="flex flex-col">
               {isApprovalCompleted ? (
                 <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-1" />
+                  <CheckCircle className="size-4 mr-1" />
                   <span className="text-sm font-medium">Approved</span>
                 </div>
               ) : (
@@ -157,9 +157,9 @@ export function CeloApproveCardCompact({
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="size-4" />
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="size-4" />
             )}
           </Button>
         </div>
@@ -268,7 +268,7 @@ export function CeloApproveCardCompact({
                     {!isCorrectNetwork && (
                       <div className="bg-amber-50 p-2 rounded-md">
                         <div className="flex items-center text-amber-600 text-sm">
-                          <Info className="h-4 w-4 mr-1" />
+                          <Info className="size-4 mr-1" />
                           <span>
                             You need to switch to the Celo network to proceed.
                           </span>
@@ -281,7 +281,7 @@ export function CeloApproveCardCompact({
                         >
                           {isSwitchingChain ? (
                             <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              <Loader2 className="size-4 mr-2 animate-spin" />
                               Switching...
                             </>
                           ) : (
@@ -313,7 +313,7 @@ export function CeloApproveCardCompact({
                       >
                         {isLoading ? (
                           <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            <Loader2 className="size-4 mr-2 animate-spin" />
                             Approving...
                           </>
                         ) : (
@@ -327,7 +327,7 @@ export function CeloApproveCardCompact({
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-1" />
+                  <CheckCircle className="size-4 mr-1" />
                   <span className="text-sm">
                     Approved {amount} CELO for swapping
                   </span>

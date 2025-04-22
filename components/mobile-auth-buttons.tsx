@@ -165,7 +165,7 @@ export function MobileAuthButtons() {
     if (showSuccess) {
       return (
         <div className="flex items-center gap-2 text-green-600">
-          <CheckCircle className="h-4 w-4" />
+          <CheckCircle className="size-4" />
           <span className="text-xs">Authenticated</span>
         </div>
       );
@@ -179,7 +179,7 @@ export function MobileAuthButtons() {
               variant="outline"
               className="text-xs py-1 px-2 h-auto"
             >
-              <Wallet className="mr-1 h-3 w-3" />
+              <Wallet className="mr-1 size-3" />
               {ensName || (address ? `${address.slice(0, 4)}...` : "Wallet")}
             </Button>
           )}
@@ -199,12 +199,12 @@ export function MobileAuthButtons() {
       >
         {isAuthenticating ? (
           <>
-            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+            <Loader2 className="mr-1 size-3 animate-spin" />
             Signing...
           </>
         ) : (
           <>
-            <Key className="mr-1 h-3 w-3" />
+            <Key className="mr-1 size-3" />
             Sign In
           </>
         )}
@@ -221,7 +221,7 @@ export function MobileAuthButtons() {
           size="sm"
           className="w-full text-xs py-1 px-2 h-auto"
         >
-          <Wallet className="mr-1 h-3 w-3" />
+          <Wallet className="mr-1 size-3" />
           Connect
         </Button>
       )}

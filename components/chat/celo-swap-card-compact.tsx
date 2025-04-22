@@ -197,7 +197,7 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Switching to Celo...
                   </>
                 ) : (
@@ -288,25 +288,25 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                   <Button onClick={handleSwap} disabled={isLoading}>
                     {status === "transaction-pending" && (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 size-4 animate-spin" />
                         Preparing Transaction...
                       </>
                     )}
                     {status === "transaction-submitted" && (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 size-4 animate-spin" />
                         Waiting for Confirmation...
                       </>
                     )}
                     {status === "transaction-confirming" && (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 size-4 animate-spin" />
                         Confirming Transaction...
                       </>
                     )}
                     {status === "swapping" && (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 size-4 animate-spin" />
                         Processing Swap...
                       </>
                     )}

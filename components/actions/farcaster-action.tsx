@@ -20,12 +20,12 @@ export function FarcasterAction() {
     try {
       // Open Farcaster in a new tab
       window.open("https://farcaster.xyz", "_blank");
-      
+
       // Ask the user if they completed the action
       const confirmed = window.confirm(
         "Did you create a Farcaster account and connect it to your wallet? Click OK to confirm and complete this action."
       );
-      
+
       if (confirmed) {
         // Get the action ID from the database
         const response = await fetch("/api/actions/by-title", {
@@ -35,19 +35,19 @@ export function FarcasterAction() {
           },
           body: JSON.stringify({ title: "Set up Farcaster Account" }),
         });
-        
+
         if (!response.ok) {
           throw new Error("Failed to get action ID");
         }
-        
+
         const { id } = await response.json();
-        
+
         // Complete the action
-        await completeAction(id, { 
+        await completeAction(id, {
           platform: "farcaster",
           completedAt: new Date().toISOString(),
         });
-        
+
         toast.success("Action completed successfully!");
       }
     } catch (error) {
@@ -62,9 +62,10 @@ export function FarcasterAction() {
     <Card className="p-6">
       <h3 className="text-xl font-semibold mb-4">Set up Farcaster Account</h3>
       <p className="text-gray-600 mb-6">
-        Create a Farcaster account and connect it to your wallet to earn rewards.
+        Create a Farcaster account and connect it to your wallet to earn
+        rewards.
       </p>
-      
+
       <div className="mb-6">
         <h4 className="font-medium mb-2">Steps:</h4>
         <ol className="list-decimal pl-5 space-y-2">
@@ -74,12 +75,12 @@ export function FarcasterAction() {
           <li>Set up your profile</li>
         </ol>
       </div>
-      
+
       <div className="mb-6">
         <h4 className="font-medium mb-2">Rewards:</h4>
         <p className="text-green-600 font-medium">0.1 ETH</p>
       </div>
-      
+
       <Button
         onClick={handleStart}
         disabled={isLoading || !address}
@@ -87,7 +88,7 @@ export function FarcasterAction() {
       >
         {isLoading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="mr-2 size-4 animate-spin" />
             Processing...
           </>
         ) : (

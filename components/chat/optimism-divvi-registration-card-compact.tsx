@@ -70,7 +70,7 @@ export function OptimismDivviRegistrationCardCompact({
     return (
       <Card className="p-4 border-purple-200 bg-purple-50 dark:bg-purple-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-purple-600" />
+          <CheckCircle className="size-5 text-purple-600" />
           <div>
             <h3 className="font-medium">Registration Complete ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -92,9 +92,9 @@ export function OptimismDivviRegistrationCardCompact({
               {status === "transaction-success" ||
               status === "transaction-confirming" ||
               status === "transaction-pending" ? (
-                <Loader2 className="h-5 w-5 text-amber-500 animate-spin" />
+                <Loader2 className="size-5 text-amber-500 animate-spin" />
               ) : (
-                <div className="h-5 w-5 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
+                <div className="size-5 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
                   !
                 </div>
               )}
@@ -143,13 +143,13 @@ export function OptimismDivviRegistrationCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full"
+            className="size-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="size-3" />
             ) : (
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="size-3" />
             )}
           </Button>
         </div>
@@ -170,7 +170,7 @@ export function OptimismDivviRegistrationCardCompact({
                   className="flex items-center hover:underline"
                 >
                   Learn about Optimism
-                  <ExternalLink className="ml-1 h-3 w-3" />
+                  <ExternalLink className="ml-1 size-3" />
                 </a>
               </div>
             </div>
@@ -186,7 +186,7 @@ export function OptimismDivviRegistrationCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Switching Network...
                       </>
                     ) : (
@@ -205,7 +205,7 @@ export function OptimismDivviRegistrationCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : (
@@ -221,7 +221,7 @@ export function OptimismDivviRegistrationCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : (

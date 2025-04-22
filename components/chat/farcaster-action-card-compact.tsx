@@ -161,9 +161,9 @@ export function FarcasterActionCardCompact({
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="size-4" />
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="size-4" />
             )}
           </Button>
         </div>
@@ -235,7 +235,7 @@ export function FarcasterActionCardCompact({
         ) : (
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-center space-x-2 text-green-600 text-xs font-medium">
-              <CheckCircle className="h-4 w-4" />
+              <CheckCircle className="size-4" />
               <span>Action completed successfully!</span>
             </div>
 

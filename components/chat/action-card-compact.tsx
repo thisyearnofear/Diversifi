@@ -127,7 +127,7 @@ export function ActionCardCompact({
           variant="ghost"
           size="sm"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-0 h-5 w-5"
+          className="p-0 size-5"
         >
           {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </Button>
@@ -153,7 +153,7 @@ export function ActionCardCompact({
           disabled={isLoading}
           className="w-full h-7 text-xs"
         >
-          <ExternalLink className="mr-1 h-3 w-3" />
+          <ExternalLink className="mr-1 size-3" />
           Start Action
         </Button>
 
@@ -173,7 +173,7 @@ export function ActionCardCompact({
             className="whitespace-nowrap h-7 text-xs"
           >
             {isLoading ? (
-              <Loader2 className="h-3 w-3 animate-spin" />
+              <Loader2 className="size-3 animate-spin" />
             ) : (
               "Complete"
             )}

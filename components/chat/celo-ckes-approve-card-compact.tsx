@@ -159,12 +159,12 @@ export function CeloCkesApproveCardCompact({
             <div className="flex flex-col">
               {isApprovalCompleted && status !== "completed" ? (
                 <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-1" />
+                  <CheckCircle className="size-4 mr-1" />
                   <span className="text-sm font-medium">Approved</span>
                 </div>
               ) : status === "completed" ? (
                 <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-1" />
+                  <CheckCircle className="size-4 mr-1" />
                   <span className="text-sm font-medium">Completed</span>
                 </div>
               ) : (
@@ -177,13 +177,13 @@ export function CeloCkesApproveCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0"
+            className="size-8 p-0"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="size-4" />
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="size-4" />
             )}
           </Button>
         </div>
@@ -191,7 +191,7 @@ export function CeloCkesApproveCardCompact({
           <div className="mt-4 space-y-2">
             <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-md">
               <div className="flex items-center gap-2 text-green-600">
-                <CheckCircle className="h-4 w-4" />
+                <CheckCircle className="size-4" />
                 <span className="text-sm">cKES acquired successfully!</span>
               </div>
               {txHash && (
@@ -202,7 +202,7 @@ export function CeloCkesApproveCardCompact({
                   className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
                 >
                   View transaction
-                  <ExternalLink className="h-3 w-3 ml-1" />
+                  <ExternalLink className="size-3 ml-1" />
                 </a>
               )}
             </div>
@@ -242,7 +242,7 @@ export function CeloCkesApproveCardCompact({
                       </span>
                       {cUSDBalance && (
                         <span className="text-xs flex items-center text-gray-500">
-                          <Wallet className="h-3 w-3 mr-1" />
+                          <Wallet className="size-3 mr-1" />
                           Balance:{" "}
                           {formatUnits(
                             cUSDBalance.value,
@@ -260,7 +260,7 @@ export function CeloCkesApproveCardCompact({
                     </span>
                     {!hasEnoughCUSD && amount && (
                       <div className="bg-red-50 p-2 rounded-md text-xs text-red-700 flex items-start">
-                        <Info className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
+                        <Info className="size-3 mr-1 mt-0.5 flex-shrink-0" />
                         <span>
                           Insufficient cUSD balance. You need {amount} cUSD but
                           only have{" "}
@@ -281,7 +281,7 @@ export function CeloCkesApproveCardCompact({
                   </div>
                   {!isCorrectNetwork && (
                     <div className="bg-amber-50 p-2 rounded-md flex items-center text-amber-600 text-sm">
-                      <Info className="h-4 w-4 mr-1" />
+                      <Info className="size-4 mr-1" />
                       You need to switch to the Celo network.
                     </div>
                   )}
@@ -313,7 +313,7 @@ export function CeloCkesApproveCardCompact({
                     >
                       {isLoading ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          <Loader2 className="size-4 mr-2 animate-spin" />
                           Approving...
                         </>
                       ) : (

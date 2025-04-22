@@ -158,7 +158,11 @@ function DiversiScore() {
 export function RightSidebar() {
   const isMobile = useIsMobile();
   const { selectedRegion, setSelectedRegion } = useRegion();
-  const { balance: ckesBalance, status: ckesStatus, isSwitchingChain: ckesSwitching } = useCkesSwap();
+  const {
+    balance: ckesBalance,
+    status: ckesStatus,
+    isSwitchingChain: ckesSwitching,
+  } = useCkesSwap();
 
   // Don't render on mobile
   if (isMobile) {
@@ -316,14 +320,20 @@ export function RightSidebar() {
                   {/* Token Holdings for Selected Region */}
                   <div className="space-y-1 pl-3 mt-2">
                     {walletAssetsByRegion[selectedRegion]
-                      .filter((asset) => asset.symbol === "cKES" || asset.value > 0)
+                      .filter(
+                        (asset) => asset.symbol === "cKES" || asset.value > 0
+                      )
                       .map((asset) => {
                         const isCkes = asset.symbol === "cKES";
-                        const amountDisplay = isCkes
-                          ? (ckesStatus === "checking" || ckesSwitching
-                              ? <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
-                              : `${ckesBalance}`)
-                          : asset.amount;
+                        const amountDisplay = isCkes ? (
+                          ckesStatus === "checking" || ckesSwitching ? (
+                            <Loader2 className="size-4 animate-spin text-gray-500" />
+                          ) : (
+                            `${ckesBalance}`
+                          )
+                        ) : (
+                          asset.amount
+                        );
                         return (
                           <div
                             key={asset.symbol}
@@ -336,11 +346,12 @@ export function RightSidebar() {
                       })}
                     {walletAssetsByRegion[selectedRegion].filter(
                       (asset) => asset.value > 0 && asset.symbol !== "cKES"
-                    ).length === 0 && selectedRegion !== "Africa" && (
-                      <div className="text-xs text-gray-500 text-center py-1">
-                        No assets in this region
-                      </div>
-                    )}
+                    ).length === 0 &&
+                      selectedRegion !== "Africa" && (
+                        <div className="text-xs text-gray-500 text-center py-1">
+                          No assets in this region
+                        </div>
+                      )}
                   </div>
                 </div>
               )}
@@ -361,7 +372,7 @@ export function RightSidebar() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center h-7 w-7 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="flex items-center justify-center size-7 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                       title={link.name}
                     >
                       <link.icon className={cn("size-3.5", link.color)} />

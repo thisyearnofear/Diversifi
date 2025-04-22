@@ -113,7 +113,7 @@ export function MobileNavigation() {
             onClick={item.action}
             title={item.name}
           >
-            <item.icon className="h-5 w-5" />
+            <item.icon className="size-5" />
             <span className="sr-only">{item.name}</span>
           </Button>
         ))}

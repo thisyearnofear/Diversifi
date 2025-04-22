@@ -193,7 +193,7 @@ export function SeparateAuthButtons() {
         <div className="flex items-center gap-2">
           {isConnected ? (
             <div className="flex items-center gap-2 text-green-600">
-              <CheckCircle className="h-4 w-4" />
+              <CheckCircle className="size-4" />
             </div>
           ) : (
             <ConnectKitButton.Custom>
@@ -215,7 +215,7 @@ export function SeparateAuthButtons() {
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
             <div className="flex items-center gap-2 text-green-600">
-              <CheckCircle className="h-4 w-4" />
+              <CheckCircle className="size-4" />
             </div>
           ) : (
             <Button
@@ -226,7 +226,7 @@ export function SeparateAuthButtons() {
             >
               {isAuthenticating ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                   Signing...
                 </>
               ) : (

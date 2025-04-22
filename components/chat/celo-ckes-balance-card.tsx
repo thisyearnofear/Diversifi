@@ -12,7 +12,7 @@ export function CeloCkesBalanceCard() {
     return (
       <Card className="p-4 border-red-200 bg-red-50 dark:bg-red-900/20">
         <div className="flex items-center gap-3">
-          <Loader2 className="h-5 w-5 text-red-600 animate-spin" />
+          <Loader2 className="size-5 text-red-600 animate-spin" />
           <div>
             <h3 className="font-medium">Switch to Celo Network</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -29,7 +29,7 @@ export function CeloCkesBalanceCard() {
     return (
       <Card className="p-4 border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="flex items-center gap-3">
-          <Loader2 className="h-5 w-5 text-yellow-600 animate-spin" />
+          <Loader2 className="size-5 text-yellow-600 animate-spin" />
           <div>
             <h3 className="font-medium">Checking cKES Balance…</h3>
           </div>
@@ -42,7 +42,7 @@ export function CeloCkesBalanceCard() {
     return (
       <Card className="p-4 border-red-200 bg-red-50 dark:bg-red-900/20">
         <div className="flex items-center gap-3">
-          <Loader2 className="h-5 w-5 text-red-600 animate-spin" />
+          <Loader2 className="size-5 text-red-600 animate-spin" />
           <div>
             <h3 className="font-medium">Error</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
@@ -55,7 +55,7 @@ export function CeloCkesBalanceCard() {
   return (
     <Card className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
       <div className="flex items-center gap-3">
-        <CheckCircle className="h-5 w-5 text-green-600" />
+        <CheckCircle className="size-5 text-green-600" />
         <div>
           <h3 className="font-medium">Your cKES Balance</h3>
           <p className="text-lg font-mono">{balance} cKES</p>

@@ -103,7 +103,7 @@ export function PolygonDivviRegistrationCardCompact({
                 className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
               >
                 View transaction
-                <ExternalLink className="h-3 w-3 ml-1" />
+                <ExternalLink className="size-3 ml-1" />
               </a>
             )}
           </div>
@@ -160,9 +160,9 @@ export function PolygonDivviRegistrationCardCompact({
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="size-3" />
             ) : (
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="size-3" />
             )}
           </Button>
         </div>
@@ -183,7 +183,7 @@ export function PolygonDivviRegistrationCardCompact({
                   className="flex items-center hover:underline"
                 >
                   Learn about Polygon
-                  <ExternalLink className="ml-1 h-3 w-3" />
+                  <ExternalLink className="ml-1 size-3" />
                 </a>
               </div>
             </div>
@@ -199,7 +199,7 @@ export function PolygonDivviRegistrationCardCompact({
                   >
                     {isSwitchingChain ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Switching Network...
                       </>
                     ) : (
@@ -219,7 +219,7 @@ export function PolygonDivviRegistrationCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : (
@@ -235,7 +235,7 @@ export function PolygonDivviRegistrationCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : (
