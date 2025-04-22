@@ -12,7 +12,7 @@ export interface Token {
 
 export const tokensByRegion: Record<string, Token[]> = {
   Africa: [
-    { id: "ckes", name: "Celo Kenyan Shilling", symbol: "cKES", region: "Africa", chain: "CELO", actionPrompt: "I want to get cKES stablecoins on Celo. Can you help me directly in this chat?", available: false },
+    { id: "ckes", name: "Celo Kenyan Shilling", symbol: "cKES", region: "Africa", chain: "CELO", actionPrompt: "I want to get cKES stablecoins on Celo. Can you help me directly in this chat?", available: true },
     { id: "zar", name: "South African Rand", symbol: "ZAR", region: "Africa", chain: "CELO", actionPrompt: "I want to get ZAR stablecoins. Can you help me directly in this chat?", available: false },
     { id: "ngn", name: "Nigerian Naira", symbol: "NGN", region: "Africa", chain: "CELO", actionPrompt: "I want to get NGN stablecoins. Can you help me directly in this chat?", available: false },
     { id: "cghs", name: "Celo Ghanaian Cedi", symbol: "cGHS", region: "Africa", chain: "CELO", actionPrompt: "I want to get cGHS stablecoins on Celo. Can you help me directly in this chat?", available: false },

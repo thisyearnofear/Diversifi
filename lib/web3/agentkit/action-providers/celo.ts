@@ -36,7 +36,7 @@ export class CeloActionProvider extends ActionProvider<WalletProvider> {
     schema: z.object({}).describe("No parameters needed"),
   })
   async celoAction(_walletProvider: WalletProvider): Promise<string> {
-    // Return a JSON string with both Celo actions
+    // Return a JSON string with Celo cUSD actions
     return JSON.stringify([
       {
         title: "Register on Celo",
@@ -67,6 +67,55 @@ export class CeloActionProvider extends ActionProvider<WalletProvider> {
         ],
         reward: "Access to USD-backed stablecoins on Celo",
         actionUrl: "https://app.uniswap.org/#/swap?inputCurrency=0x471ece3750da237f93b8e339c536989b8978a438&outputCurrency=0x765DE816845861e75A25fCA122bb6898B8B1282a&chain=celo",
+        proofFieldLabel: "Transaction Hash",
+        proofFieldPlaceholder: "0x..."
+      }
+    ]);
+  }
+
+  /**
+   * Get cKES on Celo action.
+   *
+   * @param _walletProvider - The wallet provider (not used for this action).
+   * @returns A JSON string with the Celo cKES action data.
+   */
+  @CreateAction({
+    name: "celo-ckes-action",
+    description: "Get Kenyan Shilling stablecoins on Celo by setting up your account and swapping for cKES",
+    schema: z.object({}).describe("No parameters needed"),
+  })
+  async celoCkesAction(_walletProvider: WalletProvider): Promise<string> {
+    // Return a JSON string with Celo cKES actions
+    return JSON.stringify([
+      {
+        title: "Register on Celo",
+        description: "Enable portfolio tracking on Celo",
+        chain: "CELO",
+        difficulty: "beginner",
+        steps: [
+          "Connect your wallet to continue",
+          "Click 'Register' to enable portfolio tracking",
+          "Confirm the transaction in your wallet",
+          "Click 'Complete Registration' to finish"
+        ],
+        reward: "Access portfolio tracking and future rebalancing features",
+        actionUrl: "",
+        proofFieldLabel: "Transaction Hash",
+        proofFieldPlaceholder: "0x..."
+      },
+      {
+        title: "Get cKES Stablecoins",
+        description: "Secure Kenyan Shilling stablecoins on Celo",
+        chain: "CELO",
+        difficulty: "beginner",
+        steps: [
+          "Choose CELO as your source token",
+          "Enter the amount you want to swap",
+          "Review and confirm the swap",
+          "Wait for the transaction to complete"
+        ],
+        reward: "Access to Kenyan Shilling stablecoins on Celo",
+        actionUrl: "https://app.mento.finance",
         proofFieldLabel: "Transaction Hash",
         proofFieldPlaceholder: "0x..."
       }

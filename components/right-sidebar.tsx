@@ -10,6 +10,7 @@ import {
   Euro,
   Gem,
   MessageCircle,
+  Loader2,
 } from "lucide-react";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -17,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { useRegion, type Region } from "@/contexts/region-context";
 import { Badge } from "@/components/ui/badge";
 import { getAvailableTokensByRegion } from "@/lib/tokens/token-data";
+import { useCkesSwap } from "@/hooks/use-celo-ckes";
 
 // Region data with icons and colors
 const regions: {
@@ -74,7 +76,10 @@ const walletAssetsByRegion: Record<
     { symbol: "EURA", amount: "45.0", value: 45 },
     { symbol: "CEUR", amount: "0.0", value: 0 },
   ],
-  Africa: [{ symbol: "cUSD", amount: "25.0", value: 25 }],
+  Africa: [
+    { symbol: "cUSD", amount: "25.0", value: 25 },
+    { symbol: "cKES", amount: "0.0", value: 0 }, // Placeholder, will show real component below
+  ],
   LatAm: [{ symbol: "cREAL", amount: "0.0", value: 0 }],
   Asia: [{ symbol: "USDT", amount: "100.0", value: 100 }],
   RWA: [{ symbol: "PAXG", amount: "0.01", value: 20 }],
@@ -153,6 +158,7 @@ function DiversiScore() {
 export function RightSidebar() {
   const isMobile = useIsMobile();
   const { selectedRegion, setSelectedRegion } = useRegion();
+  const { balance: ckesBalance, status: ckesStatus, isSwitchingChain: ckesSwitching } = useCkesSwap();
 
   // Don't render on mobile
   if (isMobile) {
@@ -310,19 +316,27 @@ export function RightSidebar() {
                   {/* Token Holdings for Selected Region */}
                   <div className="space-y-1 pl-3 mt-2">
                     {walletAssetsByRegion[selectedRegion]
-                      .filter((asset) => asset.value > 0)
-                      .map((asset) => (
-                        <div
-                          key={asset.symbol}
-                          className="flex justify-between items-center text-xs"
-                        >
-                          <span>{asset.symbol}</span>
-                          <span>{asset.amount}</span>
-                        </div>
-                      ))}
+                      .filter((asset) => asset.symbol === "cKES" || asset.value > 0)
+                      .map((asset) => {
+                        const isCkes = asset.symbol === "cKES";
+                        const amountDisplay = isCkes
+                          ? (ckesStatus === "checking" || ckesSwitching
+                              ? <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+                              : `${ckesBalance}`)
+                          : asset.amount;
+                        return (
+                          <div
+                            key={asset.symbol}
+                            className="flex justify-between items-center text-xs"
+                          >
+                            <span>{asset.symbol}</span>
+                            <span>{amountDisplay}</span>
+                          </div>
+                        );
+                      })}
                     {walletAssetsByRegion[selectedRegion].filter(
-                      (asset) => asset.value > 0
-                    ).length === 0 && (
+                      (asset) => asset.value > 0 && asset.symbol !== "cKES"
+                    ).length === 0 && selectedRegion !== "Africa" && (
                       <div className="text-xs text-gray-500 text-center py-1">
                         No assets in this region
                       </div>

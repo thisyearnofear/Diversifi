@@ -15,6 +15,7 @@ import { LensActionCardCompact } from "./chat/lens-action-card-compact";
 import { BaseActionMessage } from "./chat/base-action-message";
 import { OptimismActionHandler } from "./chat/optimism-action-handler";
 import { CeloActionHandler } from "./chat/celo-action-handler";
+import { CeloCkesActionHandler } from "./chat/celo-ckes-action-handler";
 import { PolygonActionHandler } from "./chat/polygon-action-handler";
 
 interface ActionButtonsProps {
@@ -129,8 +130,9 @@ export function InteractiveElement({
     (a) => a.args?.[0]?.chain === "POLYGON"
   );
 
-  // Find dedicated Celo action
+  // Find dedicated Celo actions
   const celoAction = actions.find((a) => a.action === "celo-action");
+  const celoCkesAction = actions.find((a) => a.action === "celo-ckes-action");
   const polygonAction = actions.find((a) => a.action === "polygon-action");
 
   // Filter out Farcaster, Lens, Base, Optimism, Celo, and Polygon actions from actionCardActions to avoid duplication
@@ -290,6 +292,11 @@ export function InteractiveElement({
         <CeloActionHandler
           args={celoAction?.args || celoActionCard?.args || []}
         />
+      )}
+
+      {/* Handle celo-ckes-action for cKES on Celo */}
+      {celoCkesAction && (
+        <CeloCkesActionHandler args={celoCkesAction?.args || []} />
       )}
 
       {/* Handle both dedicated polygon-action and action-card for Polygon */}

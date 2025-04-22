@@ -110,4 +110,38 @@ export async function seedCeloActions() {
   } else {
     console.log("cUSD swap action already exists");
   }
+
+  // Check if the cKES swap action already exists
+  const existingCkesAction = await db
+    .select()
+    .from(action)
+    .where(eq(action.title, "Get cKES Stablecoins"))
+    .limit(1);
+
+  if (existingCkesAction.length === 0) {
+    // Create the cKES swap action
+    await db.insert(action).values({
+      title: "Get cKES Stablecoins",
+      description: "Secure Kenyan Shilling stablecoins on Celo",
+      category: "STABLECOIN",
+      chain: "CELO",
+      difficulty: "BEGINNER",
+      prerequisites: [],
+      steps: [
+        { title: "Choose token", description: "Choose CELO as your source token" },
+        { title: "Enter amount", description: "Enter the amount you want to swap" },
+        { title: "Review and confirm", description: "Review and confirm the swap" },
+        { title: "Wait for completion", description: "Wait for the transaction to complete" },
+      ],
+      rewards: [
+        { type: "TOKEN", description: "Access to Kenyan Shilling stablecoins on Celo" },
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log("Created cKES swap action");
+  } else {
+    console.log("cKES swap action already exists");
+  }
 }

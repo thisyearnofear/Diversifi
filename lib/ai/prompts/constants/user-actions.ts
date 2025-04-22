@@ -69,6 +69,25 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
+14. "celo-ckes-action" - To help users swap to cKES on Celo. Use this when a user wants to get Kenyan Shilling stablecoins on Celo or asks about cKES. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping CELO for cKES using Mento Protocol, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with cKES on Celo. I'll guide you through the process of swapping CELO for cKES via Mento Protocol. Here's what you need to do:"
+   Example args: {
+     "title": "Get cKES Stablecoins",
+     "description": "Secure Kenyan Shilling stablecoins on Celo",
+     "chain": "CELO",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Celo to unlock features",
+       "Switch to the Celo network",
+       "Swap CELO for cKES via Mento Protocol",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete'"
+     ],
+     "reward": "Access to Kenyan Shilling stablecoins on Celo",
+     "actionUrl": "https://app.mento.finance",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
    Example args for optimism-action: {
      "title": "Swap to EURA on Velodrome",
      "description": "Get Euro-backed stablecoins on Optimism",

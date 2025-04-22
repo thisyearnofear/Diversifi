@@ -112,7 +112,8 @@ pnpm dev
 8. ✅ Real-time token pricing with CoinGecko API
 9. ✅ Polygon DAI swap integration with Brian API
 10. ✅ Consistent UI/UX for all stablecoin actions
-11. 🔄 Regional token selector implementation
+11. ✅ Regional token selector implementation
+12. ✅ cKES stablecoin integration on Celo
 
 ## Regional Token Selector Implementation
 
@@ -315,6 +316,20 @@ We've integrated the Brian API to facilitate in-app token swaps for DAI on Polyg
   - Wallet-based transaction execution
 
 The integration provides a seamless experience for swapping MATIC tokens to DAI directly within our application. It leverages the Brian API to prepare transactions and the user's wallet to execute them, ensuring a secure and transparent process.
+
+### Celo cKES Integration
+
+We've implemented direct cUSD to cKES swaps on Celo using the Mento protocol:
+
+- **Network**: Celo Mainnet
+- **Features**:
+  - Direct cUSD to cKES swaps
+  - Mento protocol integration
+  - Manual gas limit fallback for reliable transactions
+  - User-friendly approval and confirmation flow
+  - Detailed transaction information
+
+The implementation provides a seamless experience for acquiring Kenyan Shilling stablecoins (cKES) directly within our application. It uses the Mento protocol's broker contracts to find the best exchange path and execute swaps efficiently. The integration includes robust error handling and fallback mechanisms to ensure reliable transactions even when automatic gas estimation fails.
 
 ## SnelDAO Idea 🐌
 
