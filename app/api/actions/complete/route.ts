@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         } else {
           console.log(`Action with title "${title}" not found, creating a synthetic record`);
           // For certain actions, we'll create a synthetic record
-          if (title === "Register on Optimism" || title === "Get EURA Stablecoins" || title === "Get cKES Stablecoins") {
+          if (title === "Register on Optimism" || title === "Get EURA Stablecoins" || title === "Get cKES Stablecoins" || title === "Get cCOP Stablecoins") {
             // Create a synthetic ID for these known actions
             actionIdToUse = `synthetic-${title.replace(/\s+/g, '-').toLowerCase()}`;
           } else {
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
         await db.insert(userReward).values({
           userId: session.user.id,
           actionId: actionIdToUse,
-          type: reward.type,
+          type: reward.type || 'POINTS', // Default to 'POINTS' if type is not provided
           details: reward,
           claimed: false,
           createdAt: now,

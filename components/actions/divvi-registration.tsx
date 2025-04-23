@@ -602,7 +602,7 @@ export function DivviRegistrationAction() {
             className="flex items-center hover:underline"
           >
             Learn more about Stable Station
-            <ExternalLink className="ml-1 h-3 w-3" />
+            <ExternalLink className="ml-1 size-3" />
           </a>
         </div>
       </div>

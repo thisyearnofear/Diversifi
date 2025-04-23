@@ -70,7 +70,7 @@ export function CustomConnectButton() {
         </button>
       );
     },
-    [isConnecting]
+    [isConnecting, cleanupWalletConnectSessions]
   );
 
   return (

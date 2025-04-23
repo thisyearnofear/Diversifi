@@ -33,7 +33,7 @@ export const tokensByRegion: Record<string, Token[]> = {
   ],
   LatAm: [
     { id: "creal", name: "Celo Brazilian Real", symbol: "cREAL", region: "LatAm", chain: "CELO", actionPrompt: "I want to get cREAL stablecoins on Celo. Can you help me directly in this chat?", available: false },
-    { id: "ccop", name: "Celo Colombian Peso", symbol: "cCOP", region: "LatAm", chain: "CELO", actionPrompt: "I want to get cCOP stablecoins on Celo. Can you help me directly in this chat?", available: false },
+    { id: "ccop", name: "Celo Colombian Peso", symbol: "cCOP", region: "LatAm", chain: "CELO", actionPrompt: "I want to get cCOP stablecoins on Celo. Can you help me directly in this chat?", available: true },
     { id: "mxnt", name: "Mexican Peso Tether", symbol: "MXNT", region: "LatAm", chain: "ETHEREUM", actionPrompt: "I want to get MXNT stablecoins. Can you help me directly in this chat?", available: false },
     { id: "brz", name: "Brazilian Real", symbol: "BRZ", region: "LatAm", chain: "POLYGON", actionPrompt: "I want to get BRZ stablecoins on Polygon. Can you help me directly in this chat?", available: false },
   ],

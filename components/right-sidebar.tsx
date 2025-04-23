@@ -19,6 +19,7 @@ import { useRegion, type Region } from "@/contexts/region-context";
 import { Badge } from "@/components/ui/badge";
 import { getAvailableTokensByRegion } from "@/lib/tokens/token-data";
 import { useCkesSwap } from "@/hooks/use-celo-ckes";
+import { useCcopSwap } from "@/hooks/use-celo-ccop";
 
 // Region data with icons and colors
 const regions: {
@@ -80,7 +81,11 @@ const walletAssetsByRegion: Record<
     { symbol: "cUSD", amount: "25.0", value: 25 },
     { symbol: "cKES", amount: "0.0", value: 0 }, // Placeholder, will show real component below
   ],
-  LatAm: [{ symbol: "cREAL", amount: "0.0", value: 0 }],
+  LatAm: [
+    { symbol: "cCOP", amount: "0.0", value: 0 },
+    { symbol: "BRZ", amount: "0.0", value: 0 },
+    { symbol: "cREAL", amount: "0.0", value: 0 },
+  ],
   Asia: [{ symbol: "USDT", amount: "100.0", value: 100 }],
   RWA: [{ symbol: "PAXG", amount: "0.01", value: 20 }],
 };
@@ -163,6 +168,12 @@ export function RightSidebar() {
     status: ckesStatus,
     isSwitchingChain: ckesSwitching,
   } = useCkesSwap();
+
+  const {
+    balance: ccopBalance,
+    status: ccopStatus,
+    isSwitchingChain: ccopSwitching,
+  } = useCcopSwap();
 
   // Don't render on mobile
   if (isMobile) {
@@ -325,29 +336,47 @@ export function RightSidebar() {
                       )
                       .map((asset) => {
                         const isCkes = asset.symbol === "cKES";
-                        const amountDisplay = isCkes ? (
-                          ckesStatus === "checking" || ckesSwitching ? (
-                            <Loader2 className="size-4 animate-spin text-gray-500" />
-                          ) : (
-                            `${ckesBalance}`
-                          )
-                        ) : (
-                          asset.amount
-                        );
+                        const isCcop = asset.symbol === "cCOP";
+
+                        // Check if we should show loading state
+                        const isLoading =
+                          (isCkes &&
+                            (ckesStatus === "checking" || ckesSwitching)) ||
+                          (isCcop &&
+                            (ccopStatus === "checking" || ccopSwitching));
+
+                        // Get the text value
+                        let textValue = asset.amount;
+                        if (isCkes && !isLoading) {
+                          textValue = `${ckesBalance}`;
+                        } else if (isCcop && !isLoading) {
+                          textValue = `${ccopBalance}`;
+                        }
+
                         return (
                           <div
                             key={asset.symbol}
                             className="flex justify-between items-center text-xs"
                           >
                             <span>{asset.symbol}</span>
-                            <span>{amountDisplay}</span>
+                            <span>
+                              {isLoading ? (
+                                <Loader2 className="size-4 animate-spin text-gray-500" />
+                              ) : (
+                                textValue
+                              )}
+                            </span>
                           </div>
                         );
                       })}
                     {walletAssetsByRegion[selectedRegion].filter(
-                      (asset) => asset.value > 0 && asset.symbol !== "cKES"
+                      (asset) =>
+                        asset.value > 0 &&
+                        asset.symbol !== "cKES" &&
+                        asset.symbol !== "cCOP"
                     ).length === 0 &&
-                      selectedRegion !== "Africa" && (
+                      selectedRegion !== "Africa" &&
+                      selectedRegion !== "LatAm" && (
                         <div className="text-xs text-gray-500 text-center py-1">
                           No assets in this region
                         </div>

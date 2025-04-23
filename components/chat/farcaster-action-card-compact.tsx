@@ -157,7 +157,7 @@ export function FarcasterActionCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0"
+            className="size-6 p-0"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
@@ -193,7 +193,7 @@ export function FarcasterActionCardCompact({
                 className="w-full h-7 text-xs flex items-center gap-1"
                 variant="outline"
               >
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink className="size-3" />
                 Open Farcaster
               </Button>
 
@@ -216,7 +216,7 @@ export function FarcasterActionCardCompact({
               >
                 {isCompleting ? (
                   <>
-                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                    <Loader2 className="mr-1 size-3 animate-spin" />
                     Verifying...
                   </>
                 ) : (
@@ -227,7 +227,7 @@ export function FarcasterActionCardCompact({
 
             {error && (
               <div className="flex items-center space-x-2 text-red-500 text-xs">
-                <AlertCircle className="h-3 w-3" />
+                <AlertCircle className="size-3" />
                 <span>{error}</span>
               </div>
             )}

@@ -190,7 +190,7 @@ export const action = pgTable("Action", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   category: varchar("category", {
-    enum: ["SOCIAL", "DEFI", "NFT", "STABLECOIN", "TRADING"],
+    enum: ["SOCIAL", "DEFI", "NFT", "STABLECOIN", "TRADING", "stablecoins"],
   }).notNull(),
   chain: varchar("chain", {
     enum: ["BASE", "CELO", "ETHEREUM", "OPTIMISM", "POLYGON"],

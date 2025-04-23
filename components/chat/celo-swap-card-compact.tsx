@@ -123,7 +123,7 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                 className="text-xs text-blue-600 flex items-center mt-1 hover:underline"
               >
                 View transaction
-                <ExternalLink className="h-3 w-3 ml-1" />
+                <ExternalLink className="size-3 ml-1" />
               </a>
             )}
           </div>
@@ -180,9 +180,9 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="size-3" />
             ) : (
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="size-3" />
             )}
           </Button>
         </div>
@@ -263,13 +263,13 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                       </span>
                     </div>
                     <div className="flex items-center text-xs text-gray-500 mt-1">
-                      <Info className="h-3 w-3 mr-1" />
+                      <Info className="size-3 mr-1" />
                       <span>
                         A small 0.25% fee is applied to support development
                       </span>
                     </div>
                     <div className="flex items-center text-xs text-amber-600 mt-1">
-                      <Info className="h-3 w-3 mr-1" />
+                      <Info className="size-3 mr-1" />
                       <span>
                         This requires two transactions: first approve, then swap
                       </span>

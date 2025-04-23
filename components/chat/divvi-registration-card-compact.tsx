@@ -166,9 +166,9 @@ export function DivviRegistrationCardCompact({
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="size-3" />
             ) : (
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="size-3" />
             )}
           </Button>
         </div>
@@ -192,7 +192,7 @@ export function DivviRegistrationCardCompact({
                   className="flex items-center hover:underline"
                 >
                   Learn about {chain === "celo" ? "Celo" : "Base"}.
-                  <ExternalLink className="ml-1 h-3 w-3" />
+                  <ExternalLink className="ml-1 size-3" />
                 </a>
               </div>
             </div>
@@ -214,7 +214,7 @@ export function DivviRegistrationCardCompact({
                   >
                     {isSwitchingChain ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Switching Network...
                       </>
                     ) : (
@@ -233,7 +233,7 @@ export function DivviRegistrationCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : (
@@ -249,7 +249,7 @@ export function DivviRegistrationCardCompact({
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                        <Loader2 className="mr-2 size-3 animate-spin" />
                         Processing...
                       </>
                     ) : (

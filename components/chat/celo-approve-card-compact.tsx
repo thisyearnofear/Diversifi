@@ -199,13 +199,13 @@ export function CeloApproveCardCompact({
                         </span>
                       </div>
                       <div className="flex items-center text-xs text-gray-500 mt-1">
-                        <Info className="h-3 w-3 mr-1" />
+                        <Info className="size-3 mr-1" />
                         <span>
                           A small 0.25% fee is applied to support development
                         </span>
                       </div>
                       <div className="flex items-center text-xs text-amber-600 mt-1">
-                        <Info className="h-3 w-3 mr-1" />
+                        <Info className="size-3 mr-1" />
                         <span>
                           This requires two transactions: first approve, then
                           swap
@@ -341,7 +341,7 @@ export function CeloApproveCardCompact({
                       className="flex items-center hover:underline"
                     >
                       View transaction
-                      <ExternalLink className="h-3 w-3 ml-1" />
+                      <ExternalLink className="size-3 ml-1" />
                     </a>
                   </div>
                 )}

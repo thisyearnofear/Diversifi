@@ -185,7 +185,7 @@ export function LensActionCardCompact({
 
       {error && (
         <div className="flex items-center gap-1 text-xs text-red-500 mb-2">
-          <AlertCircle className="h-3 w-3" />
+          <AlertCircle className="size-3" />
           {error}
         </div>
       )}
@@ -199,7 +199,7 @@ export function LensActionCardCompact({
                 className="w-full h-7 text-xs flex items-center gap-1"
                 variant="outline"
               >
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink className="size-3" />
                 Open Lens
               </Button>
 
@@ -222,7 +222,7 @@ export function LensActionCardCompact({
               >
                 {isCompleting ? (
                   <>
-                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                    <Loader2 className="mr-1 size-3 animate-spin" />
                     Verifying...
                   </>
                 ) : (
@@ -233,7 +233,7 @@ export function LensActionCardCompact({
           </>
         ) : (
           <div className="flex items-center gap-1 text-xs text-green-600">
-            <CheckCircle className="h-3 w-3" />
+            <CheckCircle className="size-3" />
             Action completed successfully!
           </div>
         )}

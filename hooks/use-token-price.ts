@@ -10,6 +10,7 @@ const TOKEN_IDS = {
   USDbC: "usd-coin", // Using USDC as a proxy for USDbC since they're pegged 1:1
   CELO: "celo",
   cKES: "celo-kenyan-shilling",
+  cCOP: "celo-colombian-peso", // May not exist in CoinGecko, but we'll try
 };
 
 // Define the token addresses for Moralis API (Optimism)
@@ -91,6 +92,7 @@ export function useTokenPrice(
           EURA: { usd: 1.08 },
           CELO: { usd: 0.29 },
           cKES: { usd: 0.0072 }, // Approx. 1 KES = 0.0072 USD (1 USD ≈ 140 KES)
+          cCOP: { usd: 0.00025 }, // Approx. 1 COP = 0.00025 USD (1 USD ≈ 4000 COP)
         };
         setPrices(fallbackPrices);
         setSource("fallback");

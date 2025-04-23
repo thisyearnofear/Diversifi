@@ -451,6 +451,89 @@ interface LearningPath {
 - Contribution incentives
 - Research funding
 
+## New Token Integration Checklist
+
+When adding a new stablecoin to Stable Station, follow this checklist to ensure all components are properly updated:
+
+### 1. Backend Implementation
+
+- [ ] **Create Swap Hook**
+
+  - [ ] Create a new hook file (e.g., `hooks/use-[chain]-[token].ts`)
+  - [ ] Implement token approval functionality
+  - [ ] Implement swap functionality
+  - [ ] Add proper error handling
+  - [ ] Implement network switching support
+  - [ ] Add transaction tracking and confirmation
+
+- [ ] **Database Integration**
+
+  - [ ] Create a migration file to add the new token action
+  - [ ] Update schema if needed (e.g., add new enum values)
+  - [ ] Test migration on development database
+
+- [ ] **API Routes**
+  - [ ] Create API route for the token action (`app/api/actions/[chain]/[token]/route.ts`)
+  - [ ] Create API route for completing the token action (`app/api/actions/[chain]/[token]/complete/route.ts`)
+  - [ ] Implement proper error handling and authentication
+
+### 2. Frontend Implementation
+
+- [ ] **UI Components**
+
+  - [ ] Create swap card component (`components/chat/[chain]-[token]-swap-card-compact.tsx`)
+  - [ ] Create action message component (`components/chat/[chain]-[token]-action-message.tsx`)
+  - [ ] Create action handler component (`components/chat/[chain]-[token]-action-handler.tsx`)
+
+- [ ] **Update Token Data**
+
+  - [ ] Add token to `lib/tokens/token-data.ts` with appropriate region
+  - [ ] Set `available: true` for the new token
+
+- [ ] **Update Sidebar Components**
+  - [ ] Ensure token appears in left sidebar when its region is selected
+  - [ ] Add token to right sidebar's DiversiFi section under the appropriate region
+
+### 3. AI Integration
+
+- [ ] **Update AI Prompts**
+
+  - [ ] Add token action to `lib/ai/prompts/constants/user-actions.ts`
+  - [ ] Add token description to `lib/ai/prompts/constants/regular.ts`
+  - [ ] Update action numbering in both files
+
+- [ ] **Update Interactive Elements**
+  - [ ] Add token action handler to `components/interactive-element.tsx`
+  - [ ] Import the new action handler component
+  - [ ] Add the action to the render function
+
+### 4. Testing
+
+- [ ] **Local Testing**
+
+  - [ ] Test token swap functionality on development environment
+  - [ ] Test AI recognition of token commands
+  - [ ] Verify token appears in correct region selector
+  - [ ] Verify token balance displays correctly in DiversiFi section
+
+- [ ] **Production Deployment**
+  - [ ] Deploy database migrations
+  - [ ] Verify token functionality in production environment
+  - [ ] Monitor for any errors or issues
+
+### 5. Documentation
+
+- [ ] **Update README**
+
+  - [ ] Add token to the appropriate region in the "Token Categories by Region" section
+  - [ ] Add token integration details to the "Deployed Contracts" section if applicable
+
+- [ ] **Update User Documentation**
+  - [ ] Add token to any user-facing documentation
+  - [ ] Create guides or tutorials for the new token if needed
+
+Following this checklist ensures that all aspects of the token integration are properly addressed, from backend implementation to AI recognition and user interface updates.
+
 ## Next Steps
 
 1. Set up local development environment

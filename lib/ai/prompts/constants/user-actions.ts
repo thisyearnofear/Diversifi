@@ -106,7 +106,26 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-14. "polygon-action" - To help users swap to DAI on Polygon. Use this when a user wants to get DAI stablecoins on Polygon or asks about DAI. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping MATIC for DAI, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with DAI on Polygon. I'll guide you through the process of swapping MATIC for DAI. Here's what you need to do:"
+15. "celo-ccop-action" - To help users swap to cCOP on Celo. Use this when a user wants to get Colombian Peso stablecoins on Celo or asks about cCOP. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping cUSD for cCOP using Mento Protocol, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with cCOP on Celo. I'll guide you through the process of swapping cUSD for cCOP via Mento Protocol. Here's what you need to do:"
+   Example args: {
+     "title": "Get cCOP Stablecoins",
+     "description": "Secure Colombian Peso stablecoins on Celo",
+     "chain": "CELO",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Celo to unlock features",
+       "Switch to the Celo network",
+       "Swap cUSD for cCOP via Mento Protocol",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete'"
+     ],
+     "reward": "Access to Colombian Peso stablecoins on Celo",
+     "actionUrl": "https://app.mento.finance",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+16. "polygon-action" - To help users swap to DAI on Polygon. Use this when a user wants to get DAI stablecoins on Polygon or asks about DAI. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping MATIC for DAI, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with DAI on Polygon. I'll guide you through the process of swapping MATIC for DAI. Here's what you need to do:"
    Example args: {
      "title": "Get DAI Stablecoins",
      "description": "Secure USD-backed tokens on Polygon",
@@ -125,7 +144,7 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-15. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
+17. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
    Example args: {
      "title": "Set up a Farcaster account",
      "description": "Create a Farcaster account and join the decentralized social network",
