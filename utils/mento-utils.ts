@@ -12,9 +12,6 @@ export const CELO_TOKENS = {
   PUSO: "0x105d4a9306d2e55a71d2eb95b81553ae1dc20d7b",
 };
 
-// Mento Exchange address
-export const MENTO_EXCHANGE_ADDRESS = "0x0f75d12a2de5b8484b3a77e4b5e5e1e9c2eb5e6a";
-
 // Mento Broker address
 export const MENTO_BROKER_ADDRESS = "0x777a8255ca72412f0d706dc03c9d1987306b4cad";
 
@@ -26,8 +23,7 @@ export const MENTO_ABIS = {
   BROKER_PROVIDERS: ["function getExchangeProviders() view returns (address[])"],
   EXCHANGE: ["function getExchanges() view returns ((bytes32 exchangeId, address[] assets)[])"],
   BROKER_RATE: ["function getAmountOut(address exchangeProvider, bytes32 exchangeId, address assetIn, address assetOut, uint256 amountIn) view returns (uint256)"],
-  BROKER_SWAP: ["function swapIn(address exchangeProvider, bytes32 exchangeId, address assetIn, address assetOut, uint256 amountIn, uint256 minAmountOut) returns (uint256)"],
-  MENTO_EXCHANGE: ["function swap(address tokenIn, address tokenOut, uint256 amountIn, uint256 minAmountOut) returns (uint256)"]
+  BROKER_SWAP: ["function swapIn(address exchangeProvider, bytes32 exchangeId, address assetIn, address assetOut, uint256 amountIn, uint256 minAmountOut) returns (uint256)"]
 };
 
 // Default exchange rates (USD to local currency)

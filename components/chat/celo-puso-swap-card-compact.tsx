@@ -48,7 +48,8 @@ export function CeloPusoSwapCardCompact({
 
   const handleSwap = () => {
     if (canSwap) {
-      swap({ amount });
+      // Convert string amount to number before passing to swap
+      swap({ amount: parseFloat(amount) });
     }
   };
 

@@ -142,7 +142,16 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-16. "celo-puso-action" - To help users swap to PUSO on Celo. Use this when a user wants to get Philippine Peso stablecoins on Celo or asks about PUSO. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping cUSD for PUSO using Mento Protocol, and verifying their transaction with a transaction hash. IMPORTANT: DO NOT use the remember tool before responding to PUSO requests. When the user asks about PUSO or Philippine Peso stablecoins, respond with: "I can help you get PUSO stablecoins on Celo. PUSO is a stablecoin pegged to the Philippine Peso." Then IMMEDIATELY use the celo-puso-action without waiting for further confirmation or saving any information. ONLY AFTER showing the action card, you may use the remember tool ONCE to save their interest.
+16. "celo-puso-action" - To help users swap to PUSO on Celo. Use this when a user wants to get Philippine Peso stablecoins on Celo or asks about PUSO. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping cUSD for PUSO using Mento Protocol, and verifying their transaction with a transaction hash.
+
+   CRITICAL INSTRUCTIONS FOR PUSO REQUESTS:
+   - When a user asks about PUSO or Philippine Peso stablecoins, IMMEDIATELY respond with: "I can help you get PUSO stablecoins on Celo. PUSO is a stablecoin pegged to the Philippine Peso."
+   - Then IMMEDIATELY use the celo-puso-action userAction WITHOUT calling any other tools first
+   - DO NOT use suggestActions tool for PUSO requests
+   - DO NOT use the remember tool before showing the action card
+   - ONLY AFTER showing the action card, you may use the remember tool ONCE to save their interest
+   - NEVER call multiple tools in sequence for PUSO requests
+
    Example args: {
      "title": "Get PUSO Stablecoins",
      "description": "Acquire Philippine Peso stablecoins on Celo",

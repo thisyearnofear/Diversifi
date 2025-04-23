@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Globe,
   MapPin,
@@ -66,11 +66,32 @@ const socialLinks = [
 
 // Helper function to format balance for display
 const formatBalance = (balance: string): string => {
+  if (!balance || balance === "NaN") return "0.00";
+
   const num = parseFloat(balance);
   if (isNaN(num)) return "0.00";
   if (num === 0) return "0.00";
-  if (num < 0.01) return "<0.01";
-  return num.toFixed(2); // Always limit to 2 decimal places
+
+  // Handle very small values
+  if (num < 0.01) {
+    // For extremely small values (less than 0.0001), show scientific notation
+    if (num < 0.0001) {
+      return num.toExponential(2);
+    }
+    // For small values between 0.0001 and 0.01, show 4 decimal places
+    return num.toFixed(4);
+  }
+
+  // For normal values, show 2 decimal places
+  return num.toFixed(2);
+};
+
+// Helper function to format percentage
+const formatPercentage = (amount: number, total: number): string => {
+  if (total === 0 || amount === 0) return "0%";
+  const percentage = (amount / total) * 100;
+  if (percentage < 0.1) return "<0.1%";
+  return `${percentage.toFixed(1)}%`;
 };
 
 // Helper functions for DiversiFi component
@@ -93,6 +114,7 @@ const getRegionColor = (region: string): string => {
   }
 };
 
+// Calculate region totals from balances
 const calculateRegionTotals = (
   balances: Record<
     string,
@@ -103,9 +125,9 @@ const calculateRegionTotals = (
   let totalValue = 0;
 
   // Initialize all regions with 0
-  regions.forEach((region) => {
-    if (region.id !== "All") {
-      totals[region.id] = 0;
+  Object.keys(TOKEN_REGIONS).forEach((region) => {
+    if (region !== "All") {
+      totals[region] = 0;
     }
   });
 
@@ -124,33 +146,21 @@ const calculateRegionTotals = (
   return { totals, totalValue };
 };
 
-// DiversiScore component with click-to-show tooltip
+// Simple DiversiScore component - no automatic calculation
 function DiversiScore({
-  balances,
-  isLoading,
+  score,
+  hasData,
 }: {
-  balances: Record<
-    string,
-    { amount: string; value: number; loading: boolean; error: string | null }
-  >;
-  isLoading: boolean;
+  score: number | null;
+  hasData: boolean;
 }) {
-  const { totals: regionTotals } = calculateRegionTotals(balances);
-  const activeRegionsCount = Object.values(regionTotals).filter(
-    (v) => v > 0
-  ).length;
-  const diversityScore = Math.min(Math.ceil(activeRegionsCount * 1.7), 10);
-
-  // If no balances have been loaded yet, show a placeholder score
-  const displayScore = isLoading ? "..." : `${diversityScore}/10`;
-
   return (
     <div className="relative mt-1">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded cursor-pointer">
-              DiversiScore: {displayScore}
+              DiversiScore{hasData && score !== null ? `: ${score}/10` : ""}
             </span>
           </TooltipTrigger>
           <TooltipContent side="top" className="text-xs">
@@ -165,8 +175,60 @@ function DiversiScore({
 export function RightSidebar() {
   const isMobile = useIsMobile();
   const { selectedRegion, setSelectedRegion } = useRegion();
-  const { balances, totalValue, isLoading, refreshBalances } =
+
+  // Get token balances - no automatic fetching
+  const { balances, isLoading, refreshBalances } =
     useTokenBalances(selectedRegion);
+
+  // State for balance visibility (hidden by default for privacy)
+  // Use localStorage to persist the user's preference
+  const [showBalances, setShowBalances] = useState(() => {
+    // Check if we're in the browser environment
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("showBalances");
+      return saved === "true";
+    }
+    return false; // Default to hidden
+  });
+
+  // State for DiversiScore
+  const [diversiScore, setDiversiScore] = useState<number | null>(null);
+  const [hasBalanceData, setHasBalanceData] = useState(false);
+
+  // Update localStorage when preference changes
+  const toggleBalanceVisibility = () => {
+    const newValue = !showBalances;
+    setShowBalances(newValue);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("showBalances", String(newValue));
+    }
+  };
+
+  // No debug logging in production
+
+  // Calculate DiversiScore manually when balances change
+  useEffect(() => {
+    if (!isLoading && Object.keys(balances).length > 0) {
+      // Calculate region totals directly
+      const { totals, totalValue } = calculateRegionTotals(balances);
+
+      // Count regions with non-zero balances
+      const activeRegionsCount = Object.values(totals).filter(
+        (v) => v > 0
+      ).length;
+
+      // Check if we have any actual balance data
+      const hasData = Object.values(totals).some((v) => v > 0);
+      setHasBalanceData(hasData);
+
+      if (hasData) {
+        const score = Math.min(Math.ceil(activeRegionsCount * 1.7), 10);
+        setDiversiScore(score);
+      } else {
+        setDiversiScore(null);
+      }
+    }
+  }, [balances, isLoading]);
 
   // Don't render on mobile
   if (isMobile) {
@@ -245,125 +307,191 @@ export function RightSidebar() {
                   <Globe className="size-4 text-blue-500" />
                   <h3 className="font-medium text-sm">Stables</h3>
                 </div>
-                {selectedRegion === "All" && (
-                  <DiversiScore balances={balances} isLoading={isLoading} />
-                )}
+                <div className="flex items-center gap-2">
+                  {selectedRegion === "All" && (
+                    <DiversiScore
+                      score={diversiScore}
+                      hasData={hasBalanceData}
+                    />
+                  )}
+                  {/* Privacy toggle button */}
+                  <button
+                    onClick={toggleBalanceVisibility}
+                    className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mt-1"
+                    title={showBalances ? "Hide balances" : "Show balances"}
+                  >
+                    {showBalances ? "Hide" : "Show"}
+                  </button>
+                </div>
               </div>
 
-              {selectedRegion === "All" ? (
-                // Show regional overview when "All" is selected
-                <div className="space-y-2 mb-3">
-                  {(() => {
-                    const {
-                      totals: regionTotals,
-                      totalValue: totalRegionValue,
-                    } = calculateRegionTotals(balances);
+              {/* Balance Display Section */}
+              <div className="space-y-2 mb-3">
+                {/* Initial State - No Balances Loaded */}
+                {!isLoading && Object.keys(balances).length === 0 && (
+                  <div className="text-xs text-gray-500 text-center py-2">
+                    Click "View Balances" to see your stablecoin holdings.
+                  </div>
+                )}
 
-                    return Object.entries(regionTotals)
-                      .filter(([_, amount]) => amount > 0)
-                      .map(([region, amount]) => (
-                        <div
-                          key={region}
-                          className="flex items-center gap-2 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                          onClick={() => setSelectedRegion(region as Region)}
-                        >
-                          <div
-                            className={`w-1 h-full rounded-full ${getRegionColor(
-                              region
-                            )}`}
-                            style={{ height: "16px" }}
-                          />
-                          <div className="flex-1">
-                            <div className="flex justify-between items-center">
-                              <span className="text-xs font-medium">
-                                {region}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                ${amount}
-                              </span>
+                {/* Loading State */}
+                {isLoading && (
+                  <div className="text-xs text-gray-500 text-center py-2">
+                    <Loader2 className="animate-spin mx-auto mb-1 size-4" />
+                    Loading your balances...
+                  </div>
+                )}
+
+                {/* Balances Loaded - All Regions View */}
+                {!isLoading &&
+                  Object.keys(balances).length > 0 &&
+                  selectedRegion === "All" && (
+                    <div>
+                      {/* Region List with Balances */}
+                      {(() => {
+                        const { totals, totalValue } =
+                          calculateRegionTotals(balances);
+                        // Get all regions, not just ones with balances
+                        // Exclude 'All' and 'RWA' (empty region)
+                        const allRegions = Object.keys(TOKEN_REGIONS).filter(
+                          (r) => r !== "All" && r !== "RWA"
+                        );
+
+                        // If no balances at all, show a message
+                        if (
+                          Object.values(totals).every((amount) => amount === 0)
+                        ) {
+                          return (
+                            <div className="text-xs text-gray-500 text-center py-2">
+                              No stablecoin balances found.
                             </div>
-                            <div className="w-full bg-gray-200 dark:bg-gray-700 h-1 mt-1 rounded-full">
+                          );
+                        }
+
+                        // Show all regions, even if they have zero balances
+                        return allRegions.map((region) => {
+                          // Get the amount for this region (default to 0)
+                          const amount = totals[region] || 0;
+                          return (
+                            <div
+                              key={region}
+                              className="flex items-center gap-2 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer mb-2"
+                              onClick={() =>
+                                setSelectedRegion(region as Region)
+                              }
+                            >
                               <div
-                                className={`h-1 rounded-full ${getRegionColor(
+                                className={`w-1 h-full rounded-full ${getRegionColor(
                                   region
                                 )}`}
-                                style={{
-                                  width: `${
-                                    totalRegionValue > 0
-                                      ? (amount / totalRegionValue) * 100
-                                      : 0
-                                  }%`,
-                                }}
+                                style={{ height: "16px" }}
                               />
+                              <div className="flex-1">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-xs font-medium">
+                                    {region}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    {showBalances
+                                      ? `$${formatBalance(amount.toString())}`
+                                      : formatPercentage(amount, totalValue)}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
+                          );
+                        });
+                      })()}
+                    </div>
+                  )}
+
+                {/* Balances Loaded - Specific Region View */}
+                {!isLoading &&
+                  Object.keys(balances).length > 0 &&
+                  selectedRegion !== "All" && (
+                    <div>
+                      {/* Region Header */}
+                      <div className="flex items-center gap-2 p-1.5 rounded-md bg-gray-50 dark:bg-gray-800/50 mb-2">
+                        <div
+                          className={`w-1 h-full rounded-full ${getRegionColor(
+                            selectedRegion
+                          )}`}
+                          style={{ height: "16px" }}
+                        />
+                        <div className="flex-1">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-medium">
+                              {selectedRegion}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {(() => {
+                                const { totals, totalValue } =
+                                  calculateRegionTotals(balances);
+                                const regionAmount =
+                                  totals[selectedRegion] || 0;
+
+                                return showBalances
+                                  ? `$${formatBalance(regionAmount.toString())}`
+                                  : formatPercentage(regionAmount, totalValue);
+                              })()}
+                            </span>
                           </div>
                         </div>
-                      ));
-                  })()}
-                </div>
-              ) : (
-                // Show specific region token holdings when a region is selected
-                <div className="space-y-2 mb-3">
-                  {/* Selected Region Header */}
-                  <div className="flex items-center gap-2 p-1.5 rounded-md bg-gray-50 dark:bg-gray-800/50">
-                    <div
-                      className={`w-1 h-full rounded-full ${getRegionColor(
-                        selectedRegion
-                      )}`}
-                      style={{ height: "16px" }}
-                    />
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-medium">
-                          {selectedRegion}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          $
-                          {(() => {
-                            const { totals: regionTotals } =
-                              calculateRegionTotals(balances);
-                            return regionTotals[selectedRegion] || 0;
-                          })()}
-                        </span>
+                      </div>
+
+                      {/* Token List */}
+                      <div className="space-y-1 pl-3">
+                        {(() => {
+                          const tokens =
+                            TOKEN_REGIONS[
+                              selectedRegion as keyof typeof TOKEN_REGIONS
+                            ] || [];
+
+                          if (tokens.length === 0) {
+                            return (
+                              <div className="text-xs text-gray-500 text-center py-1">
+                                No assets in this region
+                              </div>
+                            );
+                          }
+
+                          return tokens.map((token) => {
+                            const tokenData = balances[token];
+                            return (
+                              <div
+                                key={token}
+                                className="flex justify-between items-center text-xs"
+                              >
+                                <span>{token}</span>
+                                <span>
+                                  {(() => {
+                                    if (!tokenData) return "0.00";
+
+                                    if (!showBalances) {
+                                      // Calculate token's percentage of region total
+                                      const { totals } =
+                                        calculateRegionTotals(balances);
+                                      const regionTotal =
+                                        totals[selectedRegion] || 0;
+                                      if (regionTotal === 0) return "0%";
+
+                                      return formatPercentage(
+                                        tokenData.value,
+                                        regionTotal
+                                      );
+                                    }
+
+                                    return formatBalance(tokenData.amount);
+                                  })()}
+                                </span>
+                              </div>
+                            );
+                          });
+                        })()}
                       </div>
                     </div>
-                  </div>
-
-                  {/* Token Holdings for Selected Region */}
-                  <div className="space-y-1 pl-3 mt-2">
-                    {TOKEN_REGIONS[
-                      selectedRegion as keyof typeof TOKEN_REGIONS
-                    ]?.map((token) => {
-                      const tokenData = balances[token];
-
-                      return (
-                        <div
-                          key={token}
-                          className="flex justify-between items-center text-xs"
-                        >
-                          <span>{token}</span>
-                          <span>
-                            {isLoading || (tokenData && tokenData.loading) ? (
-                              <Skeleton className="h-4 w-10" />
-                            ) : tokenData ? (
-                              formatBalance(tokenData.amount)
-                            ) : (
-                              "0.00"
-                            )}
-                          </span>
-                        </div>
-                      );
-                    })}
-
-                    {TOKEN_REGIONS[selectedRegion as keyof typeof TOKEN_REGIONS]
-                      ?.length === 0 && (
-                      <div className="text-xs text-gray-500 text-center py-1">
-                        No assets in this region
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+                  )}
+              </div>
 
               <div className="flex gap-2">
                 <button
@@ -371,13 +499,22 @@ export function RightSidebar() {
                   onClick={refreshBalances}
                   disabled={isLoading}
                 >
-                  <Loader2
-                    className={cn(
-                      "size-3 mr-1",
-                      isLoading ? "animate-spin" : ""
-                    )}
-                  />
-                  {isLoading ? "Loading..." : "Refresh Balances"}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="size-3 mr-1 animate-spin" />
+                      Loading...
+                    </>
+                  ) : Object.keys(balances).length > 0 ? (
+                    <>
+                      <Loader2 className="size-3 mr-1" />
+                      Refresh Balances
+                    </>
+                  ) : (
+                    <>
+                      <Loader2 className="size-3 mr-1" />
+                      View Balances
+                    </>
+                  )}
                 </button>
               </div>
             </div>
