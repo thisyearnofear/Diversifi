@@ -260,7 +260,7 @@ export function CeloCkesApproveCardCompact({
                     </span>
                     {!hasEnoughCUSD && amount && (
                       <div className="bg-red-50 p-2 rounded-md text-xs text-red-700 flex items-start">
-                        <Info className="size-3 mr-1 mt-0.5 flex-shrink-0" />
+                        <Info className="size-3 mr-1 mt-0.5 shrink-0" />
                         <span>
                           Insufficient cUSD balance. You need {amount} cUSD but
                           only have{" "}

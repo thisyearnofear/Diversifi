@@ -10,9 +10,16 @@ import { useNetworkState } from "./use-network-state";
 import { useTokenPrice } from "./use-token-price";
 import { ABIS } from "../constants/celo-tokens";
 import { handleSwapError } from "../utils/celo-utils";
-
-// Define cCOP address
-const CCOP_ADDRESS = "0x8A567e2aE79CA692Bd748aB832081C45de4041eA";
+import {
+  CELO_TOKENS,
+  getMentoExchangeRate,
+  getCachedData,
+  setCachedData,
+  CACHE_KEYS,
+  CACHE_DURATIONS,
+  handleMentoError,
+  DEFAULT_EXCHANGE_RATES
+} from "../utils/mento-utils";
 
 // Swap status types
 export type CcopSwapStatus =
@@ -31,11 +38,11 @@ export type CcopSwapStatus =
   | "switching-network"
   | "error";
 
-// Contract addresses
+// Contract addresses from mento-utils
 const ADDRESSES = {
-  CELO: "0x471EcE3750Da237f93B8E339c536989b8978a438",
-  CCOP: CCOP_ADDRESS,
-  CUSD: "0x765DE816845861e75A25fCA122bb6898B8B1282a",
+  CELO: CELO_TOKENS.CELO,
+  CCOP: CELO_TOKENS.CCOP,
+  CUSD: CELO_TOKENS.CUSD,
   BROKER: "0x777A8255cA72412f0d706dc03C9D1987306B4CaD"
 };
 
@@ -63,11 +70,34 @@ export function useCcopSwap(options?: UseCcopSwapOptions) {
   // These values are static for simplicity, but could be updated in a more complex implementation
   const balance = "0";
 
-  // Calculate exchange rate from token prices
-  // cCOP is approximately 0.00025 USD (1 USD ≈ 4000 COP)
-  const ccopUsdPrice = 0.00025;
-  const cusdUsdPrice = 1.0; // cUSD is pegged to USD
-  const exchangeRate = prices ? (cusdUsdPrice / ccopUsdPrice) : 4000; // Default to 4000 if prices not available
+  // Get exchange rate from Mento SDK or cache
+  const [exchangeRate, setExchangeRate] = useState<number>(DEFAULT_EXCHANGE_RATES.CCOP);
+
+  // Fetch exchange rate from Mento or cache
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        // Check cache first
+        const cachedRate = getCachedData(CACHE_KEYS.EXCHANGE_RATE_CCOP);
+        if (cachedRate !== null) {
+          setExchangeRate(cachedRate);
+          return;
+        }
+
+        // Fetch from Mento SDK
+        const rate = await getMentoExchangeRate('CCOP');
+        setExchangeRate(rate);
+
+        // Cache the result
+        setCachedData(CACHE_KEYS.EXCHANGE_RATE_CCOP, rate);
+      } catch (error) {
+        console.warn("Error fetching CCOP exchange rate:", error);
+        // Keep default rate
+      }
+    };
+
+    fetchExchangeRate();
+  }, []);
 
   // Network state
   const { isCorrectNetwork, isSwitchingChain, switchToCelo } = useNetworkState();
@@ -303,7 +333,7 @@ export function useCcopSwap(options?: UseCcopSwapOptions) {
       toast.success("Approval confirmed! Now you can swap.");
       return true;
     } catch (error) {
-      const errorMessage = handleSwapError(error, "approving tokens");
+      const errorMessage = handleMentoError(error, "approving tokens");
       setStatus("error");
       setError(errorMessage);
       toast.error(errorMessage);
@@ -478,13 +508,13 @@ export function useCcopSwap(options?: UseCcopSwapOptions) {
           completeSwap(swapTx.hash);
         }
       } catch (error) {
-        const errorMessage = handleSwapError(error, "performing swap");
+        const errorMessage = handleMentoError(error, "performing swap");
         setStatus("error");
         setError(errorMessage);
         toast.error(errorMessage);
       }
     } catch (error) {
-      const errorMessage = handleSwapError(error, "swap process");
+      const errorMessage = handleMentoError(error, "swap process");
       setStatus("error");
       setError(errorMessage);
       toast.error(errorMessage);

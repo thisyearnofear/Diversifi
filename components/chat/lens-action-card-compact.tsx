@@ -156,7 +156,7 @@ export function LensActionCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0"
+            className="size-6 p-0"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (

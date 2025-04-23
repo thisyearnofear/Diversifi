@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Moralis from "moralis";
+import { getMentoExchangeRate, DEFAULT_EXCHANGE_RATES } from "@/utils/mento-utils";
 
 // Define the token IDs for CoinGecko API
 const TOKEN_IDS = {
@@ -9,8 +10,7 @@ const TOKEN_IDS = {
   USDC: "usd-coin",
   USDbC: "usd-coin", // Using USDC as a proxy for USDbC since they're pegged 1:1
   CELO: "celo",
-  cKES: "celo-kenyan-shilling",
-  cCOP: "celo-colombian-peso", // May not exist in CoinGecko, but we'll try
+  // Celo stablecoins are handled by Mento SDK directly
 };
 
 // Define the token addresses for Moralis API (Optimism)
@@ -76,7 +76,7 @@ export function useTokenPrice(
   const [prices, setPrices] = useState<TokenPriceData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<"fallback" | "coingecko" | "moralis">("fallback");
+  const [source, setSource] = useState<"fallback" | "coingecko" | "moralis" | "mento">("fallback");
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -91,23 +91,35 @@ export function useTokenPrice(
           USDbC: { usd: 1 },
           EURA: { usd: 1.08 },
           CELO: { usd: 0.29 },
-          cKES: { usd: 0.0072 }, // Approx. 1 KES = 0.0072 USD (1 USD ≈ 140 KES)
-          cCOP: { usd: 0.00025 }, // Approx. 1 COP = 0.00025 USD (1 USD ≈ 4000 COP)
+          // Celo stablecoins use default exchange rates
+          cKES: { usd: 1 / DEFAULT_EXCHANGE_RATES.CKES },
+          cCOP: { usd: 1 / DEFAULT_EXCHANGE_RATES.CCOP },
+          PUSO: { usd: 1 / DEFAULT_EXCHANGE_RATES.PUSO },
         };
         setPrices(fallbackPrices);
         setSource("fallback");
 
-        // Try to fetch prices from CoinGecko API first
-        let success = await fetchFromCoinGecko();
-
-        // If CoinGecko fails, try Moralis as a fallback
-        if (!success) {
-          success = await fetchFromMoralis();
+        // For Celo stablecoins, use Mento SDK directly
+        const celoTokens = tokens.filter(token => ['cKES', 'cCOP', 'PUSO'].includes(token));
+        if (celoTokens.length > 0) {
+          await fetchCeloStablecoinRates(celoTokens);
         }
 
-        // If both fail, we'll use the fallback prices set above
-        if (!success) {
-          console.warn("Using fallback prices as both CoinGecko and Moralis failed");
+        // For other tokens, try CoinGecko first
+        const nonCeloTokens = tokens.filter(token => !['cKES', 'cCOP', 'PUSO'].includes(token));
+        if (nonCeloTokens.length > 0) {
+          // Try to fetch prices from CoinGecko API first
+          let success = await fetchFromCoinGecko(nonCeloTokens);
+
+          // If CoinGecko fails, try Moralis as a fallback
+          if (!success) {
+            success = await fetchFromMoralis(nonCeloTokens);
+          }
+
+          // If both fail, we'll use the fallback prices set above
+          if (!success) {
+            console.warn("Using fallback prices as both CoinGecko and Moralis failed");
+          }
         }
       } catch (err) {
         console.error("Error in token price hook:", err);
@@ -118,11 +130,39 @@ export function useTokenPrice(
       }
     };
 
+    // Fetch Celo stablecoin rates using Mento SDK
+    const fetchCeloStablecoinRates = async (celoTokens: string[]): Promise<void> => {
+      try {
+        const updatedPrices = { ...prices } as TokenPriceData;
+
+        for (const token of celoTokens) {
+          try {
+            // Get exchange rate from Mento (cUSD to token)
+            const exchangeRate = await getMentoExchangeRate(token);
+
+            // Calculate USD price (1/exchangeRate since exchangeRate is cUSD to token)
+            const usdPrice = 1 / exchangeRate;
+
+            updatedPrices[token] = { [currency]: usdPrice };
+          } catch (tokenError) {
+            console.warn(`Failed to fetch Mento rate for ${token}:`, tokenError);
+            // Keep fallback price if already set
+          }
+        }
+
+        setPrices(updatedPrices);
+        setSource("mento");
+      } catch (error) {
+        console.error("Error fetching Celo stablecoin rates:", error);
+        // Fallback prices already set
+      }
+    };
+
     // Fetch from CoinGecko API
-    const fetchFromCoinGecko = async (): Promise<boolean> => {
+    const fetchFromCoinGecko = async (tokensToFetch: string[]): Promise<boolean> => {
       try {
         // Map tokens to CoinGecko IDs
-        const tokenIds = tokens
+        const tokenIds = tokensToFetch
           .map((token) => TOKEN_IDS[token as keyof typeof TOKEN_IDS])
           .filter(Boolean)
           .join(",");
@@ -165,7 +205,11 @@ export function useTokenPrice(
 
         // Only update if we got valid data
         if (Object.keys(formattedPrices).length > 0) {
-          setPrices(formattedPrices);
+          // Merge with existing prices
+          setPrices(prevPrices => ({
+            ...prevPrices,
+            ...formattedPrices
+          }));
           setSource("coingecko");
           return true;
         }
@@ -178,7 +222,7 @@ export function useTokenPrice(
     };
 
     // Fetch from Moralis API
-    const fetchFromMoralis = async (): Promise<boolean> => {
+    const fetchFromMoralis = async (tokensToFetch: string[]): Promise<boolean> => {
       try {
         // Initialize Moralis if not already initialized
         const initialized = await initMoralis();
@@ -194,7 +238,7 @@ export function useTokenPrice(
         const formattedPrices: TokenPriceData = {};
 
         // Fetch prices for each token
-        for (const token of tokens) {
+        for (const token of tokensToFetch) {
           const tokenAddress = tokenAddresses[token as keyof typeof tokenAddresses];
           if (!tokenAddress) {
             console.warn(`No address found for ${token} on chain ${chainId}`);
@@ -222,7 +266,11 @@ export function useTokenPrice(
 
         // Only update if we got valid data
         if (Object.keys(formattedPrices).length > 0) {
-          setPrices(formattedPrices);
+          // Merge with existing prices
+          setPrices(prevPrices => ({
+            ...prevPrices,
+            ...formattedPrices
+          }));
           setSource("moralis");
           return true;
         }

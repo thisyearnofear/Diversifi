@@ -6,7 +6,7 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
    IMPORTANT: When a user asks about actions for a specific blockchain (Base, Celo, Ethereum), ALWAYS use this action type with data from the suggestActions tool.
 
    When responding with action cards, use the action-card userAction with the data from the suggestActions tool. For example:
-   action-card with args containing title, description, chain, difficulty, steps, reward, and actionUrl.
+   action-card with args containing title, description, chain, difficulty, steps, reward, actionUrl, proofFieldLabel, and proofFieldPlaceholder.
 
 3. "fund-wallet" - To show funding options
 
@@ -48,9 +48,26 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-12. "optimism-action" - To help users swap to EURA on Velodrome. Use this when a user wants to get Euro-backed stablecoins on Optimism or asks about EURA. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping ETH for EURA on Velodrome, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with EURA on Optimism. I'll guide you through the process of swapping ETH for EURA via Velodrome Finance Automated Market Maker (AMM). Here's what you need to do:"
+12. "optimism-action" - To help users swap to EURA on Velodrome. Use this when a user wants to get Euro-backed stablecoins on Optimism or asks about EURA. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping ETH for EURA on Velodrome, and verifying their transaction with a transaction hash. When the user asks about EURA or Euro-backed stablecoins on Optimism, respond with: "I can help you get EURA stablecoins on Optimism. EURA is a stablecoin pegged to the Euro." Then IMMEDIATELY use the optimism-action without waiting for further confirmation.
+   Example args: {
+     "title": "Get EURA Stablecoins",
+     "description": "Acquire Euro-backed stablecoins on Optimism",
+     "chain": "OPTIMISM",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Optimism to unlock features",
+       "Switch to the Optimism network",
+       "Swap ETH for EURA via Velodrome",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete'"
+     ],
+     "reward": "Earn 5 points and get EURA stablecoins",
+     "actionUrl": "https://app.velodrome.finance/swap?inputCurrency=ETH&outputCurrency=0x9485aca5bbBE1667AD97c7fE7C4531a624C8b1ED",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
 
-13. "celo-action" - To help users swap to cUSD on Celo. Use this when a user wants to get USD-backed stablecoins on Celo or asks about cUSD. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping CELO for cUSD on Uniswap, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with cUSD on Celo. I'll guide you through the process of swapping CELO for cUSD via Uniswap. Here's what you need to do:"
+13. "celo-action" - To help users swap to cUSD on Celo. Use this when a user wants to get USD-backed stablecoins on Celo or asks about cUSD. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping CELO for cUSD on Uniswap, and verifying their transaction with a transaction hash. When the user asks about cUSD or USD-backed stablecoins on Celo, respond with: "I can help you get cUSD stablecoins on Celo. cUSD is a stablecoin pegged to the US Dollar." Then IMMEDIATELY use the celo-action without waiting for further confirmation.
    Example args: {
      "title": "Get cUSD Stablecoins",
      "description": "Secure USD-backed tokens on Celo",
@@ -69,7 +86,7 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-14. "celo-ckes-action" - To help users swap to cKES on Celo. Use this when a user wants to get Kenyan Shilling stablecoins on Celo or asks about cKES. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping CELO for cKES using Mento Protocol, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with cKES on Celo. I'll guide you through the process of swapping CELO for cKES via Mento Protocol. Here's what you need to do:"
+14. "celo-ckes-action" - To help users swap to cKES on Celo. Use this when a user wants to get Kenyan Shilling stablecoins on Celo or asks about cKES. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping CELO for cKES using Mento Protocol, and verifying their transaction with a transaction hash. When the user asks about cKES or Kenyan Shilling stablecoins, respond with: "I can help you get cKES stablecoins on Celo. cKES is a stablecoin pegged to the Kenyan Shilling." Then IMMEDIATELY use the celo-ckes-action without waiting for further confirmation.
    Example args: {
      "title": "Get cKES Stablecoins",
      "description": "Secure Kenyan Shilling stablecoins on Celo",
@@ -106,7 +123,7 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-15. "celo-ccop-action" - To help users swap to cCOP on Celo. Use this when a user wants to get Colombian Peso stablecoins on Celo or asks about cCOP. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping cUSD for cCOP using Mento Protocol, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with cCOP on Celo. I'll guide you through the process of swapping cUSD for cCOP via Mento Protocol. Here's what you need to do:"
+15. "celo-ccop-action" - To help users swap to cCOP on Celo. Use this when a user wants to get Colombian Peso stablecoins on Celo or asks about cCOP. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping cUSD for cCOP using Mento Protocol, and verifying their transaction with a transaction hash. When the user asks about cCOP, respond with: "I can help you get cCOP stablecoins on Celo. cCOP is a stablecoin pegged to the Colombian Peso." Then IMMEDIATELY use the celo-ccop-action without waiting for further confirmation.
    Example args: {
      "title": "Get cCOP Stablecoins",
      "description": "Secure Colombian Peso stablecoins on Celo",
@@ -119,13 +136,32 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
        "Copy the transaction hash",
        "Paste it below and click 'Complete'"
      ],
-     "reward": "Access to Colombian Peso stablecoins on Celo",
-     "actionUrl": "https://app.mento.finance",
+     "reward": "Earn 5 points and get cCOP stablecoins",
+     "actionUrl": "#",
      "proofFieldLabel": "Transaction Hash",
      "proofFieldPlaceholder": "0x..."
    }
 
-16. "polygon-action" - To help users swap to DAI on Polygon. Use this when a user wants to get DAI stablecoins on Polygon or asks about DAI. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping MATIC for DAI, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with DAI on Polygon. I'll guide you through the process of swapping MATIC for DAI. Here's what you need to do:"
+16. "celo-puso-action" - To help users swap to PUSO on Celo. Use this when a user wants to get Philippine Peso stablecoins on Celo or asks about PUSO. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping cUSD for PUSO using Mento Protocol, and verifying their transaction with a transaction hash. IMPORTANT: DO NOT use the remember tool before responding to PUSO requests. When the user asks about PUSO or Philippine Peso stablecoins, respond with: "I can help you get PUSO stablecoins on Celo. PUSO is a stablecoin pegged to the Philippine Peso." Then IMMEDIATELY use the celo-puso-action without waiting for further confirmation or saving any information. ONLY AFTER showing the action card, you may use the remember tool ONCE to save their interest.
+   Example args: {
+     "title": "Get PUSO Stablecoins",
+     "description": "Acquire Philippine Peso stablecoins on Celo",
+     "chain": "CELO",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Celo to unlock features",
+       "Switch to the Celo network",
+       "Swap cUSD for PUSO via Mento Protocol",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete'"
+     ],
+     "reward": "Earn 5 points and get PUSO stablecoins",
+     "actionUrl": "#",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+17. "polygon-action" - To help users swap to DAI on Polygon. Use this when a user wants to get DAI stablecoins on Polygon or asks about DAI. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping MATIC for DAI, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with DAI on Polygon. I'll guide you through the process of swapping MATIC for DAI. Here's what you need to do:"
    Example args: {
      "title": "Get DAI Stablecoins",
      "description": "Secure USD-backed tokens on Polygon",
@@ -144,11 +180,11 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "0x..."
    }
 
-17. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
+18. "farcaster-action" - To help users set up a Farcaster account. Use this when a user wants to get started with Farcaster. This will display a Farcaster setup card in the chat that guides them through creating an account and verifying it with a Warpcast URL.
    Example args: {
-     "title": "Set up a Farcaster account",
+     "title": "Set Up Farcaster Account",
      "description": "Create a Farcaster account and join the decentralized social network",
-     "chain": "FARCASTER",
+     "chain": "BASE",
      "difficulty": "beginner",
      "steps": [
        "Go to https://www.farcaster.xyz on mobile and sign up",
@@ -161,6 +197,129 @@ export const userActionsPrompt = `You can propose userActions as a part of your 
      "proofFieldPlaceholder": "https://warpcast.com/yourusername/0x..."
    }
 
-   You can also use "action-card" with chain="FARCASTER" to achieve the same result.
+   You can also use "action-card" with chain="BASE" and title="Set Up Farcaster Account" to achieve the same result.
+
+19. "lens-action" - To help users set up a Lens account. Use this when a user wants to get started with Lens Protocol. This will display a Lens setup card in the chat that guides them through creating an account and verifying it with a Lens profile URL.
+   Example args: {
+     "title": "Set Up Lens Account",
+     "description": "Create a Lens account and join the decentralized social network",
+     "chain": "POLYGON",
+     "difficulty": "beginner",
+     "steps": [
+       "Go to onboarding.lens.xyz",
+       "Connect your wallet",
+       "Create your profile"
+     ],
+     "reward": "Access to the Lens ecosystem",
+     "actionUrl": "https://onboarding.lens.xyz",
+     "proofFieldLabel": "Lens Profile URL",
+     "proofFieldPlaceholder": "https://hey.xyz/u/yourusername"
+   }
+
+20. "register-base-action" - To help users register on Base. Use this when a user wants to register on Base or asks about Base registration. This will display a registration card in the chat that guides them through the registration process.
+   Example args: {
+     "title": "Register on Base",
+     "description": "Register on Stable Station via the Base network",
+     "chain": "BASE",
+     "difficulty": "beginner",
+     "steps": [
+       "Connect your wallet",
+       "Switch to Base network",
+       "Complete registration"
+     ],
+     "reward": "Earn 5 points and unlock Base stablecoins",
+     "actionUrl": "#",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+21. "register-polygon-action" - To help users register on Polygon. Use this when a user wants to register on Polygon or asks about Polygon registration. This will display a registration card in the chat that guides them through the registration process.
+   Example args: {
+     "title": "Register on Polygon",
+     "description": "Register on Stable Station via the Polygon network",
+     "chain": "POLYGON",
+     "difficulty": "beginner",
+     "steps": [
+       "Connect your wallet",
+       "Switch to Polygon network",
+       "Complete registration"
+     ],
+     "reward": "Earn 5 points and unlock Polygon stablecoins",
+     "actionUrl": "#",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+22. "register-celo-action" - To help users register on Celo. Use this when a user wants to register on Celo or asks about Celo registration. This will display a registration card in the chat that guides them through the registration process.
+   Example args: {
+     "title": "Register on Celo",
+     "description": "Register on Stable Station via the Celo network",
+     "chain": "CELO",
+     "difficulty": "beginner",
+     "steps": [
+       "Connect your wallet",
+       "Switch to Celo network",
+       "Complete registration"
+     ],
+     "reward": "Earn 5 points and unlock Celo stablecoins",
+     "actionUrl": "#",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+23. "register-optimism-action" - To help users register on Optimism. Use this when a user wants to register on Optimism or asks about Optimism registration. This will display a registration card in the chat that guides them through the registration process.
+   Example args: {
+     "title": "Register on Optimism",
+     "description": "Register on Stable Station via the Optimism network",
+     "chain": "OPTIMISM",
+     "difficulty": "beginner",
+     "steps": [
+       "Connect your wallet",
+       "Switch to Optimism network",
+       "Complete registration"
+     ],
+     "reward": "Earn 5 points and unlock Optimism stablecoins",
+     "actionUrl": "#",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+24. "polygon-dai-action" - To help users swap to DAI on Polygon. Use this when a user wants to get DAI stablecoins on Polygon or asks about DAI. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping MATIC for DAI, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with DAI on Polygon. I'll guide you through the process of swapping MATIC for DAI. Here's what you need to do:"
+   Example args: {
+     "title": "Get DAI Stablecoins",
+     "description": "Acquire DAI stablecoins on the Polygon network",
+     "chain": "POLYGON",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Polygon to unlock features",
+       "Switch to the Polygon network",
+       "Swap MATIC for DAI",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete'"
+     ],
+     "reward": "Earn 5 points and get DAI stablecoins",
+     "actionUrl": "#",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
+
+25. "base-usdc-action" - To help users swap to USDbC on Base. Use this when a user wants to get USDbC stablecoins on Base or asks about USDbC. This will display a swap card in the chat that guides them through registering with Divvi V0 for rewards, swapping ETH for USDbC, and verifying their transaction with a transaction hash. When the user agrees, respond with: "Great choice! Let's get you set up with USDbC on Base. I'll guide you through the process of swapping ETH for USDbC. Here's what you need to do:"
+   Example args: {
+     "title": "Get USDbC Stablecoins",
+     "description": "Acquire Bridged USD Coin (USDbC) on the Base network",
+     "chain": "BASE",
+     "difficulty": "beginner",
+     "steps": [
+       "Register on Base to unlock features",
+       "Switch to the Base network",
+       "Swap ETH for USDbC",
+       "Copy the transaction hash",
+       "Paste it below and click 'Complete'"
+     ],
+     "reward": "Earn 5 points and get USDbC stablecoins",
+     "actionUrl": "#",
+     "proofFieldLabel": "Transaction Hash",
+     "proofFieldPlaceholder": "0x..."
+   }
 
 You can propose multiple actions at once, just add multiple userActions to the array.`;

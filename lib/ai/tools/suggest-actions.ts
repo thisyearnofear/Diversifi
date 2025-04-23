@@ -47,7 +47,7 @@ export const suggestActionsDefinition = {
   name: "suggestActions",
   description: "Suggest actions for the user to complete based on their interests or questions",
   parameters: z.object({
-    category: z.string().optional().describe("The blockchain category to filter actions by (BASE, CELO, ETHEREUM)"),
+    category: z.string().optional().describe("The category to filter actions by. Can be a blockchain (BASE, CELO, ETHEREUM, OPTIMISM, POLYGON) or an action category (SOCIAL, DEFI, NFT, STABLECOIN, TRADING, REGISTRATION)"),
     title: z.string().optional().describe("The specific action title to look for"),
     limit: z.number().optional().default(3).describe("The maximum number of actions to return")
   }),

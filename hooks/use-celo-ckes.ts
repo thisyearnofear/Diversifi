@@ -9,6 +9,16 @@ import { toast } from "sonner";
 import { useNetworkState } from "./use-network-state";
 import { ADDRESSES, ABIS, SwapParams, UseCkesSwapOptions, CkesSwapStatus } from "../constants/celo-tokens";
 import { handleSwapError } from "../utils/celo-utils";
+import {
+  CELO_TOKENS,
+  getMentoExchangeRate,
+  getCachedData,
+  setCachedData,
+  CACHE_KEYS,
+  CACHE_DURATIONS,
+  handleMentoError,
+  DEFAULT_EXCHANGE_RATES
+} from "../utils/mento-utils";
 
 export function useCkesSwap(options?: UseCkesSwapOptions) {
   const { address } = useAccount();
@@ -22,9 +32,36 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
   const [approvalAmount, setApprovalAmount] = useState<string | null>(null);
-  // These values are static for simplicity, but could be updated in a more complex implementation
+  // Balance is static for simplicity
   const balance = "0";
-  const exchangeRate = 40.06; // Default exchange rate
+  // Get exchange rate from Mento SDK or cache
+  const [exchangeRate, setExchangeRate] = useState<number>(DEFAULT_EXCHANGE_RATES.CKES);
+
+  // Fetch exchange rate from Mento or cache
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        // Check cache first
+        const cachedRate = getCachedData(CACHE_KEYS.EXCHANGE_RATE_CKES);
+        if (cachedRate !== null) {
+          setExchangeRate(cachedRate);
+          return;
+        }
+
+        // Fetch from Mento SDK
+        const rate = await getMentoExchangeRate('CKES');
+        setExchangeRate(rate);
+
+        // Cache the result
+        setCachedData(CACHE_KEYS.EXCHANGE_RATE_CKES, rate);
+      } catch (error) {
+        console.warn("Error fetching CKES exchange rate:", error);
+        // Keep default rate
+      }
+    };
+
+    fetchExchangeRate();
+  }, []);
 
   // Network state
   const { isCorrectNetwork, isSwitchingChain, switchToCelo } = useNetworkState();
@@ -260,7 +297,7 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
       toast.success("Approval confirmed! Now you can swap.");
       return true;
     } catch (error) {
-      const errorMessage = handleSwapError(error, "approving tokens");
+      const errorMessage = handleMentoError(error, "approving tokens");
       setStatus("error");
       setError(errorMessage);
       toast.error(errorMessage);
@@ -435,13 +472,13 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
           completeSwap(swapTx.hash);
         }
       } catch (error) {
-        const errorMessage = handleSwapError(error, "performing swap");
+        const errorMessage = handleMentoError(error, "performing swap");
         setStatus("error");
         setError(errorMessage);
         toast.error(errorMessage);
       }
     } catch (error) {
-      const errorMessage = handleSwapError(error, "swap process");
+      const errorMessage = handleMentoError(error, "swap process");
       setStatus("error");
       setError(errorMessage);
       toast.error(errorMessage);

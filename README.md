@@ -451,86 +451,178 @@ interface LearningPath {
 - Contribution incentives
 - Research funding
 
+## Celo Stablecoin Implementation
+
+We've implemented a robust system for Celo stablecoins using the Mento Protocol. Our implementation includes:
+
+1. **Centralized Utilities**
+
+   - Shared functionality in `utils/mento-utils.ts`
+   - Consistent token addresses and ABIs
+   - Caching system for exchange rates
+   - Fallback values for reliability
+
+2. **Direct Protocol Integration**
+
+   - Direct integration with Mento Protocol
+   - No dependency on external price APIs
+   - More accurate exchange rates
+   - Reduced API calls and rate limiting issues
+
+3. **Supported Stablecoins**
+
+   - cUSD (US Dollar)
+   - cKES (Kenyan Shilling)
+   - cCOP (Colombian Peso)
+   - PUSO (Philippine Peso)
+
+4. **Implementation Pattern**
+   - Two-step process: registration and swap
+   - Consistent UI across all Celo stablecoins
+   - Proper error handling and user feedback
+   - Network switching support
+
 ## New Token Integration Checklist
 
 When adding a new stablecoin to Stable Station, follow this checklist to ensure all components are properly updated:
 
-### 1. Backend Implementation
+### 1. Research & Preparation
+
+- [ ] **Token Information**
+
+  - [ ] Gather token details (name, symbol, contract address, decimals)
+  - [ ] Identify the blockchain network (Celo, Base, Polygon, etc.)
+  - [ ] Determine the geographical region for the token
+  - [ ] Research current exchange rates and price sources
+  - [ ] Identify the swap protocol to use (Mento, Uniswap, etc.)
+
+- [ ] **Contract Verification**
+
+  - [ ] Verify the token contract on the blockchain explorer
+  - [ ] Check token liquidity and trading volume
+  - [ ] Test small transactions if possible
+  - [ ] Identify any special requirements or limitations
+
+### 2. Backend Implementation
 
 - [ ] **Create Swap Hook**
 
   - [ ] Create a new hook file (e.g., `hooks/use-[chain]-[token].ts`)
+  - [ ] Add token contract address and ABI to constants
   - [ ] Implement token approval functionality
-  - [ ] Implement swap functionality
-  - [ ] Add proper error handling
+  - [ ] Implement swap functionality using appropriate protocol
+  - [ ] Add proper error handling with user-friendly messages
   - [ ] Implement network switching support
   - [ ] Add transaction tracking and confirmation
+  - [ ] Implement exchange rate calculation with fallbacks
 
 - [ ] **Database Integration**
 
   - [ ] Create a migration file to add the new token action
+  - [ ] Include proper rewards with type field (e.g., 'POINTS')
   - [ ] Update schema if needed (e.g., add new enum values)
   - [ ] Test migration on development database
+  - [ ] Verify action appears correctly in database
 
 - [ ] **API Routes**
+
   - [ ] Create API route for the token action (`app/api/actions/[chain]/[token]/route.ts`)
   - [ ] Create API route for completing the token action (`app/api/actions/[chain]/[token]/complete/route.ts`)
   - [ ] Implement proper error handling and authentication
+  - [ ] Update action completion handler to recognize the new token
 
-### 2. Frontend Implementation
+### 3. Frontend Implementation
 
 - [ ] **UI Components**
 
   - [ ] Create swap card component (`components/chat/[chain]-[token]-swap-card-compact.tsx`)
   - [ ] Create action message component (`components/chat/[chain]-[token]-action-message.tsx`)
   - [ ] Create action handler component (`components/chat/[chain]-[token]-action-handler.tsx`)
+  - [ ] Include registration step if required
+  - [ ] Add appropriate branding and token information
+  - [ ] Ensure consistent UI with other token components
 
 - [ ] **Update Token Data**
 
   - [ ] Add token to `lib/tokens/token-data.ts` with appropriate region
+  - [ ] Add token to price hook in `hooks/use-token-price.ts`
+  - [ ] Set appropriate fallback price for the token
   - [ ] Set `available: true` for the new token
 
 - [ ] **Update Sidebar Components**
+
   - [ ] Ensure token appears in left sidebar when its region is selected
   - [ ] Add token to right sidebar's DiversiFi section under the appropriate region
+  - [ ] Update wallet assets in right sidebar to include the new token
 
-### 3. AI Integration
+### 4. AI Integration
 
 - [ ] **Update AI Prompts**
 
   - [ ] Add token action to `lib/ai/prompts/constants/user-actions.ts`
   - [ ] Add token description to `lib/ai/prompts/constants/regular.ts`
   - [ ] Update action numbering in both files
+  - [ ] Add appropriate example arguments and descriptions
 
 - [ ] **Update Interactive Elements**
+
   - [ ] Add token action handler to `components/interactive-element.tsx`
   - [ ] Import the new action handler component
   - [ ] Add the action to the render function
+  - [ ] Ensure proper action detection in the AI
 
-### 4. Testing
+### 5. Testing
+
+- [ ] **Type Checking**
+
+  - [ ] Run type checking to ensure no type errors
+  - [ ] Fix any type issues in the implementation
+  - [ ] Ensure proper typing for all components and hooks
 
 - [ ] **Local Testing**
 
   - [ ] Test token swap functionality on development environment
+  - [ ] Test registration flow if applicable
+  - [ ] Test network switching functionality
+  - [ ] Test token approval process
+  - [ ] Test transaction completion and verification
   - [ ] Test AI recognition of token commands
   - [ ] Verify token appears in correct region selector
   - [ ] Verify token balance displays correctly in DiversiFi section
 
+- [ ] **Error Handling**
+
+  - [ ] Test error scenarios (network issues, rejection, etc.)
+  - [ ] Verify user-friendly error messages
+  - [ ] Test fallback mechanisms
+
 - [ ] **Production Deployment**
+
   - [ ] Deploy database migrations
   - [ ] Verify token functionality in production environment
   - [ ] Monitor for any errors or issues
+  - [ ] Test with real users if possible
 
-### 5. Documentation
+### 6. Documentation & Finalization
 
 - [ ] **Update README**
 
   - [ ] Add token to the appropriate region in the "Token Categories by Region" section
   - [ ] Add token integration details to the "Deployed Contracts" section if applicable
+  - [ ] Document any special considerations or requirements
 
 - [ ] **Update User Documentation**
+
   - [ ] Add token to any user-facing documentation
   - [ ] Create guides or tutorials for the new token if needed
+  - [ ] Update FAQ if applicable
+
+- [ ] **Final Review**
+
+  - [ ] Conduct a final review of all components
+  - [ ] Check for any console errors or warnings
+  - [ ] Verify all features work as expected
+  - [ ] Get feedback from team members if applicable
 
 Following this checklist ensures that all aspects of the token integration are properly addressed, from backend implementation to AI recognition and user interface updates.
 

@@ -38,7 +38,7 @@ export const tokensByRegion: Record<string, Token[]> = {
     { id: "brz", name: "Brazilian Real", symbol: "BRZ", region: "LatAm", chain: "POLYGON", actionPrompt: "I want to get BRZ stablecoins on Polygon. Can you help me directly in this chat?", available: false },
   ],
   Asia: [
-    { id: "puso", name: "Philippine Peso", symbol: "PUSO", region: "Asia", chain: "ETHEREUM", actionPrompt: "I want to get PUSO stablecoins. Can you help me directly in this chat?", available: false },
+    { id: "puso", name: "Philippine Peso", symbol: "PUSO", region: "Asia", chain: "CELO", actionPrompt: "I want to get PUSO stablecoins on Celo. Can you help me directly in this chat?", available: true },
     { id: "idrt", name: "Indonesian Rupiah", symbol: "IDRT", region: "Asia", chain: "ETHEREUM", actionPrompt: "I want to get IDRT stablecoins. Can you help me directly in this chat?", available: false },
     { id: "xsgd", name: "Singapore Dollar", symbol: "XSGD", region: "Asia", chain: "ETHEREUM", actionPrompt: "I want to get XSGD stablecoins. Can you help me directly in this chat?", available: false },
     { id: "jpyc", name: "Japanese Yen", symbol: "JPYC", region: "Asia", chain: "ETHEREUM", actionPrompt: "I want to get JPYC stablecoins. Can you help me directly in this chat?", available: false },

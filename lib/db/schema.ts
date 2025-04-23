@@ -190,7 +190,7 @@ export const action = pgTable("Action", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   category: varchar("category", {
-    enum: ["SOCIAL", "DEFI", "NFT", "STABLECOIN", "TRADING", "stablecoins"],
+    enum: ["SOCIAL", "DEFI", "NFT", "STABLECOIN", "TRADING", "REGISTRATION", "stablecoins"],
   }).notNull(),
   chain: varchar("chain", {
     enum: ["BASE", "CELO", "ETHEREUM", "OPTIMISM", "POLYGON"],
@@ -201,6 +201,8 @@ export const action = pgTable("Action", {
   prerequisites: json("prerequisites").array(),
   steps: json("steps").array(),
   rewards: json("rewards").array(),
+  proofFieldLabel: text("proofFieldLabel"),
+  proofFieldPlaceholder: text("proofFieldPlaceholder"),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });

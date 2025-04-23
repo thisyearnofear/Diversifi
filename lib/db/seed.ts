@@ -56,89 +56,9 @@ const actions: Omit<ActionInsert, "id" | "createdAt" | "updatedAt">[] = [
     ],
   },
 
-  // Stable Actions (CELO)
-  {
-    title: "Mint Celo NFT",
-    description: "Create and mint an NFT on Celo",
-    category: "NFT",
-    chain: "CELO",
-    difficulty: "INTERMEDIATE",
-    prerequisites: ["Wallet with CELO"],
-    steps: [
-      "Visit celo.art",
-      "Connect your wallet",
-      "Create your NFT",
-      "Mint it to your wallet",
-    ],
-    rewards: [
-      {
-        type: "TOKEN",
-        description: "10 CELO",
-      },
-    ],
-  },
-  {
-    title: "Swap on Ubeswap",
-    description: "Perform a token swap on Ubeswap",
-    category: "TRADING",
-    chain: "CELO",
-    difficulty: "BEGINNER",
-    prerequisites: ["Wallet with CELO"],
-    steps: [
-      "Visit ubeswap.org",
-      "Connect your wallet",
-      "Select tokens to swap",
-      "Confirm transaction",
-    ],
-    rewards: [
-      {
-        type: "TOKEN",
-        description: "5 CELO",
-      },
-    ],
-  },
+  // Note: Celo stablecoin actions are now defined in lib/db/seeds/celo-action.ts
 
-  // Global Actions (ETHEREUM)
-  {
-    title: "Deploy Smart Contract",
-    description: "Deploy a simple smart contract to Ethereum",
-    category: "DEFI",
-    chain: "ETHEREUM",
-    difficulty: "ADVANCED",
-    prerequisites: ["Wallet with ETH", "Basic Solidity knowledge"],
-    steps: [
-      "Write your contract",
-      "Compile it",
-      "Deploy to testnet",
-      "Verify on Etherscan",
-    ],
-    rewards: [
-      {
-        type: "TOKEN",
-        description: "0.5 ETH",
-      },
-    ],
-  },
-  {
-    title: "Participate in DAO",
-    description: "Join and participate in a DAO governance",
-    category: "DEFI",
-    chain: "ETHEREUM",
-    difficulty: "INTERMEDIATE",
-    prerequisites: ["Wallet with ETH"],
-    steps: [
-      "Join a DAO",
-      "Get governance tokens",
-      "Create a proposal",
-      "Vote on proposals",
-    ],
-    rewards: [
-      {
-        type: "TOKEN",
-        description: "0.3 ETH",
-      },
-    ],
-  },
+  // Note: We're focusing on stablecoin actions now
 ];
 
 export async function seedActions() {

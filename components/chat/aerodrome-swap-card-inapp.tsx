@@ -182,7 +182,7 @@ export function AerodromeSwapCardInapp({
       <div className="p-4 bg-blue-50 dark:bg-blue-900/20">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               {/* Status indicator icon */}
               {isRegistered ? (
                 status === "transaction-pending" ||
@@ -249,7 +249,7 @@ export function AerodromeSwapCardInapp({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full"
+            className="size-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
             disabled={!isRegistered}
           >

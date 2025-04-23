@@ -42,8 +42,30 @@ export async function POST(request: Request) {
           actionIdToUse = actions[0].id;
         } else {
           console.log(`Action with title "${title}" not found, creating a synthetic record`);
-          // For certain actions, we'll create a synthetic record
-          if (title === "Register on Optimism" || title === "Get EURA Stablecoins" || title === "Get cKES Stablecoins" || title === "Get cCOP Stablecoins") {
+          // List of all known actions that might not be in the database yet
+          const knownActions = [
+            // Registration actions
+            "Register on Optimism",
+            "Register on Celo",
+            "Register on Polygon",
+            "Register on Base",
+
+            // Stablecoin actions
+            "Get EURA Stablecoins",
+            "Get cKES Stablecoins",
+            "Get cCOP Stablecoins",
+            "Get PUSO Stablecoins",
+            "Get cUSD Stablecoins",
+            "Get DAI Stablecoins",
+            "Get USDbC Stablecoins",
+
+            // Social actions
+            "Set Up Lens Account",
+            "Set Up Farcaster Account"
+          ];
+
+          // For known actions, we'll create a synthetic record
+          if (knownActions.includes(title)) {
             // Create a synthetic ID for these known actions
             actionIdToUse = `synthetic-${title.replace(/\s+/g, '-').toLowerCase()}`;
           } else {

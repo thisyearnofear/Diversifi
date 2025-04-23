@@ -127,7 +127,7 @@ export function CeloCkesActionMessage({
               <div className="relative">
                 <div className="flex items-center space-x-2 mb-2">
                   <div
-                    className={`flex items-center justify-center h-8 w-8 rounded-full ${
+                    className={`flex items-center justify-center size-8 rounded-full ${
                       action.isCompleted
                         ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400"
                         : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400"

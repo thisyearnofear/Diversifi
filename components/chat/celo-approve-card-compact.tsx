@@ -153,7 +153,7 @@ export function CeloApproveCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0"
+            className="size-8 p-0"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (

@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db/queries";
+import { db, deleteChatById, getChatById } from "@/lib/db/queries";
 import { chat } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/app/auth";
-import { deleteChatById, getChatById } from "@/lib/db/queries";
 
 // PATCH - Update chat title
 export async function PATCH(request: Request, context: any) {

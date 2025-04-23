@@ -616,7 +616,7 @@ export function DivviRegistrationAction() {
 
       {isRegistered ? (
         <div className="bg-green-50 p-4 rounded-md flex items-center gap-3 mb-6">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+          <CheckCircle className="size-5 text-green-600" />
           <div>
             <h3 className="font-medium">Successfully Registered!</h3>
             <p className="text-sm text-gray-600">

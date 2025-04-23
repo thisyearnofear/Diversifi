@@ -222,7 +222,7 @@ export function CeloCkesConfirmCardCompact({
             {!isCorrectNetwork ? (
               <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-md">
                 <div className="flex items-center text-amber-600 dark:text-amber-400 text-sm">
-                  <Info className="size-4 mr-2 flex-shrink-0" />
+                  <Info className="size-4 mr-2 shrink-0" />
                   <span>
                     You need to switch to the Celo network to proceed.
                   </span>
@@ -284,7 +284,7 @@ export function CeloCkesConfirmCardCompact({
             {error && (
               <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3">
                 <div className="flex">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <Info className="size-5 text-red-400" aria-hidden="true" />
                   </div>
                   <div className="ml-3">

@@ -109,7 +109,7 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
     return (
       <Card className="p-4 border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+          <CheckCircle className="size-5 text-green-600" />
           <div>
             <h3 className="font-medium">cUSD Acquired</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -176,7 +176,7 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full"
+            className="size-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (

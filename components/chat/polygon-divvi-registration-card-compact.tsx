@@ -89,7 +89,7 @@ export function PolygonDivviRegistrationCardCompact({
     return (
       <Card className="p-4 border-purple-200 bg-purple-50 dark:bg-purple-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-purple-600" />
+          <CheckCircle className="size-5 text-purple-600" />
           <div>
             <h3 className="font-medium">Registration Complete</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -156,7 +156,7 @@ export function PolygonDivviRegistrationCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full"
+            className="size-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (

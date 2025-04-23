@@ -28,19 +28,55 @@ export async function POST(request: Request) {
     if (actions.length === 0) {
       console.log(`Action with title "${title}" not found in database`);
 
-      // For certain actions, we'll create a fallback response
-      if (title === "Register on Optimism" || title === "Get EURA Stablecoins" || title === "Get cKES Stablecoins") {
+      // List of all known actions that might not be in the database yet
+      const knownActions = [
+        // Registration actions
+        "Register on Optimism",
+        "Register on Celo",
+        "Register on Polygon",
+        "Register on Base",
+
+        // Stablecoin actions
+        "Get EURA Stablecoins",
+        "Get cKES Stablecoins",
+        "Get cCOP Stablecoins",
+        "Get PUSO Stablecoins",
+        "Get cUSD Stablecoins",
+        "Get DAI Stablecoins",
+        "Get USDbC Stablecoins",
+
+        // Social actions
+        "Set Up Lens Account",
+        "Set Up Farcaster Account"
+      ];
+
+      // For known actions, we'll create a fallback response
+      if (knownActions.includes(title)) {
+        // Determine the category based on the title
+        const category = title.includes("Register") ? "REGISTRATION" : "STABLECOIN";
+
+        // Determine the proof fields based on the category
+        const proofFieldLabel = category === "REGISTRATION" || category === "STABLECOIN"
+          ? "Transaction Hash"
+          : "Proof";
+
+        const proofFieldPlaceholder = category === "REGISTRATION" || category === "STABLECOIN"
+          ? "0x..."
+          : "Provide proof of completion";
+
         // Return a synthetic action for these known actions
         return NextResponse.json({
           id: `synthetic-${Date.now()}`,
           title: title,
           description: `${title} action`,
-          category: "STABLECOIN",
+          category,
           chain: title.includes("Optimism") ? "OPTIMISM" : "CELO",
           difficulty: "BEGINNER",
           prerequisites: [],
           steps: [],
           rewards: [],
+          proofFieldLabel,
+          proofFieldPlaceholder,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });

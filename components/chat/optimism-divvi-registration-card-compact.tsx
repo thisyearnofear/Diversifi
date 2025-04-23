@@ -87,7 +87,7 @@ export function OptimismDivviRegistrationCardCompact({
       <div className="p-4 bg-purple-50 dark:bg-purple-900/20">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               {/* Status indicator icon */}
               {status === "transaction-success" ||
               status === "transaction-confirming" ||

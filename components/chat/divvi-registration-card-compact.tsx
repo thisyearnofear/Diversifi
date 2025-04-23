@@ -82,7 +82,7 @@ export function DivviRegistrationCardCompact({
     return (
       <Card className="p-4 border-green-200 bg-green-50 dark:bg-green-900/20">
         <div className="flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+          <CheckCircle className="size-5 text-green-600" />
           <div>
             <h3 className="font-medium">Registration Complete ✓</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -111,14 +111,14 @@ export function DivviRegistrationCardCompact({
       >
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               {/* Status indicator icon */}
               {status === "transaction-success" ||
               status === "transaction-confirming" ||
               status === "transaction-pending" ? (
-                <Loader2 className="h-5 w-5 text-amber-500 animate-spin" />
+                <Loader2 className="size-5 text-amber-500 animate-spin" />
               ) : (
-                <div className="h-5 w-5 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
+                <div className="size-5 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
                   !
                 </div>
               )}
@@ -162,7 +162,7 @@ export function DivviRegistrationCardCompact({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full"
+            className="size-8 p-0 rounded-full"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? (

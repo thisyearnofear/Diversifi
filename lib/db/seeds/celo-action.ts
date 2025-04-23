@@ -144,4 +144,70 @@ export async function seedCeloActions() {
   } else {
     console.log("cKES swap action already exists");
   }
+
+  // Check if the cCOP swap action already exists
+  const existingCcopAction = await db
+    .select()
+    .from(action)
+    .where(eq(action.title, "Get cCOP Stablecoins"))
+    .limit(1);
+
+  if (existingCcopAction.length === 0) {
+    // Create the cCOP swap action
+    await db.insert(action).values({
+      title: "Get cCOP Stablecoins",
+      description: "Get Colombian Peso stablecoins on Celo",
+      category: "STABLECOIN",
+      chain: "CELO",
+      difficulty: "BEGINNER",
+      prerequisites: [],
+      steps: [
+        { title: "Connect your wallet", description: "Connect your wallet to continue" },
+        { title: "Switch to Celo network", description: "Switch to the Celo network" },
+        { title: "Swap cUSD for cCOP", description: "Swap your cUSD for cCOP" },
+      ],
+      rewards: [
+        { type: "POINTS", description: "Earn 5 points and get cCOP stablecoins" },
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log("Created cCOP swap action");
+  } else {
+    console.log("cCOP swap action already exists");
+  }
+
+  // Check if the PUSO swap action already exists
+  const existingPusoAction = await db
+    .select()
+    .from(action)
+    .where(eq(action.title, "Get PUSO Stablecoins"))
+    .limit(1);
+
+  if (existingPusoAction.length === 0) {
+    // Create the PUSO swap action
+    await db.insert(action).values({
+      title: "Get PUSO Stablecoins",
+      description: "Get Philippine Peso stablecoins on Celo",
+      category: "STABLECOIN",
+      chain: "CELO",
+      difficulty: "BEGINNER",
+      prerequisites: [],
+      steps: [
+        { title: "Connect your wallet", description: "Connect your wallet to continue" },
+        { title: "Switch to Celo network", description: "Switch to the Celo network" },
+        { title: "Swap cUSD for PUSO", description: "Swap your cUSD for PUSO" },
+      ],
+      rewards: [
+        { type: "POINTS", description: "Earn 5 points and get PUSO stablecoins" },
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log("Created PUSO swap action");
+  } else {
+    console.log("PUSO swap action already exists");
+  }
 }

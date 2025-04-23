@@ -18,8 +18,14 @@ import { cn } from "@/lib/utils";
 import { useRegion, type Region } from "@/contexts/region-context";
 import { Badge } from "@/components/ui/badge";
 import { getAvailableTokensByRegion } from "@/lib/tokens/token-data";
-import { useCkesSwap } from "@/hooks/use-celo-ckes";
-import { useCcopSwap } from "@/hooks/use-celo-ccop";
+import { useTokenBalances, TOKEN_REGIONS } from "@/hooks/use-token-balances";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Region data with icons and colors
 const regions: {
@@ -58,36 +64,13 @@ const socialLinks = [
   },
 ];
 
-// Sample wallet assets by region with numeric values for calculations
-const walletAssetsByRegion: Record<
-  Region,
-  { symbol: string; amount: string; value: number }[]
-> = {
-  All: [
-    { symbol: "ETH", amount: "0.05", value: 100 },
-    { symbol: "CELO", amount: "10.2", value: 20 },
-    { symbol: "cUSD", amount: "25.0", value: 25 },
-  ],
-  USA: [
-    { symbol: "USDbC", amount: "50.0", value: 50 },
-    { symbol: "cUSD", amount: "25.0", value: 25 },
-    { symbol: "DAI", amount: "75.0", value: 75 },
-  ],
-  Europe: [
-    { symbol: "EURA", amount: "45.0", value: 45 },
-    { symbol: "CEUR", amount: "0.0", value: 0 },
-  ],
-  Africa: [
-    { symbol: "cUSD", amount: "25.0", value: 25 },
-    { symbol: "cKES", amount: "0.0", value: 0 }, // Placeholder, will show real component below
-  ],
-  LatAm: [
-    { symbol: "cCOP", amount: "0.0", value: 0 },
-    { symbol: "BRZ", amount: "0.0", value: 0 },
-    { symbol: "cREAL", amount: "0.0", value: 0 },
-  ],
-  Asia: [{ symbol: "USDT", amount: "100.0", value: 100 }],
-  RWA: [{ symbol: "PAXG", amount: "0.01", value: 20 }],
+// Helper function to format balance for display
+const formatBalance = (balance: string): string => {
+  const num = parseFloat(balance);
+  if (isNaN(num)) return "0.00";
+  if (num === 0) return "0.00";
+  if (num < 0.01) return "<0.01";
+  return num.toFixed(2); // Always limit to 2 decimal places
 };
 
 // Helper functions for DiversiFi component
@@ -110,7 +93,12 @@ const getRegionColor = (region: string): string => {
   }
 };
 
-const calculateRegionTotals = () => {
+const calculateRegionTotals = (
+  balances: Record<
+    string,
+    { amount: string; value: number; loading: boolean; error: string | null }
+  >
+) => {
   const totals: Record<string, number> = {};
   let totalValue = 0;
 
@@ -122,11 +110,13 @@ const calculateRegionTotals = () => {
   });
 
   // Calculate totals for each region
-  regions.forEach((region) => {
-    if (region.id !== "All") {
-      walletAssetsByRegion[region.id].forEach((asset) => {
-        totals[region.id] += asset.value;
-        totalValue += asset.value;
+  Object.entries(TOKEN_REGIONS).forEach(([region, tokens]) => {
+    if (region !== "All") {
+      tokens.forEach((token) => {
+        if (balances[token]) {
+          totals[region] += balances[token].value;
+          totalValue += balances[token].value;
+        }
       });
     }
   });
@@ -135,27 +125,39 @@ const calculateRegionTotals = () => {
 };
 
 // DiversiScore component with click-to-show tooltip
-function DiversiScore() {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const { totals: regionTotals } = calculateRegionTotals();
+function DiversiScore({
+  balances,
+  isLoading,
+}: {
+  balances: Record<
+    string,
+    { amount: string; value: number; loading: boolean; error: string | null }
+  >;
+  isLoading: boolean;
+}) {
+  const { totals: regionTotals } = calculateRegionTotals(balances);
   const activeRegionsCount = Object.values(regionTotals).filter(
     (v) => v > 0
   ).length;
   const diversityScore = Math.min(Math.ceil(activeRegionsCount * 1.7), 10);
 
+  // If no balances have been loaded yet, show a placeholder score
+  const displayScore = isLoading ? "..." : `${diversityScore}/10`;
+
   return (
     <div className="relative mt-1">
-      <span
-        className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded cursor-pointer"
-        onClick={() => setShowTooltip(!showTooltip)}
-      >
-        DiversiScore: {diversityScore}/10
-      </span>
-      {showTooltip && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-black/80 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-10">
-          Measure of geographic portfolio concentration
-        </div>
-      )}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded cursor-pointer">
+              DiversiScore: {displayScore}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">
+            <p>Measure of geographic portfolio concentration</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 }
@@ -163,17 +165,8 @@ function DiversiScore() {
 export function RightSidebar() {
   const isMobile = useIsMobile();
   const { selectedRegion, setSelectedRegion } = useRegion();
-  const {
-    balance: ckesBalance,
-    status: ckesStatus,
-    isSwitchingChain: ckesSwitching,
-  } = useCkesSwap();
-
-  const {
-    balance: ccopBalance,
-    status: ccopStatus,
-    isSwitchingChain: ccopSwitching,
-  } = useCcopSwap();
+  const { balances, totalValue, isLoading, refreshBalances } =
+    useTokenBalances(selectedRegion);
 
   // Don't render on mobile
   if (isMobile) {
@@ -252,15 +245,19 @@ export function RightSidebar() {
                   <Globe className="size-4 text-blue-500" />
                   <h3 className="font-medium text-sm">Stables</h3>
                 </div>
-                {selectedRegion === "All" && <DiversiScore />}
+                {selectedRegion === "All" && (
+                  <DiversiScore balances={balances} isLoading={isLoading} />
+                )}
               </div>
 
               {selectedRegion === "All" ? (
                 // Show regional overview when "All" is selected
                 <div className="space-y-2 mb-3">
                   {(() => {
-                    const { totals: regionTotals, totalValue } =
-                      calculateRegionTotals();
+                    const {
+                      totals: regionTotals,
+                      totalValue: totalRegionValue,
+                    } = calculateRegionTotals(balances);
 
                     return Object.entries(regionTotals)
                       .filter(([_, amount]) => amount > 0)
@@ -291,7 +288,11 @@ export function RightSidebar() {
                                   region
                                 )}`}
                                 style={{
-                                  width: `${(amount / totalValue) * 100}%`,
+                                  width: `${
+                                    totalRegionValue > 0
+                                      ? (amount / totalRegionValue) * 100
+                                      : 0
+                                  }%`,
                                 }}
                               />
                             </div>
@@ -320,7 +321,7 @@ export function RightSidebar() {
                           $
                           {(() => {
                             const { totals: regionTotals } =
-                              calculateRegionTotals();
+                              calculateRegionTotals(balances);
                             return regionTotals[selectedRegion] || 0;
                           })()}
                         </span>
@@ -330,64 +331,55 @@ export function RightSidebar() {
 
                   {/* Token Holdings for Selected Region */}
                   <div className="space-y-1 pl-3 mt-2">
-                    {walletAssetsByRegion[selectedRegion]
-                      .filter(
-                        (asset) => asset.symbol === "cKES" || asset.value > 0
-                      )
-                      .map((asset) => {
-                        const isCkes = asset.symbol === "cKES";
-                        const isCcop = asset.symbol === "cCOP";
+                    {TOKEN_REGIONS[
+                      selectedRegion as keyof typeof TOKEN_REGIONS
+                    ]?.map((token) => {
+                      const tokenData = balances[token];
 
-                        // Check if we should show loading state
-                        const isLoading =
-                          (isCkes &&
-                            (ckesStatus === "checking" || ckesSwitching)) ||
-                          (isCcop &&
-                            (ccopStatus === "checking" || ccopSwitching));
-
-                        // Get the text value
-                        let textValue = asset.amount;
-                        if (isCkes && !isLoading) {
-                          textValue = `${ckesBalance}`;
-                        } else if (isCcop && !isLoading) {
-                          textValue = `${ccopBalance}`;
-                        }
-
-                        return (
-                          <div
-                            key={asset.symbol}
-                            className="flex justify-between items-center text-xs"
-                          >
-                            <span>{asset.symbol}</span>
-                            <span>
-                              {isLoading ? (
-                                <Loader2 className="size-4 animate-spin text-gray-500" />
-                              ) : (
-                                textValue
-                              )}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    {walletAssetsByRegion[selectedRegion].filter(
-                      (asset) =>
-                        asset.value > 0 &&
-                        asset.symbol !== "cKES" &&
-                        asset.symbol !== "cCOP"
-                    ).length === 0 &&
-                      selectedRegion !== "Africa" &&
-                      selectedRegion !== "LatAm" && (
-                        <div className="text-xs text-gray-500 text-center py-1">
-                          No assets in this region
+                      return (
+                        <div
+                          key={token}
+                          className="flex justify-between items-center text-xs"
+                        >
+                          <span>{token}</span>
+                          <span>
+                            {isLoading || (tokenData && tokenData.loading) ? (
+                              <Skeleton className="h-4 w-10" />
+                            ) : tokenData ? (
+                              formatBalance(tokenData.amount)
+                            ) : (
+                              "0.00"
+                            )}
+                          </span>
                         </div>
-                      )}
+                      );
+                    })}
+
+                    {TOKEN_REGIONS[selectedRegion as keyof typeof TOKEN_REGIONS]
+                      ?.length === 0 && (
+                      <div className="text-xs text-gray-500 text-center py-1">
+                        No assets in this region
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
-              <button className="w-full text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 py-1.5 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 transition-colors">
-                DiversiFi →
-              </button>
+              <div className="flex gap-2">
+                <button
+                  className="w-full text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 py-1.5 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 transition-colors flex items-center justify-center"
+                  onClick={refreshBalances}
+                  disabled={isLoading}
+                >
+                  <Loader2
+                    className={cn(
+                      "size-3 mr-1",
+                      isLoading ? "animate-spin" : ""
+                    )}
+                  />
+                  {isLoading ? "Loading..." : "Refresh Balances"}
+                </button>
+              </div>
             </div>
 
             {/* Social Links - Compact Row */}
