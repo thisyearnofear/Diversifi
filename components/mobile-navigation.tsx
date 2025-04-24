@@ -7,6 +7,7 @@ import {
   Coins,
   Globe,
   Rocket,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -53,6 +54,7 @@ export function MobileNavigation() {
       icon: MessageSquare,
       action: () => router.push("/"),
     },
+
     {
       name: "Starter Kits",
       icon: Sparkles,

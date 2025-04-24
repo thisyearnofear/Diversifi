@@ -7,6 +7,33 @@ const nextConfig: NextConfig = {
       {
         hostname: "avatar.vercel.sh",
       },
+      {
+        hostname: "ipfs.io",
+      },
+      {
+        hostname: "i.imgur.com",
+      },
+      {
+        hostname: "api.hey.xyz",
+      },
+      {
+        hostname: "euc.li",
+      },
+      {
+        hostname: "pbs.twimg.com",
+      },
+      {
+        hostname: "*.infura-ipfs.io",
+      },
+      {
+        hostname: "*.pinata.cloud",
+      },
+      {
+        hostname: "*.arweave.net",
+      },
+      {
+        hostname: "*.cloudfront.net",
+      },
     ],
   },
   webpack: (config) => {

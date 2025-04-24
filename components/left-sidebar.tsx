@@ -10,6 +10,7 @@ import {
   Coins,
   Wallet,
   Clock,
+  User,
 } from "lucide-react";
 import { SidebarHistory } from "@/components/sidebar-history";
 import {
@@ -219,23 +220,6 @@ export function LeftSidebar() {
           >
             <Wallet className="text-gray-600 dark:text-gray-400" />
             Create Wallet
-          </SidebarMenuButton>
-
-          <SidebarGroupLabel className="text-red-600 dark:text-red-400">
-            Admin
-          </SidebarGroupLabel>
-
-          <SidebarMenuButton
-            asChild
-            className="bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/30"
-          >
-            <Link
-              href="/admin/starter-kits"
-              onClick={() => setOpenMobile(false)}
-            >
-              <Settings className="text-red-600 dark:text-red-400" />
-              Admin: Starter Kits
-            </Link>
           </SidebarMenuButton>
         </SidebarMenu>
       </SidebarHeader>

@@ -11,6 +11,7 @@ import {
   Gem,
   MessageCircle,
   Loader2,
+  User,
 } from "lucide-react";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -363,7 +364,7 @@ export function RightSidebar() {
                         ) {
                           return (
                             <div className="text-xs text-gray-500 text-center py-2">
-                              No stablecoin balances found.
+                              coin balances
                             </div>
                           );
                         }
@@ -517,6 +518,17 @@ export function RightSidebar() {
                   )}
                 </button>
               </div>
+            </div>
+
+            {/* Profile Link */}
+            <div className="rounded-lg border p-3 mb-3">
+              <a
+                href="/profile"
+                className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <User className="size-4 text-green-600 dark:text-green-400" />
+                <span className="text-sm font-medium">Dashboard</span>
+              </a>
             </div>
 
             {/* Social Links - Compact Row */}

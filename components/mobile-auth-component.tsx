@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileAuthButtons } from "./mobile-auth-buttons";
 import { User, UserCheck } from "lucide-react";
+import Link from "next/link";
 
 export function MobileAuthComponent() {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -47,6 +48,18 @@ export function MobileAuthComponent() {
             </div>
           )}
         </div>
+
+        {isAuthenticated && !showSuccess && (
+          <div className="bg-background/80 backdrop-blur-sm p-2 rounded-lg shadow-md">
+            <Link
+              href="/profile"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <User className="size-4 text-green-600" />
+              <span className="text-xs font-medium">Dashboard</span>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
