@@ -124,7 +124,10 @@ export default function ProfilePage() {
         </TabsList>
 
         {/* Profile Section */}
-        <TabsContent value="profile" className="space-y-6 flex flex-col items-center">
+        <TabsContent
+          value="profile"
+          className="space-y-6 flex flex-col items-center"
+        >
           <Card>
             <CardHeader>
               <CardTitle>User Profile</CardTitle>
@@ -143,17 +146,12 @@ export default function ProfilePage() {
         {/* DiversiFi Section: Only load balances/metrics when manually triggered */}
         <TabsContent value="diversifi" className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>DiversiFi Portfolio</CardTitle>
-              <CardDescription>
-                Visualize your global diversification and scores
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               {!triggerDiversifi ? (
                 <div className="flex flex-col items-center gap-4 py-12">
                   <p className="text-center text-muted-foreground">
-                    For performance, portfolio diversification metrics only load once you trigger them.
+                    For performance, portfolio diversification metrics only load
+                    once you trigger them.
                   </p>
                   <Button
                     variant="default"
@@ -170,17 +168,10 @@ export default function ProfilePage() {
                   </span>
                 </div>
               ) : (
-                <div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => refreshDiversifiBalances()}
-                    className="mb-2"
-                  >
-                    Refresh Data
-                  </Button>
-                  <DiversifiVisualizer regionAllocations={regionAllocations} />
-                </div>
+                <DiversifiVisualizer
+                  regionAllocations={regionAllocations}
+                  onRefresh={refreshDiversifiBalances}
+                />
               )}
             </CardContent>
           </Card>
