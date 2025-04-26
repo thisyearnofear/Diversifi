@@ -111,15 +111,17 @@ const PurePreviewMessage = ({
 
                 <div
                   className={cn("flex flex-col gap-4", {
-                    "bg-primary text-primary-foreground px-3 py-2 rounded-xl":
+                    "bg-primary text-primary-foreground px-3 py-2 rounded-xl max-w-[calc(100vw-80px)] md:max-w-none":
                       message.role === "user",
+                    "max-w-[calc(100vw-60px)] md:max-w-none":
+                      message.role === "assistant",
                   })}
                 >
                   {(() => {
                     const { text, interactive } = parseMessageContent(message);
                     return (
                       <>
-                        <div className="markdown-content">
+                        <div className="markdown-content text-[15px] md:text-base">
                           <Markdown>{text}</Markdown>
                         </div>
                         {interactive && (

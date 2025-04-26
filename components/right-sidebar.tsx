@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { getAvailableTokensByRegion } from "@/lib/tokens/token-data";
 import { useTokenBalances, TOKEN_REGIONS } from "@/hooks/use-token-balances";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ConnectButton } from "@/components/connect-button-new";
 import {
   Tooltip,
   TooltipContent,
@@ -238,322 +239,316 @@ export function RightSidebar() {
 
   return (
     <Sidebar collapsible="icon" side="right">
-      <div className="pt-20">
-        {" "}
-        {/* Add padding to push content below wallet UI */}
-        <SidebarContent>
-          <div className="flex flex-col gap-3 p-3 max-w-[220px] mx-auto">
-            {/* Region Selector - More Compact */}
-            <div className="rounded-lg border p-3 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Globe className="size-4 text-blue-500 dark:text-blue-400" />
-                <h3 className="font-medium text-sm">Region Selector</h3>
+      <SidebarContent>
+        <div className="flex flex-col gap-3 p-3 max-w-[220px] mx-auto">
+          {/* Connect Button and Auth at the top */}
+          <div className="mb-4 mt-2 bg-background/80 backdrop-blur-sm p-3 rounded-lg border shadow-sm">
+            <ConnectButton />
+          </div>
+          {/* Region Selector - More Compact */}
+          <div className="rounded-lg border p-3 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Globe className="size-4 text-blue-500 dark:text-blue-400" />
+              <h3 className="font-medium text-sm">Region Selector</h3>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {regions.map((region) => {
+                // Get the count of available tokens for this region
+                const availableTokens = getAvailableTokensByRegion(region.id);
+                const availableCount = availableTokens.length;
+
+                return (
+                  <button
+                    key={region.id}
+                    onClick={() => setSelectedRegion(region.id)}
+                    className={cn(
+                      "flex items-center gap-1.5 text-xs p-1.5 rounded-md transition-colors",
+                      selectedRegion === region.id
+                        ? region.id === "Africa"
+                          ? "bg-green-100 dark:bg-green-900/30 font-medium"
+                          : region.id === "Europe"
+                          ? "bg-blue-100 dark:bg-blue-900/30 font-medium"
+                          : region.id === "USA"
+                          ? "bg-red-100 dark:bg-red-900/30 font-medium"
+                          : region.id === "LatAm"
+                          ? "bg-yellow-100 dark:bg-yellow-900/30 font-medium"
+                          : region.id === "Asia"
+                          ? "bg-purple-100 dark:bg-purple-900/30 font-medium"
+                          : region.id === "RWA"
+                          ? "bg-amber-100 dark:bg-amber-900/30 font-medium"
+                          : "bg-blue-100 dark:bg-blue-900/30 font-medium"
+                        : "hover:bg-muted"
+                    )}
+                    title={`${region.name} - ${availableCount} available tokens`}
+                  >
+                    <region.icon className={cn("size-3.5", region.color)} />
+                    <span>{region.name}</span>
+                    {availableCount > 0 && (
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-[10px] px-1 py-0 h-4 ml-1",
+                          selectedRegion === region.id
+                            ? "bg-primary/20 border-primary/30"
+                            : "bg-muted border-muted-foreground/20"
+                        )}
+                      >
+                        {availableCount}
+                      </Badge>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* DiversiFi - Portfolio Diversification Teaser */}
+          <div className="rounded-lg border p-4 bg-gradient-to-br from-zinc-50 to-gray-50 dark:from-zinc-900 dark:to-gray-900">
+            <div className="flex flex-col items-center mb-3">
+              <div className="flex items-center gap-2">
+                <Globe className="size-4 text-blue-500" />
+                <h3 className="font-medium text-sm">Stables</h3>
               </div>
-
-              <div className="flex flex-wrap justify-center gap-1.5">
-                {regions.map((region) => {
-                  // Get the count of available tokens for this region
-                  const availableTokens = getAvailableTokensByRegion(region.id);
-                  const availableCount = availableTokens.length;
-
-                  return (
-                    <button
-                      key={region.id}
-                      onClick={() => setSelectedRegion(region.id)}
-                      className={cn(
-                        "flex items-center gap-1.5 text-xs p-1.5 rounded-md transition-colors",
-                        selectedRegion === region.id
-                          ? region.id === "Africa"
-                            ? "bg-green-100 dark:bg-green-900/30 font-medium"
-                            : region.id === "Europe"
-                            ? "bg-blue-100 dark:bg-blue-900/30 font-medium"
-                            : region.id === "USA"
-                            ? "bg-red-100 dark:bg-red-900/30 font-medium"
-                            : region.id === "LatAm"
-                            ? "bg-yellow-100 dark:bg-yellow-900/30 font-medium"
-                            : region.id === "Asia"
-                            ? "bg-purple-100 dark:bg-purple-900/30 font-medium"
-                            : region.id === "RWA"
-                            ? "bg-amber-100 dark:bg-amber-900/30 font-medium"
-                            : "bg-blue-100 dark:bg-blue-900/30 font-medium"
-                          : "hover:bg-muted"
-                      )}
-                      title={`${region.name} - ${availableCount} available tokens`}
-                    >
-                      <region.icon className={cn("size-3.5", region.color)} />
-                      <span>{region.name}</span>
-                      {availableCount > 0 && (
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            "text-[10px] px-1 py-0 h-4 ml-1",
-                            selectedRegion === region.id
-                              ? "bg-primary/20 border-primary/30"
-                              : "bg-muted border-muted-foreground/20"
-                          )}
-                        >
-                          {availableCount}
-                        </Badge>
-                      )}
-                    </button>
-                  );
-                })}
+              <div className="flex items-center gap-2">
+                {selectedRegion === "All" && (
+                  <DiversiScore score={diversiScore} hasData={hasBalanceData} />
+                )}
+                {/* Privacy toggle button */}
+                <button
+                  onClick={toggleBalanceVisibility}
+                  className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mt-1"
+                  title={showBalances ? "Hide balances" : "Show balances"}
+                >
+                  {showBalances ? "Hide" : "Show"}
+                </button>
               </div>
             </div>
 
-            {/* DiversiFi - Portfolio Diversification Teaser */}
-            <div className="rounded-lg border p-4 bg-gradient-to-br from-zinc-50 to-gray-50 dark:from-zinc-900 dark:to-gray-900">
-              <div className="flex flex-col items-center mb-3">
-                <div className="flex items-center gap-2">
-                  <Globe className="size-4 text-blue-500" />
-                  <h3 className="font-medium text-sm">Stables</h3>
+            {/* Balance Display Section */}
+            <div className="space-y-2 mb-3">
+              {/* Initial State - No Balances Loaded */}
+              {!isLoading && Object.keys(balances).length === 0 && (
+                <div className="text-xs text-gray-500 text-center py-2">
+                  Click "View Balances" to see your stablecoin holdings.
                 </div>
-                <div className="flex items-center gap-2">
-                  {selectedRegion === "All" && (
-                    <DiversiScore
-                      score={diversiScore}
-                      hasData={hasBalanceData}
-                    />
-                  )}
-                  {/* Privacy toggle button */}
-                  <button
-                    onClick={toggleBalanceVisibility}
-                    className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mt-1"
-                    title={showBalances ? "Hide balances" : "Show balances"}
-                  >
-                    {showBalances ? "Hide" : "Show"}
-                  </button>
+              )}
+
+              {/* Loading State */}
+              {isLoading && (
+                <div className="text-xs text-gray-500 text-center py-2">
+                  <Loader2 className="animate-spin mx-auto mb-1 size-4" />
+                  Loading your balances...
                 </div>
-              </div>
+              )}
 
-              {/* Balance Display Section */}
-              <div className="space-y-2 mb-3">
-                {/* Initial State - No Balances Loaded */}
-                {!isLoading && Object.keys(balances).length === 0 && (
-                  <div className="text-xs text-gray-500 text-center py-2">
-                    Click "View Balances" to see your stablecoin holdings.
-                  </div>
-                )}
+              {/* Balances Loaded - All Regions View */}
+              {!isLoading &&
+                Object.keys(balances).length > 0 &&
+                selectedRegion === "All" && (
+                  <div>
+                    {/* Region List with Balances */}
+                    {(() => {
+                      const { totals, totalValue } =
+                        calculateRegionTotals(balances);
+                      // Get all regions, not just ones with balances
+                      // Exclude 'All' and 'RWA' (empty region)
+                      const allRegions = Object.keys(TOKEN_REGIONS).filter(
+                        (r) => r !== "All" && r !== "RWA"
+                      );
 
-                {/* Loading State */}
-                {isLoading && (
-                  <div className="text-xs text-gray-500 text-center py-2">
-                    <Loader2 className="animate-spin mx-auto mb-1 size-4" />
-                    Loading your balances...
-                  </div>
-                )}
-
-                {/* Balances Loaded - All Regions View */}
-                {!isLoading &&
-                  Object.keys(balances).length > 0 &&
-                  selectedRegion === "All" && (
-                    <div>
-                      {/* Region List with Balances */}
-                      {(() => {
-                        const { totals, totalValue } =
-                          calculateRegionTotals(balances);
-                        // Get all regions, not just ones with balances
-                        // Exclude 'All' and 'RWA' (empty region)
-                        const allRegions = Object.keys(TOKEN_REGIONS).filter(
-                          (r) => r !== "All" && r !== "RWA"
+                      // If no balances at all, show a message
+                      if (
+                        Object.values(totals).every((amount) => amount === 0)
+                      ) {
+                        return (
+                          <div className="text-xs text-gray-500 text-center py-2">
+                            coin balances
+                          </div>
                         );
+                      }
 
-                        // If no balances at all, show a message
-                        if (
-                          Object.values(totals).every((amount) => amount === 0)
-                        ) {
+                      // Show all regions, even if they have zero balances
+                      return allRegions.map((region) => {
+                        // Get the amount for this region (default to 0)
+                        const amount = totals[region] || 0;
+                        return (
+                          <div
+                            key={region}
+                            className="flex items-center gap-2 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer mb-2"
+                            onClick={() => setSelectedRegion(region as Region)}
+                          >
+                            <div
+                              className={`w-1 h-full rounded-full ${getRegionColor(
+                                region
+                              )}`}
+                              style={{ height: "16px" }}
+                            />
+                            <div className="flex-1">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs font-medium">
+                                  {region}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {showBalances
+                                    ? `$${formatBalance(amount.toString())}`
+                                    : formatPercentage(amount, totalValue)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                )}
+
+              {/* Balances Loaded - Specific Region View */}
+              {!isLoading &&
+                Object.keys(balances).length > 0 &&
+                selectedRegion !== "All" && (
+                  <div>
+                    {/* Region Header */}
+                    <div className="flex items-center gap-2 p-1.5 rounded-md bg-gray-50 dark:bg-gray-800/50 mb-2">
+                      <div
+                        className={`w-1 h-full rounded-full ${getRegionColor(
+                          selectedRegion
+                        )}`}
+                        style={{ height: "16px" }}
+                      />
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-medium">
+                            {selectedRegion}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {(() => {
+                              const { totals, totalValue } =
+                                calculateRegionTotals(balances);
+                              const regionAmount = totals[selectedRegion] || 0;
+
+                              return showBalances
+                                ? `$${formatBalance(regionAmount.toString())}`
+                                : formatPercentage(regionAmount, totalValue);
+                            })()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Token List */}
+                    <div className="space-y-1 pl-3">
+                      {(() => {
+                        const tokens =
+                          TOKEN_REGIONS[
+                            selectedRegion as keyof typeof TOKEN_REGIONS
+                          ] || [];
+
+                        if (tokens.length === 0) {
                           return (
-                            <div className="text-xs text-gray-500 text-center py-2">
-                              coin balances
+                            <div className="text-xs text-gray-500 text-center py-1">
+                              No assets in this region
                             </div>
                           );
                         }
 
-                        // Show all regions, even if they have zero balances
-                        return allRegions.map((region) => {
-                          // Get the amount for this region (default to 0)
-                          const amount = totals[region] || 0;
+                        return tokens.map((token) => {
+                          const tokenData = balances[token];
                           return (
                             <div
-                              key={region}
-                              className="flex items-center gap-2 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer mb-2"
-                              onClick={() =>
-                                setSelectedRegion(region as Region)
-                              }
+                              key={token}
+                              className="flex justify-between items-center text-xs"
                             >
-                              <div
-                                className={`w-1 h-full rounded-full ${getRegionColor(
-                                  region
-                                )}`}
-                                style={{ height: "16px" }}
-                              />
-                              <div className="flex-1">
-                                <div className="flex justify-between items-center">
-                                  <span className="text-xs font-medium">
-                                    {region}
-                                  </span>
-                                  <span className="text-xs text-gray-500">
-                                    {showBalances
-                                      ? `$${formatBalance(amount.toString())}`
-                                      : formatPercentage(amount, totalValue)}
-                                  </span>
-                                </div>
-                              </div>
+                              <span>{token}</span>
+                              <span>
+                                {(() => {
+                                  if (!tokenData) return "0.00";
+
+                                  if (!showBalances) {
+                                    // Calculate token's percentage of region total
+                                    const { totals } =
+                                      calculateRegionTotals(balances);
+                                    const regionTotal =
+                                      totals[selectedRegion] || 0;
+                                    if (regionTotal === 0) return "0%";
+
+                                    return formatPercentage(
+                                      tokenData.value,
+                                      regionTotal
+                                    );
+                                  }
+
+                                  return formatBalance(tokenData.amount);
+                                })()}
+                              </span>
                             </div>
                           );
                         });
                       })()}
                     </div>
-                  )}
-
-                {/* Balances Loaded - Specific Region View */}
-                {!isLoading &&
-                  Object.keys(balances).length > 0 &&
-                  selectedRegion !== "All" && (
-                    <div>
-                      {/* Region Header */}
-                      <div className="flex items-center gap-2 p-1.5 rounded-md bg-gray-50 dark:bg-gray-800/50 mb-2">
-                        <div
-                          className={`w-1 h-full rounded-full ${getRegionColor(
-                            selectedRegion
-                          )}`}
-                          style={{ height: "16px" }}
-                        />
-                        <div className="flex-1">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs font-medium">
-                              {selectedRegion}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {(() => {
-                                const { totals, totalValue } =
-                                  calculateRegionTotals(balances);
-                                const regionAmount =
-                                  totals[selectedRegion] || 0;
-
-                                return showBalances
-                                  ? `$${formatBalance(regionAmount.toString())}`
-                                  : formatPercentage(regionAmount, totalValue);
-                              })()}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Token List */}
-                      <div className="space-y-1 pl-3">
-                        {(() => {
-                          const tokens =
-                            TOKEN_REGIONS[
-                              selectedRegion as keyof typeof TOKEN_REGIONS
-                            ] || [];
-
-                          if (tokens.length === 0) {
-                            return (
-                              <div className="text-xs text-gray-500 text-center py-1">
-                                No assets in this region
-                              </div>
-                            );
-                          }
-
-                          return tokens.map((token) => {
-                            const tokenData = balances[token];
-                            return (
-                              <div
-                                key={token}
-                                className="flex justify-between items-center text-xs"
-                              >
-                                <span>{token}</span>
-                                <span>
-                                  {(() => {
-                                    if (!tokenData) return "0.00";
-
-                                    if (!showBalances) {
-                                      // Calculate token's percentage of region total
-                                      const { totals } =
-                                        calculateRegionTotals(balances);
-                                      const regionTotal =
-                                        totals[selectedRegion] || 0;
-                                      if (regionTotal === 0) return "0%";
-
-                                      return formatPercentage(
-                                        tokenData.value,
-                                        regionTotal
-                                      );
-                                    }
-
-                                    return formatBalance(tokenData.amount);
-                                  })()}
-                                </span>
-                              </div>
-                            );
-                          });
-                        })()}
-                      </div>
-                    </div>
-                  )}
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  className="w-full text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 py-1.5 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 transition-colors flex items-center justify-center"
-                  onClick={refreshBalances}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="size-3 mr-1 animate-spin" />
-                      Loading...
-                    </>
-                  ) : Object.keys(balances).length > 0 ? (
-                    <>
-                      <Loader2 className="size-3 mr-1" />
-                      Refresh Balances
-                    </>
-                  ) : (
-                    <>
-                      <Loader2 className="size-3 mr-1" />
-                      View Balances
-                    </>
-                  )}
-                </button>
-              </div>
+                  </div>
+                )}
             </div>
 
-            {/* Profile Link */}
-            <div className="rounded-lg border p-3 mb-3">
-              <a
-                href="/profile"
-                className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            <div className="flex gap-2">
+              <button
+                className="w-full text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 py-1.5 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 transition-colors flex items-center justify-center"
+                onClick={refreshBalances}
+                disabled={isLoading}
               >
-                <User className="size-4 text-green-600 dark:text-green-400" />
-                <span className="text-sm font-medium">Dashboard</span>
-              </a>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="size-3 mr-1 animate-spin" />
+                    Loading...
+                  </>
+                ) : Object.keys(balances).length > 0 ? (
+                  <>
+                    <Loader2 className="size-3 mr-1" />
+                    Refresh Balances
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="size-3 mr-1" />
+                    View Balances
+                  </>
+                )}
+              </button>
             </div>
+          </div>
 
-            {/* Social Links - Compact Row */}
-            <div className="rounded-lg border p-3">
-              <div className="flex flex-col items-center gap-2">
-                <div className="flex items-center justify-center gap-2"></div>
-                <div className="flex gap-3 justify-center">
-                  {socialLinks.map((link) => (
-                    <a
-                      key={link.name}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center size-7 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                      title={link.name}
-                    >
-                      <link.icon className={cn("size-3.5", link.color)} />
-                    </a>
-                  ))}
-                </div>
+          {/* Profile Link */}
+          <div className="rounded-lg border p-3 mb-3">
+            <a
+              href="/profile"
+              className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <User className="size-4 text-green-600 dark:text-green-400" />
+              <span className="text-sm font-medium">Dashboard</span>
+            </a>
+          </div>
+
+          {/* Social Links - Compact Row */}
+          <div className="rounded-lg border p-3">
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center justify-center gap-2"></div>
+              <div className="flex gap-3 justify-center">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center size-7 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    title={link.name}
+                  >
+                    <link.icon className={cn("size-3.5", link.color)} />
+                  </a>
+                ))}
               </div>
             </div>
           </div>
-        </SidebarContent>
-      </div>
+        </div>
+      </SidebarContent>
     </Sidebar>
   );
 }

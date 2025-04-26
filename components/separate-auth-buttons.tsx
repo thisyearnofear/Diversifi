@@ -163,14 +163,17 @@ export function SeparateAuthButtons() {
   // If authenticated and not showing success message, show only the wallet button
   if (isAuthenticated && !showSuccess) {
     return (
-      <div className="flex items-center justify-end w-full">
+      <div className="flex items-center justify-between w-full">
+        <div>
+          <h3 className="text-sm font-medium">Wallet</h3>
+        </div>
         <ConnectKitButton.Custom>
           {({ show, ensName }) => (
             <Button
               onClick={show}
               size="sm"
               variant="outline"
-              className="text-xs"
+              className="text-xs py-1 h-8"
             >
               {ensName ||
                 (address
@@ -184,21 +187,21 @@ export function SeparateAuthButtons() {
   }
 
   return (
-    <div className="flex flex-col gap-3 w-full">
-      <div className="flex items-center gap-2">
-        <div className="flex-1">
-          <h3 className="text-sm font-medium">Start</h3>
-          <p className="text-xs text-muted-foreground">here</p>
+    <div className="flex flex-col gap-2 w-full">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-medium">Wallet</h3>
         </div>
         <div className="flex items-center gap-2">
           {isConnected ? (
-            <div className="flex items-center gap-2 text-green-600">
-              <CheckCircle className="size-4" />
+            <div className="flex items-center gap-1 text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md">
+              <CheckCircle className="size-3.5" />
+              <span className="text-xs font-medium">Connected</span>
             </div>
           ) : (
             <ConnectKitButton.Custom>
               {({ show }) => (
-                <Button onClick={show} size="sm">
+                <Button onClick={show} size="sm" className="py-1 h-8">
                   Connect
                 </Button>
               )}
@@ -207,15 +210,15 @@ export function SeparateAuthButtons() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex-1">
-          <h3 className="text-sm font-medium">SIWE</h3>
-          <p className="text-xs text-muted-foreground">authenticate</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-medium">Auth</h3>
         </div>
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
-            <div className="flex items-center gap-2 text-green-600">
-              <CheckCircle className="size-4" />
+            <div className="flex items-center gap-1 text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md">
+              <CheckCircle className="size-3.5" />
+              <span className="text-xs font-medium">Verified</span>
             </div>
           ) : (
             <Button
@@ -223,10 +226,11 @@ export function SeparateAuthButtons() {
               disabled={!isConnected || isAuthenticating}
               size="sm"
               variant={isConnected ? "default" : "outline"}
+              className="py-1 h-8"
             >
               {isAuthenticating ? (
                 <>
-                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
                   Signing...
                 </>
               ) : (

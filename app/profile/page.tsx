@@ -9,6 +9,7 @@ import { DiversifiVisualizer } from "@/components/profile/diversifi-visualizer";
 import { useTokenBalances, TOKEN_REGIONS } from "@/hooks/use-token-balances";
 type RegionKey = keyof typeof TOKEN_REGIONS;
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Card,
   CardContent,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SeparateAuthButtons } from "@/components/separate-auth-buttons";
 
 // Utility: compute region allocations from balances
 function useRegionAllocations(balances: Record<string, any>) {
@@ -55,14 +57,17 @@ export default function ProfilePage() {
   const { isAuthenticated } = useAuth();
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
+  const isMobile = useIsMobile();
 
-  // Manual trigger for DiversiFi data calculation/fetch
-  const [triggerDiversifi, setTriggerDiversifi] = useState(false);
+  // State for DiversiFi data loading
   const {
     balances,
     isLoading: isDiversifiLoading,
     refreshBalances: refreshDiversifiBalances,
-  } = useTokenBalances(triggerDiversifi ? "All" : undefined);
+  } = useTokenBalances("All"); // Always initialize with "All" to prepare for data loading
+
+  // Track if this is the first load to show skeleton instead of spinner on refresh
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const regionAllocations = useRegionAllocations(balances);
 
@@ -73,6 +78,15 @@ export default function ProfilePage() {
     }, 500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Load DiversiFi data when the tab is selected
+  useEffect(() => {
+    if (activeTab === "diversifi" && isFirstLoad) {
+      // Load data when the tab is selected for the first time
+      refreshDiversifiBalances();
+      setIsFirstLoad(false);
+    }
+  }, [activeTab, isFirstLoad, refreshDiversifiBalances]);
 
   // If entire page is still loading (not just DiversiFi), show loader
   if (isLoadingPage) {
@@ -107,35 +121,52 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container p-6 pt-20 md:pt-6 space-y-8">
-      <h1 className="text-3xl font-bold text-center">Dashboard</h1>
+    <div className="w-full max-w-3xl mx-auto p-0 sm:p-6 pt-4 md:pt-6 space-y-6 md:space-y-8">
+      <h1
+        className={`font-bold text-center ${
+          isMobile ? "text-2xl" : "text-3xl"
+        }`}
+      >
+        Dashboard
+      </h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 mb-8">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="diversifi">DiversiFi</TabsTrigger>
-          <TabsTrigger value="referrals" className="text-muted-foreground">
-            Referrals
-          </TabsTrigger>
-          <TabsTrigger value="points" className="text-muted-foreground">
-            Points
-          </TabsTrigger>
-          <TabsTrigger value="admin">Admin</TabsTrigger>
-        </TabsList>
+        {isMobile ? (
+          <TabsList className="w-full flex mb-4 p-0 sticky top-14 z-10 bg-background/95 backdrop-blur-sm shadow-sm rounded-lg">
+            <TabsTrigger
+              value="profile"
+              className="flex-1 py-2.5 text-sm font-medium active:scale-95 transition-all duration-150"
+            >
+              Profile
+            </TabsTrigger>
+            <TabsTrigger
+              value="diversifi"
+              className="flex-1 py-2.5 text-sm font-medium active:scale-95 transition-all duration-150"
+            >
+              Diversifi
+            </TabsTrigger>
+          </TabsList>
+        ) : (
+          <TabsList className="grid grid-cols-5 mb-8">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="diversifi">DiversiFi</TabsTrigger>
+            <TabsTrigger value="referrals" className="text-muted-foreground">
+              Referrals
+            </TabsTrigger>
+            <TabsTrigger value="points" className="text-muted-foreground">
+              Points
+            </TabsTrigger>
+            <TabsTrigger value="admin">Admin</TabsTrigger>
+          </TabsList>
+        )}
 
         {/* Profile Section */}
         <TabsContent
           value="profile"
-          className="space-y-6 flex flex-col items-center"
+          className="space-y-6 flex flex-col items-center px-4 md:px-0"
         >
-          <Card>
-            <CardHeader>
-              <CardTitle>User Profile</CardTitle>
-              <CardDescription>
-                Your wallet and account information
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          <Card className="w-full shadow-md">
+            <CardContent className={isMobile ? "px-4 py-6" : "py-6"}>
               <div className="flex flex-col items-center justify-center">
                 <UserProfile />
               </div>
@@ -143,29 +174,65 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
 
-        {/* DiversiFi Section: Only load balances/metrics when manually triggered */}
-        <TabsContent value="diversifi" className="space-y-6">
-          <Card>
-            <CardContent className="p-6">
-              {!triggerDiversifi ? (
-                <div className="flex flex-col items-center gap-4 py-12">
-                  <p className="text-center text-muted-foreground">
-                    For performance, portfolio diversification metrics only load
-                    once you trigger them.
-                  </p>
-                  <Button
-                    variant="default"
-                    onClick={() => setTriggerDiversifi(true)}
-                  >
-                    Load Portfolio Data
-                  </Button>
+        {/* DiversiFi Section: Auto-loads when tab is selected */}
+        <TabsContent value="diversifi" className="space-y-6 px-4 md:px-0">
+          <Card className="w-full shadow-md">
+            <CardContent className={isMobile ? "p-4" : "p-6"}>
+              {isDiversifiLoading && isFirstLoad ? (
+                <div className="space-y-6">
+                  {/* Skeleton UI for first load */}
+                  <div className="w-full flex items-center justify-between pb-2 border-b">
+                    <div className="h-5 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-24 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                      <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+
+                  {/* Skeleton for map visualization */}
+                  <div className="w-full h-[350px] bg-gray-100 dark:bg-gray-900/50 rounded-lg border flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                      <span className="text-sm text-muted-foreground">
+                        Loading your portfolio data...
+                      </span>
+                      <span className="text-xs text-muted-foreground max-w-xs text-center">
+                        We're analyzing your stablecoin holdings across
+                        different regions
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Skeleton for pie chart */}
+                  <div className="w-full h-[200px] bg-gray-100 dark:bg-gray-900/50 rounded-lg border"></div>
+
+                  {/* Skeleton for metrics */}
+                  <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className="h-20 bg-gray-100 dark:bg-gray-900/50 rounded-lg border"
+                      ></div>
+                    ))}
+                  </div>
                 </div>
               ) : isDiversifiLoading ? (
-                <div className="flex flex-col items-center gap-4 py-16">
-                  <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-                  <span className="text-sm text-muted-foreground">
-                    Loading portfolio balances&hellip;
-                  </span>
+                <div className="relative">
+                  {/* Overlay loading state for refreshes */}
+                  <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                      <span className="text-sm font-medium">
+                        Refreshing data...
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Keep showing the previous visualization during refresh */}
+                  <DiversifiVisualizer
+                    regionAllocations={regionAllocations}
+                    onRefresh={refreshDiversifiBalances}
+                  />
                 </div>
               ) : (
                 <DiversifiVisualizer
@@ -177,22 +244,28 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="referrals" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Referrals</CardTitle>
+        <TabsContent value="referrals" className="space-y-6 px-4 md:px-0">
+          <Card className="w-full shadow-md">
+            <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
+              <CardTitle className={isMobile ? "text-xl" : undefined}>
+                Referrals
+              </CardTitle>
               <CardDescription>
                 Track your referrals and earn points
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className={isMobile ? "px-4 py-4" : undefined}>
               <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800/50 text-center">
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   The referral system is currently under development. Soon
                   you'll be able to invite friends and earn points when they
                   join Stable Station.
                 </p>
-                <Button variant="outline" disabled className="opacity-50">
+                <Button
+                  variant="outline"
+                  disabled
+                  className="opacity-50 active:scale-95 transition-all duration-150"
+                >
                   Coming Soon
                 </Button>
               </div>
@@ -200,22 +273,28 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="points" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Points System</CardTitle>
+        <TabsContent value="points" className="space-y-6 px-4 md:px-0">
+          <Card className="w-full shadow-md">
+            <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
+              <CardTitle className={isMobile ? "text-xl" : undefined}>
+                Points System
+              </CardTitle>
               <CardDescription>
                 Track your platform usage and earn points
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className={isMobile ? "px-4 py-4" : undefined}>
               <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800/50 text-center">
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   The points system is currently under development. Soon you'll
                   be able to track your platform usage and earn points for using
                   Stable Station features.
                 </p>
-                <Button variant="outline" disabled className="opacity-50">
+                <Button
+                  variant="outline"
+                  disabled
+                  className="opacity-50 active:scale-95 transition-all duration-150"
+                >
                   Coming Soon
                 </Button>
               </div>
@@ -223,21 +302,27 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="admin" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Admin: Starter Kits</CardTitle>
+        <TabsContent value="admin" className="space-y-6 px-4 md:px-0">
+          <Card className="w-full shadow-md">
+            <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
+              <CardTitle className={isMobile ? "text-xl" : undefined}>
+                Admin: Starter Kits
+              </CardTitle>
               <CardDescription>
                 Manage starter kits for users (Sponsor access only)
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className={isMobile ? "px-4 py-4" : undefined}>
               <div className="space-y-4">
                 <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800/50 text-center">
-                  <p className="text-muted-foreground mb-2">
+                  <p className="text-muted-foreground mb-2 text-sm md:text-base">
                     This feature is currently under development
                   </p>
-                  <Button variant="outline" disabled className="opacity-50">
+                  <Button
+                    variant="outline"
+                    disabled
+                    className="opacity-50 active:scale-95 transition-all duration-150"
+                  >
                     Manage Starter Kits
                   </Button>
                 </div>

@@ -53,8 +53,8 @@ export function UserProfile() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-6 items-start">
+    <div className="space-y-6 w-full max-w-2xl mx-auto">
+      <div className="flex flex-col items-center text-center gap-6">
         <div className="flex-shrink-0 flex items-center justify-center bg-muted rounded-full w-24 h-24 overflow-hidden">
           {primaryProfile?.avatar ? (
             <Image
@@ -70,8 +70,8 @@ export function UserProfile() {
           )}
         </div>
 
-        <div className="space-y-4 flex-1">
-          <div>
+        <div className="space-y-4 w-full">
+          <div className="text-center">
             <h2 className="text-xl font-semibold">
               {primaryProfile?.displayName || "Wallet"}
               {primaryProfile?.platform && (
@@ -87,8 +87,8 @@ export function UserProfile() {
             )}
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-            <div className="flex items-center gap-2 bg-muted px-3 py-1 rounded-md">
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center justify-center gap-2 bg-muted px-3 py-1 rounded-md">
               <span className="text-sm font-mono">
                 {address
                   ? `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -109,8 +109,8 @@ export function UserProfile() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto">
+            <div className="text-center">
               <p className="text-sm text-muted-foreground">Status</p>
               <p className="font-medium">
                 {isAuthenticated ? (
@@ -120,7 +120,7 @@ export function UserProfile() {
                 )}
               </p>
             </div>
-            <div>
+            <div className="text-center">
               <p className="text-sm text-muted-foreground">Joined</p>
               <p className="font-medium">{joinDate || "Unknown"}</p>
             </div>
@@ -128,9 +128,9 @@ export function UserProfile() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
         <Card className="p-4 bg-muted/50">
-          <h3 className="font-medium mb-3">Web3 Profiles</h3>
+          <h3 className="font-medium mb-3 text-center">Web3 Profiles</h3>
           <div className="space-y-2">
             {profiles && profiles.length > 0 ? (
               profiles.map((profile, index) => (
@@ -167,7 +167,7 @@ export function UserProfile() {
                 </div>
               ))
             ) : (
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground text-center">
                 No web3 profiles found
               </div>
             )}
@@ -175,21 +175,21 @@ export function UserProfile() {
         </Card>
 
         <Card className="p-4 bg-muted/50">
-          <h3 className="font-medium mb-3">Connected Networks</h3>
+          <h3 className="font-medium mb-3 text-center">Connected Networks</h3>
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
               <span>Base</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
               <span>Optimism</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
               <span>Celo</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
               <span>Polygon</span>
             </div>

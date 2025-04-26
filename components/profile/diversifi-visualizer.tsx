@@ -125,11 +125,16 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
   const [activeRegion, setActiveRegion] = useState<string | null>(null);
   const vizRef = useRef<HTMLDivElement>(null);
 
+  // Check if there's any data to display
+  const hasData = weights.some((weight) => weight > 0);
+
   // Find the region with the highest allocation
-  const mainRegion = Object.entries(regionAllocations).reduce((a, b) =>
-    b[1] > a[1] ? b : a
-  )[0];
-  const mainPct = regionAllocations[mainRegion] * 100;
+  const mainRegion = hasData
+    ? Object.entries(regionAllocations).reduce((a, b) =>
+        b[1] > a[1] ? b : a
+      )[0]
+    : "None";
+  const mainPct = hasData ? regionAllocations[mainRegion] * 100 : 0;
 
   // Get all regions with non-zero allocations
   const regionLabels = Object.entries(regionAllocations)
@@ -238,7 +243,7 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
         .append("text")
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
-        .attr("fill", allocation > 0 ? "white" : "#64748b")
+        .attr("fill", allocation > 0 ? "white" : "currentColor")
         .attr("font-weight", allocation > 0 ? "bold" : "normal")
         .attr("font-size", allocation > 0 ? "12px" : "10px")
         .text(region.name);
@@ -294,7 +299,7 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
 
       legend
         .append("text")
-        .attr("fill", "#64748b")
+        .attr("fill", "currentColor")
         .attr("font-size", "10px")
         .text(
           `${regionLabels.length} of ${REGIONS.length} regions active · ${
@@ -383,7 +388,7 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
       })
       .attr("dy", ".35em")
       .attr("text-anchor", "middle")
-      .attr("fill", "white")
+      .attr("fill", "currentColor")
       .style("font-size", "12px")
       .style("font-weight", "bold")
       .style("pointer-events", "none")
@@ -397,7 +402,7 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
       .attr("text-anchor", "middle")
       .attr("dy", "-0.2em")
       .style("font-size", "14px")
-      .style("fill", "#6b7280")
+      .style("fill", "currentColor")
       .text("Portfolio");
 
     svg
@@ -405,7 +410,7 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
       .attr("text-anchor", "middle")
       .attr("dy", "1em")
       .style("font-size", "14px")
-      .style("fill", "#6b7280")
+      .style("fill", "currentColor")
       .text("Distribution");
 
     // Add legend
@@ -430,7 +435,7 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
         .attr("x", 20)
         .attr("y", 10)
         .attr("font-size", "12px")
-        .attr("fill", "#1e293b")
+        .attr("fill", "currentColor")
         .text(`${d.region} (${Math.round(d.value * 100)}%)`);
     });
   }, [regionAllocations, activeRegion]);
@@ -439,16 +444,8 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
     <div className="flex flex-col items-center gap-4 py-4">
       {/* Header with title, badge, and refresh button */}
       <div className="w-full max-w-3xl mx-auto flex items-center justify-between pb-2 border-b">
-        <h3 className="text-base font-medium">Geographic Distribution</h3>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRefresh}
-            className="text-xs"
-          >
-            Refresh Data
-          </Button>
+          <h3 className="text-base font-medium">Geographic Distribution</h3>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -465,122 +462,191 @@ export const DiversifiVisualizer: React.FC<DiversifiVisualizerProps> = ({
             </Tooltip>
           </TooltipProvider>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRefresh}
+          className="flex items-center gap-1.5 text-xs hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-refresh-cw"
+          >
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+            <path d="M3 21v-5h5"></path>
+          </svg>
+          Refresh Portfolio
+        </Button>
       </div>
 
       {/* Main visualization area */}
       <div className="w-full max-w-3xl mx-auto">
-        <div className="relative bg-slate-50 dark:bg-slate-900/50 rounded-lg border shadow-sm overflow-hidden">
-          <div ref={vizRef} className="w-full h-[350px]"></div>
+        <div className="relative bg-slate-50 dark:bg-slate-900/50 rounded-lg border shadow-sm overflow-hidden text-slate-900 dark:text-slate-200">
+          {!hasData ? (
+            <div className="w-full h-[350px] flex flex-col items-center justify-center p-6">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg max-w-md text-center">
+                <h4 className="font-medium text-blue-700 dark:text-blue-400 mb-2">
+                  No Stablecoins Found
+                </h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                  We couldn't find any stablecoins in your wallet. To visualize
+                  your geographic distribution, you'll need to acquire
+                  stablecoins from different regions.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white dark:bg-slate-800 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                  onClick={onRefresh}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-refresh-cw mr-1.5"
+                  >
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                    <path d="M21 3v5h-5"></path>
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                    <path d="M3 21v-5h5"></path>
+                  </svg>
+                  Refresh Data
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div ref={vizRef} className="w-full h-[350px]"></div>
+          )}
         </div>
       </div>
 
       {/* Pie chart below the map */}
-      <div className="w-full max-w-3xl mx-auto">
-        <div className="relative bg-slate-50 dark:bg-slate-900/50 rounded-lg border shadow-sm overflow-hidden">
-          <div ref={pieChartRef} className="w-full h-[200px]"></div>
+      {hasData && (
+        <div className="w-full max-w-3xl mx-auto">
+          <div className="relative bg-slate-50 dark:bg-slate-900/50 rounded-lg border shadow-sm overflow-hidden text-slate-900 dark:text-slate-200">
+            <div ref={pieChartRef} className="w-full h-[200px]"></div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Metrics section with full names on desktop */}
-      <div className="w-full max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="w-full">
-              <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
-                <div className="w-full text-center">
-                  <span className="block text-xs text-slate-500 md:hidden">
-                    HHI
-                  </span>
-                  <span className="hidden text-xs text-slate-500 md:block">
-                    Herfindahl-Hirschman Index
-                  </span>
+      {hasData && (
+        <div className="w-full max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="w-full">
+                <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
+                  <div className="w-full text-center">
+                    <span className="block text-xs text-slate-500 md:hidden">
+                      HHI
+                    </span>
+                    <span className="hidden text-xs text-slate-500 md:block">
+                      Herfindahl-Hirschman Index
+                    </span>
+                  </div>
+                  <div className="font-medium mt-2">{hhi.toFixed(2)}</div>
                 </div>
-                <div className="font-medium mt-2">{hhi.toFixed(2)}</div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent
-              side="top"
-              className="text-xs max-w-[200px] text-center z-50"
-            >
-              Concentration measure: lower values indicate better
-              diversification
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="text-xs max-w-[200px] text-center z-50"
+              >
+                Concentration measure: lower values indicate better
+                diversification
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="w-full">
-              <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
-                <div className="w-full text-center">
-                  <span className="block text-xs text-slate-500 md:hidden">
-                    Entropy
-                  </span>
-                  <span className="hidden text-xs text-slate-500 md:block">
-                    Shannon Entropy
-                  </span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="w-full">
+                <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
+                  <div className="w-full text-center">
+                    <span className="block text-xs text-slate-500 md:hidden">
+                      Entropy
+                    </span>
+                    <span className="hidden text-xs text-slate-500 md:block">
+                      Shannon Entropy
+                    </span>
+                  </div>
+                  <div className="font-medium mt-2">{entropy.toFixed(2)}</div>
                 </div>
-                <div className="font-medium mt-2">{entropy.toFixed(2)}</div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent
-              side="top"
-              className="text-xs max-w-[200px] text-center z-50"
-            >
-              Diversity measure: higher values indicate more even distribution
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="text-xs max-w-[200px] text-center z-50"
+              >
+                Diversity measure: higher values indicate more even distribution
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="w-full">
-              <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
-                <div className="w-full text-center">
-                  <span className="block text-xs text-slate-500 md:hidden">
-                    Spread
-                  </span>
-                  <span className="hidden text-xs text-slate-500 md:block">
-                    Geographic Spread Ratio
-                  </span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="w-full">
+                <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
+                  <div className="w-full text-center">
+                    <span className="block text-xs text-slate-500 md:hidden">
+                      Spread
+                    </span>
+                    <span className="hidden text-xs text-slate-500 md:block">
+                      Geographic Spread Ratio
+                    </span>
+                  </div>
+                  <div className="font-medium mt-2">
+                    {(spread * 100).toFixed(0)}%
+                  </div>
                 </div>
-                <div className="font-medium mt-2">
-                  {(spread * 100).toFixed(0)}%
-                </div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent
-              side="top"
-              className="text-xs max-w-[200px] text-center z-50"
-            >
-              Percentage of available regions where you have holdings
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="text-xs max-w-[200px] text-center z-50"
+              >
+                Percentage of available regions where you have holdings
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="w-full">
-              <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
-                <div className="w-full text-center">
-                  <span className="text-xs text-slate-500">Main Region</span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="w-full">
+                <div className="w-full h-full flex flex-col items-center p-3 border rounded-lg bg-slate-50 dark:bg-slate-900/50 cursor-help">
+                  <div className="w-full text-center">
+                    <span className="text-xs text-slate-500">Main Region</span>
+                  </div>
+                  <div className="font-medium mt-2">
+                    {mainPct >= 1
+                      ? `${mainRegion} (${mainPct.toFixed(0)}%)`
+                      : "None"}
+                  </div>
                 </div>
-                <div className="font-medium mt-2">
-                  {mainPct >= 1
-                    ? `${mainRegion} (${mainPct.toFixed(0)}%)`
-                    : "None"}
-                </div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent
-              side="top"
-              className="text-xs max-w-[200px] text-center z-50"
-            >
-              Region with the highest allocation in your portfolio
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="text-xs max-w-[200px] text-center z-50"
+              >
+                Region with the highest allocation in your portfolio
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )}
     </div>
   );
 };

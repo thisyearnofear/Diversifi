@@ -9,8 +9,9 @@ import { RightSidebar } from "@/components/right-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/lib/web3/providers";
 import { MobileNavigation } from "@/components/mobile-navigation";
-import { MobileAuthComponent } from "@/components/mobile-auth-component";
+import { MobileHeader } from "@/components/mobile-header";
 import { RegionProvider } from "@/contexts/region-context";
+import { ReactQueryProvider } from "@/lib/react-query";
 
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
@@ -81,24 +82,25 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster position="top-center" />
-          <Providers>
-            <RegionProvider>
-              <SidebarProvider>
-                <div className="grid grid-cols-[auto,1fr,auto] min-h-screen w-full">
-                  <LeftSidebar />
-                  <div className="flex justify-center items-start">
-                    <div className="fixed top-0 right-0 z-50 p-4 m-4 bg-background/80 backdrop-blur-sm border rounded-md shadow-sm">
-                      <ConnectButton />
+          <ReactQueryProvider>
+            <Providers>
+              <RegionProvider>
+                <SidebarProvider>
+                  <div className="grid grid-cols-[auto,1fr,auto] min-h-screen w-full">
+                    <LeftSidebar />
+                    <div className="flex justify-center items-start">
+                      <MobileHeader />
+                      <main className="w-full max-w-3xl mx-auto pb-24 md:pb-0 mt-14 md:mt-0">
+                        {children}
+                      </main>
+                      <MobileNavigation />
                     </div>
-                    <main className="w-full max-w-3xl mx-auto">{children}</main>
-                    <MobileNavigation />
-                    <MobileAuthComponent />
+                    <RightSidebar />
                   </div>
-                  <RightSidebar />
-                </div>
-              </SidebarProvider>
-            </RegionProvider>
-          </Providers>
+                </SidebarProvider>
+              </RegionProvider>
+            </Providers>
+          </ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

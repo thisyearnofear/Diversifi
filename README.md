@@ -68,6 +68,22 @@ We've built:
 - Action-based learning system with rewards
 - Multi-chain support (Base, Celo, Ethereum, Polygon, Optimism)
 
+## Design Philosophy
+
+### Desktop Experience
+- The desktop layout is intentionally left untouched for maximum stability and familiarity.
+- All desktop grid, sidebar, and main content classes remain as originally designed.
+
+### Mobile & Small Screen Improvements
+- Mobile enhancements are implemented using Tailwind's responsive utilities (e.g., `md:`, `sm:`, `block md:hidden`).
+- Mobile-specific UI (navigation bars, overlays, alternate tab navigation, etc.) is added without affecting desktop.
+- Conditional rendering is used for mobile-only components as needed.
+
+#### Current/Future Mobile Improvements
+- Bottom navigation bar (mobile only)
+- Mobile-friendly tab navigation
+- Profile/dashboard mobile layout
+
 ## Development
 
 Requirements:

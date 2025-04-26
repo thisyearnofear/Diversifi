@@ -164,9 +164,9 @@ export function MobileAuthButtons() {
   if (isAuthenticated) {
     if (showSuccess) {
       return (
-        <div className="flex items-center gap-2 text-green-600">
-          <CheckCircle className="size-4" />
-          <span className="text-xs">Authenticated</span>
+        <div className="flex items-center gap-1.5 text-green-600 py-1 px-1">
+          <CheckCircle className="size-3.5" />
+          <span className="text-xs font-medium">Authenticated</span>
         </div>
       );
     } else {
@@ -177,9 +177,9 @@ export function MobileAuthButtons() {
               onClick={show}
               size="sm"
               variant="outline"
-              className="text-xs py-1 px-2 h-auto"
+              className="text-xs py-1 px-2.5 h-auto min-h-[28px] active:scale-95 transition-all duration-150"
             >
-              <Wallet className="mr-1 size-3" />
+              <Wallet className="mr-1 size-3.5" />
               {ensName || (address ? `${address.slice(0, 4)}...` : "Wallet")}
             </Button>
           )}
@@ -195,16 +195,16 @@ export function MobileAuthButtons() {
         onClick={handleAuthenticate}
         disabled={isAuthenticating}
         size="sm"
-        className="w-full text-xs py-1 px-2 h-auto"
+        className="text-xs py-1 px-2.5 h-auto min-h-[28px] active:scale-95 transition-all duration-150"
       >
         {isAuthenticating ? (
           <>
-            <Loader2 className="mr-1 size-3 animate-spin" />
+            <Loader2 className="mr-1 size-3.5 animate-spin" />
             Signing...
           </>
         ) : (
           <>
-            <Key className="mr-1 size-3" />
+            <Key className="mr-1 size-3.5" />
             Sign In
           </>
         )}
@@ -219,9 +219,9 @@ export function MobileAuthButtons() {
         <Button
           onClick={show}
           size="sm"
-          className="w-full text-xs py-1 px-2 h-auto"
+          className="text-xs py-1 px-2.5 h-auto min-h-[28px] active:scale-95 transition-all duration-150"
         >
-          <Wallet className="mr-1 size-3" />
+          <Wallet className="mr-1 size-3.5" />
           Connect
         </Button>
       )}

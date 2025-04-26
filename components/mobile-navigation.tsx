@@ -7,7 +7,6 @@ import {
   Coins,
   Globe,
   Rocket,
-  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -15,7 +14,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { eventBus, EVENTS } from "@/lib/events";
-import { toast } from "sonner";
 
 export function MobileNavigation() {
   const { setOpenMobile } = useSidebar();
@@ -99,27 +97,44 @@ export function MobileNavigation() {
   ];
 
   return (
-    <div className="fixed left-4 top-1/4 z-50 flex flex-col gap-3 pointer-events-none">
-      <div className="flex flex-col gap-3 pointer-events-auto">
-        {navItems.map((item) => (
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden bg-background/90 backdrop-blur-sm rounded-xl shadow-lg px-2 py-1.5 w-[98vw] max-w-md flex justify-center items-end pointer-events-none">
+      <div className="flex flex-row justify-around items-end w-full pointer-events-auto">
+        {navItems.map((item, index) => (
           <Button
             key={item.name}
             variant={item.primary ? "default" : "ghost"}
             size="icon"
             className={cn(
-              "h-10 w-10 rounded-full shadow-md transition-all duration-200",
+              "h-14 w-14 rounded-full flex flex-col items-center justify-center px-0 py-0 bg-background/90",
+              "transition-all duration-150 active:scale-95", // Add touch feedback
               item.primary
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "bg-background/80 backdrop-blur-sm hover:bg-accent"
+                : "hover:bg-accent",
+              // Add subtle staggered animation on initial render
+              "animate-fade-in",
+              { "animation-delay-100": index === 1 },
+              { "animation-delay-200": index === 2 },
+              { "animation-delay-300": index === 3 },
+              { "animation-delay-400": index === 4 },
+              { "animation-delay-500": index === 5 },
+              { "animation-delay-600": index === 6 }
             )}
-            onClick={item.action}
+            onClick={() => {
+              // Add haptic feedback if available
+              if (navigator.vibrate) {
+                navigator.vibrate(5);
+              }
+              item.action();
+            }}
             title={item.name}
           >
-            <item.icon className="size-5" />
-            <span className="sr-only">{item.name}</span>
+            <item.icon className="size-6 mb-0.5" />
+            <span className="text-[10px] mt-1 leading-tight whitespace-nowrap font-medium">
+              {item.name}
+            </span>
           </Button>
         ))}
       </div>
-    </div>
+    </nav>
   );
 }

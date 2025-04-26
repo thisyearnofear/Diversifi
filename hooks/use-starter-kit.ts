@@ -1,51 +1,40 @@
-import useSWR from "swr";
 import type { StarterKit } from "@/lib/db/schema";
 import { useAuth } from "@/hooks/use-auth";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-interface AvailableResponse {
-  kits: StarterKit[];
-}
-
-type ClaimedResponse = StarterKit[];
-type CreatedResponse = StarterKit[];
-
-const REFRESH_INTERVAL = 15000; // 15 seconds in milliseconds
+import {
+  useAvailableStarterKits,
+  useClaimedStarterKits,
+  useCreatedStarterKits
+} from "./api/use-starter-kit-queries";
 
 export function useStarterKit() {
   const { isAuthenticated } = useAuth();
 
-  const { data: claimedData, error: claimedError } = useSWR<ClaimedResponse>(
-    isAuthenticated ? "/api/starter-kit/claimed/list" : null,
-    fetcher
-  );
+  // Use React Query hooks with proper caching
+  const {
+    data: availableKits = [],
+    isLoading: isLoadingAvailable,
+    error: availableError
+  } = useAvailableStarterKits();
 
-  const { data: availableData, error: availableError } =
-    useSWR<AvailableResponse>("/api/starter-kit/available", fetcher, {
-      refreshInterval: claimedData?.length ? 0 : REFRESH_INTERVAL,
-      fallbackData: { kits: [] },
-    });
+  const {
+    data: claimedKits = [],
+    isLoading: isLoadingClaimed,
+    error: claimedError
+  } = useClaimedStarterKits();
 
-  const { data: createdData, error: createdError } = useSWR<CreatedResponse>(
-    isAuthenticated ? "/api/starter-kit/created/list" : null,
-    fetcher,
-    {
-      refreshInterval: REFRESH_INTERVAL,
-      fallbackData: [],
-    }
-  );
+  const {
+    data: createdKits = [],
+    isLoading: isLoadingCreated,
+    error: createdError
+  } = useCreatedStarterKits();
 
-  const isLoading =
-    (!availableData && !availableError) ||
-    (isAuthenticated && !claimedData && !claimedError) ||
-    (isAuthenticated && !createdData && !createdError);
-
+  const isLoading = isLoadingAvailable || isLoadingClaimed || isLoadingCreated;
   const error = availableError || claimedError || createdError;
 
-  const kits = availableData?.kits || [];
-  const claimed = claimedData || [];
-  const created = createdData || [];
+  // For backward compatibility
+  const kits = availableKits;
+  const claimed = claimedKits;
+  const created = createdKits;
 
   return {
     available: kits.length,

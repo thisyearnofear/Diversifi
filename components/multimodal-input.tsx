@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import type { Attachment, Message } from "ai";
-import cx from 'classnames';
-import type React from 'react';
+import cx from "classnames";
+import type React from "react";
 import {
   useRef,
   useEffect,
@@ -12,9 +12,9 @@ import {
   type SetStateAction,
   type ChangeEvent,
   memo,
-} from 'react';
-import { toast } from 'sonner';
-import { useLocalStorage, useWindowSize } from 'usehooks-ts';
+} from "react";
+import { toast } from "sonner";
+import { useLocalStorage, useWindowSize } from "usehooks-ts";
 import { useAuth } from "@/hooks/use-auth";
 import { useChatContext } from "@/contexts/chat-context";
 
@@ -225,10 +225,12 @@ function PureMultimodalInput({
         onChange={handleInput}
         className={cx(
           "min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 dark:border-zinc-700",
+          "md:text-base text-base", // Ensure consistent text size
+          "focus:outline-none focus:ring-2 focus:ring-primary", // Better focus state
           className
         )}
         rows={2}
-        autoFocus
+        autoFocus={width ? width > 768 : false} // Only autofocus on desktop
         onKeyDown={(event) => {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
@@ -269,7 +271,7 @@ export const MultimodalInput = memo(
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
 
     return true;
-  },
+  }
 );
 
 function PureAttachmentsButton({
@@ -279,9 +281,15 @@ function PureAttachmentsButton({
   fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
   isLoading: boolean;
 }) {
+  const { width } = useWindowSize();
+  const isMobile = width ? width < 768 : false;
+
   return (
     <Button
-      className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
+      className={cx(
+        "rounded-md rounded-bl-lg h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200",
+        isMobile ? "p-2.5" : "p-[7px]" // Larger touch target on mobile
+      )}
       onClick={(event) => {
         event.preventDefault();
         fileInputRef.current?.click();
@@ -289,7 +297,7 @@ function PureAttachmentsButton({
       disabled={isLoading}
       variant="ghost"
     >
-      <PaperclipIcon size={14} />
+      <PaperclipIcon size={isMobile ? 16 : 14} />
     </Button>
   );
 }
@@ -328,16 +336,25 @@ function PureSendButton({
   input: string;
   uploadQueue: Array<string>;
 }) {
+  const { width } = useWindowSize();
+  const isMobile = width ? width < 768 : false;
+
   return (
     <Button
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+      className={cx(
+        "rounded-full h-fit border dark:border-zinc-600",
+        isMobile ? "p-2.5" : "p-1.5", // Larger touch target on mobile
+        input.length === 0 || uploadQueue.length > 0
+          ? "opacity-50"
+          : "opacity-100 hover:bg-primary hover:text-primary-foreground"
+      )}
       onClick={(event) => {
         event.preventDefault();
         submitForm();
       }}
       disabled={input.length === 0 || uploadQueue.length > 0}
     >
-      <ArrowUpIcon size={14} />
+      <ArrowUpIcon size={isMobile ? 16 : 14} />
     </Button>
   );
 }
