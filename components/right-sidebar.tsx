@@ -22,6 +22,8 @@ import { getAvailableTokensByRegion } from "@/lib/tokens/token-data";
 import { useTokenBalances, TOKEN_REGIONS } from "@/hooks/use-token-balances";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConnectButton } from "@/components/connect-button-new";
+import { useStarterKit } from "@/hooks/use-starter-kit";
+import { RightSidebarIcons } from "@/components/right-sidebar-icons";
 import {
   Tooltip,
   TooltipContent,
@@ -51,7 +53,7 @@ const regions: {
 ];
 
 // Social links with icons and URLs
-const socialLinks = [
+export const socialLinks = [
   {
     name: "Farcaster",
     icon: MessageCircle,
@@ -177,25 +179,40 @@ function DiversiScore({
 export function RightSidebar() {
   const isMobile = useIsMobile();
   const { selectedRegion, setSelectedRegion } = useRegion();
-
-  // Get token balances - no automatic fetching
-  const { balances, isLoading, refreshBalances } =
-    useTokenBalances(selectedRegion);
-
-  // State for balance visibility (hidden by default for privacy)
-  // Use localStorage to persist the user's preference
+  const { balances, isLoading, refreshBalances } = useTokenBalances(selectedRegion);
   const [showBalances, setShowBalances] = useState(() => {
-    // Check if we're in the browser environment
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("showBalances");
       return saved === "true";
     }
-    return false; // Default to hidden
+    return false;
   });
-
-  // State for DiversiScore
   const [diversiScore, setDiversiScore] = useState<number | null>(null);
   const [hasBalanceData, setHasBalanceData] = useState(false);
+  // Starter kit logic state
+  const [isRequesting, setIsRequesting] = useState(false);
+  // Use useStarterKit at the top level, not conditionally
+  const { claimed } = useStarterKit();
+  // Handler for starter kit icon click
+  const handleStarterKitClick = async () => {
+    if (isRequesting) return;
+    setIsRequesting(true);
+    try {
+      const response = await fetch("/api/starter-kit/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (typeof window !== "undefined" && window.location) window.location.reload();
+      }
+      // Optionally: show toast here if desired
+    } catch {
+      // Optionally: show error toast
+    } finally {
+      setIsRequesting(false);
+    }
+  };
 
   // Update localStorage when preference changes
   const toggleBalanceVisibility = () => {
@@ -241,7 +258,7 @@ export function RightSidebar() {
     <Sidebar collapsible="icon" side="right">
       <SidebarContent>
         <div className="flex flex-col gap-3 p-3 max-w-[220px] mx-auto">
-          {/* Connect Button and Auth at the top */}
+          {/* Auth Buttons and icons row (inside ConnectButton) */}
           <div className="mb-4 mt-2 bg-background/80 backdrop-blur-sm p-3 rounded-lg border shadow-sm">
             <ConnectButton />
           </div>
@@ -516,37 +533,7 @@ export function RightSidebar() {
             </div>
           </div>
 
-          {/* Profile Link */}
-          <div className="rounded-lg border p-3 mb-3">
-            <a
-              href="/profile"
-              className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <User className="size-4 text-green-600 dark:text-green-400" />
-              <span className="text-sm font-medium">Dashboard</span>
-            </a>
-          </div>
 
-          {/* Social Links - Compact Row */}
-          <div className="rounded-lg border p-3">
-            <div className="flex flex-col items-center gap-2">
-              <div className="flex items-center justify-center gap-2"></div>
-              <div className="flex gap-3 justify-center">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center size-7 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                    title={link.name}
-                  >
-                    <link.icon className={cn("size-3.5", link.color)} />
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </SidebarContent>
     </Sidebar>
