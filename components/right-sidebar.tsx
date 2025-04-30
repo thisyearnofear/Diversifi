@@ -156,8 +156,9 @@ function DiversiScore({
             <span
               className={cn(
                 "text-xs px-2 py-0.5 rounded cursor-pointer",
-                getRegionStyle("Europe", "medium", "bg"),
-                getRegionStyle("Europe", "medium", "text")
+                "bg-blue-100 dark:bg-blue-700",
+                "text-blue-600 dark:text-blue-50",
+                "hover:bg-blue-200 dark:hover:bg-blue-600"
               )}
             >
               DiversiScore{hasData && score !== null ? `: ${score}/10` : ""}
@@ -261,7 +262,7 @@ export function RightSidebar() {
             <ConnectButton />
           </div>
           {/* Region Selector - More Compact */}
-          <div className={getCardStyle({ variant: "blue", className: "p-3" })}>
+          <div className="p-3">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Globe className="size-4 text-blue-500 dark:text-blue-400" />
               <h3 className="font-medium text-sm">Region Selector</h3>
@@ -273,6 +274,9 @@ export function RightSidebar() {
                 const availableTokens = getAvailableTokensByRegion(region.id);
                 const availableCount = availableTokens.length;
 
+                // Extract color name from the color class
+                const colorName = region.color.split("-")[1];
+
                 return (
                   <button
                     key={region.id}
@@ -280,9 +284,8 @@ export function RightSidebar() {
                     className={cn(
                       "flex items-center gap-1.5 text-xs p-1.5 rounded-md transition-colors",
                       selectedRegion === region.id
-                        ? getRegionStyle(region.id, "medium", "bg") +
-                            " font-medium"
-                        : "hover:bg-muted"
+                        ? `bg-${colorName}-100 dark:bg-${colorName}-700 text-${colorName}-600 dark:text-${colorName}-50 font-medium`
+                        : `text-${colorName}-600 dark:text-${colorName}-200 hover:bg-${colorName}-50 dark:hover:bg-${colorName}-800/70`
                     )}
                     title={`${region.name} - ${availableCount} available tokens`}
                   >
@@ -294,7 +297,7 @@ export function RightSidebar() {
                         className={cn(
                           "text-[10px] px-1 py-0 h-4 ml-1",
                           selectedRegion === region.id
-                            ? "bg-primary/20 border-primary/30"
+                            ? `border-${colorName}-300 dark:border-${colorName}-600 bg-${colorName}-100/50 dark:bg-${colorName}-800/50`
                             : "bg-muted border-muted-foreground/20"
                         )}
                       >
@@ -519,9 +522,8 @@ export function RightSidebar() {
               <button
                 className={cn(
                   "w-full text-xs py-1.5 rounded transition-colors flex items-center justify-center",
-                  getRegionStyle("Europe", "medium", "bg"),
-                  getRegionStyle("Europe", "hover", "bg"),
-                  getRegionStyle("Europe", "medium", "text")
+                  "bg-blue-100 hover:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600",
+                  "text-blue-600 dark:text-blue-50"
                 )}
                 onClick={refreshBalances}
                 disabled={isLoading}

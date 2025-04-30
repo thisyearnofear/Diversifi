@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils';
-import { regionColors, chainColors, componentStyles } from './theme';
-import type { Region } from '@/contexts/region-context';
+import { cn } from "@/lib/utils";
+import { regionColors, chainColors, componentStyles } from "./theme";
+import type { Region } from "@/contexts/region-context";
 
 /**
  * Get region-specific styling classes
@@ -9,17 +9,18 @@ import type { Region } from '@/contexts/region-context';
  * @param type The type of style to return (bg, text, border)
  */
 export function getRegionStyle(
-  region: Region | string = 'default',
-  variant: 'light' | 'medium' | 'strong' | 'hover' = 'medium',
-  type: 'bg' | 'text' | 'border' = 'bg'
+  region: Region | string = "default",
+  variant: "light" | "medium" | "strong" | "hover" = "medium",
+  type: "bg" | "text" | "border" = "bg"
 ): string {
-  const regionData = regionColors[region as keyof typeof regionColors] || regionColors.default;
+  const regionData =
+    regionColors[region as keyof typeof regionColors] || regionColors.default;
 
-  if (type === 'bg') {
-    return regionData.bg[variant] || '';
+  if (type === "bg") {
+    return regionData.bg[variant] || "";
   }
 
-  return regionData[type] || '';
+  return regionData[type] || "";
 }
 
 /**
@@ -29,17 +30,18 @@ export function getRegionStyle(
  * @param type The type of style to return (bg, text)
  */
 export function getChainStyle(
-  chain: string = 'BASE',
-  variant: 'light' | 'medium' | 'hover' = 'medium',
-  type: 'bg' | 'text' = 'bg'
+  chain: string = "BASE",
+  variant: "light" | "medium" | "hover" = "medium",
+  type: "bg" | "text" = "bg"
 ): string {
-  const chainData = chainColors[chain as keyof typeof chainColors] || chainColors.BASE;
+  const chainData =
+    chainColors[chain as keyof typeof chainColors] || chainColors.BASE;
 
-  if (type === 'bg') {
-    return chainData.bg[variant] || '';
+  if (type === "bg") {
+    return chainData.bg[variant] || "";
   }
 
-  return chainData[type] || '';
+  return chainData[type] || "";
 }
 
 /**
@@ -54,7 +56,7 @@ export function getSidebarMenuButtonStyle({
   region,
   chain,
   isDisabled = false,
-  className = '',
+  className = "",
 }: {
   isActive?: boolean;
   region?: Region | string;
@@ -66,31 +68,37 @@ export function getSidebarMenuButtonStyle({
   const baseStyle = componentStyles.sidebar.menuButton;
 
   // Determine color scheme
-  let colorStyle = '';
+  let colorStyle = "";
 
   if (isDisabled) {
-    colorStyle = 'bg-gray-50 dark:bg-gray-800/20 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-70';
+    colorStyle =
+      "bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-70";
   } else if (region) {
     colorStyle = cn(
-      getRegionStyle(region, 'light', 'bg'),
-      getRegionStyle(region, 'hover', 'bg'),
-      getRegionStyle(region, 'medium', 'text')
+      getRegionStyle(region, "light", "bg"),
+      getRegionStyle(region, "hover", "bg"),
+      getRegionStyle(region, "medium", "text"),
+      // Ensure text is always visible with a stronger contrast in dark mode
+      "dark:text-white"
     );
   } else if (chain) {
     colorStyle = cn(
-      getChainStyle(chain, 'light', 'bg'),
-      getChainStyle(chain, 'hover', 'bg'),
-      getChainStyle(chain, 'medium', 'text')
+      getChainStyle(chain, "light", "bg"),
+      getChainStyle(chain, "hover", "bg"),
+      getChainStyle(chain, "medium", "text"),
+      // Ensure text is always visible with a stronger contrast in dark mode
+      "dark:text-white"
     );
   } else {
-    // Default style
-    colorStyle = 'bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-700/30 text-gray-600 dark:text-gray-400';
+    // Default style with improved dark mode contrast
+    colorStyle =
+      "bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-100";
   }
 
   // Active state
   if (isActive && !isDisabled) {
-    colorStyle = colorStyle.replace('bg-', 'bg-opacity-80 bg-');
-    colorStyle += ' font-medium';
+    colorStyle = colorStyle.replace("bg-", "bg-opacity-80 bg-");
+    colorStyle += " font-medium";
   }
 
   return cn(baseStyle, colorStyle, className);
@@ -102,18 +110,18 @@ export function getSidebarMenuButtonStyle({
  * @param className Additional classes to apply
  */
 export function getCardStyle({
-  variant = 'default',
-  className = '',
+  variant = "default",
+  className = "",
 }: {
-  variant?: 'default' | 'blue' | 'neutral';
+  variant?: "default" | "blue" | "neutral";
   className?: string;
 }): string {
   const baseStyle = componentStyles.card.base;
-  let gradientStyle = '';
+  let gradientStyle = "";
 
-  if (variant === 'blue') {
+  if (variant === "blue") {
     gradientStyle = componentStyles.card.gradient.blue;
-  } else if (variant === 'neutral') {
+  } else if (variant === "neutral") {
     gradientStyle = componentStyles.card.gradient.neutral;
   }
 
@@ -129,10 +137,10 @@ export function getCardStyle({
  */
 export function getAnimationStyle(
   delay?: 100 | 200 | 300 | 400 | 500,
-  className = ''
+  className = ""
 ): string {
   const baseStyle = componentStyles.animation.fadeIn;
-  const delayStyle = delay ? componentStyles.animation.delays[delay] : '';
+  const delayStyle = delay ? componentStyles.animation.delays[delay] : "";
 
   return cn(baseStyle, delayStyle, className);
 }

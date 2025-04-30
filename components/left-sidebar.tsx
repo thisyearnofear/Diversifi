@@ -77,32 +77,32 @@ export function LeftSidebar() {
           <SidebarGroupLabel className="text-md font-bold text-primary">
             Stable Station
           </SidebarGroupLabel>
+
           <SidebarMenuButton onClick={toggleSidebar}>
             <SidebarIcon /> Toggle Sidebar
           </SidebarMenuButton>
+
           <SidebarMenuButton
             asChild
-            className={getChainStyle("BASE", "light", "bg")}
+            className="bg-blue-50 dark:bg-blue-800 hover:bg-blue-100 dark:hover:bg-blue-700 text-blue-600 dark:text-blue-100"
           >
             <Link href="/" onClick={() => setOpenMobile(false)}>
-              <Plus className={getChainStyle("BASE", "medium", "text")} />
+              <Plus className="text-blue-600 dark:text-blue-100" />
               New Chat
             </Link>
           </SidebarMenuButton>
 
           <SidebarMenuButton
             asChild
-            className={getRegionStyle("RWA", "light", "bg")}
+            className="bg-amber-50 dark:bg-amber-800 hover:bg-amber-100 dark:hover:bg-amber-700 text-amber-600 dark:text-amber-100"
           >
             <Link href="/starter-kits" onClick={() => setOpenMobile(false)}>
-              <Sparkles className={getRegionStyle("RWA", "medium", "text")} />
+              <Sparkles className="text-amber-600 dark:text-amber-100" />
               Starter Kits
             </Link>
           </SidebarMenuButton>
 
-          <SidebarGroupLabel
-            className={getChainStyle("OPTIMISM", "medium", "text")}
-          >
+          <SidebarGroupLabel className="text-purple-600 dark:text-purple-100 font-medium">
             Social Actions
           </SidebarGroupLabel>
 
@@ -113,9 +113,9 @@ export function LeftSidebar() {
                 "I want to set up a Farcaster account. Can you help me with that directly in this chat?"
               )
             }
-            className={getChainStyle("OPTIMISM", "light", "bg")}
+            className="bg-purple-50 dark:bg-purple-800 hover:bg-purple-100 dark:hover:bg-purple-700 text-purple-600 dark:text-purple-100"
           >
-            <Globe className={getChainStyle("OPTIMISM", "medium", "text")} />
+            <Globe className="text-purple-600 dark:text-purple-100" />
             Farcaster Setup
           </SidebarMenuButton>
 
@@ -126,46 +126,51 @@ export function LeftSidebar() {
                 "I want to set up a Lens account. Can you help me with that directly in this chat?"
               )
             }
-            className={getRegionStyle("Africa", "light", "bg")}
+            className="bg-green-50 dark:bg-green-800 hover:bg-green-100 dark:hover:bg-green-700 text-green-600 dark:text-green-100"
           >
-            <Globe className={getRegionStyle("Africa", "medium", "text")} />
+            <Globe className="text-green-600 dark:text-green-100" />
             Lens Setup
           </SidebarMenuButton>
 
-          <SidebarGroupLabel
-            className={getRegionStyle("Africa", "medium", "text")}
-          >
+          <SidebarGroupLabel className="text-green-600 dark:text-green-100 font-medium">
             Stable Actions
           </SidebarGroupLabel>
 
           {/* Available Tokens */}
-          {availableTokens.map((token) => (
-            <SidebarMenuButton
-              key={token.id}
-              onClick={() =>
-                triggerActionPrompt(
-                  token.chain,
-                  token.actionPrompt ||
-                    `I want to get ${token.symbol} stablecoins. Can you help me directly in this chat?`
-                )
-              }
-              className={getChainStyle(token.chain, "light", "bg")}
-            >
-              <Coins className={getChainStyle(token.chain, "medium", "text")} />
-              Get {token.symbol}
-            </SidebarMenuButton>
-          ))}
+          {availableTokens.map((token) => {
+            // Map chain to color
+            const colorMap: Record<string, string> = {
+              BASE: "blue",
+              OPTIMISM: "purple",
+              CELO: "yellow",
+              POLYGON: "indigo",
+            };
+            const color = colorMap[token.chain] || "blue";
+
+            return (
+              <SidebarMenuButton
+                key={token.id}
+                onClick={() =>
+                  triggerActionPrompt(
+                    token.chain,
+                    token.actionPrompt ||
+                      `I want to get ${token.symbol} stablecoins. Can you help me directly in this chat?`
+                  )
+                }
+                className={`bg-${color}-50 dark:bg-${color}-800 hover:bg-${color}-100 dark:hover:bg-${color}-700 text-${color}-600 dark:text-${color}-100`}
+              >
+                <Coins className={`text-${color}-600 dark:text-${color}-100`} />
+                Get {token.symbol}
+              </SidebarMenuButton>
+            );
+          })}
 
           {/* Coming Soon Tokens - No label, just grayed out */}
-
           {comingSoonTokens.map((token) => (
             <SidebarMenuButton
               key={token.id}
               disabled
-              className={getSidebarMenuButtonStyle({
-                isDisabled: true,
-                region: token.region,
-              })}
+              className="bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-70"
               tooltip={`${token.name} - Coming Soon`}
             >
               <Clock className="text-gray-400 dark:text-gray-500" />
@@ -173,9 +178,7 @@ export function LeftSidebar() {
             </SidebarMenuButton>
           ))}
 
-          <SidebarGroupLabel
-            className={getChainStyle("BASE", "medium", "text")}
-          >
+          <SidebarGroupLabel className="text-blue-600 dark:text-blue-100 font-medium">
             On/Off Ramp Actions
           </SidebarGroupLabel>
 
@@ -186,9 +189,9 @@ export function LeftSidebar() {
                 "I want to create an Ethereum wallet. Can you help me set one up directly in this chat?"
               )
             }
-            className="bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-700/30"
+            className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200"
           >
-            <Wallet className="text-gray-600 dark:text-gray-400" />
+            <Wallet className="text-gray-600 dark:text-gray-200" />
             Create Wallet
           </SidebarMenuButton>
         </SidebarMenu>
