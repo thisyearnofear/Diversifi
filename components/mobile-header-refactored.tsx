@@ -7,6 +7,7 @@ import { MobileAuthButtons } from "./mobile-auth-buttons";
 import { User, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { getAnimationStyle, getRegionStyle } from "@/lib/styles/style-utils";
+import { getMobileHeaderContainer } from "@/lib/styles/mobile";
 import { cn } from "@/lib/utils";
 
 export function MobileHeader() {
@@ -33,11 +34,7 @@ export function MobileHeader() {
   return (
     <div
       className={cn(
-        "fixed top-0 left-0 right-0 z-50",
-        "bg-background/95 backdrop-blur-sm",
-        "border-b border-gray-200 dark:border-gray-800",
-        "px-4 py-2",
-        "md:hidden",
+        getMobileHeaderContainer(),
         "flex items-center justify-between"
       )}
     >

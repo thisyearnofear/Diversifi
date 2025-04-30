@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { generateSiweChallenge, verifySiwe } from "@/app/auth-actions";
 import { useAuth } from "@/hooks/use-auth";
 import { CheckCircle, Loader2, Wallet, Key } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getRegionStyle, getAnimationStyle } from "@/lib/styles/style-utils";
 
 export function MobileAuthButtons() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -164,7 +166,12 @@ export function MobileAuthButtons() {
   if (isAuthenticated) {
     if (showSuccess) {
       return (
-        <div className="flex items-center gap-1.5 text-green-600 py-1 px-1">
+        <div
+          className={cn(
+            "flex items-center gap-1.5 py-1 px-1",
+            getRegionStyle("Africa", "medium", "text")
+          )}
+        >
           <CheckCircle className="size-3.5" />
           <span className="text-xs font-medium">Authenticated</span>
         </div>
@@ -177,7 +184,10 @@ export function MobileAuthButtons() {
               onClick={show}
               size="sm"
               variant="outline"
-              className="text-xs py-1 px-2.5 h-auto min-h-[28px] active:scale-95 transition-all duration-150"
+              className={cn(
+                "text-xs py-1 px-2.5 h-auto min-h-[28px]",
+                "active:scale-95 transition-all duration-150"
+              )}
             >
               <Wallet className="mr-1 size-3.5" />
               {ensName || (address ? `${address.slice(0, 4)}...` : "Wallet")}
@@ -195,11 +205,14 @@ export function MobileAuthButtons() {
         onClick={handleAuthenticate}
         disabled={isAuthenticating}
         size="sm"
-        className="text-xs py-1 px-2.5 h-auto min-h-[28px] active:scale-95 transition-all duration-150"
+        className={cn(
+          "text-xs py-1 px-2.5 h-auto min-h-[28px]",
+          "active:scale-95 transition-all duration-150"
+        )}
       >
         {isAuthenticating ? (
           <>
-            <Loader2 className="mr-1 size-3.5 animate-spin" />
+            <Loader2 className={cn("mr-1 size-3.5", getAnimationStyle())} />
             Signing...
           </>
         ) : (
@@ -219,7 +232,10 @@ export function MobileAuthButtons() {
         <Button
           onClick={show}
           size="sm"
-          className="text-xs py-1 px-2.5 h-auto min-h-[28px] active:scale-95 transition-all duration-150"
+          className={cn(
+            "text-xs py-1 px-2.5 h-auto min-h-[28px]",
+            "active:scale-95 transition-all duration-150"
+          )}
         >
           <Wallet className="mr-1 size-3.5" />
           Connect

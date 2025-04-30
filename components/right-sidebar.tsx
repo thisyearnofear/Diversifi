@@ -30,6 +30,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  getRegionStyle,
+  getCardStyle,
+  getAnimationStyle,
+} from "@/lib/styles/style-utils";
 
 // Region data with icons and colors
 const regions: {
@@ -98,24 +103,9 @@ const formatPercentage = (amount: number, total: number): string => {
   return `${percentage.toFixed(1)}%`;
 };
 
-// Helper functions for DiversiFi component
+// Helper function to get region color using our style utilities
 const getRegionColor = (region: string): string => {
-  switch (region) {
-    case "USA":
-      return "bg-red-400 dark:bg-red-600";
-    case "Europe":
-      return "bg-blue-400 dark:bg-blue-600";
-    case "Africa":
-      return "bg-green-400 dark:bg-green-600";
-    case "LatAm":
-      return "bg-yellow-400 dark:bg-yellow-600";
-    case "Asia":
-      return "bg-purple-400 dark:bg-purple-600";
-    case "RWA":
-      return "bg-amber-400 dark:bg-amber-600";
-    default:
-      return "bg-gray-400 dark:bg-gray-600";
-  }
+  return getRegionStyle(region, "strong", "bg");
 };
 
 // Calculate region totals from balances
@@ -163,7 +153,13 @@ function DiversiScore({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded cursor-pointer">
+            <span
+              className={cn(
+                "text-xs px-2 py-0.5 rounded cursor-pointer",
+                getRegionStyle("Europe", "medium", "bg"),
+                getRegionStyle("Europe", "medium", "text")
+              )}
+            >
               DiversiScore{hasData && score !== null ? `: ${score}/10` : ""}
             </span>
           </TooltipTrigger>
@@ -179,7 +175,8 @@ function DiversiScore({
 export function RightSidebar() {
   const isMobile = useIsMobile();
   const { selectedRegion, setSelectedRegion } = useRegion();
-  const { balances, isLoading, refreshBalances } = useTokenBalances(selectedRegion);
+  const { balances, isLoading, refreshBalances } =
+    useTokenBalances(selectedRegion);
   const [showBalances, setShowBalances] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("showBalances");
@@ -204,7 +201,8 @@ export function RightSidebar() {
       });
       const data = await response.json();
       if (response.ok) {
-        if (typeof window !== "undefined" && window.location) window.location.reload();
+        if (typeof window !== "undefined" && window.location)
+          window.location.reload();
       }
       // Optionally: show toast here if desired
     } catch {
@@ -263,7 +261,7 @@ export function RightSidebar() {
             <ConnectButton />
           </div>
           {/* Region Selector - More Compact */}
-          <div className="rounded-lg border p-3 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
+          <div className={getCardStyle({ variant: "blue", className: "p-3" })}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Globe className="size-4 text-blue-500 dark:text-blue-400" />
               <h3 className="font-medium text-sm">Region Selector</h3>
@@ -282,19 +280,8 @@ export function RightSidebar() {
                     className={cn(
                       "flex items-center gap-1.5 text-xs p-1.5 rounded-md transition-colors",
                       selectedRegion === region.id
-                        ? region.id === "Africa"
-                          ? "bg-green-100 dark:bg-green-900/30 font-medium"
-                          : region.id === "Europe"
-                          ? "bg-blue-100 dark:bg-blue-900/30 font-medium"
-                          : region.id === "USA"
-                          ? "bg-red-100 dark:bg-red-900/30 font-medium"
-                          : region.id === "LatAm"
-                          ? "bg-yellow-100 dark:bg-yellow-900/30 font-medium"
-                          : region.id === "Asia"
-                          ? "bg-purple-100 dark:bg-purple-900/30 font-medium"
-                          : region.id === "RWA"
-                          ? "bg-amber-100 dark:bg-amber-900/30 font-medium"
-                          : "bg-blue-100 dark:bg-blue-900/30 font-medium"
+                        ? getRegionStyle(region.id, "medium", "bg") +
+                            " font-medium"
                         : "hover:bg-muted"
                     )}
                     title={`${region.name} - ${availableCount} available tokens`}
@@ -321,7 +308,9 @@ export function RightSidebar() {
           </div>
 
           {/* DiversiFi - Portfolio Diversification Teaser */}
-          <div className="rounded-lg border p-4 bg-gradient-to-br from-zinc-50 to-gray-50 dark:from-zinc-900 dark:to-gray-900">
+          <div
+            className={getCardStyle({ variant: "neutral", className: "p-4" })}
+          >
             <div className="flex flex-col items-center mb-3">
               <div className="flex items-center gap-2">
                 <Globe className="size-4 text-blue-500" />
@@ -334,7 +323,11 @@ export function RightSidebar() {
                 {/* Privacy toggle button */}
                 <button
                   onClick={toggleBalanceVisibility}
-                  className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mt-1"
+                  className={cn(
+                    "text-xs px-2 py-0.5 rounded transition-colors mt-1",
+                    "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400",
+                    "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  )}
                   title={showBalances ? "Hide balances" : "Show balances"}
                 >
                   {showBalances ? "Hide" : "Show"}
@@ -353,7 +346,12 @@ export function RightSidebar() {
 
               {/* Loading State */}
               {isLoading && (
-                <div className="text-xs text-gray-500 text-center py-2">
+                <div
+                  className={cn(
+                    "text-xs text-gray-500 text-center py-2",
+                    getAnimationStyle()
+                  )}
+                >
                   <Loader2 className="animate-spin mx-auto mb-1 size-4" />
                   Loading your balances...
                 </div>
@@ -392,13 +390,17 @@ export function RightSidebar() {
                         return (
                           <div
                             key={region}
-                            className="flex items-center gap-2 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer mb-2"
+                            className={cn(
+                              "flex items-center gap-2 p-1.5 rounded-md cursor-pointer mb-2",
+                              "hover:bg-gray-100 dark:hover:bg-gray-800"
+                            )}
                             onClick={() => setSelectedRegion(region as Region)}
                           >
                             <div
-                              className={`w-1 h-full rounded-full ${getRegionColor(
-                                region
-                              )}`}
+                              className={cn(
+                                "w-1 h-full rounded-full",
+                                getRegionColor(region)
+                              )}
                               style={{ height: "16px" }}
                             />
                             <div className="flex-1">
@@ -426,11 +428,17 @@ export function RightSidebar() {
                 selectedRegion !== "All" && (
                   <div>
                     {/* Region Header */}
-                    <div className="flex items-center gap-2 p-1.5 rounded-md bg-gray-50 dark:bg-gray-800/50 mb-2">
+                    <div
+                      className={cn(
+                        "flex items-center gap-2 p-1.5 rounded-md mb-2",
+                        getRegionStyle(selectedRegion, "light", "bg")
+                      )}
+                    >
                       <div
-                        className={`w-1 h-full rounded-full ${getRegionColor(
-                          selectedRegion
-                        )}`}
+                        className={cn(
+                          "w-1 h-full rounded-full",
+                          getRegionColor(selectedRegion)
+                        )}
                         style={{ height: "16px" }}
                       />
                       <div className="flex-1">
@@ -509,7 +517,12 @@ export function RightSidebar() {
 
             <div className="flex gap-2">
               <button
-                className="w-full text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 py-1.5 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 transition-colors flex items-center justify-center"
+                className={cn(
+                  "w-full text-xs py-1.5 rounded transition-colors flex items-center justify-center",
+                  getRegionStyle("Europe", "medium", "bg"),
+                  getRegionStyle("Europe", "hover", "bg"),
+                  getRegionStyle("Europe", "medium", "text")
+                )}
                 onClick={refreshBalances}
                 disabled={isLoading}
               >
@@ -532,8 +545,6 @@ export function RightSidebar() {
               </button>
             </div>
           </div>
-
-
         </div>
       </SidebarContent>
     </Sidebar>

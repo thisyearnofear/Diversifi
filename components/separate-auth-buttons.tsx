@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { generateSiweChallenge, verifySiwe } from "@/app/auth-actions";
 import { useAuth } from "@/hooks/use-auth";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getRegionStyle, getAnimationStyle } from "@/lib/styles/style-utils";
 
 export function SeparateAuthButtons() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -194,7 +196,13 @@ export function SeparateAuthButtons() {
         </div>
         <div className="flex items-center gap-2">
           {isConnected ? (
-            <div className="flex items-center gap-1 text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md">
+            <div
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 rounded-md",
+                getRegionStyle("Africa", "light", "bg"),
+                getRegionStyle("Africa", "medium", "text")
+              )}
+            >
               <CheckCircle className="size-3.5" />
               <span className="text-xs font-medium">Connected</span>
             </div>
@@ -216,7 +224,13 @@ export function SeparateAuthButtons() {
         </div>
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
-            <div className="flex items-center gap-1 text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md">
+            <div
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 rounded-md",
+                getRegionStyle("Africa", "light", "bg"),
+                getRegionStyle("Africa", "medium", "text")
+              )}
+            >
               <CheckCircle className="size-3.5" />
               <span className="text-xs font-medium">Verified</span>
             </div>
@@ -230,7 +244,9 @@ export function SeparateAuthButtons() {
             >
               {isAuthenticating ? (
                 <>
-                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                  <Loader2
+                    className={cn("mr-1.5 size-3.5", getAnimationStyle())}
+                  />
                   Signing...
                 </>
               ) : (

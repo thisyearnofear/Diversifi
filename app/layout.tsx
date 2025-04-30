@@ -12,6 +12,7 @@ import { MobileNavigation } from "@/components/mobile-navigation";
 import { MobileHeader } from "@/components/mobile-header";
 import { RegionProvider } from "@/contexts/region-context";
 import { ReactQueryProvider } from "@/lib/react-query";
+import { cn } from "@/lib/utils";
 
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
@@ -86,11 +87,30 @@ export default function RootLayout({
             <Providers>
               <RegionProvider>
                 <SidebarProvider>
-                  <div className="grid grid-cols-[auto,1fr,auto] min-h-screen w-full">
+                  <div
+                    className={cn(
+                      "grid min-h-screen w-full",
+                      "grid-cols-1",
+                      "md:grid-cols-[auto,1fr,auto]"
+                    )}
+                  >
                     <LeftSidebar />
-                    <div className="flex justify-center items-start">
+                    <div
+                      className={cn(
+                        "flex flex-col items-start w-full",
+                        "px-2",
+                        "md:px-0 md:justify-center"
+                      )}
+                    >
                       <MobileHeader />
-                      <main className="w-full max-w-3xl mx-auto pb-24 md:pb-0 mt-14 md:mt-0">
+                      <main
+                        className={cn(
+                          "w-full mx-auto",
+                          "pb-24 mt-14",
+                          "md:pb-0 md:mt-0",
+                          "max-w-3xl"
+                        )}
+                      >
                         {children}
                       </main>
                       <MobileNavigation />

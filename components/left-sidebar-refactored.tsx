@@ -29,10 +29,10 @@ import {
   getComingSoonTokensByRegion,
 } from "@/lib/tokens/token-data";
 import { cn } from "@/lib/utils";
-import {
-  getChainStyle,
-  getRegionStyle,
-  getSidebarMenuButtonStyle,
+import { 
+  getChainStyle, 
+  getRegionStyle, 
+  getSidebarMenuButtonStyle 
 } from "@/lib/styles/style-utils";
 
 export function LeftSidebar() {
@@ -77,32 +77,32 @@ export function LeftSidebar() {
           <SidebarGroupLabel className="text-md font-bold text-primary">
             Stable Station
           </SidebarGroupLabel>
+          
           <SidebarMenuButton onClick={toggleSidebar}>
             <SidebarIcon /> Toggle Sidebar
           </SidebarMenuButton>
+          
           <SidebarMenuButton
             asChild
-            className={getChainStyle("BASE", "light", "bg")}
+            className={getChainStyle('BASE', 'light', 'bg')}
           >
             <Link href="/" onClick={() => setOpenMobile(false)}>
-              <Plus className={getChainStyle("BASE", "medium", "text")} />
+              <Plus className={getChainStyle('BASE', 'medium', 'text')} />
               New Chat
             </Link>
           </SidebarMenuButton>
-
+          
           <SidebarMenuButton
             asChild
-            className={getRegionStyle("RWA", "light", "bg")}
+            className={getRegionStyle('RWA', 'light', 'bg')}
           >
             <Link href="/starter-kits" onClick={() => setOpenMobile(false)}>
-              <Sparkles className={getRegionStyle("RWA", "medium", "text")} />
+              <Sparkles className={getRegionStyle('RWA', 'medium', 'text')} />
               Starter Kits
             </Link>
           </SidebarMenuButton>
 
-          <SidebarGroupLabel
-            className={getChainStyle("OPTIMISM", "medium", "text")}
-          >
+          <SidebarGroupLabel className={getChainStyle('OPTIMISM', 'medium', 'text')}>
             Social Actions
           </SidebarGroupLabel>
 
@@ -113,9 +113,9 @@ export function LeftSidebar() {
                 "I want to set up a Farcaster account. Can you help me with that directly in this chat?"
               )
             }
-            className={getChainStyle("OPTIMISM", "light", "bg")}
+            className={getChainStyle('OPTIMISM', 'light', 'bg')}
           >
-            <Globe className={getChainStyle("OPTIMISM", "medium", "text")} />
+            <Globe className={getChainStyle('OPTIMISM', 'medium', 'text')} />
             Farcaster Setup
           </SidebarMenuButton>
 
@@ -126,15 +126,13 @@ export function LeftSidebar() {
                 "I want to set up a Lens account. Can you help me with that directly in this chat?"
               )
             }
-            className={getRegionStyle("Africa", "light", "bg")}
+            className={getRegionStyle('Africa', 'light', 'bg')}
           >
-            <Globe className={getRegionStyle("Africa", "medium", "text")} />
+            <Globe className={getRegionStyle('Africa', 'medium', 'text')} />
             Lens Setup
           </SidebarMenuButton>
 
-          <SidebarGroupLabel
-            className={getRegionStyle("Africa", "medium", "text")}
-          >
+          <SidebarGroupLabel className={getRegionStyle('Africa', 'medium', 'text')}>
             Stable Actions
           </SidebarGroupLabel>
 
@@ -149,15 +147,14 @@ export function LeftSidebar() {
                     `I want to get ${token.symbol} stablecoins. Can you help me directly in this chat?`
                 )
               }
-              className={getChainStyle(token.chain, "light", "bg")}
+              className={getChainStyle(token.chain, 'light', 'bg')}
             >
-              <Coins className={getChainStyle(token.chain, "medium", "text")} />
+              <Coins className={getChainStyle(token.chain, 'medium', 'text')} />
               Get {token.symbol}
             </SidebarMenuButton>
           ))}
 
           {/* Coming Soon Tokens - No label, just grayed out */}
-
           {comingSoonTokens.map((token) => (
             <SidebarMenuButton
               key={token.id}
@@ -173,9 +170,7 @@ export function LeftSidebar() {
             </SidebarMenuButton>
           ))}
 
-          <SidebarGroupLabel
-            className={getChainStyle("BASE", "medium", "text")}
-          >
+          <SidebarGroupLabel className={getChainStyle('BASE', 'medium', 'text')}>
             On/Off Ramp Actions
           </SidebarGroupLabel>
 

@@ -14,6 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { eventBus, EVENTS } from "@/lib/events";
+import { getAnimationStyle } from "@/lib/styles/style-utils";
 
 export function MobileNavigation() {
   const { setOpenMobile } = useSidebar();
@@ -97,7 +98,17 @@ export function MobileNavigation() {
   ];
 
   return (
-    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden bg-background/90 backdrop-blur-sm rounded-xl shadow-lg px-2 py-1.5 w-[98vw] max-w-md flex justify-center items-end pointer-events-none">
+    <nav
+      className={cn(
+        "fixed bottom-4 left-1/2 -translate-x-1/2 z-50",
+        "md:hidden",
+        "bg-background/90 backdrop-blur-sm",
+        "rounded-xl shadow-lg",
+        "px-2 py-1.5",
+        "w-[95vw] max-w-md",
+        "flex justify-center items-end pointer-events-none"
+      )}
+    >
       <div className="flex flex-row justify-around items-end w-full pointer-events-auto">
         {navItems.map((item, index) => (
           <Button
@@ -110,14 +121,22 @@ export function MobileNavigation() {
               item.primary
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
                 : "hover:bg-accent",
-              // Add subtle staggered animation on initial render
-              "animate-fade-in",
-              { "animation-delay-100": index === 1 },
-              { "animation-delay-200": index === 2 },
-              { "animation-delay-300": index === 3 },
-              { "animation-delay-400": index === 4 },
-              { "animation-delay-500": index === 5 },
-              { "animation-delay-600": index === 6 }
+              // Add animation with appropriate delay based on index
+              getAnimationStyle(
+                index === 1
+                  ? 100
+                  : index === 2
+                  ? 200
+                  : index === 3
+                  ? 300
+                  : index === 4
+                  ? 400
+                  : index === 5
+                  ? 500
+                  : index === 6
+                  ? 500
+                  : undefined
+              )
             )}
             onClick={() => {
               // Add haptic feedback if available

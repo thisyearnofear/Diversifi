@@ -20,6 +20,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SeparateAuthButtons } from "@/components/separate-auth-buttons";
+import { cn } from "@/lib/utils";
 
 // Utility: compute region allocations from balances
 function useRegionAllocations(balances: Record<string, any>) {
@@ -121,7 +122,14 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-0 sm:p-6 pt-4 md:pt-6 space-y-6 md:space-y-8">
+    <div
+      className={cn(
+        "w-full max-w-3xl mx-auto",
+        "p-0 sm:p-6 pt-4 md:pt-6",
+        "space-y-6 md:space-y-8",
+        "px-2 md:px-0"
+      )}
+    >
       <h1
         className={`font-bold text-center ${
           isMobile ? "text-2xl" : "text-3xl"
@@ -163,7 +171,7 @@ export default function ProfilePage() {
         {/* Profile Section */}
         <TabsContent
           value="profile"
-          className="space-y-6 flex flex-col items-center px-4 md:px-0"
+          className="space-y-6 w-full flex flex-col items-center"
         >
           <Card className="w-full shadow-md">
             <CardContent className={isMobile ? "px-4 py-6" : "py-6"}>
@@ -175,7 +183,7 @@ export default function ProfilePage() {
         </TabsContent>
 
         {/* DiversiFi Section: Auto-loads when tab is selected */}
-        <TabsContent value="diversifi" className="space-y-6 px-4 md:px-0">
+        <TabsContent value="diversifi" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
             <CardContent className={isMobile ? "p-4" : "p-6"}>
               {isDiversifiLoading && isFirstLoad ? (
@@ -244,7 +252,7 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="referrals" className="space-y-6 px-4 md:px-0">
+        <TabsContent value="referrals" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
             <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
               <CardTitle className={isMobile ? "text-xl" : undefined}>
@@ -273,7 +281,7 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="points" className="space-y-6 px-4 md:px-0">
+        <TabsContent value="points" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
             <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
               <CardTitle className={isMobile ? "text-xl" : undefined}>
@@ -302,7 +310,7 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="admin" className="space-y-6 px-4 md:px-0">
+        <TabsContent value="admin" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
             <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
               <CardTitle className={isMobile ? "text-xl" : undefined}>
