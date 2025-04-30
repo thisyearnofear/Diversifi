@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     try {
       session = await auth();
     } catch (authError) {
-      console.error('Authentication error in chat API:', authError);
+      console.error("Authentication error in chat API:", authError);
       // Continue without authentication
     }
 
@@ -71,241 +71,255 @@ export async function POST(request: Request) {
     if (session?.user?.id) {
       const userInfo = await getUser(session.user.id);
       userProfile = `USER-WALLET-ADDRESS=${
-      session.user.id
-    }. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile(
-      {
-        userInfo: userInfo[0],
-        attachments,
-      }
-    )}`;
+        session.user.id
+      }. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile(
+        {
+          userInfo: userInfo[0],
+          attachments,
+        }
+      )}`;
 
-    const chat = await getChatById({ id });
-    if (!chat) {
-      const title = await generateTitleFromUserMessage({
-        message: userMessage,
-      });
-      await saveChat({ id, userId: session.user.id, title });
-
-      // Enforce chat limit after creating a new chat
-      try {
-        // Use absolute URL for server-side fetch
-        const baseUrl = process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:4000";
-
-        await fetch(`${baseUrl}/api/chat/enforce-limit`, {
-          method: 'POST',
+      const chat = await getChatById({ id });
+      if (!chat) {
+        const title = await generateTitleFromUserMessage({
+          message: userMessage,
         });
-      } catch (error) {
-        console.error('Error enforcing chat limit:', error);
-        // Continue even if limit enforcement fails
+        await saveChat({ id, userId: session.user.id, title });
+
+        // Only attempt chat limit enforcement if we have a valid session
+        if (session?.user?.id) {
+          const enforceUrl = process.env.VERCEL_URL
+            ? `https://${process.env.VERCEL_URL}/api/chat/enforce-limit`
+            : "http://localhost:4000/api/chat/enforce-limit";
+
+          // Make chat limit enforcement completely non-blocking
+          // Use a fire-and-forget approach that won't affect the main flow
+          setTimeout(() => {
+            fetch(enforceUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                // Include session info to prevent 401
+                Cookie: request.headers.get("cookie") || "",
+              },
+            }).catch((error: Error) => {
+              // Just log the error and continue
+              console.warn("Chat limit enforcement failed:", error);
+            });
+          }, 0);
+        }
       }
+      await saveMessages({
+        messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
+      });
     }
-    await saveMessages({
-      messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
-    });
-  }
 
-  let agentKit;
-  let tools = {};
+    let agentKit;
+    let tools = {};
 
-  try {
-    agentKit = await setupAgentKit();
-    tools = agentKitToTools(agentKit);
-    console.log("AgentKit setup successful");
-  } catch (error) {
-    console.error("Failed to setup AgentKit:", error);
-    // Continue without AgentKit tools
-  }
+    try {
+      agentKit = await setupAgentKit();
+      tools = agentKitToTools(agentKit);
+      console.log("AgentKit setup successful");
+    } catch (error) {
+      console.error("Failed to setup AgentKit:", error);
+      // Continue without AgentKit tools
+    }
 
-  return createDataStreamResponse({
-    execute: (dataStream) => {
-      const result = streamText({
-        model: myProvider.languageModel(selectedChatModel),
-        system: generateSystemPrompt({ selectedChatModel }) + userProfile,
-        messages,
-        maxSteps: 10,
-        // experimental_activeTools:
-        //   selectedChatModel === "chat-model-reasoning"
-        //     ? []
-        //     : ["createDocument", "updateDocument", "requestSuggestions"],
-        experimental_output: Output.object({
-          schema: z.object({
-            agent: z.string(),
-            content: z.string(),
-            userActions: z.array(
-              z.object({
-                action: z.string(),
-                label: z
-                  .string()
-                  .optional()
-                  .describe(
-                    "An additional label with more context about the action for the user"
-                  ),
-                args: z.array(z.record(z.any())).optional(),
-              })
-            ),
+    return createDataStreamResponse({
+      execute: (dataStream) => {
+        const result = streamText({
+          model: myProvider.languageModel(selectedChatModel),
+          system: generateSystemPrompt({ selectedChatModel }) + userProfile,
+          messages,
+          maxSteps: 10,
+          // experimental_activeTools:
+          //   selectedChatModel === "chat-model-reasoning"
+          //     ? []
+          //     : ["createDocument", "updateDocument", "requestSuggestions"],
+          experimental_output: Output.object({
+            schema: z.object({
+              agent: z.string(),
+              content: z.string(),
+              userActions: z.array(
+                z.object({
+                  action: z.string(),
+                  label: z
+                    .string()
+                    .optional()
+                    .describe(
+                      "An additional label with more context about the action for the user"
+                    ),
+                  args: z.array(z.record(z.any())).optional(),
+                })
+              ),
+            }),
           }),
-        }),
-        // experimental_transform: smoothStream({ chunking: "word" }),
-        experimental_generateMessageId: generateUUID,
-        tools: session ? {
-          ...tools,
-          createDocument: createDocument({ session, dataStream }),
-          updateDocument: updateDocument({ session, dataStream }),
-          requestSuggestions: requestSuggestions({
-            session,
-            dataStream,
-          }),
-          saveUserInformation: saveUserInformation({ session }),
-          getUserInformation: getUserInformation({ session }),
-          getAvailableStarterKits: getAvailableStarterKitsTool(),
-          claimAvailableStarterKit: claimAvailableStarterKitTool(),
-          suggestActions: tool({
-            description: suggestActionsDefinition.description,
-            parameters: suggestActionsDefinition.parameters,
-            execute: async ({ category, title, limit }) => {
-              console.log("Executing suggestActions with args:", {
-                category,
-                title,
-                limit,
-              });
-              try {
-                const result = await suggestActionsDefinition.handler(
-                  category,
-                  title,
-                  limit
-                );
-                console.log("suggestActions result:", result);
-                return result;
-              } catch (error) {
-                console.error("Error in suggestActions:", error);
-                // Return a default action if there's an error
-                return [
-                  {
-                    title: "Set up Lens Account",
-                    description: "Create a Lens account and join the decentralized social network",
-                    chain: category || "BASE",
-                    difficulty: "beginner",
-                    steps: [
-                      "Go to onboarding.lens.xyz",
-                      "Connect wallet",
-                      "Create profile",
-                    ],
-                    reward: "Access to the Lens ecosystem",
-                    actionUrl: "https://onboarding.lens.xyz",
-                    proofFieldLabel: "Lens Profile URL",
-                    proofFieldPlaceholder: "https://hey.xyz/u/yourusername",
-                  },
-                ];
-              }
-            },
-          }),
-        } : {
-          ...tools,
-          // Provide limited tools when no session is available
-          getAvailableStarterKits: getAvailableStarterKitsTool(),
-          suggestActions: tool({
-            description: suggestActionsDefinition.description,
-            parameters: suggestActionsDefinition.parameters,
-            execute: async ({ category, title, limit }) => {
-              try {
-                const result = await suggestActionsDefinition.handler(
-                  category,
-                  title,
-                  limit
-                );
-                return result;
-              } catch (error) {
-                console.error("Error in suggestActions:", error);
-                // Return a default action if there's an error
-                return [
-                  {
-                    title: "Set up Lens Account",
-                    description: "Create a Lens account and join the decentralized social network",
-                    chain: category || "BASE",
-                    difficulty: "beginner",
-                    steps: [
-                      "Go to https://onboarding.lens.xyz and sign up",
-                      "Connect your wallet",
-                      "Create your profile",
-                      "Copy your profile URL (e.g. https://hey.xyz/u/username)",
-                    ],
-                    reward: "Access to the Lens ecosystem",
-                    actionUrl: "https://onboarding.lens.xyz",
-                    proofFieldLabel: "Lens Profile URL",
-                    proofFieldPlaceholder: "https://hey.xyz/u/yourusername",
-                  },
-                ];
-              }
-            },
-          }),
-        },
-        onFinish: async ({ response, reasoning, text }) => {
-          // currently the content of the last message is truncated, so passing in the text as a partial fix
-          const assistantMessages = response.messages.filter(
-            (message) => message.role === "assistant"
-          );
-          const lastAssistantMessage =
-            assistantMessages[assistantMessages.length - 1];
-          if (lastAssistantMessage) {
-            response.messages[response.messages.length - 1] = {
-              ...lastAssistantMessage,
-              content: [
-                {
-                  type: "text",
-                  text,
-                },
-              ],
-            };
-          }
-          if (session?.user?.id) {
-            try {
-              const sanitizedResponseMessages = sanitizeResponseMessages({
-                messages: response.messages,
-                reasoning,
-              });
-
-              await saveMessages({
-                messages: sanitizedResponseMessages.map((message) => {
-                  return {
-                    id: message.id,
-                    chatId: id,
-                    role: message.role,
-                    content:
-                      typeof message.content === "string"
-                        ? message.content
-                        : JSON.stringify(message.content),
-                    createdAt: new Date(),
-                  };
+          // experimental_transform: smoothStream({ chunking: "word" }),
+          experimental_generateMessageId: generateUUID,
+          tools: session
+            ? {
+                ...tools,
+                createDocument: createDocument({ session, dataStream }),
+                updateDocument: updateDocument({ session, dataStream }),
+                requestSuggestions: requestSuggestions({
+                  session,
+                  dataStream,
                 }),
-              });
-            } catch (error) {
-              console.error("Failed to save chat");
+                saveUserInformation: saveUserInformation({ session }),
+                getUserInformation: getUserInformation({ session }),
+                getAvailableStarterKits: getAvailableStarterKitsTool(),
+                claimAvailableStarterKit: claimAvailableStarterKitTool(),
+                suggestActions: tool({
+                  description: suggestActionsDefinition.description,
+                  parameters: suggestActionsDefinition.parameters,
+                  execute: async ({ category, title, limit }) => {
+                    console.log("Executing suggestActions with args:", {
+                      category,
+                      title,
+                      limit,
+                    });
+                    try {
+                      const result = await suggestActionsDefinition.handler(
+                        category,
+                        title,
+                        limit
+                      );
+                      console.log("suggestActions result:", result);
+                      return result;
+                    } catch (error) {
+                      console.error("Error in suggestActions:", error);
+                      // Return a default action if there's an error
+                      return [
+                        {
+                          title: "Set up Lens Account",
+                          description:
+                            "Create a Lens account and join the decentralized social network",
+                          chain: category || "BASE",
+                          difficulty: "beginner",
+                          steps: [
+                            "Go to onboarding.lens.xyz",
+                            "Connect wallet",
+                            "Create profile",
+                          ],
+                          reward: "Access to the Lens ecosystem",
+                          actionUrl: "https://onboarding.lens.xyz",
+                          proofFieldLabel: "Lens Profile URL",
+                          proofFieldPlaceholder:
+                            "https://hey.xyz/u/yourusername",
+                        },
+                      ];
+                    }
+                  },
+                }),
+              }
+            : {
+                ...tools,
+                // Provide limited tools when no session is available
+                getAvailableStarterKits: getAvailableStarterKitsTool(),
+                suggestActions: tool({
+                  description: suggestActionsDefinition.description,
+                  parameters: suggestActionsDefinition.parameters,
+                  execute: async ({ category, title, limit }) => {
+                    try {
+                      const result = await suggestActionsDefinition.handler(
+                        category,
+                        title,
+                        limit
+                      );
+                      return result;
+                    } catch (error) {
+                      console.error("Error in suggestActions:", error);
+                      // Return a default action if there's an error
+                      return [
+                        {
+                          title: "Set up Lens Account",
+                          description:
+                            "Create a Lens account and join the decentralized social network",
+                          chain: category || "BASE",
+                          difficulty: "beginner",
+                          steps: [
+                            "Go to https://onboarding.lens.xyz and sign up",
+                            "Connect your wallet",
+                            "Create your profile",
+                            "Copy your profile URL (e.g. https://hey.xyz/u/username)",
+                          ],
+                          reward: "Access to the Lens ecosystem",
+                          actionUrl: "https://onboarding.lens.xyz",
+                          proofFieldLabel: "Lens Profile URL",
+                          proofFieldPlaceholder:
+                            "https://hey.xyz/u/yourusername",
+                        },
+                      ];
+                    }
+                  },
+                }),
+              },
+          onFinish: async ({ response, reasoning, text }) => {
+            // currently the content of the last message is truncated, so passing in the text as a partial fix
+            const assistantMessages = response.messages.filter(
+              (message) => message.role === "assistant"
+            );
+            const lastAssistantMessage =
+              assistantMessages[assistantMessages.length - 1];
+            if (lastAssistantMessage) {
+              response.messages[response.messages.length - 1] = {
+                ...lastAssistantMessage,
+                content: [
+                  {
+                    type: "text",
+                    text,
+                  },
+                ],
+              };
             }
-          } else {
-            console.log("No session available, skipping chat save");
-          }
-        },
-      });
+            if (session?.user?.id) {
+              try {
+                const sanitizedResponseMessages = sanitizeResponseMessages({
+                  messages: response.messages,
+                  reasoning,
+                });
 
-      result.mergeIntoDataStream(dataStream, {
-        sendReasoning: true,
-      });
-    },
-    onError: (error) => {
-      console.error("Error in chat stream:", error);
-      return `I'm sorry, but I encountered an error while processing your request. Please try again or contact support if the issue persists.`;
-    },
-  });
+                await saveMessages({
+                  messages: sanitizedResponseMessages.map((message) => {
+                    return {
+                      id: message.id,
+                      chatId: id,
+                      role: message.role,
+                      content:
+                        typeof message.content === "string"
+                          ? message.content
+                          : JSON.stringify(message.content),
+                      createdAt: new Date(),
+                    };
+                  }),
+                });
+              } catch (error) {
+                console.error("Failed to save chat");
+              }
+            } else {
+              console.log("No session available, skipping chat save");
+            }
+          },
+        });
+
+        result.mergeIntoDataStream(dataStream, {
+          sendReasoning: true,
+        });
+      },
+      onError: (error) => {
+        console.error("Error in chat stream:", error);
+        return `I'm sorry, but I encountered an error while processing your request. Please try again or contact support if the issue persists.`;
+      },
+    });
   } catch (error) {
-    console.error('Unhandled error in chat API:', error);
+    console.error("Unhandled error in chat API:", error);
     return new Response(
       JSON.stringify({
-        error: 'An unexpected error occurred',
-        message: 'Please try again later',
+        error: "An unexpected error occurred",
+        message: "Please try again later",
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

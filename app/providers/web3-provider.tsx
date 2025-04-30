@@ -44,7 +44,7 @@ const config = createConfig(
 
     // Required App Info
     appName: "Stable Station",
-    appDescription: "Learn about stablecoins and get started with Web3",
+    appDescription: "Hub for Stablecoins & Real World Assets",
     appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
     appIcon: "/favicon.ico",
   })

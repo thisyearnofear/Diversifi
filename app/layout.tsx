@@ -23,7 +23,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.vercel.ai"),
   title: "Stable Station",
-  description: "Learn about stablecoins and get started with Web3",
+  description: "Hub for Stablecoins & Real World Assets",
 };
 
 export const viewport = {
