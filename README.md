@@ -157,7 +157,7 @@ The full DiversiFi feature will include:
    - Herfindahl-Hirschman Index (HHI) for measuring concentration
    - Shannon Entropy for measuring information diversity
    - Geographic Spread Ratio for measuring regional allocation
-   - Custom diversification scores and recommendations
+   - Custom diversification scores & insight/analytics 
 
 3. **Portfolio Rebalancing Insights**
 
