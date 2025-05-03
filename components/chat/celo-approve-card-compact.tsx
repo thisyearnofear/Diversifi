@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   ChevronDown,
   ChevronUp,
@@ -13,10 +12,10 @@ import {
   Loader2,
   CheckCircle,
   Info,
-} from "lucide-react";
-import { toast } from "sonner";
-import { useCeloSwap } from "@/hooks/use-celo-swap";
-import { useTokenPrice } from "@/hooks/use-token-price";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { useCeloSwap } from '@/hooks/use-celo-swap';
+import { useTokenPrice } from '@/hooks/use-token-price';
 
 interface CeloApproveCardCompactProps {
   onComplete?: (amount: number) => void;
@@ -40,46 +39,46 @@ export function CeloApproveCardCompact({
   } = useCeloSwap();
 
   // State for the swap form
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState('');
   const [isReviewing, setIsReviewing] = useState(false);
 
   // Get real-time exchange rates from CoinGecko
-  const { prices } = useTokenPrice(["CELO", "USDC"]);
+  const { prices } = useTokenPrice(['CELO', 'USDC']);
 
   // Calculate exchange rate based on CoinGecko prices
   // Fallback rate: 1 CELO = $0.29
   let exchangeRate = 0.29;
 
-  if (prices && prices.CELO && prices.USDC) {
+  if (prices?.CELO && prices.USDC) {
     // 1 CELO = x cUSD (where cUSD is pegged to USD)
     exchangeRate = prices.CELO.usd / prices.USDC.usd;
   }
 
-  const estimatedOutput = parseFloat(amount || "0") * exchangeRate;
+  const estimatedOutput = Number.parseFloat(amount || '0') * exchangeRate;
 
   // Determine if we're in a loading state
   const isLoading =
     [
-      "approving",
-      "transaction-pending",
-      "transaction-submitted",
-      "transaction-confirming",
+      'approving',
+      'transaction-pending',
+      'transaction-submitted',
+      'transaction-confirming',
     ].includes(status) || isSwitchingChain;
 
   // Determine if the approval is completed
   const isApprovalCompleted =
-    isApproved || status === "approved" || status === "completed";
+    isApproved || status === 'approved' || status === 'completed';
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (/^\d*\.?\d*$/.test(value) || value === "") {
+    if (/^\d*\.?\d*$/.test(value) || value === '') {
       setAmount(value);
     }
   };
 
   const handleReview = () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      toast.error("Please enter a valid amount");
+    if (!amount || Number.parseFloat(amount) <= 0) {
+      toast.error('Please enter a valid amount');
       return;
     }
     setIsReviewing(true);
@@ -92,13 +91,13 @@ export function CeloApproveCardCompact({
   const handleApprove = async () => {
     try {
       if (!address) {
-        toast.error("Please connect your wallet first");
+        toast.error('Please connect your wallet first');
         return;
       }
 
       // Double-check network before proceeding
       if (!isCorrectNetwork) {
-        toast.info("Switching to Celo network...");
+        toast.info('Switching to Celo network...');
         await switchToCelo();
 
         // Add a small delay to ensure the chain ID has been updated
@@ -106,30 +105,30 @@ export function CeloApproveCardCompact({
 
         // Verify the switch was successful
         if (!isCorrectNetwork) {
-          toast.error("Please switch to the Celo network to continue");
+          toast.error('Please switch to the Celo network to continue');
           return;
         }
       }
 
-      if (!amount || parseFloat(amount) <= 0) {
-        toast.error("Please enter a valid amount");
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        toast.error('Please enter a valid amount');
         return;
       }
 
       // Call the swap function from the hook
       // This will trigger the approval flow since we're not approved yet
       swap({
-        amount: parseFloat(amount),
+        amount: Number.parseFloat(amount),
       });
     } catch (error) {
-      console.error("Error approving:", error);
-      toast.error("Failed to approve CELO tokens");
+      console.error('Error approving:', error);
+      toast.error('Failed to approve CELO tokens');
     }
   };
 
   // When approval is completed, call onComplete with the amount
   if (isApprovalCompleted && onComplete && amount) {
-    onComplete(parseFloat(amount));
+    onComplete(Number.parseFloat(amount));
   }
 
   return (
@@ -285,7 +284,7 @@ export function CeloApproveCardCompact({
                               Switching...
                             </>
                           ) : (
-                            "Switch to Celo"
+                            'Switch to Celo'
                           )}
                         </Button>
                       </div>
@@ -317,7 +316,7 @@ export function CeloApproveCardCompact({
                             Approving...
                           </>
                         ) : (
-                          "Approve"
+                          'Approve'
                         )}
                       </Button>
                     </div>

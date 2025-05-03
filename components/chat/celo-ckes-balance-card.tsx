@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/card";
-import { Loader2, CheckCircle } from "lucide-react";
-import { useCkesSwap } from "@/hooks/use-celo-ckes";
+import { Card } from '@/components/ui/card';
+import { Loader2, CheckCircle } from 'lucide-react';
+import { useCkesSwap } from '@/hooks/use-celo-ckes';
 
 export function CeloCkesBalanceCard() {
   const { status, error, balance, isCorrectNetwork, isSwitchingChain } =
@@ -25,7 +25,7 @@ export function CeloCkesBalanceCard() {
     );
   }
 
-  if (status === "checking" || isSwitchingChain) {
+  if (status === 'checking' || isSwitchingChain) {
     return (
       <Card className="p-4 border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
         <div className="flex items-center gap-3">

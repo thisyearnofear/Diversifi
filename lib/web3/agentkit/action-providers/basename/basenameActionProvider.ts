@@ -1,19 +1,19 @@
 import {
   encodeFunctionData,
-  Hex,
+  type Hex,
   namehash,
   parseEther,
   keccak256,
   toBytes,
-} from "viem";
-import { z } from "zod";
+} from 'viem';
+import type { z } from 'zod';
 import {
   ActionProvider,
   CreateAction,
-  EvmWalletProvider,
-} from "@coinbase/agentkit";
+  type EvmWalletProvider,
+} from '@coinbase/agentkit';
 
-import { Network } from "./types";
+import type { Network } from './types';
 import {
   L2_RESOLVER_ADDRESS_MAINNET,
   L2_RESOLVER_ADDRESS_TESTNET,
@@ -25,12 +25,12 @@ import {
   BASENAMES_BASE_REGISTRAR_ADDRESS_TESTNET,
   REGISTRAR_ABI,
   BASE_REGISTRAR_TRANSFER_ABI,
-} from "./constants";
+} from './constants';
 import {
   RegisterBasenameSchema,
   TransferBasenameSchema,
   RegisterAndTransferBasenameSchema,
-} from "./schemas";
+} from './schemas';
 
 /**
  * Action provider for registering Basenames.
@@ -40,7 +40,7 @@ export class BasenameActionProvider extends ActionProvider<EvmWalletProvider> {
    * Constructs a new BasenameActionProvider.
    */
   constructor() {
-    super("basename", []);
+    super('basename', []);
   }
 
   /**
@@ -51,7 +51,7 @@ export class BasenameActionProvider extends ActionProvider<EvmWalletProvider> {
    * @returns A string indicating the success or failure of the registration.
    */
   @CreateAction({
-    name: "register_basename",
+    name: 'register_basename',
     description: `
 This tool will register a Basename for the agent. The agent should have a wallet associated to register a Basename.
 When your network ID is 'base-mainnet' (also sometimes known simply as 'base'), the name must end with .base.eth, and when your network ID is 'base-sepolia', it must ends with .basetest.eth.
@@ -62,12 +62,12 @@ Basename fails, you should prompt to try again with a more unique name.
   })
   async register(
     wallet: EvmWalletProvider,
-    args: z.infer<typeof RegisterBasenameSchema>
+    args: z.infer<typeof RegisterBasenameSchema>,
   ): Promise<string> {
     const address = wallet.getAddress();
-    const isMainnet = wallet.getNetwork().networkId === "base-mainnet";
+    const isMainnet = wallet.getNetwork().networkId === 'base-mainnet';
 
-    const suffix = isMainnet ? ".base.eth" : ".basetest.eth";
+    const suffix = isMainnet ? '.base.eth' : '.basetest.eth';
     if (!args.basename.endsWith(suffix)) {
       args.basename += suffix;
     }
@@ -78,12 +78,12 @@ Basename fails, you should prompt to try again with a more unique name.
 
     const addressData = encodeFunctionData({
       abi: L2_RESOLVER_ABI,
-      functionName: "setAddr",
+      functionName: 'setAddr',
       args: [namehash(args.basename), address],
     });
     const nameData = encodeFunctionData({
       abi: L2_RESOLVER_ABI,
-      functionName: "setName",
+      functionName: 'setName',
       args: [namehash(args.basename), args.basename],
     });
 
@@ -96,10 +96,10 @@ Basename fails, you should prompt to try again with a more unique name.
         to: contractAddress,
         data: encodeFunctionData({
           abi: REGISTRAR_ABI,
-          functionName: "register",
+          functionName: 'register',
           args: [
             {
-              name: args.basename.replace(suffix, ""),
+              name: args.basename.replace(suffix, ''),
               owner: address as Hex,
               duration: REGISTRATION_DURATION,
               resolver: l2ResolverAddress,
@@ -127,7 +127,7 @@ Basename fails, you should prompt to try again with a more unique name.
    * @returns A string indicating the success or failure of the transfer.
    */
   @CreateAction({
-    name: "tranfer_basename",
+    name: 'tranfer_basename',
     description: `
 This tool will transfer a Basename from the agent's wallet to a new owner. The agent must be the current owner of the Basename to transfer it.
 
@@ -144,12 +144,12 @@ The agent must have a wallet connected that owns the Basename. The transfer will
   })
   async transfer(
     wallet: EvmWalletProvider,
-    args: z.infer<typeof TransferBasenameSchema>
+    args: z.infer<typeof TransferBasenameSchema>,
   ): Promise<string> {
     const agentAddress = wallet.getAddress();
-    const isMainnet = wallet.getNetwork().networkId === "base-mainnet";
+    const isMainnet = wallet.getNetwork().networkId === 'base-mainnet';
 
-    const suffix = isMainnet ? ".base.eth" : ".basetest.eth";
+    const suffix = isMainnet ? '.base.eth' : '.basetest.eth';
     if (!args.basename.endsWith(suffix)) {
       args.basename += suffix;
     }
@@ -166,16 +166,16 @@ The agent must have a wallet connected that owns the Basename. The transfer will
         to: l2ResolverAddress,
         data: encodeFunctionData({
           abi: L2_RESOLVER_ABI,
-          functionName: "setAddr",
+          functionName: 'setAddr',
           args: [nameHash, args.destination as `0x${string}`],
         }),
       });
       const addrReceipt = await wallet.waitForTransactionReceipt(setAddrHash);
       console.log(
-        "Set address record transaction completed in block",
+        'Set address record transaction completed in block',
         addrReceipt.blockNumber,
-        "with tx:",
-        setAddrHash
+        'with tx:',
+        setAddrHash,
       );
 
       // Step 2: Set the name record after address record completes
@@ -183,16 +183,16 @@ The agent must have a wallet connected that owns the Basename. The transfer will
         to: l2ResolverAddress,
         data: encodeFunctionData({
           abi: L2_RESOLVER_ABI,
-          functionName: "setName",
+          functionName: 'setName',
           args: [nameHash, args.basename],
         }),
       });
       const nameReceipt = await wallet.waitForTransactionReceipt(setNameHash);
       console.log(
-        "Set name record transaction completed in block",
+        'Set name record transaction completed in block',
         nameReceipt.blockNumber,
-        "with tx:",
-        setNameHash
+        'with tx:',
+        setNameHash,
       );
 
       // Step 3: Reclaim the basename after name record completes
@@ -201,29 +201,28 @@ The agent must have a wallet connected that owns the Basename. The transfer will
         : BASENAMES_BASE_REGISTRAR_ADDRESS_TESTNET;
 
       // Get just the label (remove .base.eth or .basetest.eth)
-      const label = args.basename.replace(suffix, "");
+      const label = args.basename.replace(suffix, '');
       const tokenId = BigInt(keccak256(toBytes(label)));
-      console.log("Label:", label);
-      console.log("Token ID:", tokenId.toString());
+      console.log('Label:', label);
+      console.log('Token ID:', tokenId.toString());
 
       const reclaimHash = await wallet.sendTransaction({
         to: baseRegistrarAddress,
         data: encodeFunctionData({
           abi: BASE_REGISTRAR_TRANSFER_ABI,
-          functionName: "reclaim",
+          functionName: 'reclaim',
           args: [tokenId, args.destination as `0x${string}`],
         }),
         gas: 100000n,
       });
 
-      const reclaimReceipt = await wallet.waitForTransactionReceipt(
-        reclaimHash
-      );
+      const reclaimReceipt =
+        await wallet.waitForTransactionReceipt(reclaimHash);
       console.log(
-        "Reclaim transaction completed in block",
+        'Reclaim transaction completed in block',
         reclaimReceipt.blockNumber,
-        "with tx:",
-        reclaimHash
+        'with tx:',
+        reclaimHash,
       );
 
       // Step 4: Transfer the ENS name
@@ -231,7 +230,7 @@ The agent must have a wallet connected that owns the Basename. The transfer will
         to: baseRegistrarAddress,
         data: encodeFunctionData({
           abi: BASE_REGISTRAR_TRANSFER_ABI,
-          functionName: "safeTransferFrom",
+          functionName: 'safeTransferFrom',
           args: [
             agentAddress as `0x${string}`,
             args.destination as `0x${string}`,
@@ -241,23 +240,22 @@ The agent must have a wallet connected that owns the Basename. The transfer will
         gas: 100000n,
       });
 
-      const transferReceipt = await wallet.waitForTransactionReceipt(
-        transferHash
-      );
+      const transferReceipt =
+        await wallet.waitForTransactionReceipt(transferHash);
       console.log(
-        "Transfer transaction completed in block",
+        'Transfer transaction completed in block',
         transferReceipt.blockNumber,
-        "with tx:",
-        transferHash
+        'with tx:',
+        transferHash,
       );
 
       return `Successfully transferred basename ${args.basename} to ${args.destination}`;
     } catch (error) {
-      console.error("Error in transfer process:", error);
+      console.error('Error in transfer process:', error);
       throw new Error(
         `Transfer failed: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       );
     }
   }
@@ -271,7 +269,7 @@ The agent must have a wallet connected that owns the Basename. The transfer will
    */
 
   @CreateAction({
-    name: "register_and_transfer_basename",
+    name: 'register_and_transfer_basename',
     description: `
 This tool will register a Basename and immediately transfer it to a new owner.
 When your network ID is 'base-mainnet', the name must end with .base.eth, and when your network ID is 'base-sepolia', it must end with .basetest.eth.
@@ -283,7 +281,7 @@ The tool will:
   })
   async registerAndTransfer(
     wallet: EvmWalletProvider,
-    args: z.infer<typeof RegisterAndTransferBasenameSchema>
+    args: z.infer<typeof RegisterAndTransferBasenameSchema>,
   ): Promise<string> {
     try {
       // First register the basename
@@ -292,12 +290,12 @@ The tool will:
         amount: args.amount,
       });
 
-      if (!registerResult.startsWith("Successfully")) {
+      if (!registerResult.startsWith('Successfully')) {
         throw new Error(registerResult);
       }
 
       // Then transfer it
-      const isMainnet = wallet.getNetwork().networkId === "base-mainnet";
+      const isMainnet = wallet.getNetwork().networkId === 'base-mainnet';
       const transferResult = await this.transfer(wallet, {
         basename: args.basename,
         destination: args.destination,
@@ -321,8 +319,8 @@ The tool will:
    * @returns True if the Basename action provider supports the network, false otherwise.
    */
   supportsNetwork = (network: Network) =>
-    network.networkId === "base-mainnet" ||
-    network.networkId === "base-sepolia";
+    network.networkId === 'base-mainnet' ||
+    network.networkId === 'base-sepolia';
 }
 
 export const basenameActionProvider = () => new BasenameActionProvider();

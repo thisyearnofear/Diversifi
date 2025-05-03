@@ -71,15 +71,18 @@ We've built:
 ## Design Philosophy
 
 ### Desktop Experience
+
 - The desktop layout is intentionally left untouched for maximum stability and familiarity.
 - All desktop grid, sidebar, and main content classes remain as originally designed.
 
 ### Mobile & Small Screen Improvements
+
 - Mobile enhancements are implemented using Tailwind's responsive utilities (e.g., `md:`, `sm:`, `block md:hidden`).
 - Mobile-specific UI (navigation bars, overlays, alternate tab navigation, etc.) is added without affecting desktop.
 - Conditional rendering is used for mobile-only components as needed.
 
 #### Current/Future Mobile Improvements
+
 - Bottom navigation bar (mobile only)
 - Mobile-friendly tab navigation
 - Profile/dashboard mobile layout
@@ -115,6 +118,24 @@ pnpm db:seed
 # Start the development server
 pnpm dev
 ```
+
+### Neynar MCP Setup
+
+To set up the Neynar MCP (Mintlify Command Palette) for enhanced documentation search:
+
+1. Install the Neynar MCP:
+
+```bash
+npx @mintlify/mcp@latest add neynar
+```
+
+2. Start the MCP server:
+
+```bash
+node /Users/udingethe/.mcp/neynar/src/index.js
+```
+
+The MCP server will run in the background and enable Neynar documentation search functionality directly from Cursor.
 
 ## Current Progress
 
@@ -157,7 +178,7 @@ The full DiversiFi feature will include:
    - Herfindahl-Hirschman Index (HHI) for measuring concentration
    - Shannon Entropy for measuring information diversity
    - Geographic Spread Ratio for measuring regional allocation
-   - Custom diversification scores & insight/analytics 
+   - Custom diversification scores & insight/analytics
 
 3. **Portfolio Rebalancing Insights**
 

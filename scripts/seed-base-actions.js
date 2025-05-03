@@ -45,29 +45,19 @@ async function seedBaseActions() {
         difficulty: "BEGINNER",
         prerequisites: '{}',
         steps: '{'
-          {
             title: "Connect wallet",
-            description: "Connect your wallet to continue",
-          },
-          {
+            description: "Connect your wallet to continue",,
             title: "Set up Base Account",
-            description: "Click 'Set Up Account' to enable portfolio tracking",
-          },
-          {
+            description: "Click 'Set Up Account' to enable portfolio tracking",,
             title: "Confirm transaction",
-            description: "Confirm the transaction in your wallet",
-          },
-          {
+            description: "Confirm the transaction in your wallet",,
             title: "Complete setup",
-            description: "Click 'Complete Setup' to finish",
-          },
+            description: "Click 'Complete Setup' to finish",,
         ]),
         rewards: '{'
-          {
             type: "FEATURE",
             description:
-              "Access portfolio tracking and future rebalancing features",
-          },
+              "Access portfolio tracking and future rebalancing features",,
         ]),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -92,9 +82,8 @@ async function seedBaseActions() {
 
       await client.query(insertDivviQuery);
       console.log("Divvi registration action inserted successfully");
-    } else {
+    } else 
       console.log("Divvi registration action already exists");
-    }
 
     // Insert Aerodrome swap action if it doesn't exist
     if (aerodromeResult.rows.length === 0) {
@@ -108,32 +97,20 @@ async function seedBaseActions() {
         difficulty: "BEGINNER",
         prerequisites: '{}',
         steps: '{'
-          {
             title: "Get USDbC",
-            description: "Click 'Get USDbC' to go to the swap interface",
-          },
-          {
+            description: "Click 'Get USDbC' to go to the swap interface",,
             title: "Connect wallet",
-            description: "Connect your wallet to Aerodrome",
-          },
-          {
+            description: "Connect your wallet to Aerodrome",,
             title: "Swap ETH for USDbC",
-            description: "Swap ETH for USDbC (already pre-selected)",
-          },
-          {
+            description: "Swap ETH for USDbC (already pre-selected)",,
             title: "Confirm transaction",
-            description: "Confirm the transaction in your wallet",
-          },
-          {
+            description: "Confirm the transaction in your wallet",,
             title: "Copy transaction hash",
             description:
-              "Copy the transaction hash from your wallet or explorer",
-          },
-          {
+              "Copy the transaction hash from your wallet or explorer",,
             title: "Complete action",
             description:
-              "Paste the transaction hash and click 'Complete Action'",
-          },
+              "Paste the transaction hash and click 'Complete Action'",,
         ]),
         rewards: '{}',
         createdAt: new Date(),

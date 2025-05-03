@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db/queries";
-import { chat } from "@/lib/db/schema";
-import { desc, eq } from "drizzle-orm";
-import { auth } from "@/app/auth";
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db/queries';
+import { chat } from '@/lib/db/schema';
+import { desc, eq } from 'drizzle-orm';
+import { auth } from '@/app/auth';
 
 // Maximum number of chats to keep per user
 const MAX_CHATS = 3;
@@ -13,16 +13,13 @@ export async function POST() {
     const userId = session?.user?.id;
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -38,28 +35,26 @@ export async function POST() {
       const chatsToDelete = userChats.slice(MAX_CHATS);
 
       for (const chatToDelete of chatsToDelete) {
-        await db
-          .delete(chat)
-          .where(eq(chat.id, chatToDelete.id));
+        await db.delete(chat).where(eq(chat.id, chatToDelete.id));
       }
 
       return NextResponse.json({
         success: true,
         deleted: chatsToDelete.length,
-        remaining: MAX_CHATS
+        remaining: MAX_CHATS,
       });
     }
 
     return NextResponse.json({
       success: true,
       deleted: 0,
-      remaining: userChats.length
+      remaining: userChats.length,
     });
   } catch (error) {
-    console.error("Error enforcing chat limit:", error);
+    console.error('Error enforcing chat limit:', error);
     return NextResponse.json(
-      { error: "Failed to enforce chat limit" },
-      { status: 500 }
+      { error: 'Failed to enforce chat limit' },
+      { status: 500 },
     );
   }
 }

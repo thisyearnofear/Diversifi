@@ -1,16 +1,16 @@
-import type { z } from "zod";
+import type { z } from 'zod';
 import {
   ActionProvider,
   CreateAction,
-  EvmWalletProvider,
-} from "@coinbase/agentkit";
+  type EvmWalletProvider,
+} from '@coinbase/agentkit';
 import {
   getTokenBalancesSchema,
   type TokenBalanceWithMetadata,
   getNFTsForOwnerSchema,
   type NFTWithMetadata,
-} from "./schemas";
-import { Network } from "../types";
+} from './schemas';
+import type { Network } from '../types';
 
 /**
  * AlchemyActionProvider provides actions for interacting with Alchemy APIs.
@@ -23,7 +23,7 @@ export class AlchemyActionProvider extends ActionProvider {
    * @param apiKey - The Alchemy API key
    */
   constructor(apiKey: string) {
-    super("alchemy", []);
+    super('alchemy', []);
     this.apiKey = apiKey;
   }
 
@@ -34,9 +34,9 @@ export class AlchemyActionProvider extends ActionProvider {
    */
   private getBaseUrl(chainId: string): string {
     const urls: Record<string, string> = {
-      "1": "eth-mainnet.g.alchemy.com",
-      "8453": "base-mainnet.g.alchemy.com",
-      "84532": "base-sepolia.g.alchemy.com",
+      '1': 'eth-mainnet.g.alchemy.com',
+      '8453': 'base-mainnet.g.alchemy.com',
+      '84532': 'base-sepolia.g.alchemy.com',
     };
 
     const domain = urls[chainId];
@@ -55,7 +55,7 @@ export class AlchemyActionProvider extends ActionProvider {
    * @returns Array of token balances with metadata.
    */
   @CreateAction({
-    name: "get_token_balances",
+    name: 'get_token_balances',
     description: `
     This tool will get all ERC-20 token balances for a wallet address.
     It takes the following inputs:
@@ -67,17 +67,17 @@ export class AlchemyActionProvider extends ActionProvider {
   })
   async getTokenBalances(
     walletProvider: EvmWalletProvider,
-    args: z.infer<typeof getTokenBalancesSchema>
+    args: z.infer<typeof getTokenBalancesSchema>,
   ): Promise<TokenBalanceWithMetadata[] | { error: string }> {
     try {
       const chainId = String(walletProvider.getNetwork().chainId);
       const baseURL = this.getBaseUrl(chainId);
       const balancesResponse = await fetch(baseURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "alchemy_getTokenBalances",
+          jsonrpc: '2.0',
+          method: 'alchemy_getTokenBalances',
           params: [args.address],
           id: 42,
         }),
@@ -89,18 +89,18 @@ export class AlchemyActionProvider extends ActionProvider {
       // Filter out zero balances if requested
       const filteredBalances = args.includeZeroBalances
         ? balances
-        : balances.filter((token: any) => token.tokenBalance !== "0");
+        : balances.filter((token: any) => token.tokenBalance !== '0');
 
       // Get metadata for each token
       const tokenBalancesWithMetadata: TokenBalanceWithMetadata[] =
         await Promise.all(
           filteredBalances.map(async (token: any) => {
             const metadataResponse = await fetch(baseURL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                jsonrpc: "2.0",
-                method: "alchemy_getTokenMetadata",
+                jsonrpc: '2.0',
+                method: 'alchemy_getTokenMetadata',
                 params: [token.contractAddress],
                 id: 42,
               }),
@@ -111,7 +111,7 @@ export class AlchemyActionProvider extends ActionProvider {
 
             // Convert balance to human readable format
             const balance = (
-              parseInt(token.tokenBalance) / Math.pow(10, metadata.decimals)
+              Number.parseInt(token.tokenBalance) / Math.pow(10, metadata.decimals)
             ).toFixed(2);
 
             return {
@@ -121,7 +121,7 @@ export class AlchemyActionProvider extends ActionProvider {
               decimals: metadata.decimals,
               contractAddress: token.contractAddress,
             };
-          })
+          }),
         );
 
       return tokenBalancesWithMetadata;
@@ -140,7 +140,7 @@ export class AlchemyActionProvider extends ActionProvider {
    * @returns Array of NFTs with metadata.
    */
   @CreateAction({
-    name: "get_nfts_for_owner",
+    name: 'get_nfts_for_owner',
     description: `
     This tool will get all NFTs owned by a specified wallet address.
     It takes the following inputs:
@@ -153,12 +153,12 @@ export class AlchemyActionProvider extends ActionProvider {
   })
   async getNFTsForOwner(
     walletProvider: EvmWalletProvider,
-    args: z.infer<typeof getNFTsForOwnerSchema>
+    args: z.infer<typeof getNFTsForOwnerSchema>,
   ): Promise<NFTWithMetadata[]> {
     try {
       const chainId = String(walletProvider.getNetwork().chainId);
       const baseURL = this.getBaseUrl(chainId);
-      const nftBaseUrl = baseURL.replace("/v2/", "/nft/v3/");
+      const nftBaseUrl = baseURL.replace('/v2/', '/nft/v3/');
 
       const queryParams = new URLSearchParams({
         owner: args.owner,
@@ -169,15 +169,15 @@ export class AlchemyActionProvider extends ActionProvider {
       const response = await fetch(
         `${nftBaseUrl}/getNFTsForOwner?${queryParams}`,
         {
-          method: "GET",
-          headers: { accept: "application/json" },
-        }
+          method: 'GET',
+          headers: { accept: 'application/json' },
+        },
       );
 
       const data = await response.json();
 
       if (data.error) {
-        throw new Error(data.error.message || "Failed to fetch NFTs");
+        throw new Error(data.error.message || 'Failed to fetch NFTs');
       }
 
       return data.ownedNfts;
@@ -193,9 +193,10 @@ export class AlchemyActionProvider extends ActionProvider {
    */
   supportsNetwork = (network: Network) => {
     // Supported networks: Ethereum mainnet, Base mainnet, Base Sepolia
-    const supportedChainIds = ["1", "8453", "84532"];
+    const supportedChainIds = ['1', '8453', '84532'];
     return supportedChainIds.includes(String(network.chainId));
   };
 }
 
-export const alchemyActionProvider = (apiKey: string) => new AlchemyActionProvider(apiKey); 
+export const alchemyActionProvider = (apiKey: string) =>
+  new AlchemyActionProvider(apiKey);

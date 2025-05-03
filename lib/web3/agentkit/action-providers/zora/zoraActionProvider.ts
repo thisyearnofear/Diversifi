@@ -1,14 +1,14 @@
-import type { z } from "zod";
+import type { z } from 'zod';
 import {
   ActionProvider,
   CreateAction,
-  EvmWalletProvider,
+  type EvmWalletProvider,
   NETWORK_ID_TO_VIEM_CHAIN,
-} from "@coinbase/agentkit";
-import type { Network } from "../types";
-import { mint1155Schema, type Mint1155Response } from "./schemas";
-import { mint } from "@zoralabs/protocol-sdk";
-import { createPublicClient, http, encodeFunctionData, type Hex } from "viem";
+} from '@coinbase/agentkit';
+import type { Network } from '../types';
+import { mint1155Schema, type Mint1155Response } from './schemas';
+import { mint } from '@zoralabs/protocol-sdk';
+import { createPublicClient, http, encodeFunctionData, type Hex } from 'viem';
 
 /**
  * ZoraActionProvider provides actions for interacting with Zora Protocol.
@@ -18,7 +18,7 @@ export class ZoraActionProvider extends ActionProvider {
    * Constructor for the ZoraActionProvider.
    */
   constructor() {
-    super("zora", []);
+    super('zora', []);
   }
 
   /**
@@ -29,7 +29,7 @@ export class ZoraActionProvider extends ActionProvider {
    * @returns The transaction hash of the mint.
    */
   @CreateAction({
-    name: "mint_1155",
+    name: 'mint_1155',
     description: `
     This tool will mint ERC-1155 tokens from a Zora contract.
     It takes the following inputs:
@@ -46,7 +46,7 @@ export class ZoraActionProvider extends ActionProvider {
   })
   async mint1155(
     walletProvider: EvmWalletProvider,
-    args: z.infer<typeof mint1155Schema>
+    args: z.infer<typeof mint1155Schema>,
   ): Promise<Mint1155Response> {
     try {
       const network = walletProvider.getNetwork();
@@ -61,7 +61,7 @@ export class ZoraActionProvider extends ActionProvider {
       // Prepare mint parameters
       const { parameters } = await mint({
         tokenContract: args.tokenContract as `0x${string}`,
-        mintType: "1155",
+        mintType: '1155',
         tokenId: BigInt(args.tokenId),
         quantityToMint: args.quantityToMint,
         minterAccount: recipient,
@@ -84,7 +84,7 @@ export class ZoraActionProvider extends ActionProvider {
 
       return {
         success: true,
-        message: "Successfully minted tokens",
+        message: 'Successfully minted tokens',
         data: {
           tokenContract: args.tokenContract,
           tokenId: args.tokenId,
@@ -96,10 +96,10 @@ export class ZoraActionProvider extends ActionProvider {
         },
       };
     } catch (error) {
-      console.log("Error minting tokens", error);
+      console.log('Error minting tokens', error);
       return {
         success: false,
-        message: "Failed to mint tokens",
+        message: 'Failed to mint tokens',
         error: error instanceof Error ? error.message : String(error),
       };
     }
@@ -113,10 +113,10 @@ export class ZoraActionProvider extends ActionProvider {
    */
   supportsNetwork = (network: Network) => {
     // Zora supports Base (8453) and Zora Network (7777777)
-    const supportedChainIds = ["8453", "7777777"];
+    const supportedChainIds = ['8453', '7777777'];
     const chainId = String(network.chainId);
     return supportedChainIds.includes(chainId);
   };
 }
 
-export const zoraActionProvider = () => new ZoraActionProvider(); 
+export const zoraActionProvider = () => new ZoraActionProvider();

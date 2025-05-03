@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   ChevronDown,
   ChevronUp,
@@ -11,10 +11,10 @@ import {
   Loader2,
   CheckCircle,
   Info,
-} from "lucide-react";
-import { toast } from "sonner";
-import { useCkesSwap } from "@/hooks/use-celo-ckes";
-import { useTokenPrice } from "@/hooks/use-token-price";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { useCkesSwap } from '@/hooks/use-celo-ckes';
+import { useTokenPrice } from '@/hooks/use-token-price';
 
 interface CeloCkesConfirmCardCompactProps {
   amount: number | null;
@@ -45,7 +45,7 @@ export function CeloCkesConfirmCardCompact({
   // We'll calculate the output using either the hook's exchange rate or a backup
 
   // Get backup exchange rate from token prices
-  const { prices } = useTokenPrice(["cUSD", "cKES"]);
+  const { prices } = useTokenPrice(['cUSD', 'cKES']);
   let backupRate = 1.0; // fallback rate for cUSD to cKES (approximately 1:1)
   if (prices?.cUSD?.usd && prices?.cKES?.usd) {
     backupRate = prices.cKES.usd / prices.cUSD.usd;
@@ -56,47 +56,47 @@ export function CeloCkesConfirmCardCompact({
   const finalOutput = (amount || 0) * finalRate || 0;
 
   console.log(
-    "Confirm Card - isApproved:",
+    'Confirm Card - isApproved:',
     isApproved,
-    "status:",
+    'status:',
     status,
-    "amount:",
-    amount
+    'amount:',
+    amount,
   );
 
   const isLoading =
     [
-      "swapping",
-      "transaction-pending",
-      "transaction-submitted",
-      "transaction-confirming",
-      "completing",
-    ].includes(status || "") || isSwitchingChain;
+      'swapping',
+      'transaction-pending',
+      'transaction-submitted',
+      'transaction-confirming',
+      'completing',
+    ].includes(status || '') || isSwitchingChain;
 
   // Handle the swap confirmation
   const handleConfirmSwap = async () => {
     try {
       if (!address) {
-        toast.error("Please connect your wallet first");
+        toast.error('Please connect your wallet first');
         return;
       }
 
       if (!amount || amount <= 0) {
-        toast.error("Please enter a valid amount");
+        toast.error('Please enter a valid amount');
         return;
       }
 
       if (!isApproved) {
-        toast.error("Please approve cUSD tokens in the previous step");
+        toast.error('Please approve cUSD tokens in the previous step');
         return;
       }
 
       if (!isCorrectNetwork) {
-        toast.info("Switching to Celo network...");
+        toast.info('Switching to Celo network...');
         await switchToCelo();
         await new Promise((resolve) => setTimeout(resolve, 1000));
         if (!isCorrectNetwork) {
-          toast.error("Please switch to the Celo network to continue");
+          toast.error('Please switch to the Celo network to continue');
           return;
         }
       }
@@ -104,8 +104,8 @@ export function CeloCkesConfirmCardCompact({
       // Call the swap function from the hook
       swap({ amount });
     } catch (error) {
-      console.error("Error confirming swap:", error);
-      toast.error("Failed to confirm swap");
+      console.error('Error confirming swap:', error);
+      toast.error('Failed to confirm swap');
     }
   };
 
@@ -239,7 +239,7 @@ export function CeloCkesConfirmCardCompact({
                       Switching to Celo...
                     </>
                   ) : (
-                    "Switch to Celo Network"
+                    'Switch to Celo Network'
                   )}
                 </Button>
               </div>
@@ -263,19 +263,19 @@ export function CeloCkesConfirmCardCompact({
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" />
                       {isSwitchingChain
-                        ? "Switching Network..."
-                        : status === "completing"
-                        ? "Completing..."
-                        : status === "transaction-confirming"
-                        ? "Confirming Transaction..."
-                        : status === "transaction-submitted"
-                        ? "Transaction Submitted..."
-                        : status === "transaction-pending"
-                        ? "Transaction Pending..."
-                        : "Swapping..."}
+                        ? 'Switching Network...'
+                        : status === 'completing'
+                          ? 'Completing...'
+                          : status === 'transaction-confirming'
+                            ? 'Confirming Transaction...'
+                            : status === 'transaction-submitted'
+                              ? 'Transaction Submitted...'
+                              : status === 'transaction-pending'
+                                ? 'Transaction Pending...'
+                                : 'Swapping...'}
                     </>
                   ) : (
-                    "Confirm Swap"
+                    'Confirm Swap'
                   )}
                 </Button>
               </div>

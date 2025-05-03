@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db/queries";
-import { action, userAction } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { auth } from "@/app/auth";
+import { type NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db/queries';
+import { action, userAction } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
+import { auth } from '@/app/auth';
 
 /**
  * POST handler for completing Celo actions
@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
@@ -23,17 +23,17 @@ export async function POST(request: NextRequest) {
 
     if (!actionId || !transactionHash) {
       return NextResponse.json(
-        { error: "Action ID and transaction hash are required" },
-        { status: 400 }
+        { error: 'Action ID and transaction hash are required' },
+        { status: 400 },
       );
     }
 
     // Check if database is available
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot complete action.");
+      console.warn('⚠️ Database not available. Cannot complete action.');
       return NextResponse.json(
-        { error: "Database not available" },
-        { status: 503 }
+        { error: 'Database not available' },
+        { status: 503 },
       );
     }
 
@@ -45,10 +45,7 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (actions.length === 0) {
-      return NextResponse.json(
-        { error: "Action not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Action not found' }, { status: 404 });
     }
 
     // Record the action completion
@@ -56,7 +53,7 @@ export async function POST(request: NextRequest) {
     await db.insert(userAction).values({
       userId: session.user.id,
       actionId,
-      status: "COMPLETED",
+      status: 'COMPLETED',
       completedAt: now,
       proof: {
         transactionHash,
@@ -67,13 +64,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Action completed successfully",
+      message: 'Action completed successfully',
     });
   } catch (error) {
-    console.error("Error completing Celo action:", error);
+    console.error('Error completing Celo action:', error);
     return NextResponse.json(
-      { error: "Failed to complete action" },
-      { status: 500 }
+      { error: 'Failed to complete action' },
+      { status: 500 },
     );
   }
 }

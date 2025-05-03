@@ -1,4 +1,4 @@
-import type { User } from "@/lib/db/queries";
+import type { User } from '@/lib/db/queries';
 
 interface Attachment {
   name?: string;
@@ -7,7 +7,7 @@ interface Attachment {
 }
 
 const formatAttachments = (attachments: Attachment[]): string => {
-  if (!attachments.length) return "";
+  if (!attachments.length) return '';
 
   return `The user has shared the following files:
 ${attachments
@@ -15,26 +15,26 @@ ${attachments
     (attachment, index) =>
       `${index + 1}. ${attachment.name} (${attachment.contentType}, ${
         attachment.url
-      })`
+      })`,
   )
-  .join("\n")}`;
+  .join('\n')}`;
 };
 
-const formatUserInterests = (information: User["information"]): string => {
-  if (!information.length) return "";
+const formatUserInterests = (information: User['information']): string => {
+  if (!information.length) return '';
 
   const activeInfo = information.filter((info) => !info.deletedAt);
-  if (!activeInfo.length) return "";
+  if (!activeInfo.length) return '';
 
   return `We have the following information about them:
 ${activeInfo
   .map((interest) => `${interest.type}: ${interest.content}`)
-  .join("\n")}`;
+  .join('\n')}`;
 };
 
 const formatKitInfo = (
-  claimedKits: User["claimedKits"],
-  createdKits: User["createdKits"]
+  claimedKits: User['claimedKits'],
+  createdKits: User['createdKits'],
 ): string => {
   const parts = [];
 
@@ -45,24 +45,24 @@ const formatKitInfo = (
   if (createdKits.length > 0) {
     const unclaimedKits = createdKits.filter((kit) => !kit.claimedAt);
     parts.push(
-      `They have created ${createdKits.length}, of which ${unclaimedKits.length} are unclaimed`
+      `They have created ${createdKits.length}, of which ${unclaimedKits.length} are unclaimed`,
     );
   }
 
-  return parts.join("\n");
+  return parts.join('\n');
 };
 
-const formatCharges = (charges: User["charges"]): string => {
-  if (!charges.length) return "";
+const formatCharges = (charges: User['charges']): string => {
+  if (!charges.length) return '';
 
   const completedCharges = charges.filter(
-    (charge) => charge.status === "COMPLETED"
+    (charge) => charge.status === 'COMPLETED',
   );
-  if (!completedCharges.length) return "";
+  if (!completedCharges.length) return '';
 
   const totalSpent = completedCharges.reduce(
     (sum, charge) => sum + Number.parseFloat(charge.amount),
-    0
+    0,
   );
   return `They have spent a total of ${totalSpent} ${completedCharges[0].currency}`;
 };
@@ -75,7 +75,7 @@ export const generateUserProfile = ({
   attachments?: Attachment[];
 }): string => {
   if (!userInfo) {
-    return "User does not have a profile yet.";
+    return 'User does not have a profile yet.';
   }
 
   const sections = [
@@ -86,5 +86,5 @@ export const generateUserProfile = ({
     formatCharges(userInfo.charges),
   ].filter(Boolean); // Remove empty sections
 
-  return sections.join("\n\n");
+  return sections.join('\n\n');
 };

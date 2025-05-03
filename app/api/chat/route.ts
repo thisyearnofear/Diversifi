@@ -1,41 +1,40 @@
-import { type Message, createDataStreamResponse, streamText, Output } from "ai";
+import { type Message, createDataStreamResponse, streamText, Output } from 'ai';
 
-import { auth } from "@/app/auth";
-import { Session } from "next-auth";
-import { myProvider } from "@/lib/ai/models";
-import { generateSystemPrompt } from "@/lib/ai/prompts";
+import { auth } from '@/app/auth';
+import type { Session } from 'next-auth';
+import { myProvider } from '@/lib/ai/models';
+import { generateSystemPrompt } from '@/lib/ai/prompts';
 import {
   deleteChatById,
   getChatById,
   saveChat,
   saveMessages,
   getUser,
-} from "@/lib/db/queries";
+} from '@/lib/db/queries';
 import {
   generateUUID,
   getMostRecentUserMessage,
   sanitizeResponseMessages,
-} from "@/lib/utils";
+} from '@/lib/utils';
 
-import { generateTitleFromUserMessage } from "../../actions";
-import { createDocument } from "@/lib/ai/tools/create-document";
-import { updateDocument } from "@/lib/ai/tools/update-document";
-import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
-import { agentKitToTools } from "@/lib/web3/agentkit/framework-extensions/ai-sdk";
-import { z } from "zod";
-import { tool } from "ai";
+import { generateTitleFromUserMessage } from '../../actions';
+import { createDocument } from '@/lib/ai/tools/create-document';
+import { updateDocument } from '@/lib/ai/tools/update-document';
+import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
+import { agentKitToTools } from '@/lib/web3/agentkit/framework-extensions/ai-sdk';
+import { z } from 'zod';
+import { tool } from 'ai';
 import {
   saveUserInformation,
   getUserInformation,
-  deleteUserInformationTool,
-} from "@/lib/ai/tools/user-information";
-import { setupAgentKit } from "@/lib/web3/agentkit/setup";
-import { generateUserProfile } from "@/lib/ai/prompts/user";
+} from '@/lib/ai/tools/user-information';
+import { setupAgentKit } from '@/lib/web3/agentkit/setup';
+import { generateUserProfile } from '@/lib/ai/prompts/user';
 import {
   getAvailableStarterKitsTool,
   claimAvailableStarterKitTool,
-} from "@/lib/ai/tools/starter-kit";
-import { suggestActionsDefinition } from "@/lib/ai/tools/suggest-actions";
+} from '@/lib/ai/tools/starter-kit';
+import { suggestActionsDefinition } from '@/lib/ai/tools/suggest-actions';
 
 export const maxDuration = 60;
 
@@ -49,23 +48,23 @@ export async function POST(request: Request) {
       await request.json();
 
     const attachments = messages.flatMap(
-      (message) => message.experimental_attachments ?? []
+      (message) => message.experimental_attachments ?? [],
     );
 
-    let userProfile = "User is not signed in";
+    let userProfile = 'User is not signed in';
     let session: Session | null = null;
 
     try {
       session = await auth();
     } catch (authError) {
-      console.error("Authentication error in chat API:", authError);
+      console.error('Authentication error in chat API:', authError);
       // Continue without authentication
     }
 
     const userMessage = getMostRecentUserMessage(messages);
 
     if (!userMessage) {
-      return new Response("No user message found", { status: 400 });
+      return new Response('No user message found', { status: 400 });
     }
 
     if (session?.user?.id) {
@@ -76,7 +75,7 @@ export async function POST(request: Request) {
         {
           userInfo: userInfo[0],
           attachments,
-        }
+        },
       )}`;
 
       const chat = await getChatById({ id });
@@ -90,21 +89,21 @@ export async function POST(request: Request) {
         if (session?.user?.id) {
           const enforceUrl = process.env.VERCEL_URL
             ? `https://${process.env.VERCEL_URL}/api/chat/enforce-limit`
-            : "http://localhost:4000/api/chat/enforce-limit";
+            : 'http://localhost:4000/api/chat/enforce-limit';
 
           // Make chat limit enforcement completely non-blocking
           // Use a fire-and-forget approach that won't affect the main flow
           setTimeout(() => {
             fetch(enforceUrl, {
-              method: "POST",
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 // Include session info to prevent 401
-                Cookie: request.headers.get("cookie") || "",
+                Cookie: request.headers.get('cookie') || '',
               },
             }).catch((error: Error) => {
               // Just log the error and continue
-              console.warn("Chat limit enforcement failed:", error);
+              console.warn('Chat limit enforcement failed:', error);
             });
           }, 0);
         }
@@ -120,9 +119,9 @@ export async function POST(request: Request) {
     try {
       agentKit = await setupAgentKit();
       tools = agentKitToTools(agentKit);
-      console.log("AgentKit setup successful");
+      console.log('AgentKit setup successful');
     } catch (error) {
-      console.error("Failed to setup AgentKit:", error);
+      console.error('Failed to setup AgentKit:', error);
       // Continue without AgentKit tools
     }
 
@@ -148,10 +147,10 @@ export async function POST(request: Request) {
                     .string()
                     .optional()
                     .describe(
-                      "An additional label with more context about the action for the user"
+                      'An additional label with more context about the action for the user',
                     ),
                   args: z.array(z.record(z.any())).optional(),
-                })
+                }),
               ),
             }),
           }),
@@ -174,7 +173,7 @@ export async function POST(request: Request) {
                   description: suggestActionsDefinition.description,
                   parameters: suggestActionsDefinition.parameters,
                   execute: async ({ category, title, limit }) => {
-                    console.log("Executing suggestActions with args:", {
+                    console.log('Executing suggestActions with args:', {
                       category,
                       title,
                       limit,
@@ -183,30 +182,30 @@ export async function POST(request: Request) {
                       const result = await suggestActionsDefinition.handler(
                         category,
                         title,
-                        limit
+                        limit,
                       );
-                      console.log("suggestActions result:", result);
+                      console.log('suggestActions result:', result);
                       return result;
                     } catch (error) {
-                      console.error("Error in suggestActions:", error);
+                      console.error('Error in suggestActions:', error);
                       // Return a default action if there's an error
                       return [
                         {
-                          title: "Set up Lens Account",
+                          title: 'Set up Lens Account',
                           description:
-                            "Create a Lens account and join the decentralized social network",
-                          chain: category || "BASE",
-                          difficulty: "beginner",
+                            'Create a Lens account and join the decentralized social network',
+                          chain: category || 'BASE',
+                          difficulty: 'beginner',
                           steps: [
-                            "Go to onboarding.lens.xyz",
-                            "Connect wallet",
-                            "Create profile",
+                            'Go to onboarding.lens.xyz',
+                            'Connect wallet',
+                            'Create profile',
                           ],
-                          reward: "Access to the Lens ecosystem",
-                          actionUrl: "https://onboarding.lens.xyz",
-                          proofFieldLabel: "Lens Profile URL",
+                          reward: 'Access to the Lens ecosystem',
+                          actionUrl: 'https://onboarding.lens.xyz',
+                          proofFieldLabel: 'Lens Profile URL',
                           proofFieldPlaceholder:
-                            "https://hey.xyz/u/yourusername",
+                            'https://hey.xyz/u/yourusername',
                         },
                       ];
                     }
@@ -225,30 +224,30 @@ export async function POST(request: Request) {
                       const result = await suggestActionsDefinition.handler(
                         category,
                         title,
-                        limit
+                        limit,
                       );
                       return result;
                     } catch (error) {
-                      console.error("Error in suggestActions:", error);
+                      console.error('Error in suggestActions:', error);
                       // Return a default action if there's an error
                       return [
                         {
-                          title: "Set up Lens Account",
+                          title: 'Set up Lens Account',
                           description:
-                            "Create a Lens account and join the decentralized social network",
-                          chain: category || "BASE",
-                          difficulty: "beginner",
+                            'Create a Lens account and join the decentralized social network',
+                          chain: category || 'BASE',
+                          difficulty: 'beginner',
                           steps: [
-                            "Go to https://onboarding.lens.xyz and sign up",
-                            "Connect your wallet",
-                            "Create your profile",
-                            "Copy your profile URL (e.g. https://hey.xyz/u/username)",
+                            'Go to https://onboarding.lens.xyz and sign up',
+                            'Connect your wallet',
+                            'Create your profile',
+                            'Copy your profile URL (e.g. https://hey.xyz/u/username)',
                           ],
-                          reward: "Access to the Lens ecosystem",
-                          actionUrl: "https://onboarding.lens.xyz",
-                          proofFieldLabel: "Lens Profile URL",
+                          reward: 'Access to the Lens ecosystem',
+                          actionUrl: 'https://onboarding.lens.xyz',
+                          proofFieldLabel: 'Lens Profile URL',
                           proofFieldPlaceholder:
-                            "https://hey.xyz/u/yourusername",
+                            'https://hey.xyz/u/yourusername',
                         },
                       ];
                     }
@@ -258,7 +257,7 @@ export async function POST(request: Request) {
           onFinish: async ({ response, reasoning, text }) => {
             // currently the content of the last message is truncated, so passing in the text as a partial fix
             const assistantMessages = response.messages.filter(
-              (message) => message.role === "assistant"
+              (message) => message.role === 'assistant',
             );
             const lastAssistantMessage =
               assistantMessages[assistantMessages.length - 1];
@@ -267,7 +266,7 @@ export async function POST(request: Request) {
                 ...lastAssistantMessage,
                 content: [
                   {
-                    type: "text",
+                    type: 'text',
                     text,
                   },
                 ],
@@ -287,7 +286,7 @@ export async function POST(request: Request) {
                       chatId: id,
                       role: message.role,
                       content:
-                        typeof message.content === "string"
+                        typeof message.content === 'string'
                           ? message.content
                           : JSON.stringify(message.content),
                       createdAt: new Date(),
@@ -295,10 +294,10 @@ export async function POST(request: Request) {
                   }),
                 });
               } catch (error) {
-                console.error("Failed to save chat");
+                console.error('Failed to save chat');
               }
             } else {
-              console.log("No session available, skipping chat save");
+              console.log('No session available, skipping chat save');
             }
           },
         });
@@ -308,53 +307,53 @@ export async function POST(request: Request) {
         });
       },
       onError: (error) => {
-        console.error("Error in chat stream:", error);
+        console.error('Error in chat stream:', error);
         return `I'm sorry, but I encountered an error while processing your request. Please try again or contact support if the issue persists.`;
       },
     });
   } catch (error) {
-    console.error("Unhandled error in chat API:", error);
+    console.error('Unhandled error in chat API:', error);
     return new Response(
       JSON.stringify({
-        error: "An unexpected error occurred",
-        message: "Please try again later",
+        error: 'An unexpected error occurred',
+        message: 'Please try again later',
       }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
     );
   }
 }
 
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
+  const id = searchParams.get('id');
 
   if (!id) {
-    return new Response("Not Found", { status: 404 });
+    return new Response('Not Found', { status: 404 });
   }
 
   const session = await auth();
 
   if (!session || !session.user) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response('Unauthorized', { status: 401 });
   }
 
   try {
     const chat = await getChatById({ id });
 
     if (!chat) {
-      return new Response("Not Found", { status: 404 });
+      return new Response('Not Found', { status: 404 });
     }
 
     if (chat.userId !== session.user.id) {
-      return new Response("Unauthorized", { status: 401 });
+      return new Response('Unauthorized', { status: 401 });
     }
 
     await deleteChatById({ id });
 
-    return new Response("Chat deleted", { status: 200 });
+    return new Response('Chat deleted', { status: 200 });
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "An error occurred";
+      error instanceof Error ? error.message : 'An error occurred';
     return new Response(errorMessage, { status: 500 });
   }
 }

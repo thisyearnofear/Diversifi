@@ -1,23 +1,23 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { starterKit, user } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { starterKit, user } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 export async function POST(request: Request) {
   const session = await auth();
 
   if (!session?.user?.id) {
     return NextResponse.json(
-      { error: "You must be authenticated to request a starter kit" },
-      { status: 401 }
+      { error: 'You must be authenticated to request a starter kit' },
+      { status: 401 },
     );
   }
 
   // Check if the database connection is available
   if (!db) {
     return NextResponse.json(
-      { error: "Database connection not available" },
-      { status: 500 }
+      { error: 'Database connection not available' },
+      { status: 500 },
     );
   }
 
@@ -30,8 +30,8 @@ export async function POST(request: Request) {
 
     if (existingKits.length > 0) {
       return NextResponse.json(
-        { message: "You already have a starter kit", kit: existingKits[0] },
-        { status: 200 }
+        { message: 'You already have a starter kit', kit: existingKits[0] },
+        { status: 200 },
       );
     }
 
@@ -62,23 +62,23 @@ export async function POST(request: Request) {
         .returning();
 
       return NextResponse.json(
-        { message: "Starter kit created successfully", kit: newKit[0] },
-        { status: 201 }
+        { message: 'Starter kit created successfully', kit: newKit[0] },
+        { status: 201 },
       );
     } catch (error) {
-      console.error("Error creating starter kit:", error);
+      console.error('Error creating starter kit:', error);
       return NextResponse.json(
-        { error: "Failed to create starter kit" },
-        { status: 500 }
+        { error: 'Failed to create starter kit' },
+        { status: 500 },
       );
     }
 
     // This return is unreachable due to the try/catch above
   } catch (error) {
-    console.error("Error creating starter kit:", error);
+    console.error('Error creating starter kit:', error);
     return NextResponse.json(
-      { error: "Failed to create starter kit" },
-      { status: 500 }
+      { error: 'Failed to create starter kit' },
+      { status: 500 },
     );
   }
 }

@@ -1,20 +1,20 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { userReward, action } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { userReward, action } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function GET() {
     return NextResponse.json(formattedRewards);
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to get user rewards";
+      error instanceof Error ? error.message : 'Failed to get user rewards';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

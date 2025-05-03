@@ -3,7 +3,7 @@ export interface CoinbaseChargeResponse {
   code: string;
   name: string;
   description: string;
-  pricing_type: "fixed_price" | "no_price";
+  pricing_type: 'fixed_price' | 'no_price';
   pricing?: {
     local: {
       amount: string;
@@ -15,7 +15,7 @@ export interface CoinbaseChargeResponse {
     };
   };
   timeline: Array<{
-    status: "NEW" | "PENDING" | "COMPLETED" | "EXPIRED" | "FAILED" | "SIGNED";
+    status: 'NEW' | 'PENDING' | 'COMPLETED' | 'EXPIRED' | 'FAILED' | 'SIGNED';
     time: string;
   }>;
   web3_data?: {

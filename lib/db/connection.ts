@@ -1,7 +1,7 @@
-import "server-only";
-import postgres from "postgres";
-import { drizzle } from "drizzle-orm/postgres-js";
-import * as schema from "./schema";
+import 'server-only';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import * as schema from './schema';
 
 // Create a singleton database connection
 let client: postgres.Sql | null = null;
@@ -17,7 +17,7 @@ export const getDbClient = () => {
 
     if (!connectionString) {
       console.warn(
-        "⚠️ No database connection string found. Some features may not work."
+        '⚠️ No database connection string found. Some features may not work.',
       );
       return null;
     }
@@ -30,7 +30,7 @@ export const getDbClient = () => {
 
     return client;
   } catch (error) {
-    console.error("Failed to create database client:", error);
+    console.error('Failed to create database client:', error);
     return null;
   }
 };
@@ -53,10 +53,10 @@ export const isDatabaseAvailable = async () => {
     if (!db) return false;
 
     // Try a simple query to check if the database is available
-    await db.execute("SELECT 1");
+    await db.execute('SELECT 1');
     return true;
   } catch (error) {
-    console.error("Database availability check failed:", error);
+    console.error('Database availability check failed:', error);
     return false;
   }
 };

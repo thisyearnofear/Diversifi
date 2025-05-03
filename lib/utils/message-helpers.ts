@@ -1,4 +1,4 @@
-import type { Message } from "@/types/message";
+import type { Message } from '@/types/message';
 
 export interface UserAction {
   action: string;
@@ -19,7 +19,7 @@ export interface ActionData {
 }
 
 export const parseMessageContent = (message: Message) => {
-  let textContent = message.content || "";
+  let textContent = message.content || '';
   let userActions: UserAction[] = [];
 
   try {
@@ -38,7 +38,7 @@ export const parseMessageContent = (message: Message) => {
     text: textContent,
     interactive: shouldShowInteractive
       ? {
-          type: "actions" as const,
+          type: 'actions' as const,
           actions: userActions,
         }
       : null,

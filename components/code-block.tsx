@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 interface CodeBlockProps {
   node: any;
@@ -18,15 +18,15 @@ export function CodeBlock({
 }: CodeBlockProps) {
   const [output, setOutput] = useState<string | null>(null);
   const [pyodide, setPyodide] = useState<any>(null);
-  const match = /language-(\w+)/.exec(className || "");
-  const isPython = match && match[1] === "python";
-  const codeContent = String(children).replace(/\n$/, "");
-  const [tab, setTab] = useState<"code" | "run">("code");
+  const match = /language-(\w+)/.exec(className || '');
+  const isPython = match && match[1] === 'python';
+  const codeContent = String(children).replace(/\n$/, '');
+  const [tab, setTab] = useState<'code' | 'run'>('code');
 
   // For block code (not inline)
   if (!inline) {
     // Directly return the pre element without wrapping it in a div to avoid hydration issues
-    if (tab === "code") {
+    if (tab === 'code') {
       return (
         <pre
           {...props}
@@ -41,7 +41,7 @@ export function CodeBlock({
     // For other tabs, we can use a div wrapper
     return (
       <div className="not-prose flex flex-col" data-code-block="true">
-        {tab === "run" && output && (
+        {tab === 'run' && output && (
           <div className="text-sm w-full overflow-x-auto bg-zinc-800 dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-700 border-t-0 rounded-b-xl text-zinc-50">
             <code>{output}</code>
           </div>

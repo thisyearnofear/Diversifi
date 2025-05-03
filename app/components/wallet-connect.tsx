@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { CustomConnectButton } from "@/components/custom-connect-button";
-import { useAccount } from "wagmi";
+import { CustomConnectButton } from '@/components/custom-connect-button';
+import { useAccount } from 'wagmi';
 
 export function WalletConnect() {
   const { address, isConnected } = useAccount();

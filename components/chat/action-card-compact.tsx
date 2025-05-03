@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Loader2, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
-import { useActions } from "@/hooks/use-actions";
-import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Loader2, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { useActions } from '@/hooks/use-actions';
+import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface ActionCardCompactProps {
   title: string;
@@ -32,23 +32,23 @@ export function ActionCardCompact({
   steps,
   reward,
   actionUrl,
-  proofFieldLabel = "Proof",
-  proofFieldPlaceholder = "Transaction hash, URL, etc.",
+  proofFieldLabel = 'Proof',
+  proofFieldPlaceholder = 'Transaction hash, URL, etc.',
   onComplete,
 }: ActionCardCompactProps) {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [proof, setProof] = useState("");
+  const [proof, setProof] = useState('');
   const { completeAction } = useActions();
 
   const handleStart = () => {
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return;
     }
 
-    window.open(actionUrl, "_blank");
+    window.open(actionUrl, '_blank');
   };
 
   const handleComplete = async () => {
@@ -57,16 +57,16 @@ export function ActionCardCompact({
     setIsLoading(true);
     try {
       // Get the action ID from the database
-      const response = await fetch("/api/actions/by-title", {
-        method: "POST",
+      const response = await fetch('/api/actions/by-title', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ title }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get action ID");
+        throw new Error('Failed to get action ID');
       }
 
       const { id } = await response.json();
@@ -77,15 +77,15 @@ export function ActionCardCompact({
         completedAt: new Date().toISOString(),
       });
 
-      toast.success("Action completed successfully!");
-      setProof("");
+      toast.success('Action completed successfully!');
+      setProof('');
 
       if (onComplete) {
         onComplete();
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to complete action";
+        error instanceof Error ? error.message : 'Failed to complete action';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -103,13 +103,13 @@ export function ActionCardCompact({
           <Badge
             variant="outline"
             className={cn(
-              "capitalize text-xs py-0 h-5",
-              difficulty.toLowerCase() === "beginner" &&
-                "bg-green-50 text-green-700",
-              difficulty.toLowerCase() === "intermediate" &&
-                "bg-yellow-50 text-yellow-700",
-              difficulty.toLowerCase() === "advanced" &&
-                "bg-red-50 text-red-700"
+              'capitalize text-xs py-0 h-5',
+              difficulty.toLowerCase() === 'beginner' &&
+                'bg-green-50 text-green-700',
+              difficulty.toLowerCase() === 'intermediate' &&
+                'bg-yellow-50 text-yellow-700',
+              difficulty.toLowerCase() === 'advanced' &&
+                'bg-red-50 text-red-700',
             )}
           >
             {difficulty.toLowerCase()}
@@ -120,7 +120,7 @@ export function ActionCardCompact({
 
       <div className="flex items-center justify-between mb-2">
         <div className="text-xs">
-          <span className="font-medium">Reward:</span>{" "}
+          <span className="font-medium">Reward:</span>{' '}
           <span className="text-green-600">{reward}</span>
         </div>
         <Button
@@ -175,7 +175,7 @@ export function ActionCardCompact({
             {isLoading ? (
               <Loader2 className="size-3 animate-spin" />
             ) : (
-              "Complete"
+              'Complete'
             )}
           </Button>
         </div>

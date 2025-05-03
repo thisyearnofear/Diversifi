@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useStarterKit } from "@/hooks/use-starter-kit";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useStarterKit } from '@/hooks/use-starter-kit';
+import { toast } from 'sonner';
 
 export default function AdminStarterKitsPage() {
   const { address } = useAccount();
@@ -16,16 +16,16 @@ export default function AdminStarterKitsPage() {
 
   const handleCreateStarterKit = async () => {
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return;
     }
 
     setIsCreating(true);
     try {
-      const response = await fetch("/api/admin/create-starter-kit", {
-        method: "POST",
+      const response = await fetch('/api/admin/create-starter-kit', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           creatorId: address,
@@ -34,15 +34,15 @@ export default function AdminStarterKitsPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create starter kit");
+        throw new Error('Failed to create starter kit');
       }
 
       const data = await response.json();
-      toast.success("Starter kit created successfully!");
-      console.log("Created starter kit:", data.kit);
+      toast.success('Starter kit created successfully!');
+      console.log('Created starter kit:', data.kit);
     } catch (error) {
-      console.error("Error creating starter kit:", error);
-      toast.error("Failed to create starter kit");
+      console.error('Error creating starter kit:', error);
+      toast.error('Failed to create starter kit');
     } finally {
       setIsCreating(false);
     }
@@ -63,7 +63,7 @@ export default function AdminStarterKitsPage() {
                 Creator Address
               </label>
               <Input
-                value={address || ""}
+                value={address || ''}
                 disabled
                 placeholder="Connect your wallet to set creator address"
               />
@@ -81,7 +81,7 @@ export default function AdminStarterKitsPage() {
               onClick={handleCreateStarterKit}
               disabled={!address || isCreating}
             >
-              {isCreating ? "Creating..." : "Create Starter Kit"}
+              {isCreating ? 'Creating...' : 'Create Starter Kit'}
             </Button>
           </div>
         </CardContent>
@@ -123,9 +123,7 @@ export default function AdminStarterKitsPage() {
         </CardHeader>
         <CardContent>
           {createdKits.length === 0 ? (
-            <p className="text-muted-foreground">
-              No created starter kits yet
-            </p>
+            <p className="text-muted-foreground">No created starter kits yet</p>
           ) : (
             <ul className="space-y-4">
               {createdKits.map((kit) => (
@@ -143,7 +141,7 @@ export default function AdminStarterKitsPage() {
                     </p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {kit.claimerId ? "Claimed" : "Unclaimed"}
+                    {kit.claimerId ? 'Claimed' : 'Unclaimed'}
                   </p>
                 </li>
               ))}

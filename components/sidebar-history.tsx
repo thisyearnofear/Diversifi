@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import useSWR, { mutate } from "swr";
-import { useState } from "react";
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import useSWR, { mutate } from 'swr';
+import { useState } from 'react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Pencil, Check, X, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/tooltip';
+import { Pencil, Check, X, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 import {
   SidebarGroup,
@@ -20,11 +20,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import type { Chat } from "@/lib/db/schema";
-import { fetcher, cn } from "@/lib/utils";
-import { useAuth } from "@/hooks/use-auth";
-import { toast } from "sonner";
+} from '@/components/ui/sidebar';
+import type { Chat } from '@/lib/db/schema';
+import { fetcher, cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { toast } from 'sonner';
 
 // Maximum number of chats to keep (should match the server-side limit)
 const MAX_CHATS = 3;
@@ -33,22 +33,22 @@ const MAX_CHATS = 3;
 async function updateChatTitle(chatId: string, newTitle: string) {
   try {
     const response = await fetch(`/api/chat/${chatId}`, {
-      method: "PATCH",
+      method: 'PATCH',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ title: newTitle }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to update chat title");
+      throw new Error('Failed to update chat title');
     }
 
     // Refresh the history data
-    await mutate("/api/history");
+    await mutate('/api/history');
     return true;
   } catch (error) {
-    console.error("Error updating chat title:", error);
+    console.error('Error updating chat title:', error);
     return false;
   }
 }
@@ -57,18 +57,18 @@ async function updateChatTitle(chatId: string, newTitle: string) {
 async function deleteChat(chatId: string) {
   try {
     const response = await fetch(`/api/chat/${chatId}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
 
     if (!response.ok) {
-      throw new Error("Failed to delete chat");
+      throw new Error('Failed to delete chat');
     }
 
     // Refresh the history data
-    await mutate("/api/history");
+    await mutate('/api/history');
     return true;
   } catch (error) {
-    console.error("Error deleting chat:", error);
+    console.error('Error deleting chat:', error);
     return false;
   }
 }
@@ -79,16 +79,16 @@ export function SidebarHistory() {
   const router = useRouter();
   const { activeAddress } = useAuth();
   const { data: history } = useSWR<Array<Chat>>(
-    activeAddress ? "/api/history" : null,
+    activeAddress ? '/api/history' : null,
     fetcher,
     {
       fallbackData: [],
-    }
+    },
   );
 
   // State for chat renaming and showing more chats
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
-  const [newTitle, setNewTitle] = useState<string>("");
+  const [newTitle, setNewTitle] = useState<string>('');
   const [showAllChats, setShowAllChats] = useState(false);
 
   // Enforce maximum number of chats and limit initial display
@@ -135,12 +135,12 @@ export function SidebarHistory() {
                         if (newTitle.trim()) {
                           const success = await updateChatTitle(
                             chat.id,
-                            newTitle
+                            newTitle,
                           );
                           if (success) {
-                            toast.success("Chat renamed");
+                            toast.success('Chat renamed');
                           } else {
-                            toast.error("Failed to rename chat");
+                            toast.error('Failed to rename chat');
                           }
                         }
                         setEditingChatId(null);
@@ -194,8 +194,8 @@ export function SidebarHistory() {
                       variant="ghost"
                       size="icon"
                       className={cn(
-                        "size-7 opacity-0 group-hover:opacity-100 transition-opacity",
-                        chat.id === id ? "opacity-100" : ""
+                        'size-7 opacity-0 group-hover:opacity-100 transition-opacity',
+                        chat.id === id ? 'opacity-100' : '',
                       )}
                       onClick={() => {
                         setEditingChatId(chat.id);
@@ -208,22 +208,22 @@ export function SidebarHistory() {
                       variant="ghost"
                       size="icon"
                       className={cn(
-                        "size-7 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700",
-                        chat.id === id ? "opacity-100" : ""
+                        'size-7 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700',
+                        chat.id === id ? 'opacity-100' : '',
                       )}
                       onClick={async () => {
                         if (
-                          confirm("Are you sure you want to delete this chat?")
+                          confirm('Are you sure you want to delete this chat?')
                         ) {
                           const success = await deleteChat(chat.id);
                           if (success) {
-                            toast.success("Chat deleted");
+                            toast.success('Chat deleted');
                             if (chat.id === id) {
                               // If the current chat was deleted, redirect to home
-                              router.push("/");
+                              router.push('/');
                             }
                           } else {
-                            toast.error("Failed to delete chat");
+                            toast.error('Failed to delete chat');
                           }
                         }
                       }}

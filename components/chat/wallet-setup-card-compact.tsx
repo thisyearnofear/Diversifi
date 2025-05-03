@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 export function WalletSetupCardCompact() {
   const { address } = useAccount();
@@ -14,42 +14,42 @@ export function WalletSetupCardCompact() {
   const [isFunding, setIsFunding] = useState(false);
   const [walletCreated, setWalletCreated] = useState(false);
   const [walletFunded, setWalletFunded] = useState(false);
-  const [walletAddress, setWalletAddress] = useState("");
-  const [walletBalance, setWalletBalance] = useState("");
-  const [error, setError] = useState("");
+  const [walletAddress, setWalletAddress] = useState('');
+  const [walletBalance, setWalletBalance] = useState('');
+  const [error, setError] = useState('');
 
   const createWallet = async () => {
     setIsCreating(true);
-    setError("");
+    setError('');
 
     try {
-      console.log("Calling wallet creation API...");
-      const response = await fetch("/api/wallet/create", {
-        method: "POST",
+      console.log('Calling wallet creation API...');
+      const response = await fetch('/api/wallet/create', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       const data = await response.json();
-      console.log("Wallet creation API response:", data);
+      console.log('Wallet creation API response:', data);
 
       if (!response.ok) {
-        console.error("Wallet creation failed with status:", response.status);
-        throw new Error(data.error || "Failed to create wallet");
+        console.error('Wallet creation failed with status:', response.status);
+        throw new Error(data.error || 'Failed to create wallet');
       }
 
       setWalletCreated(true);
       setWalletAddress(data.wallet.address);
-      toast.success("Wallet created successfully!");
+      toast.success('Wallet created successfully!');
 
       // Check if the wallet already has a balance
       await checkBalance();
     } catch (error: any) {
-      console.error("Error creating wallet:", error);
-      setError(error.message || "Failed to create wallet");
+      console.error('Error creating wallet:', error);
+      setError(error.message || 'Failed to create wallet');
       toast.error(
-        "Failed to create wallet: " + (error.message || "Unknown error")
+        `Failed to create wallet: ${error.message || 'Unknown error'}`,
       );
     } finally {
       setIsCreating(false);
@@ -58,32 +58,32 @@ export function WalletSetupCardCompact() {
 
   const fundWallet = async () => {
     setIsFunding(true);
-    setError("");
+    setError('');
 
     try {
-      const response = await fetch("/api/wallet/fund", {
-        method: "POST",
+      const response = await fetch('/api/wallet/fund', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to fund wallet");
+        throw new Error(data.error || 'Failed to fund wallet');
       }
 
       setWalletFunded(true);
-      toast.success("Wallet funded successfully!");
+      toast.success('Wallet funded successfully!');
 
       // Check the updated balance
       await checkBalance();
     } catch (error: any) {
-      console.error("Error funding wallet:", error);
-      setError(error.message || "Failed to fund wallet");
+      console.error('Error funding wallet:', error);
+      setError(error.message || 'Failed to fund wallet');
       toast.error(
-        "Failed to fund wallet: " + (error.message || "Unknown error")
+        `Failed to fund wallet: ${error.message || 'Unknown error'}`,
       );
     } finally {
       setIsFunding(false);
@@ -92,24 +92,24 @@ export function WalletSetupCardCompact() {
 
   const checkBalance = async () => {
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const response = await fetch("/api/wallet/balance");
+      const response = await fetch('/api/wallet/balance');
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to get wallet balance");
+        throw new Error(data.error || 'Failed to get wallet balance');
       }
 
       setWalletBalance(data.balance);
 
-      if (parseFloat(data.balance) > 0) {
+      if (Number.parseFloat(data.balance) > 0) {
         setWalletFunded(true);
       }
     } catch (error: any) {
-      console.error("Error checking balance:", error);
+      console.error('Error checking balance:', error);
       // Don't show an error toast for balance check
     } finally {
       setIsLoading(false);
@@ -118,7 +118,7 @@ export function WalletSetupCardCompact() {
 
   const handleStart = async () => {
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return;
     }
 
@@ -126,7 +126,7 @@ export function WalletSetupCardCompact() {
 
     try {
       // First, check if the user already has a wallet
-      const response = await fetch("/api/wallet/balance");
+      const response = await fetch('/api/wallet/balance');
       const data = await response.json();
 
       if (response.ok) {
@@ -135,18 +135,18 @@ export function WalletSetupCardCompact() {
         setWalletAddress(data.address);
         setWalletBalance(data.balance);
 
-        if (parseFloat(data.balance) > 0) {
+        if (Number.parseFloat(data.balance) > 0) {
           setWalletFunded(true);
         }
 
-        toast.success("Found your existing wallet!");
+        toast.success('Found your existing wallet!');
       } else {
         // User doesn't have a wallet, create one
         await createWallet();
       }
     } catch (error: any) {
-      console.error("Error starting wallet setup:", error);
-      setError(error.message || "Failed to start wallet setup");
+      console.error('Error starting wallet setup:', error);
+      setError(error.message || 'Failed to start wallet setup');
     } finally {
       setIsLoading(false);
     }
@@ -192,7 +192,7 @@ export function WalletSetupCardCompact() {
           <span className="text-xs font-medium">Fund Wallet</span>
           {walletBalance && (
             <span className="text-xs text-gray-500">
-              (Balance: {parseFloat(walletBalance).toFixed(6)} ETH)
+              (Balance: {Number.parseFloat(walletBalance).toFixed(6)} ETH)
             </span>
           )}
         </div>
@@ -217,7 +217,7 @@ export function WalletSetupCardCompact() {
                   Creating...
                 </>
               ) : (
-                "Create Wallet"
+                'Create Wallet'
               )}
             </Button>
           ) : !walletFunded ? (
@@ -232,7 +232,7 @@ export function WalletSetupCardCompact() {
                   Funding...
                 </>
               ) : (
-                "Fund Wallet"
+                'Fund Wallet'
               )}
             </Button>
           ) : (

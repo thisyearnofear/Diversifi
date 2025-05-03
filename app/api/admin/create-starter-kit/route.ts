@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db/queries";
-import { starterKit } from "@/lib/db/schema";
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db/queries';
+import { starterKit } from '@/lib/db/schema';
 
 // This is a simple admin endpoint to create starter kits for testing
 // In production, you would want to secure this endpoint
@@ -10,16 +10,16 @@ export async function POST(request: Request) {
 
     if (!creatorId) {
       return NextResponse.json(
-        { error: "creatorId is required" },
-        { status: 400 }
+        { error: 'creatorId is required' },
+        { status: 400 },
       );
     }
 
     // Check if the database connection is available
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -36,10 +36,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ kit: newKit[0] });
   } catch (error) {
-    console.error("Failed to create starter kit:", error);
+    console.error('Failed to create starter kit:', error);
     return NextResponse.json(
-      { error: "Failed to create starter kit" },
-      { status: 500 }
+      { error: 'Failed to create starter kit' },
+      { status: 500 },
     );
   }
 }

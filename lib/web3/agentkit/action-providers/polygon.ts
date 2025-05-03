@@ -1,10 +1,10 @@
 import {
   ActionProvider,
   CreateAction,
-  WalletProvider,
-} from "@coinbase/agentkit";
-import { z } from "zod";
-import { Network } from "./types";
+  type WalletProvider,
+} from '@coinbase/agentkit';
+import { z } from 'zod';
+import type { Network } from './types';
 
 /**
  * PolygonActionProvider provides actions for getting DAI on Polygon.
@@ -14,7 +14,7 @@ export class PolygonActionProvider extends ActionProvider<WalletProvider> {
    * Constructor for the PolygonActionProvider.
    */
   constructor() {
-    super("polygon", []);
+    super('polygon', []);
   }
 
   /**
@@ -24,55 +24,55 @@ export class PolygonActionProvider extends ActionProvider<WalletProvider> {
    * @returns A JSON string with the Polygon action data.
    */
   @CreateAction({
-    name: "polygon-action",
+    name: 'polygon-action',
     description:
-      "Get DAI stablecoins on Polygon by setting up your account and swapping for DAI",
-    schema: z.object({}).describe("No parameters needed"),
+      'Get DAI stablecoins on Polygon by setting up your account and swapping for DAI',
+    schema: z.object({}).describe('No parameters needed'),
   })
   async polygonAction(_walletProvider: WalletProvider): Promise<string> {
     // Return a JSON string with both Polygon actions and their complete flow
     return JSON.stringify({
-      title: "Get DAI Stablecoins on Polygon",
+      title: 'Get DAI Stablecoins on Polygon',
       description:
-        "Follow these steps to get DAI stablecoins on the Polygon network",
+        'Follow these steps to get DAI stablecoins on the Polygon network',
       actions: [
         {
-          title: "Register on Polygon",
-          description: "Enable portfolio tracking on Polygon",
-          chain: "POLYGON",
-          difficulty: "beginner",
+          title: 'Register on Polygon',
+          description: 'Enable portfolio tracking on Polygon',
+          chain: 'POLYGON',
+          difficulty: 'beginner',
           steps: [
-            "Connect your wallet to continue",
+            'Connect your wallet to continue',
             "Click 'Register' to enable portfolio tracking",
-            "Confirm the transaction in your wallet",
+            'Confirm the transaction in your wallet',
             "Click 'Complete Registration' to finish",
           ],
-          reward: "Access portfolio tracking and future rebalancing features",
-          actionUrl: "",
-          proofFieldLabel: "Transaction Hash",
-          proofFieldPlaceholder: "0x...",
+          reward: 'Access portfolio tracking and future rebalancing features',
+          actionUrl: '',
+          proofFieldLabel: 'Transaction Hash',
+          proofFieldPlaceholder: '0x...',
         },
         {
-          title: "Get DAI Stablecoins",
-          description: "Secure USD-backed tokens on Polygon",
-          chain: "POLYGON",
-          difficulty: "beginner",
+          title: 'Get DAI Stablecoins',
+          description: 'Secure USD-backed tokens on Polygon',
+          chain: 'POLYGON',
+          difficulty: 'beginner',
           steps: [
             "Click 'Get DAI' to prepare the transaction",
-            "Review the transaction details",
-            "Confirm the transaction in your wallet",
-            "Wait for the transaction to complete",
+            'Review the transaction details',
+            'Confirm the transaction in your wallet',
+            'Wait for the transaction to complete',
           ],
-          reward: "Access to DAI stablecoins on Polygon",
-          actionUrl: "",
-          proofFieldLabel: "Transaction Hash",
-          proofFieldPlaceholder: "0x...",
+          reward: 'Access to DAI stablecoins on Polygon',
+          actionUrl: '',
+          proofFieldLabel: 'Transaction Hash',
+          proofFieldPlaceholder: '0x...',
         },
       ],
       nextSteps: [
         "After registration, you'll be able to swap MATIC for DAI",
-        "The swap will be executed through the best available DEX",
-        "You can track your portfolio and manage your DAI balance",
+        'The swap will be executed through the best available DEX',
+        'You can track your portfolio and manage your DAI balance',
       ],
     });
   }
@@ -85,7 +85,7 @@ export class PolygonActionProvider extends ActionProvider<WalletProvider> {
    */
   supportsNetwork = (network: Network) => {
     return (
-      network.networkId === "polygon" || network.networkId === "polygon-mumbai"
+      network.networkId === 'polygon' || network.networkId === 'polygon-mumbai'
     );
   };
 }

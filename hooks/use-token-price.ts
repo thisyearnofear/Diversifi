@@ -1,34 +1,37 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Moralis from "moralis";
-import { getMentoExchangeRate, DEFAULT_EXCHANGE_RATES } from "@/utils/mento-utils";
+import { useState, useEffect } from 'react';
+import Moralis from 'moralis';
+import {
+  getMentoExchangeRate,
+  DEFAULT_EXCHANGE_RATES,
+} from '@/utils/mento-utils';
 
 // Define the token IDs for CoinGecko API
 const TOKEN_IDS = {
-  ETH: "ethereum",
-  USDC: "usd-coin",
-  USDbC: "usd-coin", // Using USDC as a proxy for USDbC since they're pegged 1:1
-  CELO: "celo",
+  ETH: 'ethereum',
+  USDC: 'usd-coin',
+  USDbC: 'usd-coin', // Using USDC as a proxy for USDbC since they're pegged 1:1
+  CELO: 'celo',
   // Celo stablecoins are handled by Mento SDK directly
 };
 
 // Define the token addresses for Moralis API (Optimism)
 const OPTIMISM_TOKEN_ADDRESSES = {
-  ETH: "0x4200000000000000000000000000000000000006", // WETH on Optimism
-  USDC: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607", // USDC on Optimism
-  EURA: "0x9485aca5bbBE1667AD97c7fE7C4531a624C8b1ED", // EURA on Optimism
+  ETH: '0x4200000000000000000000000000000000000006', // WETH on Optimism
+  USDC: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607', // USDC on Optimism
+  EURA: '0x9485aca5bbBE1667AD97c7fE7C4531a624C8b1ED', // EURA on Optimism
 };
 
 // Define the token addresses for Moralis API (Base)
 const BASE_TOKEN_ADDRESSES = {
-  ETH: "0x4200000000000000000000000000000000000006", // WETH on Base
-  USDC: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC on Base
-  USDbC: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA", // USDbC on Base
+  ETH: '0x4200000000000000000000000000000000000006', // WETH on Base
+  USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // USDC on Base
+  USDbC: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA', // USDbC on Base
 };
 
 // Define the supported currencies
-export type SupportedCurrency = "usd";
+export type SupportedCurrency = 'usd';
 
 // Define the token price data structure
 export type TokenPriceData = {
@@ -43,9 +46,10 @@ const initMoralis = async () => {
   if (moralisInitialized) return;
 
   try {
-    const apiKey = process.env.NEXT_PUBLIC_MORALIS_API_KEY || process.env.MORALIS_API_KEY;
+    const apiKey =
+      process.env.NEXT_PUBLIC_MORALIS_API_KEY || process.env.MORALIS_API_KEY;
     if (!apiKey) {
-      console.warn("Moralis API key not found");
+      console.warn('Moralis API key not found');
       return false;
     }
 
@@ -56,7 +60,7 @@ const initMoralis = async () => {
     moralisInitialized = true;
     return true;
   } catch (error) {
-    console.error("Failed to initialize Moralis:", error);
+    console.error('Failed to initialize Moralis:', error);
     return false;
   }
 };
@@ -69,14 +73,16 @@ const initMoralis = async () => {
  * @returns Object containing token prices, loading state, and error
  */
 export function useTokenPrice(
-  tokens: string[] = ["ETH", "USDC"],
-  currency: SupportedCurrency = "usd",
-  chainId: string = "0xa" // Default to Optimism (0xa)
+  tokens: string[] = ['ETH', 'USDC'],
+  currency: SupportedCurrency = 'usd',
+  chainId = '0xa', // Default to Optimism (0xa)
 ) {
   const [prices, setPrices] = useState<TokenPriceData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<"fallback" | "coingecko" | "moralis" | "mento">("fallback");
+  const [source, setSource] = useState<
+    'fallback' | 'coingecko' | 'moralis' | 'mento'
+  >('fallback');
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -97,16 +103,20 @@ export function useTokenPrice(
           PUSO: { usd: 1 / DEFAULT_EXCHANGE_RATES.PUSO },
         };
         setPrices(fallbackPrices);
-        setSource("fallback");
+        setSource('fallback');
 
         // For Celo stablecoins, use Mento SDK directly
-        const celoTokens = tokens.filter(token => ['cKES', 'cCOP', 'PUSO'].includes(token));
+        const celoTokens = tokens.filter((token) =>
+          ['cKES', 'cCOP', 'PUSO'].includes(token),
+        );
         if (celoTokens.length > 0) {
           await fetchCeloStablecoinRates(celoTokens);
         }
 
         // For other tokens, try CoinGecko first
-        const nonCeloTokens = tokens.filter(token => !['cKES', 'cCOP', 'PUSO'].includes(token));
+        const nonCeloTokens = tokens.filter(
+          (token) => !['cKES', 'cCOP', 'PUSO'].includes(token),
+        );
         if (nonCeloTokens.length > 0) {
           // Try to fetch prices from CoinGecko API first
           let success = await fetchFromCoinGecko(nonCeloTokens);
@@ -118,12 +128,16 @@ export function useTokenPrice(
 
           // If both fail, we'll use the fallback prices set above
           if (!success) {
-            console.warn("Using fallback prices as both CoinGecko and Moralis failed");
+            console.warn(
+              'Using fallback prices as both CoinGecko and Moralis failed',
+            );
           }
         }
       } catch (err) {
-        console.error("Error in token price hook:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch token prices");
+        console.error('Error in token price hook:', err);
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch token prices',
+        );
         // Fallback prices already set above
       } finally {
         setIsLoading(false);
@@ -131,7 +145,9 @@ export function useTokenPrice(
     };
 
     // Fetch Celo stablecoin rates using Mento SDK
-    const fetchCeloStablecoinRates = async (celoTokens: string[]): Promise<void> => {
+    const fetchCeloStablecoinRates = async (
+      celoTokens: string[],
+    ): Promise<void> => {
       try {
         const updatedPrices = { ...prices } as TokenPriceData;
 
@@ -145,34 +161,41 @@ export function useTokenPrice(
 
             updatedPrices[token] = { [currency]: usdPrice };
           } catch (tokenError) {
-            console.warn(`Failed to fetch Mento rate for ${token}:`, tokenError);
+            console.warn(
+              `Failed to fetch Mento rate for ${token}:`,
+              tokenError,
+            );
             // Keep fallback price if already set
           }
         }
 
         setPrices(updatedPrices);
-        setSource("mento");
+        setSource('mento');
       } catch (error) {
-        console.error("Error fetching Celo stablecoin rates:", error);
+        console.error('Error fetching Celo stablecoin rates:', error);
         // Fallback prices already set
       }
     };
 
     // Fetch from CoinGecko API
-    const fetchFromCoinGecko = async (tokensToFetch: string[]): Promise<boolean> => {
+    const fetchFromCoinGecko = async (
+      tokensToFetch: string[],
+    ): Promise<boolean> => {
       try {
         // Map tokens to CoinGecko IDs
         const tokenIds = tokensToFetch
           .map((token) => TOKEN_IDS[token as keyof typeof TOKEN_IDS])
           .filter(Boolean)
-          .join(",");
+          .join(',');
 
         if (!tokenIds) {
-          console.warn("No valid token IDs provided for CoinGecko");
+          console.warn('No valid token IDs provided for CoinGecko');
           return false;
         }
 
-        const apiKey = process.env.NEXT_PUBLIC_COINGECKO_API_KEY || process.env.COINGECKO_API_KEY;
+        const apiKey =
+          process.env.NEXT_PUBLIC_COINGECKO_API_KEY ||
+          process.env.COINGECKO_API_KEY;
         const url = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenIds}&vs_currencies=${currency}${apiKey ? `&x_cg_api_key=${apiKey}` : ''}`;
 
         const controller = new AbortController();
@@ -185,7 +208,9 @@ export function useTokenPrice(
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          console.warn(`CoinGecko API returned ${response.status}: ${response.statusText}`);
+          console.warn(
+            `CoinGecko API returned ${response.status}: ${response.statusText}`,
+          );
           return false;
         }
 
@@ -206,40 +231,44 @@ export function useTokenPrice(
         // Only update if we got valid data
         if (Object.keys(formattedPrices).length > 0) {
           // Merge with existing prices
-          setPrices(prevPrices => ({
+          setPrices((prevPrices) => ({
             ...prevPrices,
-            ...formattedPrices
+            ...formattedPrices,
           }));
-          setSource("coingecko");
+          setSource('coingecko');
           return true;
         }
 
         return false;
       } catch (apiError) {
-        console.warn("Failed to fetch from CoinGecko API", apiError);
+        console.warn('Failed to fetch from CoinGecko API', apiError);
         return false;
       }
     };
 
     // Fetch from Moralis API
-    const fetchFromMoralis = async (tokensToFetch: string[]): Promise<boolean> => {
+    const fetchFromMoralis = async (
+      tokensToFetch: string[],
+    ): Promise<boolean> => {
       try {
         // Initialize Moralis if not already initialized
         const initialized = await initMoralis();
         if (!initialized) {
-          console.warn("Moralis not initialized, skipping price fetch");
+          console.warn('Moralis not initialized, skipping price fetch');
           return false;
         }
 
         // Get token addresses based on the chain ID
-        const tokenAddresses = chainId === "0xa" ? OPTIMISM_TOKEN_ADDRESSES : BASE_TOKEN_ADDRESSES;
+        const tokenAddresses =
+          chainId === '0xa' ? OPTIMISM_TOKEN_ADDRESSES : BASE_TOKEN_ADDRESSES;
 
         // Create a new formatted prices object
         const formattedPrices: TokenPriceData = {};
 
         // Fetch prices for each token
         for (const token of tokensToFetch) {
-          const tokenAddress = tokenAddresses[token as keyof typeof tokenAddresses];
+          const tokenAddress =
+            tokenAddresses[token as keyof typeof tokenAddresses];
           if (!tokenAddress) {
             console.warn(`No address found for ${token} on chain ${chainId}`);
             continue;
@@ -248,36 +277,39 @@ export function useTokenPrice(
           try {
             const response = await Moralis.EvmApi.token.getTokenPrice({
               chain: chainId,
-              include: "percent_change",
+              include: 'percent_change',
               address: tokenAddress,
             });
 
             const data = response.raw;
 
-            if (data && data.usdPrice) {
+            if (data?.usdPrice) {
               formattedPrices[token] = {
                 [currency]: data.usdPrice,
               };
             }
           } catch (tokenError) {
-            console.warn(`Failed to fetch price for ${token} from Moralis:`, tokenError);
+            console.warn(
+              `Failed to fetch price for ${token} from Moralis:`,
+              tokenError,
+            );
           }
         }
 
         // Only update if we got valid data
         if (Object.keys(formattedPrices).length > 0) {
           // Merge with existing prices
-          setPrices(prevPrices => ({
+          setPrices((prevPrices) => ({
             ...prevPrices,
-            ...formattedPrices
+            ...formattedPrices,
           }));
-          setSource("moralis");
+          setSource('moralis');
           return true;
         }
 
         return false;
       } catch (apiError) {
-        console.warn("Failed to fetch from Moralis API", apiError);
+        console.warn('Failed to fetch from Moralis API', apiError);
         return false;
       }
     };
@@ -288,7 +320,7 @@ export function useTokenPrice(
     const intervalId = setInterval(fetchPrices, 60000);
 
     return () => clearInterval(intervalId);
-  }, [tokens.join(","), currency, chainId]);
+  }, [tokens.join(','), currency, chainId]);
 
   return { prices, isLoading, error, source };
 }

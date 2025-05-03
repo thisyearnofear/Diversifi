@@ -5,10 +5,11 @@ const { Client } = require('pg');
 
 // Database connection
 const client = new Client({
-  connectionString: "postgres://postgres.aioxeyzbcwtpwpmkixya:SDL0fAdUZuJkCvjC@aws-0-eu-west-1.pooler.supabase.com:5432/postgres",
+  connectionString:
+    'postgres://postgres.aioxeyzbcwtpwpmkixya:SDL0fAdUZuJkCvjC@aws-0-eu-west-1.pooler.supabase.com:5432/postgres',
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 async function checkActions() {
@@ -20,12 +21,12 @@ async function checkActions() {
     // Check if the actions exist
     const checkDivviQuery = {
       text: 'SELECT * FROM "Action" WHERE title = $1',
-      values: ['Set up Base Account']
+      values: ['Set up Base Account'],
     };
 
     const checkAerodromeQuery = {
       text: 'SELECT * FROM "Action" WHERE title = $1',
-      values: ['Get USDbC Stablecoins']
+      values: ['Get USDbC Stablecoins'],
     };
 
     const divviResult = await client.query(checkDivviQuery);
@@ -43,15 +44,14 @@ async function checkActions() {
 
     // List all actions in the database
     const allActionsQuery = {
-      text: 'SELECT id, title FROM "Action"'
+      text: 'SELECT id, title FROM "Action"',
     };
 
     const allActionsResult = await client.query(allActionsQuery);
     console.log('All actions in the database:');
-    allActionsResult.rows.forEach(action => {
+    allActionsResult.rows.forEach((action) => {
       console.log(`- ${action.title} (${action.id})`);
     });
-
   } catch (error) {
     console.error('Error checking actions:', error);
   } finally {

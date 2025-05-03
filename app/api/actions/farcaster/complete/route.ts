@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { action, userAction } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { action, userAction } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 export async function POST(request: Request) {
   try {
@@ -11,15 +11,15 @@ export async function POST(request: Request) {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -29,8 +29,8 @@ export async function POST(request: Request) {
 
     if (!proofUrl) {
       return NextResponse.json(
-        { error: "Proof URL is required" },
-        { status: 400 }
+        { error: 'Proof URL is required' },
+        { status: 400 },
       );
     }
 
@@ -38,35 +38,35 @@ export async function POST(request: Request) {
     const farcasterActions = await db
       .select()
       .from(action)
-      .where(eq(action.title, "Set up Farcaster Account"));
+      .where(eq(action.title, 'Set up Farcaster Account'));
 
     // If no Farcaster action is found, create a default one
     let farcasterAction;
 
     if (farcasterActions.length === 0) {
-      console.log("Creating default Farcaster action");
+      console.log('Creating default Farcaster action');
 
       // Create a default Farcaster action
       const newActions = await db
         .insert(action)
         .values({
-          title: "Set up Farcaster Account",
+          title: 'Set up Farcaster Account',
           description:
-            "Create a Farcaster account and join the decentralized social network",
-          category: "SOCIAL",
-          chain: "BASE",
-          difficulty: "BEGINNER",
+            'Create a Farcaster account and join the decentralized social network',
+          category: 'SOCIAL',
+          chain: 'BASE',
+          difficulty: 'BEGINNER',
           prerequisites: [],
           steps: [
-            "Go to https://www.farcaster.xyz on mobile and sign up",
-            "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
-            "Say hi to @papa as your first cast",
-            "Copy your profile URL (e.g. https://warpcast.com/papa)",
+            'Go to https://www.farcaster.xyz on mobile and sign up',
+            'Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC',
+            'Say hi to @papa as your first cast',
+            'Copy your profile URL (e.g. https://warpcast.com/papa)',
           ],
           rewards: [
             {
-              type: "SOCIAL",
-              description: "Starter packs from the community",
+              type: 'SOCIAL',
+              description: 'Starter packs from the community',
             },
           ],
           createdAt: new Date(),
@@ -89,17 +89,17 @@ export async function POST(request: Request) {
         and(
           eq(userAction.userId, session.user.id),
           eq(userAction.actionId, farcasterAction.id),
-          eq(userAction.status, "COMPLETED")
-        )
+          eq(userAction.status, 'COMPLETED'),
+        ),
       );
 
     if (existingCompletions.length > 0) {
       return NextResponse.json(
         {
-          message: "Action already completed",
+          message: 'Action already completed',
           completion: existingCompletions[0],
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
       .values({
         userId: session.user.id,
         actionId: farcasterAction.id,
-        status: "COMPLETED",
+        status: 'COMPLETED',
         startedAt: new Date(),
         completedAt: new Date(),
         proof: { url: proofUrl },
@@ -120,14 +120,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Action completed successfully",
+        message: 'Action completed successfully',
         completion: completion[0],
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to complete action";
+      error instanceof Error ? error.message : 'Failed to complete action';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
@@ -139,15 +139,15 @@ export async function GET() {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -155,35 +155,35 @@ export async function GET() {
     const farcasterActions = await db
       .select()
       .from(action)
-      .where(eq(action.title, "Set up Farcaster Account"));
+      .where(eq(action.title, 'Set up Farcaster Account'));
 
     // If no Farcaster action is found, create a default one
     let farcasterAction;
 
     if (farcasterActions.length === 0) {
-      console.log("Creating default Farcaster action");
+      console.log('Creating default Farcaster action');
 
       // Create a default Farcaster action
       const newActions = await db
         .insert(action)
         .values({
-          title: "Set up Farcaster Account",
+          title: 'Set up Farcaster Account',
           description:
-            "Create a Farcaster account and join the decentralized social network",
-          category: "SOCIAL",
-          chain: "BASE",
-          difficulty: "BEGINNER",
+            'Create a Farcaster account and join the decentralized social network',
+          category: 'SOCIAL',
+          chain: 'BASE',
+          difficulty: 'BEGINNER',
           prerequisites: [],
           steps: [
-            "Go to https://www.farcaster.xyz on mobile and sign up",
-            "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
-            "Say hi to @papa as your first cast",
-            "Copy your profile URL (e.g. https://warpcast.com/papa)",
+            'Go to https://www.farcaster.xyz on mobile and sign up',
+            'Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC',
+            'Say hi to @papa as your first cast',
+            'Copy your profile URL (e.g. https://warpcast.com/papa)',
           ],
           rewards: [
             {
-              type: "SOCIAL",
-              description: "Starter packs from the community",
+              type: 'SOCIAL',
+              description: 'Starter packs from the community',
             },
           ],
           createdAt: new Date(),
@@ -204,8 +204,8 @@ export async function GET() {
         and(
           eq(userAction.userId, session.user.id),
           eq(userAction.actionId, farcasterAction.id),
-          eq(userAction.status, "COMPLETED")
-        )
+          eq(userAction.status, 'COMPLETED'),
+        ),
       );
 
     if (existingCompletions.length > 0) {
@@ -214,7 +214,7 @@ export async function GET() {
           completed: true,
           completion: existingCompletions[0],
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -222,13 +222,13 @@ export async function GET() {
       {
         completed: false,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    console.error("Error checking Farcaster action completion:", error);
+    console.error('Error checking Farcaster action completion:', error);
     return NextResponse.json(
-      { error: "Failed to check action completion" },
-      { status: 500 }
+      { error: 'Failed to check action completion' },
+      { status: 500 },
     );
   }
 }

@@ -1,6 +1,6 @@
-import "server-only";
-import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import 'server-only';
+import { SignJWT, jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 
 export type SessionPayload = {
   user: {
@@ -14,16 +14,16 @@ const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: SessionPayload) {
   return new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
+    .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime('7d')
     .sign(encodedKey);
 }
 
-export async function decrypt(session: string | undefined = "") {
+export async function decrypt(session: string | undefined = '') {
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
-      algorithms: ["HS256"],
+      algorithms: ['HS256'],
     });
     return payload;
   } catch (error) {
@@ -32,7 +32,7 @@ export async function decrypt(session: string | undefined = "") {
 }
 
 export async function createSession(userId: string) {
-  console.log("Creating session for user ID:", userId);
+  console.log('Creating session for user ID:', userId);
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const session = await encrypt({
     user: {
@@ -45,13 +45,13 @@ export async function createSession(userId: string) {
   // In development, we need to set secure: false for localhost
   const isLocalhost = process.env.NODE_ENV === 'development';
 
-  cookieStore.set("session", session, {
+  cookieStore.set('session', session, {
     httpOnly: true,
     secure: !isLocalhost, // Only use secure in production
     expires,
-    sameSite: "lax",
-    path: "/",
+    sameSite: 'lax',
+    path: '/',
   });
 
-  console.log("Session cookie set, expires:", expires.toISOString());
+  console.log('Session cookie set, expires:', expires.toISOString());
 }

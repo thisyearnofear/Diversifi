@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type { ComponentProps } from "react";
+import type { ComponentProps } from 'react';
 
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export function SidebarToggle({
   className,

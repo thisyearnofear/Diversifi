@@ -1,10 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import { AerodromeSwapCardInapp } from "./aerodrome-swap-card-inapp";
-import { DivviRegistrationCardCompact } from "./divvi-registration-card-compact";
-import { useDivviRegistration } from "@/hooks/use-divvi-registration";
-import { useAerodromeSwap } from "@/hooks/use-aerodrome-swap-inapp";
+'use client';
+import { AerodromeSwapCardInapp } from './aerodrome-swap-card-inapp';
+import { DivviRegistrationCardCompact } from './divvi-registration-card-compact';
+import { useDivviRegistration } from '@/hooks/use-divvi-registration';
+import { useAerodromeSwap } from '@/hooks/use-aerodrome-swap-inapp';
 
 interface BaseActionMessageProps {
   onComplete?: () => void;
@@ -23,12 +21,12 @@ export function BaseActionMessage({ onComplete }: BaseActionMessageProps) {
   // Actions for getting USDbC on Base
   const actions = [
     {
-      id: "divvi-registration",
+      id: 'divvi-registration',
       component: <DivviRegistrationCardCompact onComplete={() => {}} />,
       isCompleted: isRegistered,
     },
     {
-      id: "aerodrome-swap",
+      id: 'aerodrome-swap',
       component: <AerodromeSwapCardInapp onComplete={onComplete} />,
       isCompleted: isSwapCompleted,
     },
@@ -51,7 +49,7 @@ export function BaseActionMessage({ onComplete }: BaseActionMessageProps) {
           <div
             className="h-full bg-green-500 rounded-full transition-all duration-300 ease-in-out"
             style={{ width: `${progressPercentage}%` }}
-          ></div>
+          />
         </div>
       </div>
 

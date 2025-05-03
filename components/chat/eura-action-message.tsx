@@ -1,10 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import { OptimismDivviRegistrationCardCompact } from "./optimism-divvi-registration-card-compact";
-import { VelodromeSwapCardCompact } from "./velodrome-swap-card-compact";
-import { useOptimismDivviRegistration } from "@/hooks/use-optimism-divvi-registration";
-import { useVelodromeSwap } from "@/hooks/use-velodrome-swap";
+'use client';
+import { OptimismDivviRegistrationCardCompact } from './optimism-divvi-registration-card-compact';
+import { VelodromeSwapCardCompact } from './velodrome-swap-card-compact';
+import { useOptimismDivviRegistration } from '@/hooks/use-optimism-divvi-registration';
+import { useVelodromeSwap } from '@/hooks/use-velodrome-swap';
 
 interface EuraActionMessageProps {
   onComplete?: () => void;
@@ -23,12 +21,12 @@ export function EuraActionMessage({ onComplete }: EuraActionMessageProps) {
   // Actions for getting EURA on Optimism
   const actions = [
     {
-      id: "optimism-divvi-registration",
+      id: 'optimism-divvi-registration',
       component: <OptimismDivviRegistrationCardCompact onComplete={() => {}} />,
       isCompleted: isRegistered,
     },
     {
-      id: "velodrome-swap",
+      id: 'velodrome-swap',
       component: <VelodromeSwapCardCompact onComplete={onComplete} />,
       isCompleted: isSwapCompleted,
     },
@@ -51,7 +49,7 @@ export function EuraActionMessage({ onComplete }: EuraActionMessageProps) {
           <div
             className="h-full bg-purple-500 rounded-full transition-all duration-300 ease-in-out"
             style={{ width: `${progressPercentage}%` }}
-          ></div>
+          />
         </div>
       </div>
 

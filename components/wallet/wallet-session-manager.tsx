@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useEffect } from 'react';
+import { useAccount } from 'wagmi';
 
 /**
  * WalletSessionManager component
- * 
+ *
  * This component handles WalletConnect session management to prevent errors
  * related to session requests without listeners.
- * 
+ *
  * It cleans up any orphaned WalletConnect sessions when the component unmounts
  * or when the wallet connection status changes.
  */
@@ -20,14 +20,18 @@ export function WalletSessionManager() {
     const cleanupWalletConnectSessions = () => {
       try {
         // Clear any stored WalletConnect sessions from localStorage
-        Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('wc@2:') || key.startsWith('wagmi.') || key.startsWith('walletconnect:')) {
+        Object.keys(localStorage).forEach((key) => {
+          if (
+            key.startsWith('wc@2:') ||
+            key.startsWith('wagmi.') ||
+            key.startsWith('walletconnect:')
+          ) {
             console.log(`Cleaning up WalletConnect session: ${key}`);
             localStorage.removeItem(key);
           }
         });
       } catch (error) {
-        console.error("Error cleaning up WalletConnect sessions:", error);
+        console.error('Error cleaning up WalletConnect sessions:', error);
       }
     };
 

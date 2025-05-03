@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useCallback } from 'react';
 import { useConnect } from 'wagmi';
@@ -30,22 +30,25 @@ export function BlackCreateWalletButton() {
 
   const createWallet = useCallback(() => {
     try {
-      console.log("Available connectors:", connectors.map(c => c.id));
-      const coinbaseWalletConnector = connectors.find(
-        (connector) => connector.id === 'coinbaseWalletSDK'
+      console.log(
+        'Available connectors:',
+        connectors.map((c) => c.id),
       );
-      
+      const coinbaseWalletConnector = connectors.find(
+        (connector) => connector.id === 'coinbaseWalletSDK',
+      );
+
       if (coinbaseWalletConnector) {
-        console.log("Found Coinbase Wallet connector, connecting...");
+        console.log('Found Coinbase Wallet connector, connecting...');
         connect({ connector: coinbaseWalletConnector });
-        toast.success("Connecting to Coinbase Wallet...");
+        toast.success('Connecting to Coinbase Wallet...');
       } else {
-        console.error("Coinbase Wallet connector not found");
-        toast.error("Coinbase Wallet connector not found");
+        console.error('Coinbase Wallet connector not found');
+        toast.error('Coinbase Wallet connector not found');
       }
     } catch (error) {
-      console.error("Error connecting to Coinbase Wallet:", error);
-      toast.error("Error connecting to Coinbase Wallet");
+      console.error('Error connecting to Coinbase Wallet:', error);
+      toast.error('Error connecting to Coinbase Wallet');
     }
   }, [connectors, connect]);
 

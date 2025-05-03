@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Loader2,
   ChevronDown,
   ChevronUp,
   ExternalLink,
   CheckCircle,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { usePolygonDaiSwap } from "@/hooks/use-polygon-dai-swap";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { usePolygonDaiSwap } from '@/hooks/use-polygon-dai-swap';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 interface PolygonSwapCardCompactProps {
   onComplete?: () => void;
@@ -26,7 +26,7 @@ export function PolygonSwapCardCompact({
 }: PolygonSwapCardCompactProps) {
   const { address } = useAccount();
   const [isExpanded, setIsExpanded] = useState(true);
-  const [amount, setAmount] = useState("0.1");
+  const [amount, setAmount] = useState('0.1');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const {
     status,
@@ -46,13 +46,13 @@ export function PolygonSwapCardCompact({
 
   // Determine if we're in a loading state
   const isLoading = [
-    "checking",
-    "preparing",
-    "executing",
-    "transaction-pending",
-    "transaction-confirming",
-    "transaction-submitted",
-    "completing",
+    'checking',
+    'preparing',
+    'executing',
+    'transaction-pending',
+    'transaction-confirming',
+    'transaction-submitted',
+    'completing',
   ].includes(status);
 
   // Handle swap preparation
@@ -62,12 +62,12 @@ export function PolygonSwapCardCompact({
     try {
       // First check if we're on the correct network
       if (!isCorrectNetwork) {
-        toast.info("Switching to Polygon network...");
+        toast.info('Switching to Polygon network...');
         await switchToPolygon();
 
         // Verify the switch was successful
         if (!isCorrectNetwork) {
-          toast.error("Please switch to the Polygon network to continue");
+          toast.error('Please switch to the Polygon network to continue');
           return;
         }
       }
@@ -77,8 +77,8 @@ export function PolygonSwapCardCompact({
       // Show confirmation after preparation
       setShowConfirmation(true);
     } catch (error) {
-      console.error("Error preparing swap:", error);
-      toast.error("Failed to prepare swap. Please try again.");
+      console.error('Error preparing swap:', error);
+      toast.error('Failed to prepare swap. Please try again.');
     }
   };
 
@@ -91,12 +91,12 @@ export function PolygonSwapCardCompact({
     try {
       // First check if we're on the correct network
       if (!isCorrectNetwork) {
-        toast.info("Switching to Polygon network...");
+        toast.info('Switching to Polygon network...');
         await switchToPolygon();
 
         // Verify the switch was successful
         if (!isCorrectNetwork) {
-          toast.error("Please switch to the Polygon network to continue");
+          toast.error('Please switch to the Polygon network to continue');
           return;
         }
       }
@@ -108,22 +108,22 @@ export function PolygonSwapCardCompact({
       await executeSwap();
 
       // Check if we're using 0xProtocol API (transaction-success status and txHash present)
-      if (status === "transaction-success" && txHash) {
-        console.log("Using 0xProtocol API, completing swap immediately");
+      if (status === 'transaction-success' && txHash) {
+        console.log('Using 0xProtocol API, completing swap immediately');
         setIsUsingZeroX(true);
         // Auto-complete the swap for 0xProtocol API
         await completeSwap(txHash);
       }
     } catch (error) {
-      console.error("Error executing swap:", error);
-      toast.error("Failed to execute swap. Please try again.");
+      console.error('Error executing swap:', error);
+      toast.error('Failed to execute swap. Please try again.');
     }
   };
 
   // Handle cancellation
   const handleCancel = () => {
     setShowConfirmation(false);
-    setStatus("idle");
+    setStatus('idle');
   };
 
   // Handle completion
@@ -140,8 +140,8 @@ export function PolygonSwapCardCompact({
   const [hasCalledOnComplete, setHasCalledOnComplete] = useState(false);
 
   useEffect(() => {
-    if (status === "completed" && onComplete && !hasCalledOnComplete) {
-      console.log("Swap completed, calling onComplete");
+    if (status === 'completed' && onComplete && !hasCalledOnComplete) {
+      console.log('Swap completed, calling onComplete');
       setHasCalledOnComplete(true);
       onComplete();
     }
@@ -150,8 +150,8 @@ export function PolygonSwapCardCompact({
   // Auto-complete for 0xProtocol API when transaction is successful
   useEffect(() => {
     const autoCompleteZeroXSwap = async () => {
-      if (status === "transaction-success" && txHash && isUsingZeroX) {
-        console.log("Auto-completing 0xProtocol swap");
+      if (status === 'transaction-success' && txHash && isUsingZeroX) {
+        console.log('Auto-completing 0xProtocol swap');
         // Add a small delay to allow the UI to update
         setTimeout(async () => {
           await completeSwap(txHash);
@@ -234,18 +234,18 @@ export function PolygonSwapCardCompact({
 
           {/* Show status messages */}
           {error && <p className="text-xs text-red-600">{error}</p>}
-          {status === "wrong-network" && (
+          {status === 'wrong-network' && (
             <p className="text-xs text-amber-600">
               You need to switch to the Polygon network to continue
             </p>
           )}
-          {status === "transaction-pending" && (
+          {status === 'transaction-pending' && (
             <p className="text-xs text-amber-600">Transaction pending...</p>
           )}
-          {status === "transaction-confirming" && (
+          {status === 'transaction-confirming' && (
             <p className="text-xs text-amber-600">Transaction confirming...</p>
           )}
-          {status === "transaction-success" && (
+          {status === 'transaction-success' && (
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1">
                 <CheckCircle className="size-4 text-green-600" />
@@ -283,7 +283,7 @@ export function PolygonSwapCardCompact({
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    disabled={status !== "idle" && status !== "error"}
+                    disabled={status !== 'idle' && status !== 'error'}
                     className="h-8 text-sm"
                     placeholder="0.1"
                   />
@@ -295,7 +295,7 @@ export function PolygonSwapCardCompact({
                 )}
 
                 {/* Transaction Confirmation Display */}
-                {showConfirmation && status === "prepared" && (
+                {showConfirmation && status === 'prepared' && (
                   <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
                     <h4 className="text-xs font-medium mb-1">
                       Confirm Transaction
@@ -306,21 +306,21 @@ export function PolygonSwapCardCompact({
                         <span className="font-medium">Network:</span> Polygon
                       </p>
                       <p>
-                        <span className="font-medium">Action:</span>{" "}
+                        <span className="font-medium">Action:</span>{' '}
                         {transactionDetails?.description ||
                           `Swap ${amount} MATIC for DAI`}
                       </p>
                       {transactionDetails?.fromToken && (
                         <p>
-                          <span className="font-medium">From:</span>{" "}
-                          {transactionDetails.fromAmount}{" "}
+                          <span className="font-medium">From:</span>{' '}
+                          {transactionDetails.fromAmount}{' '}
                           {transactionDetails.fromToken.symbol}
                         </p>
                       )}
                       {transactionDetails?.toToken && (
                         <p>
-                          <span className="font-medium">To:</span> ~{" "}
-                          {transactionDetails.toAmount}{" "}
+                          <span className="font-medium">To:</span> ~{' '}
+                          {transactionDetails.toAmount}{' '}
                           {transactionDetails.toToken.symbol}
                         </p>
                       )}
@@ -332,15 +332,15 @@ export function PolygonSwapCardCompact({
                       )}
                       {transactionDetails?.data?.protocol && (
                         <p>
-                          <span className="font-medium">Protocol:</span>{" "}
+                          <span className="font-medium">Protocol:</span>{' '}
                           {transactionDetails.data.protocol.name ||
                             transactionDetails.data.protocol.key ||
-                            "Unknown"}
+                            'Unknown'}
                         </p>
                       )}
                       {transactionDetails?.solver && (
                         <p>
-                          <span className="font-medium">Solver:</span>{" "}
+                          <span className="font-medium">Solver:</span>{' '}
                           {transactionDetails.solver}
                         </p>
                       )}
@@ -380,13 +380,13 @@ export function PolygonSwapCardCompact({
                         Switching Network...
                       </>
                     ) : (
-                      "Switch to Polygon Network"
+                      'Switch to Polygon Network'
                     )}
                   </Button>
-                ) : status === "idle" || status === "error" ? (
+                ) : status === 'idle' || status === 'error' ? (
                   <Button
                     onClick={handlePrepare}
-                    disabled={isLoading || !address || parseFloat(amount) <= 0}
+                    disabled={isLoading || !address || Number.parseFloat(amount) <= 0}
                     size="sm"
                     className="flex-1"
                   >
@@ -396,10 +396,10 @@ export function PolygonSwapCardCompact({
                         Preparing...
                       </>
                     ) : (
-                      "Prepare Swap"
+                      'Prepare Swap'
                     )}
                   </Button>
-                ) : status === "prepared" ? (
+                ) : status === 'prepared' ? (
                   showConfirmation ? (
                     <div className="flex gap-2 w-full">
                       <Button
@@ -423,7 +423,7 @@ export function PolygonSwapCardCompact({
                             Confirming...
                           </>
                         ) : (
-                          "Confirm Swap"
+                          'Confirm Swap'
                         )}
                       </Button>
                     </div>
@@ -440,11 +440,11 @@ export function PolygonSwapCardCompact({
                           Executing...
                         </>
                       ) : (
-                        "Execute Swap"
+                        'Execute Swap'
                       )}
                     </Button>
                   )
-                ) : status === "transaction-success" ? (
+                ) : status === 'transaction-success' ? (
                   <Button
                     onClick={handleComplete}
                     disabled={isLoading || isUsingZeroX}
@@ -462,7 +462,7 @@ export function PolygonSwapCardCompact({
                         Completing...
                       </>
                     ) : (
-                      "Complete Swap"
+                      'Complete Swap'
                     )}
                   </Button>
                 ) : null}

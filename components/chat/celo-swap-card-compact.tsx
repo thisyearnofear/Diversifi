@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   ChevronDown,
   ChevronUp,
@@ -13,10 +13,10 @@ import {
   Loader2,
   CheckCircle,
   Info,
-} from "lucide-react";
-import { toast } from "sonner";
-import { useCeloSwap } from "@/hooks/use-celo-swap";
-import { useTokenPrice } from "@/hooks/use-token-price";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { useCeloSwap } from '@/hooks/use-celo-swap';
+import { useTokenPrice } from '@/hooks/use-token-price';
 
 interface CeloSwapCardCompactProps {
   onComplete?: () => void;
@@ -37,43 +37,43 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
   } = useCeloSwap();
 
   // State for the swap form
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState('');
   const [isReviewing, setIsReviewing] = useState(false);
 
   // Get real-time exchange rates from CoinGecko
-  const { prices } = useTokenPrice(["CELO", "USDC"]);
+  const { prices } = useTokenPrice(['CELO', 'USDC']);
 
   // Calculate exchange rate based on CoinGecko prices
   // Fallback rate: 1 CELO = $0.29
   let exchangeRate = 0.29;
 
-  if (prices && prices.CELO && prices.USDC) {
+  if (prices?.CELO && prices.USDC) {
     // 1 CELO = x cUSD (where cUSD is pegged to USD)
     exchangeRate = prices.CELO.usd / prices.USDC.usd;
   }
 
-  const estimatedOutput = parseFloat(amount || "0") * exchangeRate;
+  const estimatedOutput = Number.parseFloat(amount || '0') * exchangeRate;
 
   // Determine if we're in a loading state
   const isLoading =
     [
-      "swapping",
-      "transaction-pending",
-      "transaction-submitted",
-      "transaction-confirming",
-      "completing",
+      'swapping',
+      'transaction-pending',
+      'transaction-submitted',
+      'transaction-confirming',
+      'completing',
     ].includes(status) || isSwitchingChain;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (/^\d*\.?\d*$/.test(value) || value === "") {
+    if (/^\d*\.?\d*$/.test(value) || value === '') {
       setAmount(value);
     }
   };
 
   const handleReview = () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      toast.error("Please enter a valid amount");
+    if (!amount || Number.parseFloat(amount) <= 0) {
+      toast.error('Please enter a valid amount');
       return;
     }
     setIsReviewing(true);
@@ -86,22 +86,22 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
   const handleSwap = () => {
     try {
       if (!address) {
-        toast.error("Please connect your wallet first");
+        toast.error('Please connect your wallet first');
         return;
       }
 
-      if (!amount || parseFloat(amount) <= 0) {
-        toast.error("Please enter a valid amount");
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        toast.error('Please enter a valid amount');
         return;
       }
 
       // Call the swap function from the hook
       swap({
-        amount: parseFloat(amount),
+        amount: Number.parseFloat(amount),
       });
     } catch (error) {
-      console.error("Error performing swap:", error);
-      toast.error("Failed to perform swap");
+      console.error('Error performing swap:', error);
+      toast.error('Failed to perform swap');
     }
   };
 
@@ -156,17 +156,17 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                   Please switch to the Celo network
                 </p>
               )}
-              {status === "transaction-pending" && (
+              {status === 'transaction-pending' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction pending...
                 </p>
               )}
-              {status === "transaction-submitted" && (
+              {status === 'transaction-submitted' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction submitted, waiting for confirmation...
                 </p>
               )}
-              {status === "transaction-confirming" && (
+              {status === 'transaction-confirming' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction confirming on the blockchain...
                 </p>
@@ -201,7 +201,7 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                     Switching to Celo...
                   </>
                 ) : (
-                  "Switch to Celo Network"
+                  'Switch to Celo Network'
                 )}
               </Button>
             ) : !isReviewing ? (
@@ -217,7 +217,7 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                     onChange={handleAmountChange}
                     disabled={isLoading}
                   />
-                  {amount && !isNaN(parseFloat(amount)) && (
+                  {amount && !Number.isNaN(Number.parseFloat(amount)) && (
                     <p className="text-xs text-gray-500 mt-1">
                       ≈ {estimatedOutput.toFixed(2)} cUSD
                     </p>
@@ -227,7 +227,7 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                 <div className="flex justify-end">
                   <Button
                     onClick={handleReview}
-                    disabled={!amount || parseFloat(amount) <= 0 || isLoading}
+                    disabled={!amount || Number.parseFloat(amount) <= 0 || isLoading}
                   >
                     Review Swap
                   </Button>
@@ -286,35 +286,35 @@ export function CeloSwapCardCompact(_props: CeloSwapCardCompactProps) {
                     Back
                   </Button>
                   <Button onClick={handleSwap} disabled={isLoading}>
-                    {status === "transaction-pending" && (
+                    {status === 'transaction-pending' && (
                       <>
                         <Loader2 className="mr-2 size-4 animate-spin" />
                         Preparing Transaction...
                       </>
                     )}
-                    {status === "transaction-submitted" && (
+                    {status === 'transaction-submitted' && (
                       <>
                         <Loader2 className="mr-2 size-4 animate-spin" />
                         Waiting for Confirmation...
                       </>
                     )}
-                    {status === "transaction-confirming" && (
+                    {status === 'transaction-confirming' && (
                       <>
                         <Loader2 className="mr-2 size-4 animate-spin" />
                         Confirming Transaction...
                       </>
                     )}
-                    {status === "swapping" && (
+                    {status === 'swapping' && (
                       <>
                         <Loader2 className="mr-2 size-4 animate-spin" />
                         Processing Swap...
                       </>
                     )}
-                    {status !== "transaction-pending" &&
-                      status !== "transaction-submitted" &&
-                      status !== "transaction-confirming" &&
-                      status !== "swapping" &&
-                      "Confirm Swap"}
+                    {status !== 'transaction-pending' &&
+                      status !== 'transaction-submitted' &&
+                      status !== 'transaction-confirming' &&
+                      status !== 'swapping' &&
+                      'Confirm Swap'}
                   </Button>
                 </div>
               </>

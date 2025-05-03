@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export type ForexRateData = {
   [currencyPair: string]: number;
@@ -13,8 +13,8 @@ export type ForexRateData = {
  * @returns Object containing exchange rates, loading state, and error
  */
 export function useForexRate(
-  baseCurrency: string = "USD",
-  targetCurrencies: string[] = ["KES"]
+  baseCurrency = 'USD',
+  targetCurrencies: string[] = ['KES'],
 ) {
   const [rates, setRates] = useState<ForexRateData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,15 +28,17 @@ export function useForexRate(
 
         // Set fallback rates immediately so we have something to work with
         const fallbackRates: ForexRateData = {
-          "USD/KES": 140, // Approximate USD to KES rate
+          'USD/KES': 140, // Approximate USD to KES rate
         };
         setRates(fallbackRates);
 
         // Try to fetch rates from exchangerate.host API
         await fetchFromExchangeRateAPI();
       } catch (err) {
-        console.error("Error in forex rate hook:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch forex rates");
+        console.error('Error in forex rate hook:', err);
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch forex rates',
+        );
         // Fallback rates already set above
       } finally {
         setIsLoading(false);
@@ -46,7 +48,7 @@ export function useForexRate(
     // Fetch from exchangerate.host API
     const fetchFromExchangeRateAPI = async (): Promise<boolean> => {
       try {
-        const symbols = targetCurrencies.join(",");
+        const symbols = targetCurrencies.join(',');
         const url = `https://api.exchangerate.host/latest?base=${baseCurrency}&symbols=${symbols}`;
 
         const controller = new AbortController();
@@ -59,13 +61,15 @@ export function useForexRate(
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          console.warn(`Exchange Rate API returned ${response.status}: ${response.statusText}`);
+          console.warn(
+            `Exchange Rate API returned ${response.status}: ${response.statusText}`,
+          );
           return false;
         }
 
         const data = await response.json();
 
-        if (data && data.rates) {
+        if (data?.rates) {
           // Transform the data to our format
           const formattedRates: ForexRateData = {};
 
@@ -83,7 +87,7 @@ export function useForexRate(
 
         return false;
       } catch (apiError) {
-        console.warn("Failed to fetch from Exchange Rate API", apiError);
+        console.warn('Failed to fetch from Exchange Rate API', apiError);
         return false;
       }
     };
@@ -94,7 +98,7 @@ export function useForexRate(
     const intervalId = setInterval(fetchRates, 60 * 60 * 1000);
 
     return () => clearInterval(intervalId);
-  }, [baseCurrency, targetCurrencies.join(",")]);
+  }, [baseCurrency, targetCurrencies.join(',')]);
 
   return { rates, isLoading, error };
 }

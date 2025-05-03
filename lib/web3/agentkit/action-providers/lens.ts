@@ -1,6 +1,10 @@
-import { ActionProvider, CreateAction, WalletProvider } from "@coinbase/agentkit";
-import { z } from "zod";
-import { Network } from "./types";
+import {
+  ActionProvider,
+  CreateAction,
+  type WalletProvider,
+} from '@coinbase/agentkit';
+import { z } from 'zod';
+import type { Network } from './types';
 
 /**
  * LensActionProvider provides actions for setting up a Lens account.
@@ -10,7 +14,7 @@ export class LensActionProvider extends ActionProvider<WalletProvider> {
    * Constructor for the LensActionProvider.
    */
   constructor() {
-    super("lens", []);
+    super('lens', []);
   }
 
   /**
@@ -20,27 +24,29 @@ export class LensActionProvider extends ActionProvider<WalletProvider> {
    * @returns A JSON string with the Lens action data.
    */
   @CreateAction({
-    name: "lens-action",
-    description: "Set up a Lens account and join the decentralized social network",
-    schema: z.object({}).describe("No parameters needed"),
+    name: 'lens-action',
+    description:
+      'Set up a Lens account and join the decentralized social network',
+    schema: z.object({}).describe('No parameters needed'),
   })
   async setupLensAccount(_walletProvider: WalletProvider): Promise<string> {
     // Return a JSON string with the Lens action data
     return JSON.stringify({
-      title: "Set up Lens Account",
-      description: "Create a Lens account and join the decentralized social network",
-      chain: "LENS",
-      difficulty: "beginner",
+      title: 'Set up Lens Account',
+      description:
+        'Create a Lens account and join the decentralized social network',
+      chain: 'LENS',
+      difficulty: 'beginner',
       steps: [
-        "Go to https://onboarding.lens.xyz and sign up",
-        "Connect your wallet",
-        "Create your profile",
-        "Copy your profile URL (e.g. https://hey.xyz/u/username)",
+        'Go to https://onboarding.lens.xyz and sign up',
+        'Connect your wallet',
+        'Create your profile',
+        'Copy your profile URL (e.g. https://hey.xyz/u/username)',
       ],
-      reward: "Access to the Lens ecosystem",
-      actionUrl: "https://onboarding.lens.xyz",
-      proofFieldLabel: "Your Lens Profile URL",
-      proofFieldPlaceholder: "https://hey.xyz/u/yourusername",
+      reward: 'Access to the Lens ecosystem',
+      actionUrl: 'https://onboarding.lens.xyz',
+      proofFieldLabel: 'Your Lens Profile URL',
+      proofFieldPlaceholder: 'https://hey.xyz/u/yourusername',
     });
   }
 

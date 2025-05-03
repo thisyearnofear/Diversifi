@@ -1,18 +1,18 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Input schema for transfer action.
  */
 export const TransferSchema = z
   .object({
-    amount: z.custom<bigint>().describe("The amount of the asset to transfer"),
+    amount: z.custom<bigint>().describe('The amount of the asset to transfer'),
     contractAddress: z
       .string()
-      .describe("The contract address of the token to transfer"),
-    destination: z.string().describe("The destination to transfer the funds"),
+      .describe('The contract address of the token to transfer'),
+    destination: z.string().describe('The destination to transfer the funds'),
   })
   .strip()
-  .describe("Instructions for transferring assets");
+  .describe('Instructions for transferring assets');
 
 /**
  * Input schema for get balance action.
@@ -21,13 +21,13 @@ export const GetBalanceSchema = z
   .object({
     contractAddress: z
       .string()
-      .describe("The contract address of the token to get the balance for"),
+      .describe('The contract address of the token to get the balance for'),
     address: z
       .string()
       .optional()
       .describe(
-        "The user address to get the balance for. Defaults to the connected wallet's address"
+        "The user address to get the balance for. Defaults to the connected wallet's address",
       ),
   })
   .strip()
-  .describe("Instructions for getting wallet balance");
+  .describe('Instructions for getting wallet balance');

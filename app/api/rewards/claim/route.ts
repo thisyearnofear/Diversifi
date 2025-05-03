@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { userReward } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { userReward } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -15,15 +15,15 @@ export async function POST(request: Request) {
 
     if (!rewardId) {
       return NextResponse.json(
-        { error: "rewardId is required" },
-        { status: 400 }
+        { error: 'rewardId is required' },
+        { status: 400 },
       );
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -32,21 +32,24 @@ export async function POST(request: Request) {
       .select()
       .from(userReward)
       .where(
-        and(eq(userReward.id, rewardId), eq(userReward.userId, session.user.id))
+        and(
+          eq(userReward.id, rewardId),
+          eq(userReward.userId, session.user.id),
+        ),
       )
       .limit(1);
 
     if (existingReward.length === 0) {
       return NextResponse.json(
-        { error: "Reward not found or not owned by user" },
-        { status: 404 }
+        { error: 'Reward not found or not owned by user' },
+        { status: 404 },
       );
     }
 
     if (existingReward[0].claimed) {
       return NextResponse.json(
-        { error: "Reward already claimed" },
-        { status: 400 }
+        { error: 'Reward already claimed' },
+        { status: 400 },
       );
     }
 
@@ -65,10 +68,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to claim reward:", error);
+    console.error('Failed to claim reward:', error);
     return NextResponse.json(
-      { error: "Failed to claim reward" },
-      { status: 500 }
+      { error: 'Failed to claim reward' },
+      { status: 500 },
     );
   }
 }

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useStarterKit } from "@/hooks/use-starter-kit";
-import { useAuth } from "@/hooks/use-auth";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { SparklesIcon } from "@/components/icons";
-import { AuthHelper } from "@/components/auth-helper";
-import { useAccount } from "wagmi";
+import { useStarterKit } from '@/hooks/use-starter-kit';
+import { useAuth } from '@/hooks/use-auth';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { SparklesIcon } from '@/components/icons';
+import { AuthHelper } from '@/components/auth-helper';
+import { useAccount } from 'wagmi';
 
 export default function StarterKitsPage() {
   const { isAuthenticated } = useAuth();
@@ -107,7 +107,7 @@ export default function StarterKitsPage() {
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {kit.claimerId ? "Claimed" : "Unclaimed"}
+                      {kit.claimerId ? 'Claimed' : 'Unclaimed'}
                     </p>
                   </li>
                 ))}

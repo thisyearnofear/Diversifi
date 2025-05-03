@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import type { Attachment, Message } from "ai";
-import { useChat } from "ai/react";
-import { useState } from "react";
-import useSWR, { useSWRConfig } from "swr";
+import type { Attachment, Message } from 'ai';
+import { useChat } from 'ai/react';
+import { useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
 
-import { ChatHeader } from "@/components/chat-header";
-import type { Vote } from "@/lib/db/schema";
-import { fetcher, generateUUID } from "@/lib/utils";
+import { ChatHeader } from '@/components/chat-header';
+import type { Vote } from '@/lib/db/schema';
+import { fetcher, generateUUID } from '@/lib/utils';
 
-import { Block } from "./block";
-import { MultimodalInput } from "./multimodal-input";
-import { Messages } from "./messages";
-import { ActionHandler } from "./action-handler";
-import type { VisibilityType } from "./visibility-selector";
-import { useBlockSelector } from "@/hooks/use-block";
-import { toast } from "sonner";
-import { useAuth } from "@/hooks/use-auth";
-import { ChatProvider } from "@/contexts/chat-context";
-import { useChatForm } from "@/hooks/use-chat-form";
+import { Block } from './block';
+import { MultimodalInput } from './multimodal-input';
+import { Messages } from './messages';
+import { ActionHandler } from './action-handler';
+import type { VisibilityType } from './visibility-selector';
+import { useBlockSelector } from '@/hooks/use-block';
+import { toast } from 'sonner';
+import { useAuth } from '@/hooks/use-auth';
+import { ChatProvider } from '@/contexts/chat-context';
+import { useChatForm } from '@/hooks/use-chat-form';
 
 export function Chat({
   id,
@@ -44,11 +44,11 @@ export function Chat({
     sendExtraMessageFields: true,
     generateId: generateUUID,
     onFinish: () => {
-      mutate("/api/history");
+      mutate('/api/history');
     },
     onError: (error) => {
       console.log(error);
-      toast.error("An error occured, please try again!");
+      toast.error('An error occured, please try again!');
     },
   });
 
@@ -56,7 +56,7 @@ export function Chat({
 
   const { data: votes } = useSWR<Array<Vote>>(
     isAuthenticated ? `/api/vote?chatId=${id}` : null,
-    fetcher
+    fetcher,
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);

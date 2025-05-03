@@ -1,26 +1,20 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Input schema for mint_1155 action.
  */
 export const mint1155Schema = z
   .object({
-    tokenContract: z
-      .string()
-      .describe("The ERC-1155 contract address"),
-    tokenId: z
-      .string()
-      .describe("The ERC-1155 token id to mint"),
-    quantityToMint: z
-      .number()
-      .describe("Quantity of tokens to mint"),
+    tokenContract: z.string().describe('The ERC-1155 contract address'),
+    tokenId: z.string().describe('The ERC-1155 token id to mint'),
+    quantityToMint: z.number().describe('Quantity of tokens to mint'),
     mintRecipient: z
       .string()
       .optional()
-      .describe("Optional recipient address to mint to"),
-  }) 
+      .describe('Optional recipient address to mint to'),
+  })
   .strip()
-  .describe("Mint parameters for ERC-1155 tokens");
+  .describe('Mint parameters for ERC-1155 tokens');
 
 /**
  * Response type for mint_1155 action
@@ -51,7 +45,7 @@ export const create1155Schema = z.object({
       z.object({
         trait_type: z.string(),
         value: z.string(),
-      })
+      }),
     )
     .optional(),
 });

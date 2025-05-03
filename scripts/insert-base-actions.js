@@ -6,10 +6,11 @@ const { v4: uuidv4 } = require('uuid');
 
 // Database connection
 const client = new Client({
-  connectionString: "postgres://postgres.aioxeyzbcwtpwpmkixya:SDL0fAdUZuJkCvjC@aws-0-eu-west-1.pooler.supabase.com:5432/postgres",
+  connectionString:
+    'postgres://postgres.aioxeyzbcwtpwpmkixya:SDL0fAdUZuJkCvjC@aws-0-eu-west-1.pooler.supabase.com:5432/postgres',
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 async function insertBaseActions() {
@@ -21,7 +22,7 @@ async function insertBaseActions() {
     // Insert Divvi registration action
     const divviActionId = uuidv4();
     console.log('Inserting Divvi registration action with ID:', divviActionId);
-    
+
     const divviActionQuery = {
       text: `
         INSERT INTO "Action" (
@@ -61,12 +62,13 @@ async function insertBaseActions() {
         JSON.stringify([
           {
             type: 'FEATURE',
-            description: 'Access portfolio tracking and future rebalancing features',
+            description:
+              'Access portfolio tracking and future rebalancing features',
           },
         ]),
         new Date(),
-        new Date()
-      ]
+        new Date(),
+      ],
     };
 
     await client.query(divviActionQuery);
@@ -75,7 +77,7 @@ async function insertBaseActions() {
     // Insert Aerodrome swap action
     const aerodromeActionId = uuidv4();
     console.log('Inserting Aerodrome swap action with ID:', aerodromeActionId);
-    
+
     const aerodromeActionQuery = {
       text: `
         INSERT INTO "Action" (
@@ -113,17 +115,19 @@ async function insertBaseActions() {
           },
           {
             title: 'Copy transaction hash',
-            description: 'Copy the transaction hash from your wallet or explorer',
+            description:
+              'Copy the transaction hash from your wallet or explorer',
           },
           {
             title: 'Complete action',
-            description: "Paste the transaction hash and click 'Complete Action'",
+            description:
+              "Paste the transaction hash and click 'Complete Action'",
           },
         ]),
         '[]', // Empty array for rewards
         new Date(),
-        new Date()
-      ]
+        new Date(),
+      ],
     };
 
     await client.query(aerodromeActionQuery);

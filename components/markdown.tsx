@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { memo, Children, isValidElement } from "react";
-import ReactMarkdown, { type Components } from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { CodeBlock } from "./code-block";
+import Link from 'next/link';
+import { memo, Children, isValidElement } from 'react';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { CodeBlock } from './code-block';
 
 const components: Partial<Components> = {
   // @ts-expect-error
@@ -15,10 +15,10 @@ const components: Partial<Components> = {
     const hasInvalidChild = Children.toArray(children).some(
       (child) =>
         isValidElement(child) &&
-        (child.type === "pre" ||
-          child.props?.node?.tagName === "pre" ||
-          child.props?.node?.tagName === "div" ||
-          child.props?.className?.includes("not-prose"))
+        (child.type === 'pre' ||
+          child.props?.node?.tagName === 'pre' ||
+          child.props?.node?.tagName === 'div' ||
+          child.props?.className?.includes('not-prose')),
     );
 
     // If it has an invalid child, render without the paragraph wrapper
@@ -59,12 +59,12 @@ const components: Partial<Components> = {
   },
   a: ({ node, children, ...props }) => {
     const { href } = props;
-    const isExternal = href?.startsWith("http") || href?.startsWith("mailto:");
+    const isExternal = href?.startsWith('http') || href?.startsWith('mailto:');
 
     if (isExternal) {
       return (
         <a
-          href={href || "#"}
+          href={href || '#'}
           className="text-blue-500 hover:underline"
           target="_blank"
           rel="noopener noreferrer"
@@ -75,7 +75,7 @@ const components: Partial<Components> = {
     }
 
     return (
-      <Link href={href || "#"} className="text-blue-500 hover:underline">
+      <Link href={href || '#'} className="text-blue-500 hover:underline">
         {children}
       </Link>
     );
@@ -136,5 +136,5 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
 
 export const Markdown = memo(
   NonMemoizedMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children
+  (prevProps, nextProps) => prevProps.children === nextProps.children,
 );

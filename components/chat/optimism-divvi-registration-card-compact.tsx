@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Loader2,
   ChevronDown,
   ChevronUp,
   ExternalLink,
   CheckCircle,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useOptimismDivviRegistration } from "@/hooks/use-optimism-divvi-registration";
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { useOptimismDivviRegistration } from '@/hooks/use-optimism-divvi-registration';
 
 interface OptimismDivviRegistrationCardCompactProps {
   onComplete?: () => void;
@@ -39,16 +39,16 @@ export function OptimismDivviRegistrationCardCompact({
 
   // Determine if we're in a loading state
   const isLoading = [
-    "checking",
-    "registering",
-    "transaction-pending",
-    "transaction-confirming",
-    "completing",
-    "switching-network",
+    'checking',
+    'registering',
+    'transaction-pending',
+    'transaction-confirming',
+    'completing',
+    'switching-network',
   ].includes(status);
 
   // Determine if the registration is completed
-  const isCompleted = isRegistered || status === "completed";
+  const isCompleted = isRegistered || status === 'completed';
 
   // Handle registration
   const handleRegister = async () => {
@@ -89,9 +89,9 @@ export function OptimismDivviRegistrationCardCompact({
           <div className="flex items-center gap-3">
             <div className="shrink-0">
               {/* Status indicator icon */}
-              {status === "transaction-success" ||
-              status === "transaction-confirming" ||
-              status === "transaction-pending" ? (
+              {status === 'transaction-success' ||
+              status === 'transaction-confirming' ||
+              status === 'transaction-pending' ? (
                 <Loader2 className="size-5 text-amber-500 animate-spin" />
               ) : (
                 <div className="size-5 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
@@ -113,27 +113,27 @@ export function OptimismDivviRegistrationCardCompact({
                 Activate your account on the Optimism ecosystem
               </p>
               {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
-              {status === "wrong-network" && (
+              {status === 'wrong-network' && (
                 <p className="text-xs text-amber-600 mt-1">
                   You need to switch to the Optimism network to continue
                 </p>
               )}
-              {status === "transaction-pending" && (
+              {status === 'transaction-pending' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction pending...
                 </p>
               )}
-              {status === "transaction-confirming" && (
+              {status === 'transaction-confirming' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction confirming...
                 </p>
               )}
-              {status === "transaction-success" && (
+              {status === 'transaction-success' && (
                 <p className="text-xs text-green-600 mt-1">
                   Transaction successful! Click "Complete Setup"
                 </p>
               )}
-              {status === "switching-network" && (
+              {status === 'switching-network' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Switching to Optimism network...
                 </p>
@@ -177,7 +177,7 @@ export function OptimismDivviRegistrationCardCompact({
 
             <div className="pt-3 border-t border-purple-100 dark:border-purple-800">
               <div className="flex gap-2">
-                {status === "wrong-network" ? (
+                {status === 'wrong-network' ? (
                   <Button
                     onClick={switchToOptimism}
                     disabled={isLoading}
@@ -190,13 +190,13 @@ export function OptimismDivviRegistrationCardCompact({
                         Switching Network...
                       </>
                     ) : (
-                      "Switch to Optimism Network"
+                      'Switch to Optimism Network'
                     )}
                   </Button>
-                ) : status === "not-registered" ||
-                  status === "error" ||
-                  status === "idle" ||
-                  status === "transaction-failed" ? (
+                ) : status === 'not-registered' ||
+                  status === 'error' ||
+                  status === 'idle' ||
+                  status === 'transaction-failed' ? (
                   <Button
                     onClick={handleRegister}
                     disabled={isLoading || !address}
@@ -209,10 +209,10 @@ export function OptimismDivviRegistrationCardCompact({
                         Processing...
                       </>
                     ) : (
-                      "Register"
+                      'Register'
                     )}
                   </Button>
-                ) : status === "transaction-success" ? (
+                ) : status === 'transaction-success' ? (
                   <Button
                     onClick={handleComplete}
                     disabled={isLoading}
@@ -225,7 +225,7 @@ export function OptimismDivviRegistrationCardCompact({
                         Processing...
                       </>
                     ) : (
-                      "Complete Registration"
+                      'Complete Registration'
                     )}
                   </Button>
                 ) : null}

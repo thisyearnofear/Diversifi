@@ -1,17 +1,15 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Input schema for getTokenBalances action.
  */
 export const getTokenBalancesSchema = z.object({
-  address: z
-    .string()
-    .describe("The wallet address to get token balances for"),
+  address: z.string().describe('The wallet address to get token balances for'),
   includeZeroBalances: z
     .boolean()
     .optional()
     .default(false)
-    .describe("Whether to include tokens with zero balance"),
+    .describe('Whether to include tokens with zero balance'),
 });
 
 /**
@@ -29,19 +27,17 @@ export type TokenBalanceWithMetadata = {
  * Input schema for getNFTsForOwner action
  */
 export const getNFTsForOwnerSchema = z.object({
-  owner: z
-    .string()
-    .describe("The wallet address to get NFTs for"),
+  owner: z.string().describe('The wallet address to get NFTs for'),
   withMetadata: z
     .boolean()
     .optional()
     .default(true)
-    .describe("Whether to include NFT metadata"),
+    .describe('Whether to include NFT metadata'),
   pageSize: z
     .number()
     .optional()
     .default(100)
-    .describe("Number of NFTs to return per page"),
+    .describe('Number of NFTs to return per page'),
 });
 
 /**
@@ -62,4 +58,4 @@ export type NFTWithMetadata = {
     originalUrl?: string;
     thumbnailUrl?: string;
   };
-}; 
+};

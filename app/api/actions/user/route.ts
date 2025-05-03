@@ -1,21 +1,21 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { getDb } from "@/lib/db/connection";
-import { userAction, action } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { getDb } from '@/lib/db/connection';
+import { userAction, action } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const db = getDb();
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function GET() {
     return NextResponse.json(formattedActions);
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to get user actions";
+      error instanceof Error ? error.message : 'Failed to get user actions';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

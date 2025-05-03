@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { useAccount } from "wagmi";
+import { useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 
 // Types for starter kit data
 export interface StarterKit {
@@ -21,7 +21,9 @@ const fetchAvailableStarterKits = async (): Promise<StarterKit[]> => {
   const response = await fetch('/api/starter-kit/available');
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch available starter kits: ${response.status}`);
+    throw new Error(
+      `Failed to fetch available starter kits: ${response.status}`,
+    );
   }
 
   return response.json();

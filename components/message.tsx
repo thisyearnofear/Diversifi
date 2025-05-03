@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import type { ChatRequestOptions } from "ai";
-import type { Message } from "@/types/message";
-import cx from "classnames";
-import { AnimatePresence, motion } from "framer-motion";
-import { memo, useState, useEffect } from "react";
+import type { ChatRequestOptions } from 'ai';
+import type { Message } from '@/types/message';
+import cx from 'classnames';
+import { AnimatePresence, motion } from 'framer-motion';
+import { memo, useState, useEffect } from 'react';
 
-import type { Vote } from "@/lib/db/schema";
+import type { Vote } from '@/lib/db/schema';
 
-import { DocumentToolCall, DocumentToolResult } from "./document";
-import { PencilEditIcon, SparklesIcon } from "./icons";
-import { Markdown } from "./markdown";
-import { PreviewAttachment } from "./preview-attachment";
-import { Weather } from "./weather";
-import equal from "fast-deep-equal";
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { MessageEditor } from "./message-editor";
-import { DocumentPreview } from "./document-preview";
-import { MessageReasoning } from "./message-reasoning";
-import { InteractiveElement } from "./interactive-element";
-import { parseMessageContent } from "@/lib/utils/message-helpers";
+import { DocumentToolResult } from './document';
+import { PencilEditIcon, SparklesIcon } from './icons';
+import { Markdown } from './markdown';
+import { PreviewAttachment } from './preview-attachment';
+import { Weather } from './weather';
+import equal from 'fast-deep-equal';
+import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { MessageEditor } from './message-editor';
+import { DocumentPreview } from './document-preview';
+import { MessageReasoning } from './message-reasoning';
+import { InteractiveElement } from './interactive-element';
+import { parseMessageContent } from '@/lib/utils/message-helpers';
 
 const PurePreviewMessage = ({
   chatId,
@@ -37,14 +37,14 @@ const PurePreviewMessage = ({
   vote: Vote | undefined;
   isLoading: boolean;
   setMessages: (
-    messages: Message[] | ((messages: Message[]) => Message[])
+    messages: Message[] | ((messages: Message[]) => Message[]),
   ) => void;
   reload: (
-    chatRequestOptions?: ChatRequestOptions
+    chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
   isReadonly: boolean;
 }) => {
-  const [mode, setMode] = useState<"view" | "edit">("view");
+  const [mode, setMode] = useState<'view' | 'edit'>('view');
 
   return (
     <AnimatePresence>
@@ -56,14 +56,14 @@ const PurePreviewMessage = ({
       >
         <div
           className={cn(
-            "flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl",
+            'flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl',
             {
-              "w-full": mode === "edit",
-              "group-data-[role=user]/message:w-fit": mode !== "edit",
-            }
+              'w-full': mode === 'edit',
+              'group-data-[role=user]/message:w-fit': mode !== 'edit',
+            },
           )}
         >
-          {message.role === "assistant" && (
+          {message.role === 'assistant' && (
             <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
               <div className="translate-y-px">
                 <SparklesIcon size={14} />
@@ -90,16 +90,16 @@ const PurePreviewMessage = ({
               />
             )}
 
-            {message.content && mode === "view" && (
+            {message.content && mode === 'view' && (
               <div className="flex flex-row gap-2 items-start">
-                {message.role === "user" && !isReadonly && (
+                {message.role === 'user' && !isReadonly && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
                         className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
                         onClick={() => {
-                          setMode("edit");
+                          setMode('edit');
                         }}
                       >
                         <PencilEditIcon />
@@ -110,11 +110,11 @@ const PurePreviewMessage = ({
                 )}
 
                 <div
-                  className={cn("flex flex-col gap-4", {
-                    "bg-primary text-primary-foreground px-3 py-2 rounded-xl max-w-[calc(100vw-80px)] md:max-w-none":
-                      message.role === "user",
-                    "max-w-[calc(100vw-60px)] md:max-w-none":
-                      message.role === "assistant",
+                  className={cn('flex flex-col gap-4', {
+                    'bg-primary text-primary-foreground px-3 py-2 rounded-xl max-w-[calc(100vw-80px)] md:max-w-none':
+                      message.role === 'user',
+                    'max-w-[calc(100vw-60px)] md:max-w-none':
+                      message.role === 'assistant',
                   })}
                 >
                   {(() => {
@@ -139,7 +139,7 @@ const PurePreviewMessage = ({
               </div>
             )}
 
-            {message.content && mode === "edit" && (
+            {message.content && mode === 'edit' && (
               <div className="flex flex-row gap-2 items-start">
                 <div className="size-8" />
 
@@ -178,18 +178,18 @@ export const PreviewMessage = memo(
     if (
       !equal(
         prevProps.message.toolInvocations,
-        nextProps.message.toolInvocations
+        nextProps.message.toolInvocations,
       )
     )
       return false;
     if (!equal(prevProps.vote, nextProps.vote)) return false;
 
     return true;
-  }
+  },
 );
 
 export const ThinkingMessage = () => {
-  const role = "assistant";
+  const role = 'assistant';
 
   return (
     <motion.div
@@ -200,10 +200,10 @@ export const ThinkingMessage = () => {
     >
       <div
         className={cx(
-          "flex gap-4 group-data-[role=user]/message:px-3 w-full group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:py-2 rounded-xl",
+          'flex gap-4 group-data-[role=user]/message:px-3 w-full group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:py-2 rounded-xl',
           {
-            "group-data-[role=user]/message:bg-muted": true,
-          }
+            'group-data-[role=user]/message:bg-muted': true,
+          },
         )}
       >
         <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
@@ -240,10 +240,10 @@ const CompactToolCalls = ({
       const { toolName, state, result } = invocation;
 
       // Skip non-result states
-      if (state !== "result") return;
+      if (state !== 'result') return;
 
       // Skip saveUserInformation calls unless showing all
-      if (toolName === "saveUserInformation" && !showAllCalls) {
+      if (toolName === 'saveUserInformation' && !showAllCalls) {
         // Only keep the first one for display
         if (!grouped[toolName]) {
           grouped[toolName] = [invocation];
@@ -263,7 +263,7 @@ const CompactToolCalls = ({
 
   // Count total and filtered calls
   const totalCalls = toolInvocations.filter(
-    (inv) => inv.state === "result"
+    (inv) => inv.state === 'result',
   ).length;
   const displayedCalls = Object.values(groupedCalls).flat().length;
 
@@ -285,7 +285,7 @@ const CompactToolCalls = ({
               className="text-xs h-6 px-2"
               onClick={() => setShowAllCalls(!showAllCalls)}
             >
-              {showAllCalls ? "Hide repetitive calls" : "Show all calls"}
+              {showAllCalls ? 'Hide repetitive calls' : 'Show all calls'}
             </Button>
           </div>
         )}
@@ -297,9 +297,9 @@ const CompactToolCalls = ({
               const { toolCallId, result } = invocation;
 
               // Special handling for specific tool types
-              if (toolName === "getWeather") {
+              if (toolName === 'getWeather') {
                 return <Weather key={toolCallId} weatherAtLocation={result} />;
-              } else if (toolName === "createDocument") {
+              } else if (toolName === 'createDocument') {
                 return (
                   <DocumentPreview
                     key={toolCallId}
@@ -307,7 +307,7 @@ const CompactToolCalls = ({
                     result={result}
                   />
                 );
-              } else if (toolName === "updateDocument") {
+              } else if (toolName === 'updateDocument') {
                 return (
                   <DocumentToolResult
                     key={toolCallId}
@@ -316,7 +316,7 @@ const CompactToolCalls = ({
                     isReadonly={isReadonly}
                   />
                 );
-              } else if (toolName === "requestSuggestions") {
+              } else if (toolName === 'requestSuggestions') {
                 return (
                   <DocumentToolResult
                     key={toolCallId}
@@ -360,13 +360,13 @@ const ToolCallOutput = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   // For saveUserInformation, show a simplified version
-  if (toolName === "saveUserInformation") {
+  if (toolName === 'saveUserInformation') {
     return (
       <div className="bg-muted/50 p-1.5 rounded-md text-xs flex justify-between items-center">
         <span className="text-muted-foreground">
           {index === 0 && total > 1
             ? `Saved user information (${total} updates)`
-            : "Saved user information"}
+            : 'Saved user information'}
         </span>
         {isExpanded ? (
           <div className="flex flex-col gap-1 mt-1">
@@ -407,12 +407,12 @@ const ToolCallOutput = ({
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-xs h-5"
         >
-          {isExpanded ? "Hide" : "Details"}
+          {isExpanded ? 'Hide' : 'Details'}
         </Button>
       </div>
       {isExpanded && (
         <div className="mt-1 overflow-auto text-muted-foreground">
-          {typeof result === "object"
+          {typeof result === 'object'
             ? JSON.stringify(result, null, 2)
             : result}
         </div>

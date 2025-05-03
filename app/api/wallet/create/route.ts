@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { createWallet } from "@/lib/web3/wallet-service";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { user, wallet } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { createWallet } from '@/lib/web3/wallet-service';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { wallet } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function POST() {
   try {
@@ -12,15 +12,15 @@ export async function POST() {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -31,21 +31,21 @@ export async function POST() {
       .where(eq(wallet.userId, session.user.id));
 
     if (existingWallets.length > 0) {
-      console.log("User already has a wallet:", existingWallets[0]);
+      console.log('User already has a wallet:', existingWallets[0]);
       return NextResponse.json(
         {
-          message: "User already has a wallet",
+          message: 'User already has a wallet',
           wallet: existingWallets[0],
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
-    console.log("Creating new wallet for user:", session.user.id);
+    console.log('Creating new wallet for user:', session.user.id);
 
     // Create a new wallet
     const newWallet = await createWallet();
-    console.log("Wallet created:", newWallet);
+    console.log('Wallet created:', newWallet);
 
     // Save the wallet to the database
     const savedWallet = await db
@@ -59,26 +59,26 @@ export async function POST() {
       })
       .returning();
 
-    console.log("Wallet saved to database:", savedWallet[0]);
+    console.log('Wallet saved to database:', savedWallet[0]);
 
     return NextResponse.json(
       {
-        message: "Wallet created successfully",
+        message: 'Wallet created successfully',
         wallet: savedWallet[0],
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error("Error creating wallet:", error);
+    console.error('Error creating wallet:', error);
 
     // Properly type check the error
     const errorDetails = {
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
       name: error instanceof Error ? error.name : undefined,
     };
 
-    console.error("Error details:", errorDetails);
+    console.error('Error details:', errorDetails);
 
     return NextResponse.json({ error: errorDetails.message }, { status: 500 });
   }

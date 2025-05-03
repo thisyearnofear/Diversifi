@@ -1,8 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { useTokenBalances, TOKEN_REGIONS } from "./use-token-balances";
-import { useTokenPrice } from "./use-token-price";
+import { useState, useEffect, } from 'react';
+import { useTokenBalances, TOKEN_REGIONS } from './use-token-balances';
 
 /**
  * Custom hook that combines token balances with price data to get accurate USD values
@@ -11,7 +10,8 @@ import { useTokenPrice } from "./use-token-price";
  */
 export function useTokenValues(selectedRegion?: string) {
   // Get token balances - no automatic fetching
-  const { balances, isLoading, refreshBalances } = useTokenBalances(selectedRegion);
+  const { balances, isLoading, refreshBalances } =
+    useTokenBalances(selectedRegion);
 
   // Initialize state for region totals and total value
   const [regionTotals, setRegionTotals] = useState<Record<string, number>>({});
@@ -26,16 +26,16 @@ export function useTokenValues(selectedRegion?: string) {
     let total = 0;
 
     // Initialize all regions with 0
-    Object.keys(TOKEN_REGIONS).forEach(region => {
-      if (region !== "All") {
+    Object.keys(TOKEN_REGIONS).forEach((region) => {
+      if (region !== 'All') {
         totals[region] = 0;
       }
     });
 
     // Calculate totals for each region
     Object.entries(TOKEN_REGIONS).forEach(([region, tokens]) => {
-      if (region !== "All") {
-        tokens.forEach(token => {
+      if (region !== 'All') {
+        tokens.forEach((token) => {
           if (balances[token]) {
             totals[region] += balances[token].value;
             total += balances[token].value;
@@ -47,7 +47,6 @@ export function useTokenValues(selectedRegion?: string) {
     // Update state
     setRegionTotals(totals);
     setTotalValue(total);
-
   }, [balances, isLoading]);
 
   return {
@@ -55,6 +54,6 @@ export function useTokenValues(selectedRegion?: string) {
     regionTotals,
     totalValue,
     isLoading,
-    refreshBalances
+    refreshBalances,
   };
 }

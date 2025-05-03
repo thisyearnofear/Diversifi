@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAuth } from "./use-auth";
+import { useState, useEffect } from 'react';
+import { useAuth } from './use-auth';
 
 // Define types for actions
 export interface Action {
@@ -19,7 +19,7 @@ export interface Action {
 export interface UserAction {
   id: string;
   actionId: string;
-  status: "started" | "completed";
+  status: 'started' | 'completed';
   startedAt: string;
   completedAt: string | null;
   proof: Record<string, any> | null;
@@ -40,17 +40,17 @@ export function useActionsFallback() {
     const loadUserActions = () => {
       try {
         setIsLoading(true);
-        
+
         // Try to get actions from localStorage
         const storedActions = localStorage.getItem('completed-actions');
         if (storedActions) {
           const actionTitles = JSON.parse(storedActions) as string[];
-          
+
           // Create UserAction objects from the titles
           const actions: UserAction[] = actionTitles.map((title, index) => ({
             id: `local-${index}`,
             actionId: `action-${index}`,
-            status: "completed",
+            status: 'completed',
             startedAt: new Date().toISOString(),
             completedAt: new Date().toISOString(),
             proof: null,
@@ -59,27 +59,27 @@ export function useActionsFallback() {
             action: {
               id: `action-${index}`,
               title,
-              description: "",
-              category: "stablecoins",
-              chain: "",
-              difficulty: "beginner",
+              description: '',
+              category: 'stablecoins',
+              chain: '',
+              difficulty: 'beginner',
               prerequisites: [],
               steps: [],
               rewards: [],
-            }
+            },
           }));
-          
+
           setUserActions(actions);
         }
-        
+
         setIsLoading(false);
       } catch (err) {
-        console.error("Error loading actions from localStorage:", err);
-        setError("Failed to load actions");
+        console.error('Error loading actions from localStorage:', err);
+        setError('Failed to load actions');
         setIsLoading(false);
       }
     };
-    
+
     if (isAuthenticated && activeAddress) {
       loadUserActions();
     } else {
@@ -91,41 +91,41 @@ export function useActionsFallback() {
   // Function to complete an action
   const completeAction = async (
     title: string,
-    proof: Record<string, any> = {}
+    proof: Record<string, any> = {},
   ) => {
     try {
       // First try to use the API
       try {
-        const response = await fetch("/api/actions/complete", {
-          method: "POST",
+        const response = await fetch('/api/actions/complete', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({ title, proof }),
         });
-        
+
         if (response.ok) {
           // If the API call succeeds, we're done
           return;
         }
       } catch (apiError) {
-        console.warn("API call failed, using localStorage fallback:", apiError);
+        console.warn('API call failed, using localStorage fallback:', apiError);
       }
-      
+
       // Fallback to localStorage
       const storedActions = localStorage.getItem('completed-actions') || '[]';
       const actions = JSON.parse(storedActions) as string[];
-      
+
       if (!actions.includes(title)) {
         actions.push(title);
         localStorage.setItem('completed-actions', JSON.stringify(actions));
       }
-      
+
       // Update the local state
       const newAction: UserAction = {
         id: `local-${userActions.length}`,
         actionId: `action-${userActions.length}`,
-        status: "completed",
+        status: 'completed',
         startedAt: new Date().toISOString(),
         completedAt: new Date().toISOString(),
         proof,
@@ -134,26 +134,28 @@ export function useActionsFallback() {
         action: {
           id: `action-${userActions.length}`,
           title,
-          description: "",
-          category: "stablecoins",
-          chain: "",
-          difficulty: "beginner",
+          description: '',
+          category: 'stablecoins',
+          chain: '',
+          difficulty: 'beginner',
           prerequisites: [],
           steps: [],
           rewards: [],
-        }
+        },
       };
-      
+
       setUserActions([...userActions, newAction]);
     } catch (err) {
-      console.error("Error completing action:", err);
+      console.error('Error completing action:', err);
       throw err;
     }
   };
 
   // Check if an action is completed
   const isActionCompleted = (title: string): boolean => {
-    return userActions.some(ua => ua.action?.title === title && ua.status === "completed");
+    return userActions.some(
+      (ua) => ua.action?.title === title && ua.status === 'completed',
+    );
   };
 
   return {

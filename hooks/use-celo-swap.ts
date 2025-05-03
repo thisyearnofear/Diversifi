@@ -1,33 +1,41 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAccount, useChainId, useSwitchChain, useWriteContract, useWaitForTransactionReceipt, useBalance, usePublicClient } from "wagmi";
-import { celo } from "wagmi/chains";
-import { parseEther } from "viem";
-import { toast } from "sonner";
-import { useAuth } from "./use-auth";
-import { useActions } from "./use-actions";
-import { useTokenPrice } from "./use-token-price";
+import { useState, useEffect } from 'react';
+import {
+  useAccount,
+  useChainId,
+  useSwitchChain,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useBalance,
+  usePublicClient,
+} from 'wagmi';
+import { celo } from 'wagmi/chains';
+import { parseEther } from 'viem';
+import { toast } from 'sonner';
+import { useAuth } from './use-auth';
+import { useActions } from './use-actions';
+import { useTokenPrice } from './use-token-price';
 
 // Swap status types
 type CeloSwapStatus =
-  | "idle"
-  | "checking"
-  | "not-swapped"
-  | "swapping"
-  | "approving"
-  | "approved"
-  | "transaction-pending"
-  | "transaction-submitted"
-  | "transaction-confirming"
-  | "transaction-success"
-  | "completing"
-  | "completed"
-  | "switching-network"
-  | "error";
+  | 'idle'
+  | 'checking'
+  | 'not-swapped'
+  | 'swapping'
+  | 'approving'
+  | 'approved'
+  | 'transaction-pending'
+  | 'transaction-submitted'
+  | 'transaction-confirming'
+  | 'transaction-success'
+  | 'completing'
+  | 'completed'
+  | 'switching-network'
+  | 'error';
 
 // Contract address for SimpleCeloSwap
-const CELO_UNISWAP_V3_SWAP = "0xa27D6E9091778896FBf34bC36A3A2ef22d06F804"; // Your deployed contract
+const CELO_UNISWAP_V3_SWAP = '0xa27D6E9091778896FBf34bC36A3A2ef22d06F804'; // Your deployed contract
 
 type SwapParams = {
   amount: number;
@@ -41,7 +49,7 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
   const { address } = useAccount();
   const chainId = useChainId();
   const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
-  const [status, setStatus] = useState<CeloSwapStatus>("idle");
+  const [status, setStatus] = useState<CeloSwapStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -51,7 +59,7 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
   const { isAuthenticated } = useAuth();
 
   // Get token prices from CoinGecko
-  const { prices } = useTokenPrice(["CELO", "USDC"]);
+  const { prices } = useTokenPrice(['CELO', 'USDC']);
 
   // Get CELO balance
   const { data: celoBalance } = useBalance({
@@ -63,12 +71,17 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
   const publicClient = usePublicClient();
 
   // Write contract hook for performing the swap
-  const { writeContract, isPending: isWritePending, data: writeData } = useWriteContract();
+  const {
+    writeContract,
+    isPending: isWritePending,
+    data: writeData,
+  } = useWriteContract();
 
   // Wait for transaction receipt
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: writeData,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: writeData,
+    });
 
   // Check if we're on the correct network (Celo)
   const isCorrectNetwork = chainId === celo.id;
@@ -81,15 +94,15 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
       }
 
       try {
-        setStatus("checking");
+        setStatus('checking');
 
         // Get the action ID from the database
-        const actionResponse = await fetch("/api/actions/by-title", {
-          method: "POST",
+        const actionResponse = await fetch('/api/actions/by-title', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ title: "Get cUSD Stablecoins" }),
+          body: JSON.stringify({ title: 'Get cUSD Stablecoins' }),
         });
 
         // Check if the action is completed
@@ -101,7 +114,7 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
             const data = await response.json();
             if (data.completed) {
               setIsCompleted(true);
-              setStatus("completed");
+              setStatus('completed');
               isActionCompleted = true;
             }
           }
@@ -110,58 +123,61 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
         // If action is not completed, check approval status
         if (!isActionCompleted) {
           // Hard-code the CELO token address
-          const celoTokenAddress = "0x471EcE3750Da237f93B8E339c536989b8978a438";
+          const celoTokenAddress = '0x471EcE3750Da237f93B8E339c536989b8978a438';
 
           // Check if the contract is already approved
           const allowance = await publicClient.readContract({
             address: celoTokenAddress as `0x${string}`,
             abi: [
               {
-                inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }],
-                name: "allowance",
-                outputs: [{ name: "", type: "uint256" }],
-                stateMutability: "view",
-                type: "function"
-              }
+                inputs: [
+                  { name: 'owner', type: 'address' },
+                  { name: 'spender', type: 'address' },
+                ],
+                name: 'allowance',
+                outputs: [{ name: '', type: 'uint256' }],
+                stateMutability: 'view',
+                type: 'function',
+              },
             ],
-            functionName: "allowance",
+            functionName: 'allowance',
             args: [address, CELO_UNISWAP_V3_SWAP],
           });
 
           if (allowance > BigInt(0)) {
             setIsApproved(true);
             setApprovalAmount(allowance.toString());
-            setStatus("approved");
+            setStatus('approved');
           } else {
             setIsApproved(false);
-            setStatus("not-swapped");
+            setStatus('not-swapped');
           }
         }
       } catch (error) {
-        console.error("Error checking Celo swap status:", error);
+        console.error('Error checking Celo swap status:', error);
 
         // Handle specific error cases more gracefully
         if (error instanceof Error) {
           // Check for network-related errors
-          if (error.message.includes("allowance") && !isCorrectNetwork) {
+          if (error.message.includes('allowance') && !isCorrectNetwork) {
             // This is likely because we're not on the Celo network
-            console.debug("Allowance check failed due to wrong network");
+            console.debug('Allowance check failed due to wrong network');
             // Don't set error status, just indicate we need to switch networks
-            setStatus("not-swapped");
+            setStatus('not-swapped');
             return;
           }
 
           // For other errors, provide a user-friendly message
-          if (error.message.includes("returned no data")) {
-            setError("Please switch to the Celo network to continue");
+          if (error.message.includes('returned no data')) {
+            setError('Please switch to the Celo network to continue');
           } else {
             setError(error.message);
           }
         } else {
-          setError("Failed to check status");
+          setError('Failed to check status');
         }
 
-        setStatus("error");
+        setStatus('error');
       }
     };
 
@@ -172,29 +188,34 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
   useEffect(() => {
     if (isWritePending) {
       // Don't change status if we're already in a specific state
-      if (status !== "approving" && status !== "swapping") {
-        setStatus("transaction-pending");
+      if (status !== 'approving' && status !== 'swapping') {
+        setStatus('transaction-pending');
       }
     } else if (writeData) {
       setTxHash(writeData);
       // Don't set to success yet - wait for confirmation
-      setStatus("transaction-submitted");
+      setStatus('transaction-submitted');
     }
   }, [isWritePending, writeData, status]);
 
   // Handle transaction confirmation
   useEffect(() => {
     if (isConfirming) {
-      setStatus("transaction-confirming");
+      setStatus('transaction-confirming');
     } else if (isConfirmed && txHash) {
       // If we were in the approving state, set to approved
-      if (status === "approving" || (status === "transaction-confirming" && !isApproved)) {
-        setStatus("approved");
+      if (
+        status === 'approving' ||
+        (status === 'transaction-confirming' && !isApproved)
+      ) {
+        setStatus('approved');
         setIsApproved(true);
-        toast.success("CELO tokens approved successfully! You can now proceed to the swap.");
+        toast.success(
+          'CELO tokens approved successfully! You can now proceed to the swap.',
+        );
       } else {
         // Otherwise, this was the actual swap
-        setStatus("transaction-success");
+        setStatus('transaction-success');
         completeSwap(txHash);
       }
     } else if (txHash && !isConfirming && !isConfirmed) {
@@ -216,16 +237,16 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
       if (receipt) {
         if (receipt.status === 'success') {
           // Transaction succeeded
-          setStatus("transaction-success");
+          setStatus('transaction-success');
           completeSwap(txHash);
         } else {
           // Transaction failed
-          setStatus("error");
-          setError("Transaction failed. Please try again.");
+          setStatus('error');
+          setError('Transaction failed. Please try again.');
         }
       }
     } catch (error) {
-      console.error("Error checking transaction status:", error);
+      console.error('Error checking transaction status:', error);
     }
   };
 
@@ -234,9 +255,9 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
     if (!address) return;
 
     try {
-      setStatus("switching-network");
+      setStatus('switching-network');
       await switchChain({ chainId: celo.id });
-      toast.success("Switched to Celo network");
+      toast.success('Switched to Celo network');
 
       // Add a small delay to ensure the chain ID has been updated
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -246,17 +267,17 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
 
       // Update status based on approval state
       if (isApproved) {
-        setStatus("approved");
+        setStatus('approved');
       } else {
-        setStatus("not-swapped");
+        setStatus('not-swapped');
       }
     } catch (error) {
-      console.error("Error switching to Celo:", error);
-      let errorMessage = "Failed to switch to Celo network";
+      console.error('Error switching to Celo:', error);
+      let errorMessage = 'Failed to switch to Celo network';
 
       if (error instanceof Error) {
-        if (error.message.includes("user rejected")) {
-          errorMessage = "Network switch was rejected. Please try again.";
+        if (error.message.includes('user rejected')) {
+          errorMessage = 'Network switch was rejected. Please try again.';
         } else {
           errorMessage = error.message;
         }
@@ -270,17 +291,17 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
   // Perform the swap using the deployed contract
   const swap = async ({ amount }: SwapParams) => {
     if (!address) {
-      setError("Please connect your wallet first");
+      setError('Please connect your wallet first');
       return;
     }
 
     if (!isCorrectNetwork) {
-      setError("Please switch to the Celo network first");
+      setError('Please switch to the Celo network first');
       return;
     }
 
     try {
-      setStatus("swapping");
+      setStatus('swapping');
       setError(null);
 
       // We're allowing high slippage (90%) to ensure the transaction goes through
@@ -289,29 +310,37 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
       // Fallback rate: 1 CELO = $0.29 (as you mentioned)
       let exchangeRate = 0.29;
 
-      if (prices && prices.CELO && prices.USDC) {
+      if (prices?.CELO && prices.USDC) {
         // 1 CELO = x cUSD (where cUSD is pegged to USD)
         exchangeRate = prices.CELO.usd / prices.USDC.usd;
-        console.log(`Using CoinGecko exchange rate: 1 CELO = ${exchangeRate} cUSD`);
+        console.log(
+          `Using CoinGecko exchange rate: 1 CELO = ${exchangeRate} cUSD`,
+        );
       } else {
-        console.log(`Using fallback exchange rate: 1 CELO = ${exchangeRate} cUSD`);
+        console.log(
+          `Using fallback exchange rate: 1 CELO = ${exchangeRate} cUSD`,
+        );
       }
 
       // Check if user has enough CELO
       if (celoBalance && celoBalance.value < parseEther(amount.toString())) {
-        throw new Error(`Insufficient CELO balance. You have ${celoBalance.value} CELO`);
+        throw new Error(
+          `Insufficient CELO balance. You have ${celoBalance.value} CELO`,
+        );
       }
 
       // Calculate expected output for display purposes only
       const rawExpectedOutput = amount * exchangeRate;
-      console.log(`Expected output for ${amount} CELO: ${rawExpectedOutput} cUSD`);
+      console.log(
+        `Expected output for ${amount} CELO: ${rawExpectedOutput} cUSD`,
+      );
 
       // Hard-code the CELO token address
-      const celoTokenAddress = "0x471EcE3750Da237f93B8E339c536989b8978a438";
+      const celoTokenAddress = '0x471EcE3750Da237f93B8E339c536989b8978a438';
 
       // Check if we need to do approval or swap
       if (!publicClient) {
-        throw new Error("Public client not available");
+        throw new Error('Public client not available');
       }
 
       // Check if the contract is already approved
@@ -321,19 +350,25 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
           address: celoTokenAddress as `0x${string}`,
           abi: [
             {
-              inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }],
-              name: "allowance",
-              outputs: [{ name: "", type: "uint256" }],
-              stateMutability: "view",
-              type: "function"
-            }
+              inputs: [
+                { name: 'owner', type: 'address' },
+                { name: 'spender', type: 'address' },
+              ],
+              name: 'allowance',
+              outputs: [{ name: '', type: 'uint256' }],
+              stateMutability: 'view',
+              type: 'function',
+            },
           ],
-          functionName: "allowance",
+          functionName: 'allowance',
           args: [address, CELO_UNISWAP_V3_SWAP],
         });
       } catch (error) {
         // If this fails, it's likely because we're not on the Celo network
-        console.debug("Allowance check failed, likely due to wrong network", error);
+        console.debug(
+          'Allowance check failed, likely due to wrong network',
+          error,
+        );
         // We'll continue with allowance = 0, which will trigger the approval flow
       }
 
@@ -341,8 +376,8 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
 
       if (allowance < amountInWei) {
         // Need to approve first
-        setStatus("approving");
-        toast.info("Approving CELO tokens for swap...");
+        setStatus('approving');
+        toast.info('Approving CELO tokens for swap...');
 
         // Save the approval amount for later use
         setApprovalAmount(amountInWei.toString());
@@ -352,14 +387,17 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
           address: celoTokenAddress as `0x${string}`,
           abi: [
             {
-              inputs: [{ name: "spender", type: "address" }, { name: "amount", type: "uint256" }],
-              name: "approve",
-              outputs: [{ name: "", type: "bool" }],
-              stateMutability: "nonpayable",
-              type: "function"
-            }
+              inputs: [
+                { name: 'spender', type: 'address' },
+                { name: 'amount', type: 'uint256' },
+              ],
+              name: 'approve',
+              outputs: [{ name: '', type: 'bool' }],
+              stateMutability: 'nonpayable',
+              type: 'function',
+            },
           ],
-          functionName: "approve",
+          functionName: 'approve',
           args: [CELO_UNISWAP_V3_SWAP, amountInWei],
           chainId: celo.id,
         });
@@ -367,47 +405,48 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
         // Show instructions for the next step
         toast.success(
           "After approval is confirmed, click 'Swap' again to complete the transaction",
-          { duration: 5000 }
+          { duration: 5000 },
         );
       } else {
         // Already approved, perform the swap
-        setStatus("swapping");
-        toast.info("Performing swap...");
+        setStatus('swapping');
+        toast.info('Performing swap...');
 
         // Call the swap function
         writeContract({
           address: CELO_UNISWAP_V3_SWAP as `0x${string}`,
           abi: [
             {
-              inputs: [{ name: "celoAmount", type: "uint256" }],
-              name: "swapCELOForCUSD",
-              outputs: [{ name: "cusdReceived", type: "uint256" }],
-              stateMutability: "nonpayable",
-              type: "function"
-            }
+              inputs: [{ name: 'celoAmount', type: 'uint256' }],
+              name: 'swapCELOForCUSD',
+              outputs: [{ name: 'cusdReceived', type: 'uint256' }],
+              stateMutability: 'nonpayable',
+              type: 'function',
+            },
           ],
-          functionName: "swapCELOForCUSD",
+          functionName: 'swapCELOForCUSD',
           args: [amountInWei],
           chainId: celo.id,
         });
       }
     } catch (error) {
-      console.error("Error performing swap:", error);
-      setStatus("error");
+      console.error('Error performing swap:', error);
+      setStatus('error');
 
       // Extract more detailed error information
-      let errorMessage = "Failed to perform swap";
+      let errorMessage = 'Failed to perform swap';
 
       if (error instanceof Error) {
         errorMessage = error.message;
 
         // Check for specific error patterns in the message
-        if (error.message.includes("execution reverted")) {
-          errorMessage = "Swap failed: The Uniswap pool might not have enough liquidity or the slippage is too high.";
-        } else if (error.message.includes("user rejected")) {
-          errorMessage = "Transaction was rejected by the user.";
-        } else if (error.message.includes("insufficient funds")) {
-          errorMessage = "Insufficient funds to complete the transaction.";
+        if (error.message.includes('execution reverted')) {
+          errorMessage =
+            'Swap failed: The Uniswap pool might not have enough liquidity or the slippage is too high.';
+        } else if (error.message.includes('user rejected')) {
+          errorMessage = 'Transaction was rejected by the user.';
+        } else if (error.message.includes('insufficient funds')) {
+          errorMessage = 'Insufficient funds to complete the transaction.';
         }
       }
 
@@ -419,29 +458,29 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
   // Complete the swap action
   const completeSwap = async (hash: string) => {
     try {
-      setStatus("completing");
+      setStatus('completing');
 
       try {
         // Get the action ID from the database
-        const response = await fetch("/api/actions/by-title", {
-          method: "POST",
+        const response = await fetch('/api/actions/by-title', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ title: "Get cUSD Stablecoins" }),
+          body: JSON.stringify({ title: 'Get cUSD Stablecoins' }),
         });
 
         if (!response.ok) {
-          console.error("Failed to get action ID:", await response.text());
+          console.error('Failed to get action ID:', await response.text());
           // If we get a 404, it means the action doesn't exist in the database yet
           // We'll handle this gracefully by marking the action as completed anyway
           if (response.status === 404) {
-            setStatus("completed");
+            setStatus('completed');
             setIsCompleted(true);
-            toast.success("Swap completed successfully!");
+            toast.success('Swap completed successfully!');
             return;
           } else {
-            throw new Error("Failed to get action ID");
+            throw new Error('Failed to get action ID');
           }
         }
 
@@ -450,25 +489,27 @@ export function useCeloSwap(_options?: UseCeloSwapOptions) {
         // Complete the action
         await completeAction(id, {
           txHash: hash,
-          platform: "celo-uniswap-v3",
+          platform: 'celo-uniswap-v3',
           completedAt: new Date().toISOString(),
         });
       } catch (error) {
-        console.error("Error completing swap:", error);
+        console.error('Error completing swap:', error);
         // Even if there's an error with the database, we'll still mark it as completed
-        setStatus("completed");
+        setStatus('completed');
         setIsCompleted(true);
-        toast.success("Swap completed successfully!");
+        toast.success('Swap completed successfully!');
         return;
       }
 
-      setStatus("completed");
+      setStatus('completed');
       setIsCompleted(true);
-      toast.success("Swap completed successfully!");
+      toast.success('Swap completed successfully!');
     } catch (error) {
-      console.error("Error completing swap:", error);
-      setStatus("error");
-      setError(error instanceof Error ? error.message : "Failed to complete swap");
+      console.error('Error completing swap:', error);
+      setStatus('error');
+      setError(
+        error instanceof Error ? error.message : 'Failed to complete swap',
+      );
     }
   };
 

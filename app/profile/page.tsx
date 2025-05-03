@@ -1,26 +1,25 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo } from "react";
-import { useAccount } from "wagmi";
-import { useAuth } from "@/hooks/use-auth";
-import { AuthHelper } from "@/components/auth-helper";
-import { UserProfile } from "@/components/profile/user-profile";
-import { DiversifiVisualizer } from "@/components/profile/diversifi-visualizer";
-import { useTokenBalances, TOKEN_REGIONS } from "@/hooks/use-token-balances";
+import { useState, useEffect, useMemo } from 'react';
+import { useAccount } from 'wagmi';
+import { useAuth } from '@/hooks/use-auth';
+import { AuthHelper } from '@/components/auth-helper';
+import { UserProfile } from '@/components/profile/user-profile';
+import { DiversifiVisualizer } from '@/components/profile/diversifi-visualizer';
+import { useTokenBalances, TOKEN_REGIONS } from '@/hooks/use-token-balances';
 type RegionKey = keyof typeof TOKEN_REGIONS;
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { SeparateAuthButtons } from "@/components/separate-auth-buttons";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 // Utility: compute region allocations from balances
 function useRegionAllocations(balances: Record<string, any>) {
@@ -30,7 +29,7 @@ function useRegionAllocations(balances: Record<string, any>) {
     const regionTotals: Record<string, number> = {};
     let globalTotal = 0;
     Object.keys(TOKEN_REGIONS).forEach((region) => {
-      if (region !== "All") {
+      if (region !== 'All') {
         regionTotals[region] = 0;
         TOKEN_REGIONS[region as RegionKey].forEach((token: string) => {
           const tokenRecord = balances[token];
@@ -57,7 +56,7 @@ export default function ProfilePage() {
   const { isConnected } = useAccount();
   const { isAuthenticated } = useAuth();
   const [isLoadingPage, setIsLoadingPage] = useState(true);
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState('profile');
   const isMobile = useIsMobile();
 
   // State for DiversiFi data loading
@@ -65,7 +64,7 @@ export default function ProfilePage() {
     balances,
     isLoading: isDiversifiLoading,
     refreshBalances: refreshDiversifiBalances,
-  } = useTokenBalances("All"); // Always initialize with "All" to prepare for data loading
+  } = useTokenBalances('All'); // Always initialize with "All" to prepare for data loading
 
   // Track if this is the first load to show skeleton instead of spinner on refresh
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -82,7 +81,7 @@ export default function ProfilePage() {
 
   // Load DiversiFi data when the tab is selected
   useEffect(() => {
-    if (activeTab === "diversifi" && isFirstLoad) {
+    if (activeTab === 'diversifi' && isFirstLoad) {
       // Load data when the tab is selected for the first time
       refreshDiversifiBalances();
       setIsFirstLoad(false);
@@ -93,7 +92,7 @@ export default function ProfilePage() {
   if (isLoadingPage) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="size-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -124,15 +123,15 @@ export default function ProfilePage() {
   return (
     <div
       className={cn(
-        "w-full max-w-3xl mx-auto",
-        "p-0 sm:p-6 pt-4 md:pt-6",
-        "space-y-6 md:space-y-8",
-        "px-2 md:px-0"
+        'w-full max-w-3xl mx-auto',
+        'p-0 sm:p-6 pt-4 md:pt-6',
+        'space-y-6 md:space-y-8',
+        'px-2 md:px-0',
       )}
     >
       <h1
         className={`font-bold text-center ${
-          isMobile ? "text-2xl" : "text-3xl"
+          isMobile ? 'text-2xl' : 'text-3xl'
         }`}
       >
         Dashboard
@@ -174,7 +173,7 @@ export default function ProfilePage() {
           className="space-y-6 w-full flex flex-col items-center"
         >
           <Card className="w-full shadow-md">
-            <CardContent className={isMobile ? "px-4 py-6" : "py-6"}>
+            <CardContent className={isMobile ? 'p-4 pb-6' : 'py-6'}>
               <div className="flex flex-col items-center justify-center">
                 <UserProfile />
               </div>
@@ -185,22 +184,22 @@ export default function ProfilePage() {
         {/* DiversiFi Section: Auto-loads when tab is selected */}
         <TabsContent value="diversifi" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
-            <CardContent className={isMobile ? "p-4" : "p-6"}>
+            <CardContent className={isMobile ? 'p-4' : 'p-6'}>
               {isDiversifiLoading && isFirstLoad ? (
                 <div className="space-y-6">
                   {/* Skeleton UI for first load */}
                   <div className="w-full flex items-center justify-between pb-2 border-b">
-                    <div className="h-5 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                    <div className="h-5 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
                     <div className="flex items-center gap-2">
-                      <div className="h-8 w-24 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                      <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                      <div className="h-8 w-24 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+                      <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
                     </div>
                   </div>
 
                   {/* Skeleton for map visualization */}
                   <div className="w-full h-[350px] bg-gray-100 dark:bg-gray-900/50 rounded-lg border flex items-center justify-center">
                     <div className="flex flex-col items-center gap-3">
-                      <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                      <Loader2 className="size-8 animate-spin text-indigo-500" />
                       <span className="text-sm text-muted-foreground">
                         Loading your portfolio data...
                       </span>
@@ -212,7 +211,7 @@ export default function ProfilePage() {
                   </div>
 
                   {/* Skeleton for pie chart */}
-                  <div className="w-full h-[200px] bg-gray-100 dark:bg-gray-900/50 rounded-lg border"></div>
+                  <div className="w-full h-[200px] bg-gray-100 dark:bg-gray-900/50 rounded-lg border" />
 
                   {/* Skeleton for metrics */}
                   <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -220,7 +219,7 @@ export default function ProfilePage() {
                       <div
                         key={i}
                         className="h-20 bg-gray-100 dark:bg-gray-900/50 rounded-lg border"
-                      ></div>
+                      />
                     ))}
                   </div>
                 </div>
@@ -229,7 +228,7 @@ export default function ProfilePage() {
                   {/* Overlay loading state for refreshes */}
                   <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
                     <div className="flex flex-col items-center gap-3">
-                      <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                      <Loader2 className="size-8 animate-spin text-indigo-500" />
                       <span className="text-sm font-medium">
                         Refreshing data...
                       </span>
@@ -254,15 +253,15 @@ export default function ProfilePage() {
 
         <TabsContent value="referrals" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
-            <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
-              <CardTitle className={isMobile ? "text-xl" : undefined}>
+            <CardHeader className={isMobile ? 'p-4' : undefined}>
+              <CardTitle className={isMobile ? 'text-xl' : undefined}>
                 Referrals
               </CardTitle>
               <CardDescription>
                 Track your referrals and earn points
               </CardDescription>
             </CardHeader>
-            <CardContent className={isMobile ? "px-4 py-4" : undefined}>
+            <CardContent className={isMobile ? 'p-4' : undefined}>
               <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800/50 text-center">
                 <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   The referral system is currently under development. Soon
@@ -283,15 +282,15 @@ export default function ProfilePage() {
 
         <TabsContent value="points" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
-            <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
-              <CardTitle className={isMobile ? "text-xl" : undefined}>
+            <CardHeader className={isMobile ? 'p-4' : undefined}>
+              <CardTitle className={isMobile ? 'text-xl' : undefined}>
                 Points System
               </CardTitle>
               <CardDescription>
                 Track your platform usage and earn points
               </CardDescription>
             </CardHeader>
-            <CardContent className={isMobile ? "px-4 py-4" : undefined}>
+            <CardContent className={isMobile ? 'p-4' : undefined}>
               <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800/50 text-center">
                 <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   The points system is currently under development. Soon you'll
@@ -312,15 +311,15 @@ export default function ProfilePage() {
 
         <TabsContent value="admin" className="space-y-6 w-full">
           <Card className="w-full shadow-md">
-            <CardHeader className={isMobile ? "px-4 py-4" : undefined}>
-              <CardTitle className={isMobile ? "text-xl" : undefined}>
+            <CardHeader className={isMobile ? 'p-4' : undefined}>
+              <CardTitle className={isMobile ? 'text-xl' : undefined}>
                 Admin: Starter Kits
               </CardTitle>
               <CardDescription>
                 Manage starter kits for users (Sponsor access only)
               </CardDescription>
             </CardHeader>
-            <CardContent className={isMobile ? "px-4 py-4" : undefined}>
+            <CardContent className={isMobile ? 'p-4' : undefined}>
               <div className="space-y-4">
                 <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800/50 text-center">
                   <p className="text-muted-foreground mb-2 text-sm md:text-base">

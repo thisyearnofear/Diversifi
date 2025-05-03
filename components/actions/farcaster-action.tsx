@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import { useActions } from "@/hooks/use-actions";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import { useActions } from '@/hooks/use-actions';
+import { toast } from 'sonner';
 
 export function FarcasterAction() {
   const { address } = useAccount();
@@ -19,40 +19,40 @@ export function FarcasterAction() {
     setIsLoading(true);
     try {
       // Open Farcaster in a new tab
-      window.open("https://farcaster.xyz", "_blank");
+      window.open('https://farcaster.xyz', '_blank');
 
       // Ask the user if they completed the action
       const confirmed = window.confirm(
-        "Did you create a Farcaster account and connect it to your wallet? Click OK to confirm and complete this action."
+        'Did you create a Farcaster account and connect it to your wallet? Click OK to confirm and complete this action.',
       );
 
       if (confirmed) {
         // Get the action ID from the database
-        const response = await fetch("/api/actions/by-title", {
-          method: "POST",
+        const response = await fetch('/api/actions/by-title', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ title: "Set up Farcaster Account" }),
+          body: JSON.stringify({ title: 'Set up Farcaster Account' }),
         });
 
         if (!response.ok) {
-          throw new Error("Failed to get action ID");
+          throw new Error('Failed to get action ID');
         }
 
         const { id } = await response.json();
 
         // Complete the action
         await completeAction(id, {
-          platform: "farcaster",
+          platform: 'farcaster',
           completedAt: new Date().toISOString(),
         });
 
-        toast.success("Action completed successfully!");
+        toast.success('Action completed successfully!');
       }
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Failed to complete action");
+      console.error('Error:', error);
+      toast.error('Failed to complete action');
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +92,7 @@ export function FarcasterAction() {
             Processing...
           </>
         ) : (
-          "Start Action"
+          'Start Action'
         )}
       </Button>
       {!address && (

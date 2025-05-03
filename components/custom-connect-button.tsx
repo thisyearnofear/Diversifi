@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { ConnectKitButton } from "connectkit";
-import { useCallback, useState } from "react";
-import { toast } from "sonner";
+import { ConnectKitButton } from 'connectkit';
+import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
 
 export function CustomConnectButton() {
   const [isConnecting, setIsConnecting] = useState(false);
@@ -13,16 +13,16 @@ export function CustomConnectButton() {
       // Clear any stored WalletConnect sessions from localStorage
       Object.keys(localStorage).forEach((key) => {
         if (
-          key.startsWith("wc@2:") ||
-          key.startsWith("wagmi.") ||
-          key.startsWith("walletconnect:")
+          key.startsWith('wc@2:') ||
+          key.startsWith('wagmi.') ||
+          key.startsWith('walletconnect:')
         ) {
           console.log(`Cleaning up WalletConnect session: ${key}`);
           localStorage.removeItem(key);
         }
       });
     } catch (error) {
-      console.error("Error cleaning up WalletConnect sessions:", error);
+      console.error('Error cleaning up WalletConnect sessions:', error);
     }
   }, []);
 
@@ -41,9 +41,9 @@ export function CustomConnectButton() {
           await new Promise((resolve) => setTimeout(resolve, 50));
           await show();
         } catch (error) {
-          console.error("Connection error:", error);
+          console.error('Connection error:', error);
           toast.error(
-            "Failed to open wallet connection. Please check if pop-ups are blocked."
+            'Failed to open wallet connection. Please check if pop-ups are blocked.',
           );
         } finally {
           setIsConnecting(false);
@@ -70,7 +70,7 @@ export function CustomConnectButton() {
         </button>
       );
     },
-    [isConnecting, cleanupWalletConnectSessions]
+    [isConnecting, cleanupWalletConnectSessions],
   );
 
   return (

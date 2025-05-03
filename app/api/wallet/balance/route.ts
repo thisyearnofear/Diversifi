@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { getWalletBalance } from "@/lib/web3/wallet-service";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { wallet } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { getWalletBalance } from '@/lib/web3/wallet-service';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { wallet } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function GET() {
   try {
@@ -12,15 +12,15 @@ export async function GET() {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -32,8 +32,8 @@ export async function GET() {
 
     if (userWallets.length === 0) {
       return NextResponse.json(
-        { error: "User does not have a wallet" },
-        { status: 404 }
+        { error: 'User does not have a wallet' },
+        { status: 404 },
       );
     }
 
@@ -48,12 +48,12 @@ export async function GET() {
         network: userWallet.network,
         balance: balanceResult.balance,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    console.error("Error getting wallet balance:", error);
+    console.error('Error getting wallet balance:', error);
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to get wallet balance";
+      error instanceof Error ? error.message : 'Failed to get wallet balance';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

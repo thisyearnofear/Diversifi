@@ -1,5 +1,5 @@
-import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import useSWR from 'swr';
+import { fetcher } from '@/lib/utils';
 
 export function useChat(id: string) {
   const {

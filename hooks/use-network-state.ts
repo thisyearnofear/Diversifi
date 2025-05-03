@@ -1,6 +1,6 @@
-import { useChainId, useSwitchChain } from "wagmi";
-import { celo } from "wagmi/chains";
-import { toast } from "sonner";
+import { useChainId, useSwitchChain } from 'wagmi';
+import { celo } from 'wagmi/chains';
+import { toast } from 'sonner';
 
 export function useNetworkState() {
   const chainId = useChainId();
@@ -17,8 +17,8 @@ export function useNetworkState() {
       await switchChain({ chainId: celo.id });
       return true;
     } catch (error) {
-      console.error("Error switching to Celo network:", error);
-      toast.error("Failed to switch to Celo network. Please try manually.");
+      console.error('Error switching to Celo network:', error);
+      toast.error('Failed to switch to Celo network. Please try manually.');
       return false;
     }
   };
@@ -26,6 +26,6 @@ export function useNetworkState() {
   return {
     isCorrectNetwork,
     isSwitchingChain,
-    switchToCelo
+    switchToCelo,
   };
 }

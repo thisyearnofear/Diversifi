@@ -1,4 +1,4 @@
-import { auth } from "@/app/auth";
+import { auth } from '@/app/auth';
 
 export const authOptions = {
   auth,

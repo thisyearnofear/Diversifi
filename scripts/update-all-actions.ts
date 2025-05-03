@@ -1,6 +1,6 @@
-import { config } from "dotenv";
-import postgres from "postgres";
-import { v4 as uuidv4 } from "uuid";
+import { config } from 'dotenv';
+import postgres from 'postgres';
+import { v4 as uuidv4 } from 'uuid';
 
 // Load environment variables from .env file
 config();
@@ -19,272 +19,371 @@ const generateId = (idType: string) => {
 let actions = [
   {
     id: uuidv4(),
-    title: "Set Up Farcaster Account",
-    description: "Create a Farcaster account and join the decentralized social network",
-    category: "SOCIAL",
-    chain: "BASE",
-    difficulty: "BEGINNER",
+    title: 'Set Up Farcaster Account',
+    description:
+      'Create a Farcaster account and join the decentralized social network',
+    category: 'SOCIAL',
+    chain: 'BASE',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Go to Warpcast", description: "Visit warpcast.com" },
-      { title: "Connect wallet", description: "Connect your wallet" },
-      { title: "Create profile", description: "Set up your profile" }
+      { title: 'Go to Warpcast', description: 'Visit warpcast.com' },
+      { title: 'Connect wallet', description: 'Connect your wallet' },
+      { title: 'Create profile', description: 'Set up your profile' },
     ],
     rewards: [
-      { type: "POINTS", description: "Access to the Farcaster ecosystem" }
+      { type: 'POINTS', description: 'Access to the Farcaster ecosystem' },
     ],
-    proofLabel: "Farcaster Profile URL",
-    proofPlaceholder: "https://warpcast.com/yourusername"
+    proofLabel: 'Farcaster Profile URL',
+    proofPlaceholder: 'https://warpcast.com/yourusername',
   },
   {
     id: uuidv4(),
-    title: "Set Up Lens Account",
-    description: "Create a Lens account and join the decentralized social network",
-    category: "SOCIAL",
-    chain: "POLYGON",
-    difficulty: "BEGINNER",
+    title: 'Set Up Lens Account',
+    description:
+      'Create a Lens account and join the decentralized social network',
+    category: 'SOCIAL',
+    chain: 'POLYGON',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Go to onboarding.lens.xyz", description: "Visit the Lens onboarding site" },
-      { title: "Connect wallet", description: "Connect your wallet" },
-      { title: "Create profile", description: "Set up your profile" }
+      {
+        title: 'Go to onboarding.lens.xyz',
+        description: 'Visit the Lens onboarding site',
+      },
+      { title: 'Connect wallet', description: 'Connect your wallet' },
+      { title: 'Create profile', description: 'Set up your profile' },
     ],
-    rewards: [
-      { type: "POINTS", description: "Access to the Lens ecosystem" }
-    ],
-    proofLabel: "Lens Profile URL",
-    proofPlaceholder: "https://hey.xyz/u/yourusername"
+    rewards: [{ type: 'POINTS', description: 'Access to the Lens ecosystem' }],
+    proofLabel: 'Lens Profile URL',
+    proofPlaceholder: 'https://hey.xyz/u/yourusername',
   },
   {
     id: uuidv4(),
-    title: "Register on Optimism",
-    description: "Register on Stable Station via the Optimism network",
-    category: "REGISTRATION",
-    chain: "OPTIMISM",
-    difficulty: "BEGINNER",
+    title: 'Register on Optimism',
+    description: 'Register on Stable Station via the Optimism network',
+    category: 'REGISTRATION',
+    chain: 'OPTIMISM',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Optimism network", description: "Switch to the Optimism network" },
-      { title: "Complete registration", description: "Register with Stable Station" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Optimism network',
+        description: 'Switch to the Optimism network',
+      },
+      {
+        title: 'Complete registration',
+        description: 'Register with Stable Station',
+      },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and unlock Optimism stablecoins" }
+      {
+        type: 'POINTS',
+        description: 'Earn 5 points and unlock Optimism stablecoins',
+      },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Register on Celo",
-    description: "Register on Stable Station via the Celo network",
-    category: "REGISTRATION",
-    chain: "CELO",
-    difficulty: "BEGINNER",
+    title: 'Register on Celo',
+    description: 'Register on Stable Station via the Celo network',
+    category: 'REGISTRATION',
+    chain: 'CELO',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Celo network", description: "Switch to the Celo network" },
-      { title: "Complete registration", description: "Register with Stable Station" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Celo network',
+        description: 'Switch to the Celo network',
+      },
+      {
+        title: 'Complete registration',
+        description: 'Register with Stable Station',
+      },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and unlock Celo stablecoins" }
+      {
+        type: 'POINTS',
+        description: 'Earn 5 points and unlock Celo stablecoins',
+      },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Register on Polygon",
-    description: "Register on Stable Station via the Polygon network",
-    category: "REGISTRATION",
-    chain: "POLYGON",
-    difficulty: "BEGINNER",
+    title: 'Register on Polygon',
+    description: 'Register on Stable Station via the Polygon network',
+    category: 'REGISTRATION',
+    chain: 'POLYGON',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Polygon network", description: "Switch to the Polygon network" },
-      { title: "Complete registration", description: "Register with Stable Station" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Polygon network',
+        description: 'Switch to the Polygon network',
+      },
+      {
+        title: 'Complete registration',
+        description: 'Register with Stable Station',
+      },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and unlock Polygon stablecoins" }
+      {
+        type: 'POINTS',
+        description: 'Earn 5 points and unlock Polygon stablecoins',
+      },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Register on Base",
-    description: "Register on Stable Station via the Base network",
-    category: "REGISTRATION",
-    chain: "BASE",
-    difficulty: "BEGINNER",
+    title: 'Register on Base',
+    description: 'Register on Stable Station via the Base network',
+    category: 'REGISTRATION',
+    chain: 'BASE',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Base network", description: "Switch to the Base network" },
-      { title: "Complete registration", description: "Register with Stable Station" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Base network',
+        description: 'Switch to the Base network',
+      },
+      {
+        title: 'Complete registration',
+        description: 'Register with Stable Station',
+      },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and unlock Base stablecoins" }
+      {
+        type: 'POINTS',
+        description: 'Earn 5 points and unlock Base stablecoins',
+      },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Get cKES Stablecoins",
-    description: "Acquire Kenyan Shilling stablecoins (cKES) on the Celo network",
-    category: "STABLECOIN",
-    chain: "CELO",
-    difficulty: "BEGINNER",
+    title: 'Get cKES Stablecoins',
+    description:
+      'Acquire Kenyan Shilling stablecoins (cKES) on the Celo network',
+    category: 'STABLECOIN',
+    chain: 'CELO',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Celo network", description: "Switch to the Celo network" },
-      { title: "Swap cUSD for cKES", description: "Swap your cUSD for cKES" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Celo network',
+        description: 'Switch to the Celo network',
+      },
+      { title: 'Swap cUSD for cKES', description: 'Swap your cUSD for cKES' },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and get cKES stablecoins" }
+      { type: 'POINTS', description: 'Earn 5 points and get cKES stablecoins' },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Get EURA Stablecoins",
-    description: "Acquire Euro stablecoins (EURA) on the Optimism network",
-    category: "STABLECOIN",
-    chain: "OPTIMISM",
-    difficulty: "BEGINNER",
+    title: 'Get EURA Stablecoins',
+    description: 'Acquire Euro stablecoins (EURA) on the Optimism network',
+    category: 'STABLECOIN',
+    chain: 'OPTIMISM',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Optimism network", description: "Switch to the Optimism network" },
-      { title: "Swap ETH for EURA", description: "Swap your ETH for EURA" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Optimism network',
+        description: 'Switch to the Optimism network',
+      },
+      { title: 'Swap ETH for EURA', description: 'Swap your ETH for EURA' },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and get EURA stablecoins" }
+      { type: 'POINTS', description: 'Earn 5 points and get EURA stablecoins' },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Get cCOP Stablecoins",
-    description: "Acquire Colombian Peso stablecoins (cCOP) on the Celo network",
-    category: "STABLECOIN",
-    chain: "CELO",
-    difficulty: "BEGINNER",
+    title: 'Get cCOP Stablecoins',
+    description:
+      'Acquire Colombian Peso stablecoins (cCOP) on the Celo network',
+    category: 'STABLECOIN',
+    chain: 'CELO',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Celo network", description: "Switch to the Celo network" },
-      { title: "Swap cUSD for cCOP", description: "Swap your cUSD for cCOP" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Celo network',
+        description: 'Switch to the Celo network',
+      },
+      { title: 'Swap cUSD for cCOP', description: 'Swap your cUSD for cCOP' },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and get cCOP stablecoins" }
+      { type: 'POINTS', description: 'Earn 5 points and get cCOP stablecoins' },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
-    id: "7b697499-3a5e-4c2f-8d1b-4f5a6b7c8d9e", // Keep the existing ID for PUSO
-    title: "Get PUSO Stablecoins",
-    description: "Acquire Philippine Peso stablecoins (PUSO) on the Celo network",
-    category: "STABLECOIN",
-    chain: "CELO",
-    difficulty: "BEGINNER",
+    id: '7b697499-3a5e-4c2f-8d1b-4f5a6b7c8d9e', // Keep the existing ID for PUSO
+    title: 'Get PUSO Stablecoins',
+    description:
+      'Acquire Philippine Peso stablecoins (PUSO) on the Celo network',
+    category: 'STABLECOIN',
+    chain: 'CELO',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Celo network", description: "Switch to the Celo network" },
-      { title: "Swap cUSD for PUSO", description: "Swap your cUSD for PUSO" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Celo network',
+        description: 'Switch to the Celo network',
+      },
+      { title: 'Swap cUSD for PUSO', description: 'Swap your cUSD for PUSO' },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and get PUSO stablecoins" }
+      { type: 'POINTS', description: 'Earn 5 points and get PUSO stablecoins' },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
-  },
-  {
-    id: uuidv4(),
-    title: "Get cUSD Stablecoins",
-    description: "Acquire Celo Dollar stablecoins (cUSD) on the Celo network",
-    category: "STABLECOIN",
-    chain: "CELO",
-    difficulty: "BEGINNER",
-    prerequisites: [],
-    steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Celo network", description: "Switch to the Celo network" },
-      { title: "Swap CELO for cUSD", description: "Swap your CELO for cUSD" }
-    ],
-    rewards: [
-      { type: "POINTS", description: "Earn 5 points and get cUSD stablecoins" }
-    ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Get DAI Stablecoins",
-    description: "Acquire DAI stablecoins on the Polygon network",
-    category: "STABLECOIN",
-    chain: "POLYGON",
-    difficulty: "BEGINNER",
+    title: 'Get cUSD Stablecoins',
+    description: 'Acquire Celo Dollar stablecoins (cUSD) on the Celo network',
+    category: 'STABLECOIN',
+    chain: 'CELO',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Polygon network", description: "Switch to the Polygon network" },
-      { title: "Swap MATIC for DAI", description: "Swap your MATIC for DAI" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Celo network',
+        description: 'Switch to the Celo network',
+      },
+      { title: 'Swap CELO for cUSD', description: 'Swap your CELO for cUSD' },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and get DAI stablecoins" }
+      { type: 'POINTS', description: 'Earn 5 points and get cUSD stablecoins' },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
   },
   {
     id: uuidv4(),
-    title: "Get USDbC Stablecoins",
-    description: "Acquire Bridged USD Coin (USDbC) on the Base network",
-    category: "STABLECOIN",
-    chain: "BASE",
-    difficulty: "BEGINNER",
+    title: 'Get DAI Stablecoins',
+    description: 'Acquire DAI stablecoins on the Polygon network',
+    category: 'STABLECOIN',
+    chain: 'POLYGON',
+    difficulty: 'BEGINNER',
     prerequisites: [],
     steps: [
-      { title: "Connect your wallet", description: "Connect your wallet to continue" },
-      { title: "Switch to Base network", description: "Switch to the Base network" },
-      { title: "Swap ETH for USDbC", description: "Swap your ETH for USDbC" }
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Polygon network',
+        description: 'Switch to the Polygon network',
+      },
+      { title: 'Swap MATIC for DAI', description: 'Swap your MATIC for DAI' },
     ],
     rewards: [
-      { type: "POINTS", description: "Earn 5 points and get USDbC stablecoins" }
+      { type: 'POINTS', description: 'Earn 5 points and get DAI stablecoins' },
     ],
-    proofLabel: "Transaction Hash",
-    proofPlaceholder: "0x..."
-  }
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
+  },
+  {
+    id: uuidv4(),
+    title: 'Get USDbC Stablecoins',
+    description: 'Acquire Bridged USD Coin (USDbC) on the Base network',
+    category: 'STABLECOIN',
+    chain: 'BASE',
+    difficulty: 'BEGINNER',
+    prerequisites: [],
+    steps: [
+      {
+        title: 'Connect your wallet',
+        description: 'Connect your wallet to continue',
+      },
+      {
+        title: 'Switch to Base network',
+        description: 'Switch to the Base network',
+      },
+      { title: 'Swap ETH for USDbC', description: 'Swap your ETH for USDbC' },
+    ],
+    rewards: [
+      {
+        type: 'POINTS',
+        description: 'Earn 5 points and get USDbC stablecoins',
+      },
+    ],
+    proofLabel: 'Transaction Hash',
+    proofPlaceholder: '0x...',
+  },
 ];
 
 // Define region mappings
 const regionMappings = {
-  "Get cKES Stablecoins": "Africa",
-  "Get EURA Stablecoins": "Europe",
-  "Get cCOP Stablecoins": "LatAm",
-  "Get PUSO Stablecoins": "Asia",
-  "Get cUSD Stablecoins": "Africa",
-  "Get DAI Stablecoins": "USA",
-  "Get USDbC Stablecoins": "USA"
+  'Get cKES Stablecoins': 'Africa',
+  'Get EURA Stablecoins': 'Europe',
+  'Get cCOP Stablecoins': 'LatAm',
+  'Get PUSO Stablecoins': 'Asia',
+  'Get cUSD Stablecoins': 'Africa',
+  'Get DAI Stablecoins': 'USA',
+  'Get USDbC Stablecoins': 'USA',
 };
 
 const updateAllActions = async () => {
   if (!process.env.POSTGRES_URL) {
-    console.error("❌ POSTGRES_URL is not defined");
+    console.error('❌ POSTGRES_URL is not defined');
     process.exit(1);
   }
 
   try {
-    console.log("⏳ Connecting to database...");
+    console.log('⏳ Connecting to database...');
     const connection = postgres(process.env.POSTGRES_URL, { max: 1 });
 
     // Check if the action_region table exists
@@ -310,7 +409,7 @@ const updateAllActions = async () => {
     console.log(`Action.id column type: ${idType}`);
 
     if (!actionRegionTableExists) {
-      console.log("⏳ Creating action_region table...");
+      console.log('⏳ Creating action_region table...');
       if (idType === 'uuid') {
         await connection.unsafe(`
           CREATE TABLE IF NOT EXISTS "action_region" (
@@ -333,29 +432,35 @@ const updateAllActions = async () => {
     }
 
     // Get existing actions
-    console.log("⏳ Getting existing actions...");
+    console.log('⏳ Getting existing actions...');
     const existingActions = await connection.unsafe(`
       SELECT * FROM "Action"
     `);
 
     const existingTitles = existingActions.map((a: any) => a.title);
-    console.log("Existing actions:", existingTitles);
+    console.log('Existing actions:', existingTitles);
 
     // Update action IDs based on the database type
-    actions = actions.map(action => ({
+    actions = actions.map((action) => ({
       ...action,
-      id: action.id === "7b697499-3a5e-4c2f-8d1b-4f5a6b7c8d9e" ? action.id : generateId(idType)
+      id:
+        action.id === '7b697499-3a5e-4c2f-8d1b-4f5a6b7c8d9e'
+          ? action.id
+          : generateId(idType),
     }));
 
     // Process each action
     for (const action of actions) {
-      const existingAction = existingActions.find((a: any) => a.title === action.title);
+      const existingAction = existingActions.find(
+        (a: any) => a.title === action.title,
+      );
 
       if (existingAction) {
         console.log(`⏳ Updating action: ${action.title}`);
 
         // Update the existing action
-        await connection.unsafe(`
+        await connection.unsafe(
+          `
           UPDATE "Action" SET
             "description" = $1,
             "category" = $2,
@@ -366,21 +471,24 @@ const updateAllActions = async () => {
             "rewards" = ARRAY[${action.rewards.map((_, i) => `$${5 + action.steps.length + i}::json`).join(', ')}]::json[],
             "updatedAt" = NOW()
           WHERE "title" = $${5 + action.steps.length + action.rewards.length}
-        `, [
-          action.description,
-          action.category,
-          action.chain,
-          action.difficulty,
-          ...action.steps.map(step => JSON.stringify(step)),
-          ...action.rewards.map(reward => JSON.stringify(reward)),
-          action.title
-        ]);
+        `,
+          [
+            action.description,
+            action.category,
+            action.chain,
+            action.difficulty,
+            ...action.steps.map((step) => JSON.stringify(step)),
+            ...action.rewards.map((reward) => JSON.stringify(reward)),
+            action.title,
+          ],
+        );
       } else {
         console.log(`⏳ Adding new action: ${action.title}`);
 
         // Add the new action
         if (idType === 'uuid') {
-          await connection.unsafe(`
+          await connection.unsafe(
+            `
             INSERT INTO "Action" (
               "id", "title", "description", "category", "chain", "difficulty",
               "prerequisites", "steps", "rewards", "createdAt", "updatedAt"
@@ -391,18 +499,21 @@ const updateAllActions = async () => {
               ARRAY[${action.rewards.map((_, i) => `$${7 + action.steps.length + i}::json`).join(', ')}]::json[],
               NOW(), NOW()
             )
-          `, [
-            action.id,
-            action.title,
-            action.description,
-            action.category,
-            action.chain,
-            action.difficulty,
-            ...action.steps.map(step => JSON.stringify(step)),
-            ...action.rewards.map(reward => JSON.stringify(reward))
-          ]);
+          `,
+            [
+              action.id,
+              action.title,
+              action.description,
+              action.category,
+              action.chain,
+              action.difficulty,
+              ...action.steps.map((step) => JSON.stringify(step)),
+              ...action.rewards.map((reward) => JSON.stringify(reward)),
+            ],
+          );
         } else {
-          await connection.unsafe(`
+          await connection.unsafe(
+            `
             INSERT INTO "Action" (
               "id", "title", "description", "category", "chain", "difficulty",
               "prerequisites", "steps", "rewards", "createdAt", "updatedAt"
@@ -413,67 +524,78 @@ const updateAllActions = async () => {
               ARRAY[${action.rewards.map((_, i) => `$${7 + action.steps.length + i}::json`).join(', ')}]::json[],
               NOW(), NOW()
             )
-          `, [
-            action.id,
-            action.title,
-            action.description,
-            action.category,
-            action.chain,
-            action.difficulty,
-            ...action.steps.map(step => JSON.stringify(step)),
-            ...action.rewards.map(reward => JSON.stringify(reward))
-          ]);
+          `,
+            [
+              action.id,
+              action.title,
+              action.description,
+              action.category,
+              action.chain,
+              action.difficulty,
+              ...action.steps.map((step) => JSON.stringify(step)),
+              ...action.rewards.map((reward) => JSON.stringify(reward)),
+            ],
+          );
         }
       }
 
       // Add region mapping if applicable
-      if (regionMappings[action.title as keyof typeof regionMappings] && actionRegionTableExists) {
-        const region = regionMappings[action.title as keyof typeof regionMappings];
+      if (
+        regionMappings[action.title as keyof typeof regionMappings] &&
+        actionRegionTableExists
+      ) {
+        const region =
+          regionMappings[action.title as keyof typeof regionMappings];
         const actionId = existingAction ? existingAction.id : action.id;
 
         console.log(`⏳ Adding region mapping: ${action.title} -> ${region}`);
 
         // Check if mapping already exists
-        const existingMapping = await connection.unsafe(`
+        const existingMapping = await connection.unsafe(
+          `
           SELECT * FROM "action_region"
           WHERE "actionId" = $1 AND "region" = $2
-        `, [actionId, region]);
+        `,
+          [actionId, region],
+        );
 
         if (existingMapping.length === 0) {
-          await connection.unsafe(`
+          await connection.unsafe(
+            `
             INSERT INTO "action_region" ("actionId", "region")
             VALUES ($1, $2)
             ON CONFLICT ("actionId", "region") DO NOTHING
-          `, [actionId, region]);
+          `,
+            [actionId, region],
+          );
         }
       }
     }
 
     // Update the proof fields in the database
-    console.log("⏳ Updating proof fields...");
+    console.log('⏳ Updating proof fields...');
     for (const action of actions) {
       if (action.proofLabel && action.proofPlaceholder) {
-        await connection.unsafe(`
+        await connection.unsafe(
+          `
           UPDATE "Action" SET
             "proofFieldLabel" = $1,
             "proofFieldPlaceholder" = $2
           WHERE "title" = $3
-        `, [
-          action.proofLabel,
-          action.proofPlaceholder,
-          action.title
-        ]);
+        `,
+          [action.proofLabel, action.proofPlaceholder, action.title],
+        );
       }
     }
 
-    console.log("✅ All actions updated successfully");
+    console.log('✅ All actions updated successfully');
 
     // List all actions to verify
     const updatedActions = await connection.unsafe(`
       SELECT id, title, description, category, chain FROM "Action" ORDER BY title
     `);
 
-    console.log("✅ Updated actions in database:");
+    console.log('✅ Updated actions in database:');
     updatedActions.forEach((row: any) => {
       console.log(`- ${row.title} (${row.chain}): ${row.description}`);
     });
@@ -482,7 +604,7 @@ const updateAllActions = async () => {
     await connection.end();
     process.exit(0);
   } catch (error) {
-    console.error("❌ Failed to update actions:", error);
+    console.error('❌ Failed to update actions:', error);
     process.exit(1);
   }
 };

@@ -1,461 +1,461 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { base } from "wagmi/chains";
-import { stringToHex } from "viem";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Loader2, ExternalLink, CheckCircle } from "lucide-react";
-import { useActions } from "@/hooks/use-actions";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react';
+import { useAccount, useReadContract, useWriteContract } from 'wagmi';
+import { base } from 'wagmi/chains';
+import { stringToHex } from 'viem';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Loader2, ExternalLink, CheckCircle } from 'lucide-react';
+import { useActions } from '@/hooks/use-actions';
+import { toast } from 'sonner';
 
 // Divvi V0 Registry Contract on Base
-const REGISTRY_CONTRACT_ADDRESS = "0xBa9655677f4E42DD289F5b7888170bC0c7dA8Cdc";
-const REFERRER_ID = "papa"; // Your referral ID
+const REGISTRY_CONTRACT_ADDRESS = '0xBa9655677f4E42DD289F5b7888170bC0c7dA8Cdc';
+const REFERRER_ID = 'papa'; // Your referral ID
 
 // Full Registry Contract ABI
 const registryContractAbi = [
   {
     inputs: [
-      { internalType: "address", name: "owner", type: "address" },
-      { internalType: "uint48", name: "transferDelay", type: "uint48" },
+      { internalType: 'address', name: 'owner', type: 'address' },
+      { internalType: 'uint48', name: 'transferDelay', type: 'uint48' },
     ],
-    stateMutability: "nonpayable",
-    type: "constructor",
+    stateMutability: 'nonpayable',
+    type: 'constructor',
   },
-  { inputs: [], name: "AccessControlBadConfirmation", type: "error" },
+  { inputs: [], name: 'AccessControlBadConfirmation', type: 'error' },
   {
-    inputs: [{ internalType: "uint48", name: "schedule", type: "uint48" }],
-    name: "AccessControlEnforcedDefaultAdminDelay",
-    type: "error",
+    inputs: [{ internalType: 'uint48', name: 'schedule', type: 'uint48' }],
+    name: 'AccessControlEnforcedDefaultAdminDelay',
+    type: 'error',
   },
-  { inputs: [], name: "AccessControlEnforcedDefaultAdminRules", type: "error" },
-  {
-    inputs: [
-      { internalType: "address", name: "defaultAdmin", type: "address" },
-    ],
-    name: "AccessControlInvalidDefaultAdmin",
-    type: "error",
-  },
+  { inputs: [], name: 'AccessControlEnforcedDefaultAdminRules', type: 'error' },
   {
     inputs: [
-      { internalType: "address", name: "account", type: "address" },
-      { internalType: "bytes32", name: "neededRole", type: "bytes32" },
+      { internalType: 'address', name: 'defaultAdmin', type: 'address' },
     ],
-    name: "AccessControlUnauthorizedAccount",
-    type: "error",
+    name: 'AccessControlInvalidDefaultAdmin',
+    type: 'error',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "protocolId", type: "bytes32" },
-      { internalType: "bytes32", name: "referrerId", type: "bytes32" },
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'bytes32', name: 'neededRole', type: 'bytes32' },
     ],
-    name: "ReferrerNotRegistered",
-    type: "error",
+    name: 'AccessControlUnauthorizedAccount',
+    type: 'error',
   },
   {
     inputs: [
-      { internalType: "uint8", name: "bits", type: "uint8" },
-      { internalType: "uint256", name: "value", type: "uint256" },
+      { internalType: 'bytes32', name: 'protocolId', type: 'bytes32' },
+      { internalType: 'bytes32', name: 'referrerId', type: 'bytes32' },
     ],
-    name: "SafeCastOverflowedUintDowncast",
-    type: "error",
+    name: 'ReferrerNotRegistered',
+    type: 'error',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "protocolId", type: "bytes32" },
-      { internalType: "bytes32", name: "referrerId", type: "bytes32" },
-      { internalType: "address", name: "userAddress", type: "address" },
+      { internalType: 'uint8', name: 'bits', type: 'uint8' },
+      { internalType: 'uint256', name: 'value', type: 'uint256' },
     ],
-    name: "UserAlreadyRegistered",
-    type: "error",
+    name: 'SafeCastOverflowedUintDowncast',
+    type: 'error',
+  },
+  {
+    inputs: [
+      { internalType: 'bytes32', name: 'protocolId', type: 'bytes32' },
+      { internalType: 'bytes32', name: 'referrerId', type: 'bytes32' },
+      { internalType: 'address', name: 'userAddress', type: 'address' },
+    ],
+    name: 'UserAlreadyRegistered',
+    type: 'error',
   },
   {
     anonymous: false,
     inputs: [],
-    name: "DefaultAdminDelayChangeCanceled",
-    type: "event",
+    name: 'DefaultAdminDelayChangeCanceled',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: false,
-        internalType: "uint48",
-        name: "newDelay",
-        type: "uint48",
+        internalType: 'uint48',
+        name: 'newDelay',
+        type: 'uint48',
       },
       {
         indexed: false,
-        internalType: "uint48",
-        name: "effectSchedule",
-        type: "uint48",
+        internalType: 'uint48',
+        name: 'effectSchedule',
+        type: 'uint48',
       },
     ],
-    name: "DefaultAdminDelayChangeScheduled",
-    type: "event",
+    name: 'DefaultAdminDelayChangeScheduled',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [],
-    name: "DefaultAdminTransferCanceled",
-    type: "event",
+    name: 'DefaultAdminTransferCanceled',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "newAdmin",
-        type: "address",
+        internalType: 'address',
+        name: 'newAdmin',
+        type: 'address',
       },
       {
         indexed: false,
-        internalType: "uint48",
-        name: "acceptSchedule",
-        type: "uint48",
+        internalType: 'uint48',
+        name: 'acceptSchedule',
+        type: 'uint48',
       },
     ],
-    name: "DefaultAdminTransferScheduled",
-    type: "event",
+    name: 'DefaultAdminTransferScheduled',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: "bytes32",
-        name: "protocolId",
-        type: "bytes32",
+        internalType: 'bytes32',
+        name: 'protocolId',
+        type: 'bytes32',
       },
       {
         indexed: true,
-        internalType: "bytes32",
-        name: "referrerId",
-        type: "bytes32",
+        internalType: 'bytes32',
+        name: 'referrerId',
+        type: 'bytes32',
       },
       {
         indexed: true,
-        internalType: "address",
-        name: "userAddress",
-        type: "address",
+        internalType: 'address',
+        name: 'userAddress',
+        type: 'address',
       },
     ],
-    name: "ReferralRegistered",
-    type: "event",
+    name: 'ReferralRegistered',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: "bytes32",
-        name: "referrerId",
-        type: "bytes32",
+        internalType: 'bytes32',
+        name: 'referrerId',
+        type: 'bytes32',
       },
       {
         indexed: false,
-        internalType: "bytes32[]",
-        name: "protocolIds",
-        type: "bytes32[]",
+        internalType: 'bytes32[]',
+        name: 'protocolIds',
+        type: 'bytes32[]',
       },
       {
         indexed: false,
-        internalType: "uint256[]",
-        name: "rewardRates",
-        type: "uint256[]",
+        internalType: 'uint256[]',
+        name: 'rewardRates',
+        type: 'uint256[]',
       },
       {
         indexed: false,
-        internalType: "address",
-        name: "rewardAddress",
-        type: "address",
+        internalType: 'address',
+        name: 'rewardAddress',
+        type: 'address',
       },
     ],
-    name: "ReferrerRegistered",
-    type: "event",
+    name: 'ReferrerRegistered',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "bytes32", name: "role", type: "bytes32" },
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
       {
         indexed: true,
-        internalType: "bytes32",
-        name: "previousAdminRole",
-        type: "bytes32",
+        internalType: 'bytes32',
+        name: 'previousAdminRole',
+        type: 'bytes32',
       },
       {
         indexed: true,
-        internalType: "bytes32",
-        name: "newAdminRole",
-        type: "bytes32",
+        internalType: 'bytes32',
+        name: 'newAdminRole',
+        type: 'bytes32',
       },
     ],
-    name: "RoleAdminChanged",
-    type: "event",
+    name: 'RoleAdminChanged',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "bytes32", name: "role", type: "bytes32" },
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
       {
         indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
       },
       {
         indexed: true,
-        internalType: "address",
-        name: "sender",
-        type: "address",
+        internalType: 'address',
+        name: 'sender',
+        type: 'address',
       },
     ],
-    name: "RoleGranted",
-    type: "event",
+    name: 'RoleGranted',
+    type: 'event',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "bytes32", name: "role", type: "bytes32" },
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
       {
         indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
       },
       {
         indexed: true,
-        internalType: "address",
-        name: "sender",
-        type: "address",
+        internalType: 'address',
+        name: 'sender',
+        type: 'address',
       },
     ],
-    name: "RoleRevoked",
-    type: "event",
+    name: 'RoleRevoked',
+    type: 'event',
   },
   {
     inputs: [],
-    name: "DEFAULT_ADMIN_ROLE",
-    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'DEFAULT_ADMIN_ROLE',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "acceptDefaultAdminTransfer",
+    name: 'acceptDefaultAdminTransfer',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    inputs: [{ internalType: "address", name: "newAdmin", type: "address" }],
-    name: "beginDefaultAdminTransfer",
+    inputs: [{ internalType: 'address', name: 'newAdmin', type: 'address' }],
+    name: 'beginDefaultAdminTransfer',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "cancelDefaultAdminTransfer",
+    name: 'cancelDefaultAdminTransfer',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    inputs: [{ internalType: "uint48", name: "newDelay", type: "uint48" }],
-    name: "changeDefaultAdminDelay",
+    inputs: [{ internalType: 'uint48', name: 'newDelay', type: 'uint48' }],
+    name: 'changeDefaultAdminDelay',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "defaultAdmin",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'defaultAdmin',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "defaultAdminDelay",
-    outputs: [{ internalType: "uint48", name: "", type: "uint48" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'defaultAdminDelay',
+    outputs: [{ internalType: 'uint48', name: '', type: 'uint48' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "defaultAdminDelayIncreaseWait",
-    outputs: [{ internalType: "uint48", name: "", type: "uint48" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'defaultAdminDelayIncreaseWait',
+    outputs: [{ internalType: 'uint48', name: '', type: 'uint48' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
-    inputs: [{ internalType: "bytes32", name: "providerId", type: "bytes32" }],
-    name: "getProtocols",
-    outputs: [{ internalType: "bytes32[]", name: "", type: "bytes32[]" }],
-    stateMutability: "view",
-    type: "function",
+    inputs: [{ internalType: 'bytes32', name: 'providerId', type: 'bytes32' }],
+    name: 'getProtocols',
+    outputs: [{ internalType: 'bytes32[]', name: '', type: 'bytes32[]' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
-    inputs: [{ internalType: "bytes32", name: "protocolId", type: "bytes32" }],
-    name: "getReferrers",
-    outputs: [{ internalType: "bytes32[]", name: "", type: "bytes32[]" }],
-    stateMutability: "view",
-    type: "function",
+    inputs: [{ internalType: 'bytes32', name: 'protocolId', type: 'bytes32' }],
+    name: 'getReferrers',
+    outputs: [{ internalType: 'bytes32[]', name: '', type: 'bytes32[]' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
-    inputs: [{ internalType: "bytes32", name: "referrerId", type: "bytes32" }],
-    name: "getRewardAddress",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
+    inputs: [{ internalType: 'bytes32', name: 'referrerId', type: 'bytes32' }],
+    name: 'getRewardAddress',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "protocolId", type: "bytes32" },
-      { internalType: "bytes32", name: "referrerId", type: "bytes32" },
+      { internalType: 'bytes32', name: 'protocolId', type: 'bytes32' },
+      { internalType: 'bytes32', name: 'referrerId', type: 'bytes32' },
     ],
-    name: "getRewardRate",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'getRewardRate',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
-    inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }],
-    name: "getRoleAdmin",
-    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    stateMutability: "view",
-    type: "function",
+    inputs: [{ internalType: 'bytes32', name: 'role', type: 'bytes32' }],
+    name: 'getRoleAdmin',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "protocolId", type: "bytes32" },
-      { internalType: "bytes32", name: "referrerId", type: "bytes32" },
+      { internalType: 'bytes32', name: 'protocolId', type: 'bytes32' },
+      { internalType: 'bytes32', name: 'referrerId', type: 'bytes32' },
     ],
-    name: "getUsers",
+    name: 'getUsers',
     outputs: [
-      { internalType: "address[]", name: "", type: "address[]" },
-      { internalType: "uint256[]", name: "", type: "uint256[]" },
+      { internalType: 'address[]', name: '', type: 'address[]' },
+      { internalType: 'uint256[]', name: '', type: 'uint256[]' },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "role", type: "bytes32" },
-      { internalType: "address", name: "account", type: "address" },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
-    name: "grantRole",
+    name: 'grantRole',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "role", type: "bytes32" },
-      { internalType: "address", name: "account", type: "address" },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
-    name: "hasRole",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'hasRole',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "address", name: "userAddress", type: "address" },
-      { internalType: "bytes32[]", name: "protocolIds", type: "bytes32[]" },
+      { internalType: 'address', name: 'userAddress', type: 'address' },
+      { internalType: 'bytes32[]', name: 'protocolIds', type: 'bytes32[]' },
     ],
-    name: "isUserRegistered",
-    outputs: [{ internalType: "bool[]", name: "", type: "bool[]" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'isUserRegistered',
+    outputs: [{ internalType: 'bool[]', name: '', type: 'bool[]' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "owner",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
+    name: 'owner',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "pendingDefaultAdmin",
+    name: 'pendingDefaultAdmin',
     outputs: [
-      { internalType: "address", name: "newAdmin", type: "address" },
-      { internalType: "uint48", name: "schedule", type: "uint48" },
+      { internalType: 'address', name: 'newAdmin', type: 'address' },
+      { internalType: 'uint48', name: 'schedule', type: 'uint48' },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "pendingDefaultAdminDelay",
+    name: 'pendingDefaultAdminDelay',
     outputs: [
-      { internalType: "uint48", name: "newDelay", type: "uint48" },
-      { internalType: "uint48", name: "schedule", type: "uint48" },
+      { internalType: 'uint48', name: 'newDelay', type: 'uint48' },
+      { internalType: 'uint48', name: 'schedule', type: 'uint48' },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "referrerId", type: "bytes32" },
-      { internalType: "bytes32[]", name: "protocolIds", type: "bytes32[]" },
+      { internalType: 'bytes32', name: 'referrerId', type: 'bytes32' },
+      { internalType: 'bytes32[]', name: 'protocolIds', type: 'bytes32[]' },
     ],
-    name: "registerReferrals",
+    name: 'registerReferrals',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "referrerId", type: "bytes32" },
-      { internalType: "bytes32[]", name: "protocolIds", type: "bytes32[]" },
-      { internalType: "uint256[]", name: "rewardRates", type: "uint256[]" },
-      { internalType: "address", name: "rewardAddress", type: "address" },
+      { internalType: 'bytes32', name: 'referrerId', type: 'bytes32' },
+      { internalType: 'bytes32[]', name: 'protocolIds', type: 'bytes32[]' },
+      { internalType: 'uint256[]', name: 'rewardRates', type: 'uint256[]' },
+      { internalType: 'address', name: 'rewardAddress', type: 'address' },
     ],
-    name: "registerReferrer",
+    name: 'registerReferrer',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "role", type: "bytes32" },
-      { internalType: "address", name: "account", type: "address" },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
-    name: "renounceRole",
+    name: 'renounceRole',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "role", type: "bytes32" },
-      { internalType: "address", name: "account", type: "address" },
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
     ],
-    name: "revokeRole",
+    name: 'revokeRole',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [],
-    name: "rollbackDefaultAdminDelay",
+    name: 'rollbackDefaultAdminDelay',
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
-    inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
-    name: "supportsInterface",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
+    inputs: [{ internalType: 'bytes4', name: 'interfaceId', type: 'bytes4' }],
+    name: 'supportsInterface',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
   },
 ] as const;
 
@@ -463,7 +463,7 @@ export function DivviRegistrationAction() {
   const { address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
-  const [txHash, setTxHash] = useState("");
+  const [txHash, setTxHash] = useState('');
   const { completeAction } = useActions();
 
   // Check if user is registered with Aerodrome protocol
@@ -471,9 +471,9 @@ export function DivviRegistrationAction() {
     useReadContract({
       address: REGISTRY_CONTRACT_ADDRESS,
       abi: registryContractAbi,
-      functionName: "isUserRegistered",
+      functionName: 'isUserRegistered',
       args: address
-        ? [address, [stringToHex("aerodrome", { size: 32 })]]
+        ? [address, [stringToHex('aerodrome', { size: 32 })]]
         : undefined,
       chainId: base.id,
     });
@@ -485,7 +485,7 @@ export function DivviRegistrationAction() {
   useEffect(() => {
     if (registrationStatus?.[0]) {
       setIsRegistered(true);
-      if (writeData && typeof writeData === "string") {
+      if (writeData && typeof writeData === 'string') {
         setTxHash(writeData);
       }
     }
@@ -493,7 +493,7 @@ export function DivviRegistrationAction() {
 
   const handleRegister = async () => {
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return;
     }
 
@@ -501,7 +501,7 @@ export function DivviRegistrationAction() {
     try {
       // If user is not registered, register them
       if (!registrationStatus?.[0]) {
-        toast.info("Registering you with Divvi V0 for rewards...");
+        toast.info('Registering you with Divvi V0 for rewards...');
 
         try {
           // In wagmi v2, writeContract returns void, not a transaction hash
@@ -509,19 +509,19 @@ export function DivviRegistrationAction() {
           await writeContract({
             address: REGISTRY_CONTRACT_ADDRESS,
             abi: registryContractAbi,
-            functionName: "registerReferrals",
+            functionName: 'registerReferrals',
             args: [
               stringToHex(REFERRER_ID, { size: 32 }),
-              [stringToHex("aerodrome", { size: 32 })],
+              [stringToHex('aerodrome', { size: 32 })],
             ],
             chainId: base.id,
           });
 
-          toast.success("Registration transaction submitted!");
+          toast.success('Registration transaction submitted!');
           // The transaction hash will be set in the useEffect that watches writeData
         } catch (error) {
-          console.error("Transaction error:", error);
-          toast.error("Failed to submit transaction");
+          console.error('Transaction error:', error);
+          toast.error('Failed to submit transaction');
         }
 
         // Wait for the transaction to be mined and then refetch the registration status
@@ -529,12 +529,12 @@ export function DivviRegistrationAction() {
           await refetchRegistrationStatus();
         }, 5000);
       } else {
-        toast.info("You are already registered with Divvi V0!");
+        toast.info('You are already registered with Divvi V0!');
         setIsRegistered(true);
       }
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Failed to register. Please try again.");
+      console.error('Error:', error);
+      toast.error('Failed to register. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -546,16 +546,16 @@ export function DivviRegistrationAction() {
     setIsLoading(true);
     try {
       // Get the action ID from the database
-      const response = await fetch("/api/actions/by-title", {
-        method: "POST",
+      const response = await fetch('/api/actions/by-title', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title: "Register with Divvi V0" }),
+        body: JSON.stringify({ title: 'Register with Divvi V0' }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get action ID");
+        throw new Error('Failed to get action ID');
       }
 
       const { id } = await response.json();
@@ -563,15 +563,15 @@ export function DivviRegistrationAction() {
       // Complete the action
       await completeAction(id, {
         txHash,
-        platform: "divvi",
+        platform: 'divvi',
         completedAt: new Date().toISOString(),
       });
 
-      toast.success("Registration completed successfully!");
+      toast.success('Registration completed successfully!');
       setIsRegistered(true);
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Failed to complete registration. Please try again.");
+      console.error('Error:', error);
+      toast.error('Failed to complete registration. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -637,7 +637,7 @@ export function DivviRegistrationAction() {
                 Processing...
               </>
             ) : (
-              "Register with Stable Station"
+              'Register with Stable Station'
             )}
           </Button>
 
@@ -660,7 +660,7 @@ export function DivviRegistrationAction() {
                     Processing...
                   </>
                 ) : (
-                  "Complete Registration"
+                  'Complete Registration'
                 )}
               </Button>
             </div>

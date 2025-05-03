@@ -1,24 +1,27 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { ethers } from "ethers";
-import { useAccount } from "wagmi";
-import { useAuth } from "./use-auth";
-import { useActions } from "./use-actions";
-import { toast } from "sonner";
-import { useNetworkState } from "./use-network-state";
-import { ADDRESSES, ABIS, SwapParams, UseCkesSwapOptions, CkesSwapStatus } from "../constants/celo-tokens";
-import { handleSwapError } from "../utils/celo-utils";
+import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
+import { useAccount } from 'wagmi';
+import { useAuth } from './use-auth';
+import { useActions } from './use-actions';
+import { toast } from 'sonner';
+import { useNetworkState } from './use-network-state';
 import {
-  CELO_TOKENS,
+  ADDRESSES,
+  ABIS,
+  type SwapParams,
+  type UseCkesSwapOptions,
+  type CkesSwapStatus,
+} from '../constants/celo-tokens';
+import {
   getMentoExchangeRate,
   getCachedData,
   setCachedData,
   CACHE_KEYS,
-  CACHE_DURATIONS,
   handleMentoError,
-  DEFAULT_EXCHANGE_RATES
-} from "../utils/mento-utils";
+  DEFAULT_EXCHANGE_RATES,
+} from '../utils/mento-utils';
 
 export function useCkesSwap(options?: UseCkesSwapOptions) {
   const { address } = useAccount();
@@ -26,16 +29,18 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
   const { completeAction } = useActions();
 
   // Core state
-  const [status, setStatus] = useState<CkesSwapStatus>("idle");
+  const [status, setStatus] = useState<CkesSwapStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
   const [approvalAmount, setApprovalAmount] = useState<string | null>(null);
   // Balance is static for simplicity
-  const balance = "0";
+  const balance = '0';
   // Get exchange rate from Mento SDK or cache
-  const [exchangeRate, setExchangeRate] = useState<number>(DEFAULT_EXCHANGE_RATES.CKES);
+  const [exchangeRate, setExchangeRate] = useState<number>(
+    DEFAULT_EXCHANGE_RATES.CKES,
+  );
 
   // Fetch exchange rate from Mento or cache
   useEffect(() => {
@@ -55,7 +60,7 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
         // Cache the result
         setCachedData(CACHE_KEYS.EXCHANGE_RATE_CKES, rate);
       } catch (error) {
-        console.warn("Error fetching CKES exchange rate:", error);
+        console.warn('Error fetching CKES exchange rate:', error);
         // Keep default rate
       }
     };
@@ -64,11 +69,12 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
   }, []);
 
   // Network state
-  const { isCorrectNetwork, isSwitchingChain, switchToCelo } = useNetworkState();
+  const { isCorrectNetwork, isSwitchingChain, switchToCelo } =
+    useNetworkState();
 
   // Handle completion callback
   useEffect(() => {
-    if (status === "completed" && options?.onComplete) {
+    if (status === 'completed' && options?.onComplete) {
       options.onComplete();
     }
   }, [status, options]);
@@ -84,18 +90,18 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
       }
 
       try {
-        setStatus("checking");
+        setStatus('checking');
 
         // Try to get the action ID from the database
         let isActionCompleted = false;
         try {
           try {
-            const actionResponse = await fetch("/api/actions/by-title", {
-              method: "POST",
+            const actionResponse = await fetch('/api/actions/by-title', {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ title: "Get cKES Stablecoins" }),
+              body: JSON.stringify({ title: 'Get cKES Stablecoins' }),
             });
 
             // Check if the action is completed
@@ -106,31 +112,35 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
                 const data = await response.json();
                 if (data.completed) {
                   setIsCompleted(true);
-                  setStatus("completed");
+                  setStatus('completed');
                   isActionCompleted = true;
                 }
               }
             }
           } catch (apiError) {
             // If the API endpoint doesn't exist, check local storage instead
-            console.warn("API endpoint not available, checking local storage:", apiError);
+            console.warn(
+              'API endpoint not available, checking local storage:',
+              apiError,
+            );
 
             try {
-              const completedActions = localStorage.getItem('completed-actions');
+              const completedActions =
+                localStorage.getItem('completed-actions');
               if (completedActions) {
                 const actions = JSON.parse(completedActions);
                 if (actions.includes('Get cKES Stablecoins')) {
                   setIsCompleted(true);
-                  setStatus("completed");
+                  setStatus('completed');
                   isActionCompleted = true;
                 }
               }
             } catch (storageError) {
-              console.warn("Error checking local storage:", storageError);
+              console.warn('Error checking local storage:', storageError);
             }
           }
         } catch (error) {
-          console.warn("Error checking action completion status:", error);
+          console.warn('Error checking action completion status:', error);
         }
 
         if (!isActionCompleted && isMounted) {
@@ -139,24 +149,24 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
             // Check allowance using direct ERC20 contract
             const allowance = await checkAllowance(address);
 
-            if (allowance && allowance.gt(ethers.constants.Zero) && isMounted) {
+            if (allowance?.gt(ethers.constants.Zero) && isMounted) {
               setIsApproved(true);
               setApprovalAmount(ethers.utils.formatEther(allowance));
-              setStatus("approved");
+              setStatus('approved');
             } else if (isMounted) {
-              setStatus("idle");
+              setStatus('idle');
             }
           } catch (error) {
-            console.error("Error checking allowance:", error);
+            console.error('Error checking allowance:', error);
             if (isMounted) {
-              setStatus("idle");
+              setStatus('idle');
             }
           }
         }
       } catch (error) {
-        console.error("Error checking status:", error);
+        console.error('Error checking status:', error);
         if (isMounted) {
-          setStatus("idle");
+          setStatus('idle');
         }
       }
     };
@@ -172,27 +182,33 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
   // Method to check allowance directly using ERC20 contract
   const checkAllowance = async (userAddress: string | undefined) => {
     if (!userAddress) {
-      console.warn("Cannot check allowance: user address is undefined");
+      console.warn('Cannot check allowance: user address is undefined');
       return ethers.constants.Zero;
     }
 
     try {
       // Create a read-only provider for Celo mainnet
-      const provider = new ethers.providers.JsonRpcProvider("https://forno.celo.org");
+      const provider = new ethers.providers.JsonRpcProvider(
+        'https://forno.celo.org',
+      );
 
       // Get the broker address
       const brokerAddress = ADDRESSES.BROKER;
 
       // Create ERC20 contract instance
-      const cusdToken = new ethers.Contract(ADDRESSES.CUSD, ABIS.ERC20_ALLOWANCE, provider);
+      const cusdToken = new ethers.Contract(
+        ADDRESSES.CUSD,
+        ABIS.ERC20_ALLOWANCE,
+        provider,
+      );
 
       // Get the allowance
       const allowance = await cusdToken.allowance(userAddress, brokerAddress);
-      console.log("cUSD allowance:", ethers.utils.formatUnits(allowance, 18));
+      console.log('cUSD allowance:', ethers.utils.formatUnits(allowance, 18));
 
       return allowance;
     } catch (error) {
-      console.error("Error checking allowance:", error);
+      console.error('Error checking allowance:', error);
       return ethers.constants.Zero;
     }
   };
@@ -200,26 +216,27 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
   // Function to complete the swap process
   const completeSwap = async (transactionHash: string) => {
     try {
-      setStatus("completing");
+      setStatus('completing');
 
       // Record the completion in the database
       try {
-        await completeAction("Get cKES Stablecoins", {
+        await completeAction('Get cKES Stablecoins', {
           transactionHash,
-          network: "celo",
-          tokenSymbol: "cKES"
+          network: 'celo',
+          tokenSymbol: 'cKES',
         });
 
         // Update state
         setIsCompleted(true);
-        setStatus("completed");
-        toast.success("Successfully acquired cKES stablecoins!");
+        setStatus('completed');
+        toast.success('Successfully acquired cKES stablecoins!');
       } catch (apiError) {
-        console.error("Error recording completion:", apiError);
+        console.error('Error recording completion:', apiError);
 
         // Fallback to localStorage if API fails
         try {
-          const completedActions = localStorage.getItem('completed-actions') || '[]';
+          const completedActions =
+            localStorage.getItem('completed-actions') || '[]';
           const actions = JSON.parse(completedActions);
           if (!actions.includes('Get cKES Stablecoins')) {
             actions.push('Get cKES Stablecoins');
@@ -228,37 +245,39 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
 
           // Update state
           setIsCompleted(true);
-          setStatus("completed");
-          toast.success("Successfully acquired cKES stablecoins!");
+          setStatus('completed');
+          toast.success('Successfully acquired cKES stablecoins!');
         } catch (storageError) {
-          console.error("Error updating localStorage:", storageError);
-          setStatus("error");
-          setError("Failed to record completion. Please try again.");
+          console.error('Error updating localStorage:', storageError);
+          setStatus('error');
+          setError('Failed to record completion. Please try again.');
         }
       }
     } catch (error) {
-      console.error("Error completing swap:", error);
-      setStatus("error");
-      setError("Failed to complete swap. Please try again.");
+      console.error('Error completing swap:', error);
+      setStatus('error');
+      setError('Failed to complete swap. Please try again.');
     }
   };
 
   // Function to approve token spending
   const approveToken = async (amount: string) => {
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return false;
     }
 
     if (!isCorrectNetwork) {
-      toast.info("Switching to Celo network...");
+      toast.info('Switching to Celo network...');
       const success = await switchToCelo();
       if (!success) return false;
     }
 
     // Check if window.ethereum is available
     if (typeof window === 'undefined' || !window.ethereum) {
-      toast.error("Ethereum provider not available. Please use a Web3 browser.");
+      toast.error(
+        'Ethereum provider not available. Please use a Web3 browser.',
+      );
       return false;
     }
 
@@ -270,8 +289,8 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
     const amountInWei = ethers.utils.parseUnits(amount.toString(), 18);
 
     try {
-      setStatus("approving");
-      toast.info("Approving cUSD tokens...");
+      setStatus('approving');
+      toast.info('Approving cUSD tokens...');
 
       // Define cUSD token address for approval
       const cUSDAddress = ADDRESSES.CUSD;
@@ -280,7 +299,11 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
       const brokerAddress = ADDRESSES.BROKER;
 
       // Create ERC20 contract instance
-      const cusdToken = new ethers.Contract(cUSDAddress, ABIS.ERC20_APPROVE, signer);
+      const cusdToken = new ethers.Contract(
+        cUSDAddress,
+        ABIS.ERC20_APPROVE,
+        signer,
+      );
 
       // Approve the broker to spend cUSD
       const approveTx = await cusdToken.approve(brokerAddress, amountInWei);
@@ -288,17 +311,18 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
 
       // Wait for the transaction to be confirmed
       const allowanceReceipt = await approveTx.wait();
-      if (allowanceReceipt.status !== 1) throw new Error("Approval transaction failed");
+      if (allowanceReceipt.status !== 1)
+        throw new Error('Approval transaction failed');
 
       // Update state
       setIsApproved(true);
       setApprovalAmount(amount.toString());
-      setStatus("approved");
-      toast.success("Approval confirmed! Now you can swap.");
+      setStatus('approved');
+      toast.success('Approval confirmed! Now you can swap.');
       return true;
     } catch (error) {
-      const errorMessage = handleMentoError(error, "approving tokens");
-      setStatus("error");
+      const errorMessage = handleMentoError(error, 'approving tokens');
+      setStatus('error');
       setError(errorMessage);
       toast.error(errorMessage);
       return false;
@@ -307,15 +331,20 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
 
   // Function to perform the swap
   const swap = async ({ amount }: SwapParams) => {
-    console.log("Swap function called with amount:", amount, "and isApproved:", isApproved);
+    console.log(
+      'Swap function called with amount:',
+      amount,
+      'and isApproved:',
+      isApproved,
+    );
 
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return;
     }
 
     if (!isAuthenticated) {
-      toast.error("Please sign in first");
+      toast.error('Please sign in first');
       return;
     }
 
@@ -326,7 +355,9 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
 
     // Check if window.ethereum is available
     if (typeof window === 'undefined' || !window.ethereum) {
-      toast.error("Ethereum provider not available. Please use a Web3 browser.");
+      toast.error(
+        'Ethereum provider not available. Please use a Web3 browser.',
+      );
       return;
     }
 
@@ -345,8 +376,8 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
       }
 
       // Perform the swap
-      setStatus("swapping");
-      toast.info("Performing swap...");
+      setStatus('swapping');
+      toast.info('Performing swap...');
 
       try {
         // Get the cKES address
@@ -355,26 +386,29 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
         const brokerAddress = ADDRESSES.BROKER;
 
         // Create a read-only provider for getting the quote
-        const readProvider = new ethers.providers.JsonRpcProvider("https://forno.celo.org");
+        const readProvider = new ethers.providers.JsonRpcProvider(
+          'https://forno.celo.org',
+        );
 
         // Get the list of exchange providers from the broker
         const brokerProvidersContract = new ethers.Contract(
           brokerAddress,
           ABIS.BROKER_PROVIDERS,
-          readProvider
+          readProvider,
         );
-        const exchangeProviders = await brokerProvidersContract.getExchangeProviders();
+        const exchangeProviders =
+          await brokerProvidersContract.getExchangeProviders();
 
         // For each provider, get the exchanges and find the one for cUSD/cKES
-        let exchangeProvider = "";
-        let exchangeId = "";
+        let exchangeProvider = '';
+        let exchangeId = '';
 
         // Loop through each provider to find the cUSD/cKES exchange
         for (const providerAddress of exchangeProviders) {
           const exchangeContract = new ethers.Contract(
             providerAddress,
             ABIS.EXCHANGE,
-            readProvider
+            readProvider,
           );
           const exchanges = await exchangeContract.getExchanges();
 
@@ -382,7 +416,10 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
           for (const exchange of exchanges) {
             const assets = exchange.assets.map((a: string) => a.toLowerCase());
 
-            if (assets.includes(cUSDAddr.toLowerCase()) && assets.includes(ckesAddr.toLowerCase())) {
+            if (
+              assets.includes(cUSDAddr.toLowerCase()) &&
+              assets.includes(ckesAddr.toLowerCase())
+            ) {
               exchangeProvider = providerAddress;
               exchangeId = exchange.exchangeId;
               break;
@@ -393,21 +430,23 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
         }
 
         if (!exchangeProvider || !exchangeId) {
-          throw new Error("Direct cUSD to cKES swaps are not currently available. Please try again later or contact support.");
+          throw new Error(
+            'Direct cUSD to cKES swaps are not currently available. Please try again later or contact support.',
+          );
         }
 
         // Create a contract instance for the Broker
         const brokerRateContract = new ethers.Contract(
           brokerAddress,
           ABIS.BROKER_RATE,
-          readProvider
+          readProvider,
         );
 
         // Create a contract instance for the Broker with the signer
         const brokerSwapContract = new ethers.Contract(
           brokerAddress,
           ABIS.BROKER_SWAP,
-          signer
+          signer,
         );
 
         // Get the quote
@@ -416,11 +455,13 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
           exchangeId,
           cUSDAddr,
           ckesAddr,
-          amountInWei.toString()
+          amountInWei.toString(),
         );
 
         // Allow 1% slippage from quote
-        const expectedAmountOut = ethers.BigNumber.from(quoteAmountOut).mul(99).div(100);
+        const expectedAmountOut = ethers.BigNumber.from(quoteAmountOut)
+          .mul(99)
+          .div(100);
 
         try {
           // First try with automatic gas estimation
@@ -430,20 +471,24 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
             cUSDAddr,
             ckesAddr,
             amountInWei.toString(),
-            expectedAmountOut.toString()
+            expectedAmountOut.toString(),
           );
 
           setTxHash(swapTx.hash);
 
           // Wait for the transaction to be confirmed
           const swapReceipt = await swapTx.wait();
-          if (swapReceipt.status !== 1) throw new Error("Swap transaction failed");
+          if (swapReceipt.status !== 1)
+            throw new Error('Swap transaction failed');
 
           // Update state and complete the swap
-          setStatus("transaction-success");
+          setStatus('transaction-success');
           completeSwap(swapTx.hash);
         } catch (swapError) {
-          console.error("Error with automatic gas estimation, trying with manual gas limit:", swapError);
+          console.error(
+            'Error with automatic gas estimation, trying with manual gas limit:',
+            swapError,
+          );
 
           // If automatic gas estimation fails, try with manual gas limit
           const options = {
@@ -458,28 +503,29 @@ export function useCkesSwap(options?: UseCkesSwapOptions) {
             ckesAddr,
             amountInWei.toString(),
             expectedAmountOut.toString(),
-            options
+            options,
           );
 
           setTxHash(swapTx.hash);
 
           // Wait for the transaction to be confirmed
           const swapReceipt = await swapTx.wait();
-          if (swapReceipt.status !== 1) throw new Error("Swap transaction failed");
+          if (swapReceipt.status !== 1)
+            throw new Error('Swap transaction failed');
 
           // Update state and complete the swap
-          setStatus("transaction-success");
+          setStatus('transaction-success');
           completeSwap(swapTx.hash);
         }
       } catch (error) {
-        const errorMessage = handleMentoError(error, "performing swap");
-        setStatus("error");
+        const errorMessage = handleMentoError(error, 'performing swap');
+        setStatus('error');
         setError(errorMessage);
         toast.error(errorMessage);
       }
     } catch (error) {
-      const errorMessage = handleMentoError(error, "swap process");
-      setStatus("error");
+      const errorMessage = handleMentoError(error, 'swap process');
+      setStatus('error');
       setError(errorMessage);
       toast.error(errorMessage);
     }

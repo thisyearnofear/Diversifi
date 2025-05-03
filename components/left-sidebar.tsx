@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Plus,
@@ -8,8 +8,8 @@ import {
   Coins,
   Wallet,
   Clock,
-} from "lucide-react";
-import { SidebarHistory } from "@/components/sidebar-history";
+} from 'lucide-react';
+import { SidebarHistory } from '@/components/sidebar-history';
 import {
   Sidebar,
   SidebarContent,
@@ -18,22 +18,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   useSidebar,
-} from "@/components/ui/sidebar";
-import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { eventBus, EVENTS } from "@/lib/events";
-import { useRegion } from "@/contexts/region-context";
+} from '@/components/ui/sidebar';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { eventBus, EVENTS } from '@/lib/events';
+import { useRegion } from '@/contexts/region-context';
 import {
-  getTokensByRegion,
   getAvailableTokensByRegion,
   getComingSoonTokensByRegion,
-} from "@/lib/tokens/token-data";
-import { cn } from "@/lib/utils";
-import {
-  getChainStyle,
-  getRegionStyle,
-  getSidebarMenuButtonStyle,
-} from "@/lib/styles/style-utils";
+} from '@/lib/tokens/token-data';
 
 export function LeftSidebar() {
   const { setOpenMobile, toggleSidebar } = useSidebar();
@@ -45,16 +38,16 @@ export function LeftSidebar() {
   const availableTokens = getAvailableTokensByRegion(selectedRegion);
   // Only show coming soon tokens if a specific region is selected (not "All")
   const comingSoonTokens =
-    selectedRegion === "All" ? [] : getComingSoonTokensByRegion(selectedRegion);
+    selectedRegion === 'All' ? [] : getComingSoonTokensByRegion(selectedRegion);
 
   // Check if we're in a chat
-  const isInChat = pathname?.startsWith("/chat/");
+  const isInChat = pathname?.startsWith('/chat/');
 
   const triggerActionPrompt = (category: string, message: string) => {
     // If we're not in a chat, navigate to home first
-    if (!isInChat && pathname !== "/") {
+    if (!isInChat && pathname !== '/') {
       // Navigate to home page
-      router.push("/");
+      router.push('/');
 
       // Wait for navigation to complete before sending the message
       setTimeout(() => {
@@ -109,8 +102,8 @@ export function LeftSidebar() {
           <SidebarMenuButton
             onClick={() =>
               triggerActionPrompt(
-                "FARCASTER",
-                "I want to set up a Farcaster account. Can you help me with that directly in this chat?"
+                'FARCASTER',
+                'I want to set up a Farcaster account. Can you help me with that directly in this chat?',
               )
             }
             className="bg-purple-50 dark:bg-purple-800 hover:bg-purple-100 dark:hover:bg-purple-700 text-purple-600 dark:text-purple-100"
@@ -122,8 +115,8 @@ export function LeftSidebar() {
           <SidebarMenuButton
             onClick={() =>
               triggerActionPrompt(
-                "LENS",
-                "I want to set up a Lens account. Can you help me with that directly in this chat?"
+                'LENS',
+                'I want to set up a Lens account. Can you help me with that directly in this chat?',
               )
             }
             className="bg-green-50 dark:bg-green-800 hover:bg-green-100 dark:hover:bg-green-700 text-green-600 dark:text-green-100"
@@ -140,12 +133,12 @@ export function LeftSidebar() {
           {availableTokens.map((token) => {
             // Map chain to color
             const colorMap: Record<string, string> = {
-              BASE: "blue",
-              OPTIMISM: "purple",
-              CELO: "yellow",
-              POLYGON: "indigo",
+              BASE: 'blue',
+              OPTIMISM: 'purple',
+              CELO: 'yellow',
+              POLYGON: 'indigo',
             };
-            const color = colorMap[token.chain] || "blue";
+            const color = colorMap[token.chain] || 'blue';
 
             return (
               <SidebarMenuButton
@@ -154,7 +147,7 @@ export function LeftSidebar() {
                   triggerActionPrompt(
                     token.chain,
                     token.actionPrompt ||
-                      `I want to get ${token.symbol} stablecoins. Can you help me directly in this chat?`
+                      `I want to get ${token.symbol} stablecoins. Can you help me directly in this chat?`,
                   )
                 }
                 className={`bg-${color}-50 dark:bg-${color}-800 hover:bg-${color}-100 dark:hover:bg-${color}-700 text-${color}-600 dark:text-${color}-100`}
@@ -185,8 +178,8 @@ export function LeftSidebar() {
           <SidebarMenuButton
             onClick={() =>
               triggerActionPrompt(
-                "WALLET",
-                "I want to create an Ethereum wallet. Can you help me set one up directly in this chat?"
+                'WALLET',
+                'I want to create an Ethereum wallet. Can you help me set one up directly in this chat?',
               )
             }
             className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-200"

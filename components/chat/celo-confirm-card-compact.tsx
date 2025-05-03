@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   ChevronDown,
   ChevronUp,
@@ -12,10 +11,10 @@ import {
   Loader2,
   CheckCircle,
   Info,
-} from "lucide-react";
-import { toast } from "sonner";
-import { useCeloSwap } from "@/hooks/use-celo-swap";
-import { useTokenPrice } from "@/hooks/use-token-price";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { useCeloSwap } from '@/hooks/use-celo-swap';
+import { useTokenPrice } from '@/hooks/use-token-price';
 
 interface CeloConfirmCardCompactProps {
   amount: number | null;
@@ -41,13 +40,13 @@ export function CeloConfirmCardCompact({
   } = useCeloSwap();
 
   // Get real-time exchange rates from CoinGecko
-  const { prices } = useTokenPrice(["CELO", "USDC"]);
+  const { prices } = useTokenPrice(['CELO', 'USDC']);
 
   // Calculate exchange rate based on CoinGecko prices
   // Fallback rate: 1 CELO = $0.29
   let exchangeRate = 0.29;
 
-  if (prices && prices.CELO && prices.USDC) {
+  if (prices?.CELO && prices.USDC) {
     // 1 CELO = x cUSD (where cUSD is pegged to USD)
     exchangeRate = prices.CELO.usd / prices.USDC.usd;
   }
@@ -57,10 +56,10 @@ export function CeloConfirmCardCompact({
   // Determine if we're in a loading state
   const isLoading =
     [
-      "swapping",
-      "transaction-pending",
-      "transaction-submitted",
-      "transaction-confirming",
+      'swapping',
+      'transaction-pending',
+      'transaction-submitted',
+      'transaction-confirming',
     ].includes(status) || isSwitchingChain;
 
   // Call onComplete when the swap is completed
@@ -73,23 +72,23 @@ export function CeloConfirmCardCompact({
   const handleConfirmSwap = async () => {
     try {
       if (!address) {
-        toast.error("Please connect your wallet first");
+        toast.error('Please connect your wallet first');
         return;
       }
 
       if (!amount || amount <= 0) {
-        toast.error("Please set an amount in the previous step");
+        toast.error('Please set an amount in the previous step');
         return;
       }
 
       if (!isApproved) {
-        toast.error("Please approve CELO tokens in the previous step");
+        toast.error('Please approve CELO tokens in the previous step');
         return;
       }
 
       // Double-check network before proceeding
       if (!isCorrectNetwork) {
-        toast.info("Switching to Celo network...");
+        toast.info('Switching to Celo network...');
         await switchToCelo();
 
         // Add a small delay to ensure the chain ID has been updated
@@ -97,7 +96,7 @@ export function CeloConfirmCardCompact({
 
         // Verify the switch was successful
         if (!isCorrectNetwork) {
-          toast.error("Please switch to the Celo network to continue");
+          toast.error('Please switch to the Celo network to continue');
           return;
         }
       }
@@ -108,8 +107,8 @@ export function CeloConfirmCardCompact({
         amount: amount,
       });
     } catch (error) {
-      console.error("Error confirming swap:", error);
-      toast.error("Failed to confirm swap");
+      console.error('Error confirming swap:', error);
+      toast.error('Failed to confirm swap');
     }
   };
 
@@ -168,7 +167,7 @@ export function CeloConfirmCardCompact({
           {isCompleted && (
             <div className="flex flex-col gap-1">
               <div className="text-sm text-gray-600">
-                Successfully swapped {amount} CELO for approximately{" "}
+                Successfully swapped {amount} CELO for approximately{' '}
                 {estimatedOutput.toFixed(2)} cUSD
               </div>
               {txHash && (
@@ -242,7 +241,7 @@ export function CeloConfirmCardCompact({
                           Switching...
                         </>
                       ) : (
-                        "Switch to Celo"
+                        'Switch to Celo'
                       )}
                     </Button>
                   </div>
@@ -266,7 +265,7 @@ export function CeloConfirmCardCompact({
                         Swapping...
                       </>
                     ) : (
-                      "Confirm Swap"
+                      'Confirm Swap'
                     )}
                   </Button>
                 </div>

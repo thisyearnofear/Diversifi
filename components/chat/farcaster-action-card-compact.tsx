@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Loader2,
   CheckCircle,
@@ -11,10 +11,10 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-} from "lucide-react";
-import { toast } from "sonner";
-import { validateWarpcastUrl as validateWarpcastProfileUrl } from "@/lib/actions/farcaster-action";
-import { useAccount } from "wagmi";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { validateWarpcastUrl as validateWarpcastProfileUrl } from '@/lib/actions/farcaster-action';
+import { useAccount } from 'wagmi';
 
 interface FarcasterActionCardCompactProps {
   title: string;
@@ -41,43 +41,43 @@ export function FarcasterActionCardCompact({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [proofUrl, setProofUrl] = useState("");
-  const [error, setError] = useState("");
+  const [proofUrl, setProofUrl] = useState('');
+  const [error, setError] = useState('');
 
   const handleOpenFarcaster = () => {
-    window.open(actionUrl, "_blank");
+    window.open(actionUrl, '_blank');
   };
 
   const handleComplete = async () => {
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return;
     }
 
     setIsCompleting(true);
-    setError("");
+    setError('');
 
     try {
       // Validate the Warpcast URL
       if (!proofUrl) {
-        setError("Please enter your Warpcast URL");
+        setError('Please enter your Warpcast URL');
         setIsCompleting(false);
         return;
       }
 
       if (!validateWarpcastProfileUrl(proofUrl)) {
         setError(
-          "Please enter a valid Warpcast profile URL (e.g. https://warpcast.com/username)"
+          'Please enter a valid Warpcast profile URL (e.g. https://warpcast.com/username)',
         );
         setIsCompleting(false);
         return;
       }
 
       // Save the completion to the database
-      const response = await fetch("/api/actions/farcaster/complete", {
-        method: "POST",
+      const response = await fetch('/api/actions/farcaster/complete', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ proofUrl }),
       });
@@ -85,24 +85,24 @@ export function FarcasterActionCardCompact({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to complete action");
+        throw new Error(data.error || 'Failed to complete action');
       }
 
       // Mark as completed
       setIsCompleted(true);
-      toast.success("Farcaster action completed successfully!");
+      toast.success('Farcaster action completed successfully!');
 
       // Show guidance about starter packs
       toast.success(
-        "Check out these starter packs to follow interesting people!",
+        'Check out these starter packs to follow interesting people!',
         {
           duration: 10000,
           action: {
-            label: "View Packs",
+            label: 'View Packs',
             onClick: () =>
-              window.open("https://warpcast.com/~/packs", "_blank"),
+              window.open('https://warpcast.com/~/packs', '_blank'),
           },
-        }
+        },
       );
 
       // Call the onComplete callback if provided
@@ -110,11 +110,11 @@ export function FarcasterActionCardCompact({
         onComplete(proofUrl);
       }
     } catch (error) {
-      console.error("Error completing Farcaster action:", error);
+      console.error('Error completing Farcaster action:', error);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to complete action";
+        error instanceof Error ? error.message : 'Failed to complete action';
       setError(errorMessage);
-      toast.error("Failed to complete action");
+      toast.error('Failed to complete action');
     } finally {
       setIsCompleting(false);
     }
@@ -126,7 +126,7 @@ export function FarcasterActionCardCompact({
 
     const checkCompletion = async () => {
       try {
-        const response = await fetch("/api/actions/farcaster/complete");
+        const response = await fetch('/api/actions/farcaster/complete');
         const data = await response.json();
 
         if (response.ok && data.completed) {
@@ -134,15 +134,15 @@ export function FarcasterActionCardCompact({
           // Handle the proof which is now a JSON object with a url property
           if (
             data.completion.proof &&
-            typeof data.completion.proof === "object"
+            typeof data.completion.proof === 'object'
           ) {
-            setProofUrl(data.completion.proof.url || "");
+            setProofUrl(data.completion.proof.url || '');
           } else {
-            setProofUrl("");
+            setProofUrl('');
           }
         }
       } catch (error) {
-        console.error("Error checking action completion:", error);
+        console.error('Error checking action completion:', error);
       }
     };
 
@@ -220,7 +220,7 @@ export function FarcasterActionCardCompact({
                     Verifying...
                   </>
                 ) : (
-                  "Complete Action"
+                  'Complete Action'
                 )}
               </Button>
             </div>

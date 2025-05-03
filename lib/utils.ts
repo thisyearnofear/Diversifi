@@ -152,10 +152,10 @@ export function sanitizeResponseMessages({
   }
 
   const messagesBySanitizedContent = messages.map((message) => {
-    if (message.role !== "assistant") return message;
+    if (message.role !== 'assistant') return message;
 
     // If the content is a string and looks like JSON, keep it as is
-    if (typeof message.content === "string") {
+    if (typeof message.content === 'string') {
       try {
         // Just verify it's valid JSON
         JSON.parse(message.content);
@@ -166,16 +166,16 @@ export function sanitizeResponseMessages({
     }
 
     const sanitizedContent = message.content.filter((content) =>
-      content.type === "tool-call"
+      content.type === 'tool-call'
         ? toolResultIds.includes(content.toolCallId)
-        : content.type === "text"
-        ? content.text.length > 0
-        : true
+        : content.type === 'text'
+          ? content.text.length > 0
+          : true,
     );
 
     if (reasoning) {
       // @ts-expect-error: reasoning message parts in sdk is wip
-      sanitizedContent.push({ type: "reasoning", reasoning });
+      sanitizedContent.push({ type: 'reasoning', reasoning });
     }
 
     return {
@@ -185,9 +185,9 @@ export function sanitizeResponseMessages({
   });
 
   return messagesBySanitizedContent.filter((message) =>
-    typeof message.content === "string"
+    typeof message.content === 'string'
       ? message.content.length > 0
-      : message.content.length > 0
+      : message.content.length > 0,
   );
 }
 

@@ -1,5 +1,5 @@
-import { and, asc, desc, eq, gt, gte, inArray, isNull } from "drizzle-orm";
-import { getDb } from "./connection";
+import { and, asc, desc, eq, gt, gte, inArray, isNull } from 'drizzle-orm';
+import { getDb } from './connection';
 
 import {
   user,
@@ -15,9 +15,8 @@ import {
   type UserKnowledge,
   charge,
   type UserWithRelations,
-  action,
-} from "./schema";
-import type { BlockKind } from "@/components/block";
+} from './schema';
+import type { BlockKind } from '@/components/block';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -31,7 +30,7 @@ export type User = UserWithRelations;
 export async function getUser(id: string): Promise<User[]> {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Returning empty user array.");
+      console.warn('⚠️ Database not available. Returning empty user array.');
       return [];
     }
 
@@ -57,7 +56,7 @@ export async function getUser(id: string): Promise<User[]> {
       charges,
     }));
   } catch (error) {
-    console.error("Failed to get user with related data:", error);
+    console.error('Failed to get user with related data:', error);
     throw error;
   }
 }
@@ -65,7 +64,7 @@ export async function getUser(id: string): Promise<User[]> {
 export async function createUserIfNotExists(address: string): Promise<void> {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot create user.");
+      console.warn('⚠️ Database not available. Cannot create user.');
       return;
     }
 
@@ -76,7 +75,7 @@ export async function createUserIfNotExists(address: string): Promise<void> {
       });
     }
   } catch (error) {
-    console.error("Failed to create user");
+    console.error('Failed to create user');
     // Don't throw the error, just log it
     console.error(error);
   }
@@ -93,7 +92,7 @@ export async function saveChat({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot save chat.");
+      console.warn('⚠️ Database not available. Cannot save chat.');
       return null;
     }
 
@@ -105,7 +104,7 @@ export async function saveChat({
       createdAt: new Date(),
     });
   } catch (error) {
-    console.error("Failed to save chat");
+    console.error('Failed to save chat');
     console.error(error);
     return null;
   }
@@ -114,7 +113,7 @@ export async function saveChat({
 export async function deleteChatById({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot delete chat.");
+      console.warn('⚠️ Database not available. Cannot delete chat.');
       return null;
     }
 
@@ -123,7 +122,7 @@ export async function deleteChatById({ id }: { id: string }) {
 
     return await db.delete(chat).where(eq(chat.id, id));
   } catch (error) {
-    console.error("Failed to delete chat by id from database");
+    console.error('Failed to delete chat by id from database');
     console.error(error);
     return null;
   }
@@ -131,10 +130,10 @@ export async function deleteChatById({ id }: { id: string }) {
 
 export async function getChatsByUserId({ userId }: { userId: string }) {
   try {
-    console.log("Getting chats for user:", userId);
+    console.log('Getting chats for user:', userId);
 
     if (!db) {
-      console.warn("⚠️ Database not available. Returning empty chats array.");
+      console.warn('⚠️ Database not available. Returning empty chats array.');
       return [];
     }
 
@@ -145,7 +144,7 @@ export async function getChatsByUserId({ userId }: { userId: string }) {
       .orderBy(desc(chat.createdAt));
     return chats;
   } catch (error) {
-    console.error("Failed to get chats by user from database", error);
+    console.error('Failed to get chats by user from database', error);
     return [];
   }
 }
@@ -153,14 +152,14 @@ export async function getChatsByUserId({ userId }: { userId: string }) {
 export async function getChatById({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get chat.");
+      console.warn('⚠️ Database not available. Cannot get chat.');
       return null;
     }
 
     const [selectedChat] = await db.select().from(chat).where(eq(chat.id, id));
     return selectedChat;
   } catch (error) {
-    console.error("Failed to get chat by id from database");
+    console.error('Failed to get chat by id from database');
     console.error(error);
     return null;
   }
@@ -169,13 +168,13 @@ export async function getChatById({ id }: { id: string }) {
 export async function saveMessages({ messages }: { messages: Array<Message> }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot save messages.");
+      console.warn('⚠️ Database not available. Cannot save messages.');
       return null;
     }
 
     return await db.insert(message).values(messages);
   } catch (error) {
-    console.error("Failed to save messages in database", error);
+    console.error('Failed to save messages in database', error);
     return null;
   }
 }
@@ -183,9 +182,7 @@ export async function saveMessages({ messages }: { messages: Array<Message> }) {
 export async function getMessagesByChatId({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn(
-        "⚠️ Database not available. Returning empty messages array."
-      );
+      console.warn('⚠️ Database not available. Returning empty messages array.');
       return [];
     }
 
@@ -195,7 +192,7 @@ export async function getMessagesByChatId({ id }: { id: string }) {
       .where(eq(message.chatId, id))
       .orderBy(asc(message.createdAt));
   } catch (error) {
-    console.error("Failed to get messages by chat id from database", error);
+    console.error('Failed to get messages by chat id from database', error);
     return [];
   }
 }
@@ -207,11 +204,11 @@ export async function voteMessage({
 }: {
   chatId: string;
   messageId: string;
-  type: "up" | "down";
+  type: 'up' | 'down';
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot vote on message.");
+      console.warn('⚠️ Database not available. Cannot vote on message.');
       return null;
     }
 
@@ -223,16 +220,16 @@ export async function voteMessage({
     if (existingVote) {
       return await db
         .update(vote)
-        .set({ isUpvoted: type === "up" })
+        .set({ isUpvoted: type === 'up' })
         .where(and(eq(vote.messageId, messageId), eq(vote.chatId, chatId)));
     }
     return await db.insert(vote).values({
       chatId,
       messageId,
-      isUpvoted: type === "up",
+      isUpvoted: type === 'up',
     });
   } catch (error) {
-    console.error("Failed to upvote message in database", error);
+    console.error('Failed to upvote message in database', error);
     throw error;
   }
 }
@@ -240,12 +237,12 @@ export async function voteMessage({
 export async function getVotesByChatId({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get votes.");
+      console.warn('⚠️ Database not available. Cannot get votes.');
       return [];
     }
     return await db.select().from(vote).where(eq(vote.chatId, id));
   } catch (error) {
-    console.error("Failed to get votes by chat id from database", error);
+    console.error('Failed to get votes by chat id from database', error);
     throw error;
   }
 }
@@ -265,7 +262,7 @@ export async function saveDocument({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot save document.");
+      console.warn('⚠️ Database not available. Cannot save document.');
       return null;
     }
     return await db.insert(document).values({
@@ -277,7 +274,7 @@ export async function saveDocument({
       createdAt: new Date(),
     });
   } catch (error) {
-    console.error("Failed to save document in database");
+    console.error('Failed to save document in database');
     throw error;
   }
 }
@@ -285,7 +282,7 @@ export async function saveDocument({
 export async function getDocumentsById({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get documents.");
+      console.warn('⚠️ Database not available. Cannot get documents.');
       return [];
     }
     const documents = await db
@@ -296,7 +293,7 @@ export async function getDocumentsById({ id }: { id: string }) {
 
     return documents;
   } catch (error) {
-    console.error("Failed to get document by id from database");
+    console.error('Failed to get document by id from database');
     throw error;
   }
 }
@@ -304,7 +301,7 @@ export async function getDocumentsById({ id }: { id: string }) {
 export async function getDocumentById({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get document.");
+      console.warn('⚠️ Database not available. Cannot get document.');
       return null;
     }
     const [selectedDocument] = await db
@@ -315,7 +312,7 @@ export async function getDocumentById({ id }: { id: string }) {
 
     return selectedDocument;
   } catch (error) {
-    console.error("Failed to get document by id from database");
+    console.error('Failed to get document by id from database');
     throw error;
   }
 }
@@ -329,7 +326,7 @@ export async function deleteDocumentsByIdAfterTimestamp({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot delete documents.");
+      console.warn('⚠️ Database not available. Cannot delete documents.');
       return null;
     }
     await db
@@ -337,8 +334,8 @@ export async function deleteDocumentsByIdAfterTimestamp({
       .where(
         and(
           eq(suggestion.documentId, id),
-          gt(suggestion.documentCreatedAt, timestamp)
-        )
+          gt(suggestion.documentCreatedAt, timestamp),
+        ),
       );
 
     return await db
@@ -346,7 +343,7 @@ export async function deleteDocumentsByIdAfterTimestamp({
       .where(and(eq(document.id, id), gt(document.createdAt, timestamp)));
   } catch (error) {
     console.error(
-      "Failed to delete documents by id after timestamp from database"
+      'Failed to delete documents by id after timestamp from database',
     );
     throw error;
   }
@@ -359,12 +356,12 @@ export async function saveSuggestions({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot save suggestions.");
+      console.warn('⚠️ Database not available. Cannot save suggestions.');
       return null;
     }
     return await db.insert(suggestion).values(suggestions);
   } catch (error) {
-    console.error("Failed to save suggestions in database");
+    console.error('Failed to save suggestions in database');
     throw error;
   }
 }
@@ -376,7 +373,7 @@ export async function getSuggestionsByDocumentId({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get suggestions.");
+      console.warn('⚠️ Database not available. Cannot get suggestions.');
       return [];
     }
     return await db
@@ -385,7 +382,7 @@ export async function getSuggestionsByDocumentId({
       .where(and(eq(suggestion.documentId, documentId)));
   } catch (error) {
     console.error(
-      "Failed to get suggestions by document version from database"
+      'Failed to get suggestions by document version from database',
     );
     throw error;
   }
@@ -394,12 +391,12 @@ export async function getSuggestionsByDocumentId({
 export async function getMessageById({ id }: { id: string }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get message.");
+      console.warn('⚠️ Database not available. Cannot get message.');
       return [];
     }
     return await db.select().from(message).where(eq(message.id, id));
   } catch (error) {
-    console.error("Failed to get message by id from database");
+    console.error('Failed to get message by id from database');
     throw error;
   }
 }
@@ -413,14 +410,14 @@ export async function deleteMessagesByChatIdAfterTimestamp({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot delete messages.");
+      console.warn('⚠️ Database not available. Cannot delete messages.');
       return null;
     }
     const messagesToDelete = await db
       .select({ id: message.id })
       .from(message)
       .where(
-        and(eq(message.chatId, chatId), gte(message.createdAt, timestamp))
+        and(eq(message.chatId, chatId), gte(message.createdAt, timestamp)),
       );
 
     const messageIds = messagesToDelete.map((message) => message.id);
@@ -429,19 +426,19 @@ export async function deleteMessagesByChatIdAfterTimestamp({
       await db
         .delete(vote)
         .where(
-          and(eq(vote.chatId, chatId), inArray(vote.messageId, messageIds))
+          and(eq(vote.chatId, chatId), inArray(vote.messageId, messageIds)),
         );
 
       return await db
         .delete(message)
         .where(
-          and(eq(message.chatId, chatId), inArray(message.id, messageIds))
+          and(eq(message.chatId, chatId), inArray(message.id, messageIds)),
         );
     }
     return null;
   } catch (error) {
     console.error(
-      "Failed to delete messages by id after timestamp from database"
+      'Failed to delete messages by id after timestamp from database',
     );
     throw error;
   }
@@ -452,26 +449,26 @@ export async function updateChatVisiblityById({
   visibility,
 }: {
   chatId: string;
-  visibility: "private" | "public";
+  visibility: 'private' | 'public';
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot update chat visibility.");
+      console.warn('⚠️ Database not available. Cannot update chat visibility.');
       return null;
     }
     return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
   } catch (error) {
-    console.error("Failed to update chat visibility in database");
+    console.error('Failed to update chat visibility in database');
     throw error;
   }
 }
 
 export async function saveUserInformation(
-  data: Omit<UserKnowledge, "id" | "createdAt" | "deletedAt">
+  data: Omit<UserKnowledge, 'id' | 'createdAt' | 'deletedAt'>,
 ) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot save user information.");
+      console.warn('⚠️ Database not available. Cannot save user information.');
       return null;
     }
     return await db.insert(userKnowledge).values({
@@ -480,7 +477,7 @@ export async function saveUserInformation(
       deletedAt: null,
     });
   } catch (error) {
-    console.error("Failed to save user information");
+    console.error('Failed to save user information');
     throw error;
   }
 }
@@ -488,18 +485,18 @@ export async function saveUserInformation(
 export async function getUserInformation(userId: string) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get user information.");
+      console.warn('⚠️ Database not available. Cannot get user information.');
       return [];
     }
     return await db
       .select()
       .from(userKnowledge)
       .where(
-        and(eq(userKnowledge.userId, userId), isNull(userKnowledge.deletedAt))
+        and(eq(userKnowledge.userId, userId), isNull(userKnowledge.deletedAt)),
       )
       .orderBy(desc(userKnowledge.createdAt));
   } catch (error) {
-    console.error("Failed to get user information");
+    console.error('Failed to get user information');
     throw error;
   }
 }
@@ -519,7 +516,7 @@ export async function createStarterKit({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot create starter kit.");
+      console.warn('⚠️ Database not available. Cannot create starter kit.');
       return null;
     }
     if (id) {
@@ -557,7 +554,7 @@ export async function createStarterKit({
       });
     }
   } catch (error) {
-    console.error("Failed to create starter kit");
+    console.error('Failed to create starter kit');
     throw error;
   }
 }
@@ -571,7 +568,7 @@ export async function claimStarterKit({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot claim starter kit.");
+      console.warn('⚠️ Database not available. Cannot claim starter kit.');
       return null;
     }
     return await db
@@ -582,7 +579,7 @@ export async function claimStarterKit({
       })
       .where(and(eq(starterKit.id, kitId), isNull(starterKit.claimerId)));
   } catch (error) {
-    console.error("Failed to claim starter kit");
+    console.error('Failed to claim starter kit');
     throw error;
   }
 }
@@ -591,7 +588,7 @@ export async function getClaimedStarterKits(userId: string) {
   try {
     if (!db) {
       console.warn(
-        "⚠️ Database not available. Cannot get claimed starter kits."
+        '⚠️ Database not available. Cannot get claimed starter kits.',
       );
       return [];
     }
@@ -601,7 +598,7 @@ export async function getClaimedStarterKits(userId: string) {
       .where(eq(starterKit.claimerId, userId))
       .orderBy(desc(starterKit.claimedAt));
   } catch (error) {
-    console.error("Failed to get claimed starter kits");
+    console.error('Failed to get claimed starter kits');
     throw error;
   }
 }
@@ -610,7 +607,7 @@ export async function getCreatedStarterKits(userId: string) {
   try {
     if (!db) {
       console.warn(
-        "⚠️ Database not available. Cannot get created starter kits."
+        '⚠️ Database not available. Cannot get created starter kits.',
       );
       return [];
     }
@@ -620,7 +617,7 @@ export async function getCreatedStarterKits(userId: string) {
       .where(eq(starterKit.creatorId, userId))
       .orderBy(desc(starterKit.createdAt));
   } catch (error) {
-    console.error("Failed to get created starter kits");
+    console.error('Failed to get created starter kits');
     throw error;
   }
 }
@@ -634,7 +631,7 @@ export async function useStarterKit({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot use starter kit.");
+      console.warn('⚠️ Database not available. Cannot use starter kit.');
       return null;
     }
     return await db
@@ -644,7 +641,7 @@ export async function useStarterKit({
       })
       .where(eq(starterKit.id, kitId));
   } catch (error) {
-    console.error("Failed to use starter kit");
+    console.error('Failed to use starter kit');
     throw error;
   }
 }
@@ -653,7 +650,7 @@ export async function getUnclaimedStarterKits(userId: string) {
   try {
     if (!db) {
       console.warn(
-        "⚠️ Database not available. Cannot get unclaimed starter kits."
+        '⚠️ Database not available. Cannot get unclaimed starter kits.',
       );
       return [];
     }
@@ -661,11 +658,11 @@ export async function getUnclaimedStarterKits(userId: string) {
       .select()
       .from(starterKit)
       .where(
-        and(eq(starterKit.creatorId, userId), isNull(starterKit.claimerId))
+        and(eq(starterKit.creatorId, userId), isNull(starterKit.claimerId)),
       )
       .orderBy(desc(starterKit.createdAt));
   } catch (error) {
-    console.error("Failed to get unclaimed starter kits");
+    console.error('Failed to get unclaimed starter kits');
     throw error;
   }
 }
@@ -673,9 +670,7 @@ export async function getUnclaimedStarterKits(userId: string) {
 export async function deleteUserInformation(id: string) {
   try {
     if (!db) {
-      console.warn(
-        "⚠️ Database not available. Cannot delete user information."
-      );
+      console.warn('⚠️ Database not available. Cannot delete user information.');
       return null;
     }
     return await db
@@ -683,7 +678,7 @@ export async function deleteUserInformation(id: string) {
       .set({ deletedAt: new Date() })
       .where(eq(userKnowledge.id, id));
   } catch (error) {
-    console.error("Failed to delete user information");
+    console.error('Failed to delete user information');
     throw error;
   }
 }
@@ -693,17 +688,17 @@ export async function createCharge({
   userId,
   amount,
   currency,
-  product = "STARTERKIT",
+  product = 'STARTERKIT',
 }: {
   id: string;
   userId: string;
   amount: string;
   currency: string;
-  product?: "STARTERKIT";
+  product?: 'STARTERKIT';
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot create charge.");
+      console.warn('⚠️ Database not available. Cannot create charge.');
       return null;
     }
     return await db.insert(charge).values({
@@ -715,7 +710,7 @@ export async function createCharge({
       createdAt: new Date(),
     });
   } catch (error) {
-    console.error("Failed to create charge");
+    console.error('Failed to create charge');
     throw error;
   }
 }
@@ -729,7 +724,7 @@ export async function updateChargeStatus({
   expiresAt,
 }: {
   id: string;
-  status: "NEW" | "PENDING" | "COMPLETED" | "EXPIRED" | "FAILED";
+  status: 'NEW' | 'PENDING' | 'COMPLETED' | 'EXPIRED' | 'FAILED';
   payerAddress?: string;
   transactionHash?: string;
   confirmedAt?: Date;
@@ -737,7 +732,7 @@ export async function updateChargeStatus({
 }) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot update charge status.");
+      console.warn('⚠️ Database not available. Cannot update charge status.');
       return null;
     }
     return await db
@@ -751,7 +746,7 @@ export async function updateChargeStatus({
       })
       .where(eq(charge.id, id));
   } catch (error) {
-    console.error("Failed to update charge status");
+    console.error('Failed to update charge status');
     throw error;
   }
 }
@@ -759,12 +754,12 @@ export async function updateChargeStatus({
 export async function getChargeById(id: string) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get charge.");
+      console.warn('⚠️ Database not available. Cannot get charge.');
       return null;
     }
     return await db.select().from(charge).where(eq(charge.id, id));
   } catch (error) {
-    console.error("Failed to get charge");
+    console.error('Failed to get charge');
     throw error;
   }
 }
@@ -772,7 +767,7 @@ export async function getChargeById(id: string) {
 export async function getUserCharges(userId: string) {
   try {
     if (!db) {
-      console.warn("⚠️ Database not available. Cannot get user charges.");
+      console.warn('⚠️ Database not available. Cannot get user charges.');
       return [];
     }
     return await db
@@ -781,7 +776,7 @@ export async function getUserCharges(userId: string) {
       .where(eq(charge.userId, userId))
       .orderBy(desc(charge.createdAt));
   } catch (error) {
-    console.error("Failed to get user charges");
+    console.error('Failed to get user charges');
     throw error;
   }
 }
@@ -790,7 +785,7 @@ export async function getAvailableStarterKits() {
   try {
     if (!db) {
       console.warn(
-        "⚠️ Database not available. Cannot get available starter kits."
+        '⚠️ Database not available. Cannot get available starter kits.',
       );
       return [];
     }
@@ -800,7 +795,7 @@ export async function getAvailableStarterKits() {
       .where(isNull(starterKit.claimerId))
       .orderBy(asc(starterKit.createdAt));
   } catch (error) {
-    console.error("Failed to get available starter kits");
+    console.error('Failed to get available starter kits');
     throw error;
   }
 }
@@ -809,7 +804,7 @@ export async function claimAvailableStarterKit(userId: string) {
   try {
     if (!db) {
       console.warn(
-        "⚠️ Database not available. Cannot claim available starter kit."
+        '⚠️ Database not available. Cannot claim available starter kit.',
       );
       return null;
     }
@@ -836,7 +831,7 @@ export async function claimAvailableStarterKit(userId: string) {
 
     return availableKit;
   } catch (error) {
-    console.error("Failed to claim available starter kit");
+    console.error('Failed to claim available starter kit');
     throw error;
   }
 }

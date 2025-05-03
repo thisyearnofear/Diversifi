@@ -1,11 +1,14 @@
-import type { z } from "zod";
+import type { z } from 'zod';
+import { ActionProvider, CreateAction } from '@coinbase/agentkit';
+import type { Network } from '../types';
+import { searchBaseTokensSchema, getPortfoliosSchema } from './schemas';
 import {
-  ActionProvider,
-  CreateAction,
-} from "@coinbase/agentkit";
-import type { Network } from "../types";
-import { searchBaseTokensSchema, getPortfoliosSchema } from "./schemas";
-import { getTokens, getPortfolios, GetTokensResponse, GetPortfoliosResponse, APIError } from "@coinbase/onchainkit/api";
+  getTokens,
+  getPortfolios,
+  type GetTokensResponse,
+  type GetPortfoliosResponse,
+  type APIError,
+} from '@coinbase/onchainkit/api';
 import { setOnchainKitConfig } from '@coinbase/onchainkit';
 
 /**
@@ -17,7 +20,7 @@ export class OnchainKitActionProvider extends ActionProvider {
    * @param apiKey - The API key for OnchainKit
    */
   constructor(apiKey: string) {
-    super("onchainkit", []);
+    super('onchainkit', []);
     setOnchainKitConfig({ apiKey });
   }
 
@@ -28,7 +31,7 @@ export class OnchainKitActionProvider extends ActionProvider {
    * @returns A message containing the found tokens.
    */
   @CreateAction({
-    name: "search_base_tokens",
+    name: 'search_base_tokens',
     description: `
     This tool will search for tokens on Base by name, symbol, or address.
     It takes the following inputs:
@@ -38,19 +41,19 @@ export class OnchainKitActionProvider extends ActionProvider {
     schema: searchBaseTokensSchema,
   })
   async searchBaseTokens(
-    args: z.infer<typeof searchBaseTokensSchema>
+    args: z.infer<typeof searchBaseTokensSchema>,
   ): Promise<GetTokensResponse> {
     try {
       const tokens = await getTokens({
         search: args.search,
-        limit: args.limit || "5",
+        limit: args.limit || '5',
       });
 
       return tokens;
     } catch (error) {
       return {
         error: `Error searching for tokens: ${error}`,
-        code: "error",
+        code: 'error',
         message: `Error searching for tokens`,
       };
     }
@@ -63,7 +66,7 @@ export class OnchainKitActionProvider extends ActionProvider {
    * @returns Portfolio information for the specified addresses.
    */
   @CreateAction({
-    name: "get_portfolios",
+    name: 'get_portfolios',
     description: `
     This tool will get portfolio information for specified wallet addresses.
     It takes the following input:
@@ -74,19 +77,19 @@ export class OnchainKitActionProvider extends ActionProvider {
     schema: getPortfoliosSchema,
   })
   async getPortfolios(
-    args: z.infer<typeof getPortfoliosSchema>
+    args: z.infer<typeof getPortfoliosSchema>,
   ): Promise<GetPortfoliosResponse | APIError> {
     try {
-        console.log("getting portfolios",args.addresses)
-        const portfolios = await getPortfolios({
-            addresses: args.addresses.map((address) => address as `0x${string}`),
-        });
+      console.log('getting portfolios', args.addresses);
+      const portfolios = await getPortfolios({
+        addresses: args.addresses.map((address) => address as `0x${string}`),
+      });
 
       return portfolios;
     } catch (error) {
       return {
         error: `Error getting portfolios: ${error}`,
-        code: "error",
+        code: 'error',
         message: `Error getting portfolios`,
       };
     }
@@ -100,8 +103,8 @@ export class OnchainKitActionProvider extends ActionProvider {
    */
   supportsNetwork = (network: Network) => {
     // Base mainnet chainId is 8453
-    console.log("checking",network.chainId)
-    return String(network.chainId) === "8453";
+    console.log('checking', network.chainId);
+    return String(network.chainId) === '8453';
   };
 }
 
@@ -109,4 +112,5 @@ export class OnchainKitActionProvider extends ActionProvider {
  * Creates a new OnchainKitActionProvider instance.
  * @param apiKey - The API key for OnchainKit
  */
-export const onchainKitActionProvider = (apiKey: string) => new OnchainKitActionProvider(apiKey); 
+export const onchainKitActionProvider = (apiKey: string) =>
+  new OnchainKitActionProvider(apiKey);

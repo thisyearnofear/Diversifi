@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 export type Region =
-  | "Africa"
-  | "Europe"
-  | "USA"
-  | "LatAm"
-  | "Asia"
-  | "RWA"
-  | "All";
+  | 'Africa'
+  | 'Europe'
+  | 'USA'
+  | 'LatAm'
+  | 'Asia'
+  | 'RWA'
+  | 'All';
 
 interface RegionContextType {
   selectedRegion: Region;
@@ -19,11 +19,11 @@ interface RegionContextType {
 const RegionContext = createContext<RegionContextType | undefined>(undefined);
 
 export function RegionProvider({ children }: { children: ReactNode }) {
-  const [selectedRegion, setSelectedRegion] = useState<Region>("All");
+  const [selectedRegion, setSelectedRegion] = useState<Region>('All');
 
   // Wrap setSelectedRegion to add logging
   const setRegionWithLogging = (region: Region) => {
-    console.log("Setting region to:", region);
+    console.log('Setting region to:', region);
     setSelectedRegion(region);
   };
 
@@ -39,7 +39,7 @@ export function RegionProvider({ children }: { children: ReactNode }) {
 export function useRegion() {
   const context = useContext(RegionContext);
   if (context === undefined) {
-    throw new Error("useRegion must be used within a RegionProvider");
+    throw new Error('useRegion must be used within a RegionProvider');
   }
   return context;
 }

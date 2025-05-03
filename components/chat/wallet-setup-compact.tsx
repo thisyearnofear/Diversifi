@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { Card } from "@/components/ui/card";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { BlueCreateWalletButton } from "../wallet/BlueCreateWalletButton";
-import { toast } from "sonner";
+import React, { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { Card } from '@/components/ui/card';
+import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { BlueCreateWalletButton } from '../wallet/BlueCreateWalletButton';
+import { toast } from 'sonner';
 
 export function WalletSetupCompact() {
   const { address, isConnected } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (isConnected && address) {
-      toast.success("Wallet connected successfully!");
+      toast.success('Wallet connected successfully!');
       setIsLoading(false);
     }
   }, [isConnected, address]);
@@ -23,20 +23,20 @@ export function WalletSetupCompact() {
   useEffect(() => {
     const handleError = (event: any) => {
       if (
-        event.detail?.message?.includes("popup") ||
-        event.detail?.message?.includes("window")
+        event.detail?.message?.includes('popup') ||
+        event.detail?.message?.includes('window')
       ) {
         setError(
-          "Failed to open wallet connection. Please check if pop-ups are blocked."
+          'Failed to open wallet connection. Please check if pop-ups are blocked.',
         );
         setIsLoading(false);
       }
     };
 
-    window.addEventListener("wallet-connection-error", handleError);
+    window.addEventListener('wallet-connection-error', handleError);
 
     return () => {
-      window.removeEventListener("wallet-connection-error", handleError);
+      window.removeEventListener('wallet-connection-error', handleError);
     };
   }, []);
 

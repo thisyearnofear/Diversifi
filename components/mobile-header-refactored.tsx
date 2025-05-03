@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileAuthButtons } from "./mobile-auth-buttons";
-import { User, UserCheck } from "lucide-react";
-import Link from "next/link";
-import { getAnimationStyle, getRegionStyle } from "@/lib/styles/style-utils";
-import { getMobileHeaderContainer } from "@/lib/styles/mobile";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileAuthButtons } from './mobile-auth-buttons';
+import { User, UserCheck } from 'lucide-react';
+import Link from 'next/link';
+import { getAnimationStyle, getRegionStyle } from '@/lib/styles/style-utils';
+import { getMobileHeaderContainer } from '@/lib/styles/mobile';
+import { cn } from '@/lib/utils';
 
 export function MobileHeader() {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -35,7 +35,7 @@ export function MobileHeader() {
     <div
       className={cn(
         getMobileHeaderContainer(),
-        "flex items-center justify-between"
+        'flex items-center justify-between',
       )}
     >
       <div className="flex items-center">
@@ -47,15 +47,15 @@ export function MobileHeader() {
           <Link
             href="/profile"
             className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md",
-              "hover:bg-gray-100 dark:hover:bg-gray-800",
-              "active:scale-95 transition-all duration-150"
+              'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md',
+              'hover:bg-gray-100 dark:hover:bg-gray-800',
+              'active:scale-95 transition-all duration-150',
             )}
           >
             <User
               className={cn(
-                "size-4",
-                getRegionStyle("Africa", "medium", "text")
+                'size-4',
+                getRegionStyle('Africa', 'medium', 'text'),
               )}
             />
             <span className="text-xs font-medium">Dashboard</span>
@@ -66,8 +66,8 @@ export function MobileHeader() {
           {isAuthenticated && showSuccess ? (
             <div
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1.5",
-                getAnimationStyle()
+                'flex items-center gap-1.5 px-2.5 py-1.5',
+                getAnimationStyle(),
               )}
             >
               <UserCheck className="size-4 text-green-500" />

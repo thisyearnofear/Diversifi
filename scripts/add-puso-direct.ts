@@ -1,28 +1,28 @@
-import { config } from "dotenv";
-import postgres from "postgres";
+import { config } from 'dotenv';
+import postgres from 'postgres';
 
 // Load environment variables from .env file
 config();
 
 const addPusoAction = async () => {
   if (!process.env.POSTGRES_URL) {
-    console.error("❌ POSTGRES_URL is not defined");
+    console.error('❌ POSTGRES_URL is not defined');
     process.exit(1);
   }
 
   try {
-    console.log("⏳ Connecting to database...");
+    console.log('⏳ Connecting to database...');
     const connection = postgres(process.env.POSTGRES_URL, { max: 1 });
 
-    console.log("⏳ Checking if PUSO action exists...");
+    console.log('⏳ Checking if PUSO action exists...');
     const existingAction = await connection.unsafe(`
       SELECT * FROM "Action" WHERE title = 'Get PUSO Stablecoins'
     `);
 
     if (existingAction.length > 0) {
-      console.log("✅ PUSO action already exists:", existingAction[0]);
+      console.log('✅ PUSO action already exists:', existingAction[0]);
     } else {
-      console.log("⏳ Adding PUSO action...");
+      console.log('⏳ Adding PUSO action...');
 
       // Add the PUSO action
       await connection.unsafe(`
@@ -44,14 +44,14 @@ const addPusoAction = async () => {
         )
       `);
 
-      console.log("✅ PUSO action added successfully");
+      console.log('✅ PUSO action added successfully');
     }
 
     // Close the connection
     await connection.end();
     process.exit(0);
   } catch (error) {
-    console.error("❌ Failed to add PUSO action:", error);
+    console.error('❌ Failed to add PUSO action:', error);
     process.exit(1);
   }
 };

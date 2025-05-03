@@ -11,7 +11,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "viem": "~2.23.15",
+    "viem": "2.23.15",
     "@mento-protocol/mento-sdk": "^1.0.7"
   },
   "devDependencies": {

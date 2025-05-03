@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { DivviRegistrationCardCompact } from "./divvi-registration-card-compact";
-import { useDivviRegistration } from "@/hooks/use-divvi-registration";
-import { CeloCkesApproveCardCompact } from "./celo-ckes-approve-card-compact";
-import { CeloCkesConfirmCardCompact } from "./celo-ckes-confirm-card-compact";
-import { useCkesSwap } from "@/hooks/use-celo-ckes";
+import { useState } from 'react';
+import { DivviRegistrationCardCompact } from './divvi-registration-card-compact';
+import { useDivviRegistration } from '@/hooks/use-divvi-registration';
+import { CeloCkesApproveCardCompact } from './celo-ckes-approve-card-compact';
+import { CeloCkesConfirmCardCompact } from './celo-ckes-confirm-card-compact';
+import { useCkesSwap } from '@/hooks/use-celo-ckes';
 
 interface CeloCkesActionMessageProps {
   onComplete?: () => void;
@@ -14,12 +14,12 @@ interface CeloCkesActionMessageProps {
 export function CeloCkesActionMessage({
   onComplete,
 }: CeloCkesActionMessageProps) {
-  const { isRegistered } = useDivviRegistration("celo");
+  const { isRegistered } = useDivviRegistration('celo');
   // @ts-ignore - Ignoring type issues with the hook
   const { isApproved, isCompleted, status } = useCkesSwap() || {
     isApproved: false,
     isCompleted: false,
-    status: "",
+    status: '',
   };
   const [amount, setAmount] = useState<number>(0);
 
@@ -27,14 +27,14 @@ export function CeloCkesActionMessage({
   const [proceedingToSwap, setProceedingToSwap] = useState<boolean>(false);
 
   // Check if approval is completed
-  const isApprovalCompleted = isApproved || status === "approved";
+  const isApprovalCompleted = isApproved || status === 'approved';
   console.log(
-    "Action Message - isApproved:",
+    'Action Message - isApproved:',
     isApproved,
-    "status:",
+    'status:',
     status,
-    "isApprovalCompleted:",
-    isApprovalCompleted
+    'isApprovalCompleted:',
+    isApprovalCompleted,
   );
 
   // Check if confirmation is completed
@@ -48,20 +48,20 @@ export function CeloCkesActionMessage({
   // Actions for getting cKES on Celo
   const actions = [
     {
-      id: "celo-divvi-registration",
+      id: 'celo-divvi-registration',
       component: (
         <DivviRegistrationCardCompact chain="celo" onComplete={() => {}} />
       ),
       isCompleted: isRegistered,
     },
     {
-      id: "celo-approve",
+      id: 'celo-approve',
       component: (
         <CeloCkesApproveCardCompact
           onComplete={(value: number) => {
             console.log(
-              "CeloCkesApproveCardCompact onComplete called with value:",
-              value
+              'CeloCkesApproveCardCompact onComplete called with value:',
+              value,
             );
             setAmount(value);
             setProceedingToSwap(true);
@@ -71,7 +71,7 @@ export function CeloCkesActionMessage({
       isCompleted: isApprovalCompleted && proceedingToSwap,
     },
     {
-      id: "celo-confirm",
+      id: 'celo-confirm',
       component: (
         <CeloCkesConfirmCardCompact
           amount={amount}
@@ -103,16 +103,16 @@ export function CeloCkesActionMessage({
             (index === 2 && isApprovalCompleted && proceedingToSwap); // Show confirmation when proceeding to swap
 
           console.log(
-            "Action step",
+            'Action step',
             index,
-            "shouldShow:",
+            'shouldShow:',
             shouldShow,
-            "isRegistered:",
+            'isRegistered:',
             isRegistered,
-            "isApprovalCompleted:",
+            'isApprovalCompleted:',
             isApprovalCompleted,
-            "proceedingToSwap:",
-            proceedingToSwap
+            'proceedingToSwap:',
+            proceedingToSwap,
           );
 
           if (!shouldShow) {
@@ -129,18 +129,18 @@ export function CeloCkesActionMessage({
                   <div
                     className={`flex items-center justify-center size-8 rounded-full ${
                       action.isCompleted
-                        ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400"
-                        : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400"
+                        ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400'
+                        : 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400'
                     }`}
                   >
                     {index + 1}
                   </div>
                   <span className="font-medium">
                     {index === 0
-                      ? "Register with Stable Station"
+                      ? 'Register with Stable Station'
                       : index === 1
-                      ? "Set Amount & Approve cUSD"
-                      : "Confirm cUSD to cKES Swap"}
+                        ? 'Set Amount & Approve cUSD'
+                        : 'Confirm cUSD to cKES Swap'}
                   </span>
                 </div>
                 {action.component}

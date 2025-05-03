@@ -1,5 +1,5 @@
-import { tool } from "ai";
-import type { AgentKit } from "@coinbase/agentkit";
+import { tool } from 'ai';
+import type { AgentKit } from '@coinbase/agentkit';
 
 /**
  * Transforms AgentKit instance into AI package compatible tools
@@ -19,6 +19,6 @@ export function agentKitToTools(agentKit: AgentKit) {
           return await action.invoke(args);
         },
       }),
-    ])
+    ]),
   );
 }

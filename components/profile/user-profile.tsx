@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { useAuth } from "@/hooks/use-auth";
-import { useWeb3Profile } from "@/hooks/use-web3-profile";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Loader2, Copy, Check, User, Globe, ExternalLink } from "lucide-react";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { useAuth } from '@/hooks/use-auth';
+import { useWeb3Profile } from '@/hooks/use-web3-profile';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Loader2, Copy, Check, User, ExternalLink } from 'lucide-react';
+import Image from 'next/image';
 
 export function UserProfile() {
   const { address, isConnected } = useAccount();
@@ -36,7 +36,7 @@ export function UserProfile() {
   if (!isConnected || !isAuthenticated) {
     return (
       <div className="flex justify-center items-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="size-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -44,7 +44,7 @@ export function UserProfile() {
   if (isProfileLoading) {
     return (
       <div className="flex justify-center items-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="size-8 animate-spin text-muted-foreground" />
         <span className="ml-2 text-muted-foreground">
           Loading profile data...
         </span>
@@ -55,25 +55,25 @@ export function UserProfile() {
   return (
     <div className="space-y-6 w-full max-w-2xl mx-auto">
       <div className="flex flex-col items-center text-center gap-6">
-        <div className="flex-shrink-0 flex items-center justify-center bg-muted rounded-full w-24 h-24 overflow-hidden">
+        <div className="shrink-0 flex items-center justify-center bg-muted rounded-full size-24 overflow-hidden">
           {primaryProfile?.avatar ? (
             <Image
               src={primaryProfile.avatar}
-              alt={primaryProfile.displayName || "Profile"}
+              alt={primaryProfile.displayName || 'Profile'}
               width={96}
               height={96}
-              className="object-cover w-full h-full"
+              className="object-cover size-full"
               unoptimized
             />
           ) : (
-            <User className="h-12 w-12 text-muted-foreground" />
+            <User className="size-12 text-muted-foreground" />
           )}
         </div>
 
         <div className="space-y-4 w-full">
           <div className="text-center">
             <h2 className="text-xl font-semibold">
-              {primaryProfile?.displayName || "Wallet"}
+              {primaryProfile?.displayName || 'Wallet'}
               {primaryProfile?.platform && (
                 <span className="ml-2 text-sm text-muted-foreground">
                   via {primaryProfile.platform}
@@ -92,18 +92,18 @@ export function UserProfile() {
               <span className="text-sm font-mono">
                 {address
                   ? `${address.slice(0, 6)}...${address.slice(-4)}`
-                  : "Not connected"}
+                  : 'Not connected'}
               </span>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6"
+                className="size-6"
                 onClick={copyAddress}
               >
                 {copied ? (
-                  <Check className="h-3 w-3 text-green-500" />
+                  <Check className="size-3 text-green-500" />
                 ) : (
-                  <Copy className="h-3 w-3" />
+                  <Copy className="size-3" />
                 )}
               </Button>
             </div>
@@ -122,7 +122,7 @@ export function UserProfile() {
             </div>
             <div className="text-center">
               <p className="text-sm text-muted-foreground">Joined</p>
-              <p className="font-medium">{joinDate || "Unknown"}</p>
+              <p className="font-medium">{joinDate || 'Unknown'}</p>
             </div>
           </div>
         </div>
@@ -137,16 +137,16 @@ export function UserProfile() {
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-2 h-2 rounded-full ${
-                        profile.platform === "ens"
-                          ? "bg-blue-500"
-                          : profile.platform === "farcaster"
-                          ? "bg-purple-500"
-                          : profile.platform === "lens"
-                          ? "bg-green-500"
-                          : "bg-gray-500"
+                      className={`size-2 rounded-full ${
+                        profile.platform === 'ens'
+                          ? 'bg-blue-500'
+                          : profile.platform === 'farcaster'
+                            ? 'bg-purple-500'
+                            : profile.platform === 'lens'
+                              ? 'bg-green-500'
+                              : 'bg-gray-500'
                       }`}
-                    ></div>
+                    />
                     <span className="capitalize">{profile.platform}</span>
                     {profile.identity && (
                       <span className="text-xs text-muted-foreground">
@@ -161,7 +161,7 @@ export function UserProfile() {
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-600"
                     >
-                      <ExternalLink className="h-3 w-3" />
+                      <ExternalLink className="size-3" />
                     </a>
                   )}
                 </div>
@@ -178,19 +178,19 @@ export function UserProfile() {
           <h3 className="font-medium mb-3 text-center">Connected Networks</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <div className="size-2 rounded-full bg-green-500" />
               <span>Base</span>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <div className="size-2 rounded-full bg-green-500" />
               <span>Optimism</span>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <div className="size-2 rounded-full bg-green-500" />
               <span>Celo</span>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <div className="size-2 rounded-full bg-green-500" />
               <span>Polygon</span>
             </div>
           </div>

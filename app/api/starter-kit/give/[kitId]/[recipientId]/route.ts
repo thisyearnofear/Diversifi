@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { claimStarterKit, getCreatedStarterKits } from "@/lib/db/queries";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { claimStarterKit, getCreatedStarterKits } from '@/lib/db/queries';
 
 export async function POST(request: Request, context: any) {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const params = context.params;
@@ -18,8 +18,8 @@ export async function POST(request: Request, context: any) {
 
     if (!kit) {
       return NextResponse.json(
-        { error: "Starter kit not found or not owned by user" },
-        { status: 404 }
+        { error: 'Starter kit not found or not owned by user' },
+        { status: 404 },
       );
     }
 
@@ -29,10 +29,10 @@ export async function POST(request: Request, context: any) {
     });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to give starter kit:", error);
+    console.error('Failed to give starter kit:', error);
     return NextResponse.json(
-      { error: "Failed to give starter kit" },
-      { status: 500 }
+      { error: 'Failed to give starter kit' },
+      { status: 500 },
     );
   }
 }

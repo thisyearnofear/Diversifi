@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { CheckCircle2, Circle, Clock } from "lucide-react";
-import { type action } from "@/lib/db/schema";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useActions } from "@/hooks/use-actions";
-import { useAuth } from "@/hooks/use-auth";
-import { useState } from "react";
-import { toast } from "sonner";
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { CheckCircle2, Circle, Clock } from 'lucide-react';
+import type { action } from '@/lib/db/schema';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useActions } from '@/hooks/use-actions';
+import { useAuth } from '@/hooks/use-auth';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface ActionCardProps {
   action: typeof action.$inferSelect;
@@ -23,7 +23,7 @@ interface Step {
 }
 
 interface Reward {
-  type: "TOKEN" | "NFT" | "ENS" | "SOCIAL" | "OTHER";
+  type: 'TOKEN' | 'NFT' | 'ENS' | 'SOCIAL' | 'OTHER';
   description: string;
 }
 
@@ -37,7 +37,7 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
   const handleStartAction = async () => {
     if (!isAuthenticated) {
       toast.error(
-        "Please connect your wallet and authenticate to start actions"
+        'Please connect your wallet and authenticate to start actions',
       );
       return;
     }
@@ -53,7 +53,7 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
   const handleCompleteAction = async () => {
     if (!isAuthenticated) {
       toast.error(
-        "Please connect your wallet and authenticate to complete actions"
+        'Please connect your wallet and authenticate to complete actions',
       );
       return;
     }
@@ -70,13 +70,13 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
     <motion.div
       whileHover={{ scale: 1.02 }}
       className={cn(
-        "rounded-lg border p-6 transition-colors",
-        "hover:shadow-md",
+        'rounded-lg border p-6 transition-colors',
+        'hover:shadow-md',
         {
-          "border-blue-200 bg-blue-50": action.chain === "BASE",
-          "border-yellow-200 bg-yellow-50": action.chain === "CELO",
-          "border-purple-200 bg-purple-50": action.chain === "ETHEREUM",
-        }
+          'border-blue-200 bg-blue-50': action.chain === 'BASE',
+          'border-yellow-200 bg-yellow-50': action.chain === 'CELO',
+          'border-purple-200 bg-purple-50': action.chain === 'ETHEREUM',
+        },
       )}
     >
       <div className="flex items-start justify-between">
@@ -133,12 +133,12 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
           <div className="flex items-center justify-between">
             <Badge
               className={cn(
-                userAction.status === "COMPLETED"
-                  ? "bg-green-100 text-green-800 hover:bg-green-100"
-                  : "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                userAction.status === 'COMPLETED'
+                  ? 'bg-green-100 text-green-800 hover:bg-green-100'
+                  : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100',
               )}
             >
-              {userAction.status === "COMPLETED" ? (
+              {userAction.status === 'COMPLETED' ? (
                 <>
                   <CheckCircle2 className="mr-1 size-3" />
                   Completed
@@ -150,13 +150,13 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
                 </>
               )}
             </Badge>
-            {userAction.status === "IN_PROGRESS" && (
+            {userAction.status === 'IN_PROGRESS' && (
               <Button
                 size="sm"
                 onClick={handleCompleteAction}
                 disabled={isLoading}
               >
-                {isLoading ? "Processing..." : "Complete Action"}
+                {isLoading ? 'Processing...' : 'Complete Action'}
               </Button>
             )}
           </div>
@@ -167,7 +167,7 @@ export function ActionCard({ action, userAction }: ActionCardProps) {
           onClick={handleStartAction}
           disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Start Action"}
+          {isLoading ? 'Processing...' : 'Start Action'}
         </Button>
       )}
     </motion.div>

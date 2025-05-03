@@ -20,14 +20,14 @@ class EventBus {
 
     // Return unsubscribe function
     return () => {
-      this.events[event] = this.events[event].filter(cb => cb !== callback);
+      this.events[event] = this.events[event].filter((cb) => cb !== callback);
     };
   }
 
   // Emit an event
   emit(event: string, data?: any): void {
     if (this.events[event]) {
-      this.events[event].forEach(callback => callback(data));
+      this.events[event].forEach((callback) => callback(data));
     }
   }
 }

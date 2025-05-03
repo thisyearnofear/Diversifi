@@ -2,9 +2,15 @@
 
 import type { ChatRequestOptions, Message } from 'ai';
 import { Button } from './ui/button';
-import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Textarea } from './ui/textarea';
-import { deleteTrailingMessages } from "@/app/actions";
+import { deleteTrailingMessages } from '@/app/actions';
 
 export type MessageEditorProps = {
   message: Message;

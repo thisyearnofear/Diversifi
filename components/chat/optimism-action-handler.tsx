@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { EuraActionMessage } from "./eura-action-message";
+import { useState } from 'react';
+import { EuraActionMessage } from './eura-action-message';
 
 interface OptimismActionHandlerProps {
   args: any[];

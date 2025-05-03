@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Copy, Check, Users, Link, Share2 } from "lucide-react";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Copy, Check, Users, Link, Share2 } from 'lucide-react';
 
 export function ReferralInfo() {
   const [copied, setCopied] = useState(false);
 
   // This would typically come from your backend
-  const referralId = "Papa";
+  const referralId = 'Papa';
   const referralUrl = `https://stables-station.com/ref/${referralId}`;
 
   // Mock data for referrals
@@ -43,13 +43,13 @@ export function ReferralInfo() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 ml-2"
+                className="size-8 ml-2"
                 onClick={copyReferralLink}
               >
                 {copied ? (
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="size-4 text-green-500" />
                 ) : (
-                  <Copy className="h-4 w-4" />
+                  <Copy className="size-4" />
                 )}
               </Button>
             </div>
@@ -59,8 +59,8 @@ export function ReferralInfo() {
               onClick={() => {
                 if (navigator.share) {
                   navigator.share({
-                    title: "Join me on Stable Station",
-                    text: "Check out Stable Station for stablecoins and more!",
+                    title: 'Join me on Stable Station',
+                    text: 'Check out Stable Station for stablecoins and more!',
                     url: referralUrl,
                   });
                 } else {
@@ -68,7 +68,7 @@ export function ReferralInfo() {
                 }
               }}
             >
-              <Share2 className="h-4 w-4 mr-2" />
+              <Share2 className="size-4 mr-2" />
               Share Referral Link
             </Button>
           </div>
@@ -78,7 +78,7 @@ export function ReferralInfo() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-4">
           <div className="flex items-center gap-3 mb-4">
-            <Users className="h-5 w-5 text-blue-500" />
+            <Users className="size-5 text-blue-500" />
             <h3 className="font-medium">Referral Stats</h3>
           </div>
 
@@ -93,8 +93,8 @@ export function ReferralInfo() {
               <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary"
-                  style={{ width: "0%" }}
-                ></div>
+                  style={{ width: '0%' }}
+                />
               </div>
             </div>
 
@@ -113,7 +113,7 @@ export function ReferralInfo() {
 
         <Card className="p-4">
           <div className="flex items-center gap-3 mb-4">
-            <Link className="h-5 w-5 text-green-500" />
+            <Link className="size-5 text-green-500" />
             <h3 className="font-medium">Referral Rewards</h3>
           </div>
 
@@ -130,8 +130,8 @@ export function ReferralInfo() {
               <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary"
-                  style={{ width: "0%" }}
-                ></div>
+                  style={{ width: '0%' }}
+                />
               </div>
             </div>
 
@@ -155,7 +155,7 @@ export function ReferralInfo() {
         <h3 className="font-medium mb-4">How Referrals Work</h3>
         <div className="space-y-3">
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
+            <div className="shrink-0 size-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
               1
             </div>
             <p className="text-sm">
@@ -163,7 +163,7 @@ export function ReferralInfo() {
             </p>
           </div>
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
+            <div className="shrink-0 size-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
               2
             </div>
             <p className="text-sm">
@@ -171,7 +171,7 @@ export function ReferralInfo() {
             </p>
           </div>
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
+            <div className="shrink-0 size-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
               3
             </div>
             <p className="text-sm">
@@ -179,7 +179,7 @@ export function ReferralInfo() {
             </p>
           </div>
           <div className="flex gap-3">
-            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
+            <div className="shrink-0 size-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-400 font-medium">
               4
             </div>
             <p className="text-sm">

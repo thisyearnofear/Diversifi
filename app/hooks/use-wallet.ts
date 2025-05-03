@@ -1,6 +1,12 @@
-"use client";
+'use client';
 
-import { useAccount, useBalance, useConnect, useChainId, useSwitchChain } from "wagmi";
+import {
+  useAccount,
+  useBalance,
+  useConnect,
+  useChainId,
+  useSwitchChain,
+} from 'wagmi';
 
 export function useWallet() {
   const { address, isConnected } = useAccount();
@@ -21,11 +27,11 @@ export function useWallet() {
     balance,
     // Helper functions
     formatAddress: (addr?: string) => {
-      if (!addr) return "";
+      if (!addr) return '';
       return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
     },
     formatBalance: (bal?: bigint) => {
-      if (!bal) return "0";
+      if (!bal) return '0';
       return (Number(bal) / 1e18).toFixed(4);
     },
   };

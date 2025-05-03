@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { DivviRegistrationCardCompact } from "./divvi-registration-card-compact";
-import { useDivviRegistration } from "@/hooks/use-divvi-registration";
-import { CeloSwapCardCompact } from "./celo-swap-card-compact";
-import { CeloApproveCardCompact } from "./celo-approve-card-compact";
-import { CeloConfirmCardCompact } from "./celo-confirm-card-compact";
-import { useCeloSwap } from "@/hooks/use-celo-swap";
+import { useState } from 'react';
+import { DivviRegistrationCardCompact } from './divvi-registration-card-compact';
+import { useDivviRegistration } from '@/hooks/use-divvi-registration';
+import { CeloApproveCardCompact } from './celo-approve-card-compact';
+import { CeloConfirmCardCompact } from './celo-confirm-card-compact';
+import { useCeloSwap } from '@/hooks/use-celo-swap';
 
 interface CeloActionMessageProps {
   onComplete?: () => void;
@@ -16,7 +15,7 @@ export function CeloActionMessage({ onComplete }: CeloActionMessageProps) {
   const [showAll, setShowAll] = useState(false);
 
   // Get registration and swap status
-  const { isRegistered } = useDivviRegistration("celo");
+  const { isRegistered } = useDivviRegistration('celo');
   const {
     isCompleted: isSwapCompleted,
     status: swapStatus,
@@ -26,8 +25,8 @@ export function CeloActionMessage({ onComplete }: CeloActionMessageProps) {
 
   // Determine which steps are completed
   const isApprovalCompleted =
-    isApproved || swapStatus === "approved" || swapStatus === "completed";
-  const isConfirmationCompleted = isSwapCompleted || swapStatus === "completed";
+    isApproved || swapStatus === 'approved' || swapStatus === 'completed';
+  const isConfirmationCompleted = isSwapCompleted || swapStatus === 'completed';
 
   // Calculate the number of completed steps
   const completedSteps = [
@@ -48,21 +47,21 @@ export function CeloActionMessage({ onComplete }: CeloActionMessageProps) {
   // Actions for getting cUSD on Celo
   const actions = [
     {
-      id: "celo-divvi-registration",
+      id: 'celo-divvi-registration',
       component: (
         <DivviRegistrationCardCompact chain="celo" onComplete={() => {}} />
       ),
       isCompleted: isRegistered,
     },
     {
-      id: "celo-approve",
+      id: 'celo-approve',
       component: (
         <CeloApproveCardCompact onComplete={(value) => setAmount(value)} />
       ),
       isCompleted: isApprovalCompleted,
     },
     {
-      id: "celo-confirm",
+      id: 'celo-confirm',
       component: (
         <CeloConfirmCardCompact amount={amount} onComplete={onComplete} />
       ),
@@ -96,7 +95,7 @@ export function CeloActionMessage({ onComplete }: CeloActionMessageProps) {
           <div
             className="h-full bg-yellow-500 rounded-full transition-all duration-300 ease-in-out"
             style={{ width: `${progressPercentage}%` }}
-          ></div>
+          />
         </div>
       </div>
 

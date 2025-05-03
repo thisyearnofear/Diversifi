@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Loader2,
   CheckCircle,
@@ -11,10 +11,10 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-} from "lucide-react";
-import { toast } from "sonner";
-import { validateLensUrl } from "@/lib/actions/lens-action";
-import { useAccount } from "wagmi";
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { validateLensUrl } from '@/lib/actions/lens-action';
+import { useAccount } from 'wagmi';
 
 interface LensActionCardCompactProps {
   title: string;
@@ -41,43 +41,43 @@ export function LensActionCardCompact({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [proofUrl, setProofUrl] = useState("");
-  const [error, setError] = useState("");
+  const [proofUrl, setProofUrl] = useState('');
+  const [error, setError] = useState('');
 
   const handleOpenLens = () => {
-    window.open(actionUrl, "_blank");
+    window.open(actionUrl, '_blank');
   };
 
   const handleComplete = async () => {
     if (!address) {
-      toast.error("Please connect your wallet first");
+      toast.error('Please connect your wallet first');
       return;
     }
 
     setIsCompleting(true);
-    setError("");
+    setError('');
 
     try {
       // Validate the Lens URL
       if (!proofUrl) {
-        setError("Please enter your Lens profile URL");
+        setError('Please enter your Lens profile URL');
         setIsCompleting(false);
         return;
       }
 
       if (!validateLensUrl(proofUrl)) {
         setError(
-          "Please enter a valid Lens profile URL (e.g. https://hey.xyz/u/username)"
+          'Please enter a valid Lens profile URL (e.g. https://hey.xyz/u/username)',
         );
         setIsCompleting(false);
         return;
       }
 
       // Save the completion to the database
-      const response = await fetch("/api/actions/lens/complete", {
-        method: "POST",
+      const response = await fetch('/api/actions/lens/complete', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ proofUrl }),
       });
@@ -85,23 +85,23 @@ export function LensActionCardCompact({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to complete action");
+        throw new Error(data.error || 'Failed to complete action');
       }
 
       // Mark as completed
       setIsCompleted(true);
-      toast.success("Lens action completed successfully!");
+      toast.success('Lens action completed successfully!');
 
       // Show guidance about starter packs
       toast.success(
-        "Check out these curated starter packs for different interests!",
+        'Check out these curated starter packs for different interests!',
         {
           duration: 10000,
           action: {
-            label: "View Packs",
-            onClick: () => window.open("https://hey.xyz/explore", "_blank"),
+            label: 'View Packs',
+            onClick: () => window.open('https://hey.xyz/explore', '_blank'),
           },
-        }
+        },
       );
 
       // Call the onComplete callback if provided
@@ -109,11 +109,11 @@ export function LensActionCardCompact({
         onComplete(proofUrl);
       }
     } catch (error) {
-      console.error("Error completing Lens action:", error);
+      console.error('Error completing Lens action:', error);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to complete action";
+        error instanceof Error ? error.message : 'Failed to complete action';
       setError(errorMessage);
-      toast.error("Failed to complete action");
+      toast.error('Failed to complete action');
     } finally {
       setIsCompleting(false);
     }
@@ -125,7 +125,7 @@ export function LensActionCardCompact({
 
     const checkCompletion = async () => {
       try {
-        const response = await fetch("/api/actions/lens/complete");
+        const response = await fetch('/api/actions/lens/complete');
         const data = await response.json();
 
         if (response.ok && data.completed) {
@@ -133,15 +133,15 @@ export function LensActionCardCompact({
           // Handle the proof which is now a JSON object with a url property
           if (
             data.completion.proof &&
-            typeof data.completion.proof === "object"
+            typeof data.completion.proof === 'object'
           ) {
-            setProofUrl(data.completion.proof.url || "");
+            setProofUrl(data.completion.proof.url || '');
           } else {
-            setProofUrl("");
+            setProofUrl('');
           }
         }
       } catch (error) {
-        console.error("Error checking action completion:", error);
+        console.error('Error checking action completion:', error);
       }
     };
 
@@ -226,7 +226,7 @@ export function LensActionCardCompact({
                     Verifying...
                   </>
                 ) : (
-                  "Complete Action"
+                  'Complete Action'
                 )}
               </Button>
             </div>

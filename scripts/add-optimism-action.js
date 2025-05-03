@@ -6,8 +6,8 @@ const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL_NON_POOLING,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 async function addOptimismAction() {
@@ -57,11 +57,14 @@ async function addOptimismAction() {
           "rewards" = EXCLUDED."rewards",
           "updatedAt" = NOW();
       `);
-      
+
       console.log('Action added successfully:', result);
-      
+
       // Verify the action was added
-      const verifyResult = await client.query('SELECT * FROM "Action" WHERE title = $1;', ['Register on Optimism']);
+      const verifyResult = await client.query(
+        'SELECT * FROM "Action" WHERE title = $1;',
+        ['Register on Optimism'],
+      );
       console.log('\nRegister on Optimism action:');
       console.log(verifyResult.rows);
     } finally {

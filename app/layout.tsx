@@ -1,37 +1,36 @@
-import type { Metadata } from "next";
-import { Toaster } from "sonner";
-import Script from "next/script";
-import { Inter } from "next/font/google";
+import type { Metadata } from 'next';
+import { Toaster } from 'sonner';
+import Script from 'next/script';
+import { Inter } from 'next/font/google';
 
-import { ThemeProvider } from "@/components/theme-provider";
-import { LeftSidebar } from "@/components/left-sidebar";
-import { RightSidebar } from "@/components/right-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { Providers } from "@/lib/web3/providers";
-import { MobileNavigation } from "@/components/mobile-navigation";
-import { MobileHeader } from "@/components/mobile-header";
-import { RegionProvider } from "@/contexts/region-context";
-import { ReactQueryProvider } from "@/lib/react-query";
-import { cn } from "@/lib/utils";
+import { ThemeProvider } from '@/components/theme-provider';
+import { LeftSidebar } from '@/components/left-sidebar';
+import { RightSidebar } from '@/components/right-sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { Providers } from '@/lib/web3/providers';
+import { MobileNavigation } from '@/components/mobile-navigation';
+import { MobileHeader } from '@/components/mobile-header';
+import { RegionProvider } from '@/contexts/region-context';
+import { ReactQueryProvider } from '@/lib/react-query';
+import { cn } from '@/lib/utils';
 
-import "./globals.css";
-import "@coinbase/onchainkit/styles.css";
-import { ConnectButton } from "@/components/connect-button-new";
+import './globals.css';
+import '@coinbase/onchainkit/styles.css';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Stable Station",
-  description: "Hub for Stablecoins & Real World Assets",
+  metadataBase: new URL('https://chat.vercel.ai'),
+  title: 'Stable Station',
+  description: 'Hub for Stablecoins & Real World Assets',
 };
 
 export const viewport = {
   maximumScale: 1, // Disable auto-zoom on mobile Safari
 };
 
-const LIGHT_THEME_COLOR = "hsl(0 0% 100%)";
-const DARK_THEME_COLOR = "hsl(240deg 10% 3.92%)";
+const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';
+const DARK_THEME_COLOR = 'hsl(240deg 10% 3.92%)';
 const THEME_COLOR_SCRIPT = `\
 (function() {
   var html = document.documentElement;
@@ -89,26 +88,26 @@ export default function RootLayout({
                 <SidebarProvider>
                   <div
                     className={cn(
-                      "grid min-h-screen w-full",
-                      "grid-cols-1",
-                      "md:grid-cols-[auto,1fr,auto]"
+                      'grid min-h-screen w-full',
+                      'grid-cols-1',
+                      'md:grid-cols-[auto,1fr,auto]',
                     )}
                   >
                     <LeftSidebar />
                     <div
                       className={cn(
-                        "flex flex-col items-start w-full",
-                        "px-2",
-                        "md:px-0 md:justify-center"
+                        'flex flex-col items-start w-full',
+                        'px-2',
+                        'md:px-0 md:justify-center',
                       )}
                     >
                       <MobileHeader />
                       <main
                         className={cn(
-                          "w-full mx-auto",
-                          "pb-24 mt-14",
-                          "md:pb-0 md:mt-0",
-                          "max-w-3xl"
+                          'w-full mx-auto',
+                          'pb-24 mt-14',
+                          'md:pb-0 md:mt-0',
+                          'max-w-3xl',
                         )}
                       >
                         {children}

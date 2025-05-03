@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { CeloActionMessage } from "./celo-action-message";
+import { useState } from 'react';
+import { CeloActionMessage } from './celo-action-message';
 
 interface CeloActionHandlerProps {
   args: any[];

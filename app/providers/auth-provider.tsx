@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 import {
-  ReactNode,
+  type ReactNode,
   createContext,
   useContext,
   useState,
   useEffect,
-} from "react";
-import { useAccount } from "wagmi";
-import { auth } from "@/app/auth";
+} from 'react';
+import { useAccount } from 'wagmi';
+import { auth } from '@/app/auth';
 
 // Create a simple auth context
 interface AuthContextType {
@@ -40,12 +40,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log("AuthProvider: Checking authentication status...");
-        console.log("AuthProvider: Current web3Address:", web3Address);
+        console.log('AuthProvider: Checking authentication status...');
+        console.log('AuthProvider: Current web3Address:', web3Address);
 
         // Check if the user is authenticated with SIWE
         const session = await auth();
-        console.log("AuthProvider: Session result:", {
+        console.log('AuthProvider: Session result:', {
           hasUser: Boolean(session?.user),
           userId: session?.user?.id,
           expires: session?.expires,
@@ -59,12 +59,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const addressMatchesSession =
           Boolean(web3Address) &&
           Boolean(session?.user?.id) &&
-          typeof web3Address === "string" &&
-          typeof session?.user?.id === "string" &&
+          typeof web3Address === 'string' &&
+          typeof session?.user?.id === 'string' &&
           web3Address.toLowerCase() === session?.user?.id?.toLowerCase();
 
         // Log the authentication decision logic
-        console.log("AuthProvider: Authentication decision:", {
+        console.log('AuthProvider: Authentication decision:', {
           hasSessionUserId: Boolean(session?.user?.id),
           web3AddressMatchesSession: addressMatchesSession,
           finalDecision: isAuthenticated,
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // This prevents issues where a user connects a different wallet than the one they signed in with
         if (isAuthenticated && !addressMatchesSession) {
           console.log(
-            "AuthProvider: Wallet address doesn't match session ID, logging out"
+            "AuthProvider: Wallet address doesn't match session ID, logging out",
           );
           // We'll handle this by setting isAuthenticated to false
           // The user will need to sign in again with the new wallet
@@ -93,14 +93,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         // For debugging
-        console.log("AuthProvider: Auth state updated:", {
+        console.log('AuthProvider: Auth state updated:', {
           isAuthenticated,
           activeAddress: web3Address,
           isWeb3User: Boolean(web3Address),
           sessionUserId: session?.user?.id,
         });
       } catch (error) {
-        console.error("AuthProvider: Error checking authentication:", error);
+        console.error('AuthProvider: Error checking authentication:', error);
         setAuthState({
           isAuthenticated: false,
           activeAddress: web3Address,
@@ -109,17 +109,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     };
 
-    console.log("AuthProvider: Connection state changed:", {
+    console.log('AuthProvider: Connection state changed:', {
       isConnected,
       web3Address,
     });
 
     if (isConnected && web3Address) {
-      console.log("AuthProvider: Wallet connected, checking auth...");
+      console.log('AuthProvider: Wallet connected, checking auth...');
       checkAuth();
     } else {
       console.log(
-        "AuthProvider: Wallet disconnected or no address, resetting auth state"
+        'AuthProvider: Wallet disconnected or no address, resetting auth state',
       );
       setAuthState({
         isAuthenticated: false,

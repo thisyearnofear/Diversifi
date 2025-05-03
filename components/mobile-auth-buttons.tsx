@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { ConnectKitButton } from "connectkit";
-import { useAccount, useSignMessage } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { generateSiweChallenge, verifySiwe } from "@/app/auth-actions";
-import { useAuth } from "@/hooks/use-auth";
-import { CheckCircle, Loader2, Wallet, Key } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { getRegionStyle, getAnimationStyle } from "@/lib/styles/style-utils";
+import { useState, useEffect } from 'react';
+import { ConnectKitButton } from 'connectkit';
+import { useAccount, useSignMessage } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { generateSiweChallenge, verifySiwe } from '@/app/auth-actions';
+import { useAuth } from '@/hooks/use-auth';
+import { CheckCircle, Loader2, Wallet, Key } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { getRegionStyle, getAnimationStyle } from '@/lib/styles/style-utils';
 
 export function MobileAuthButtons() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -41,7 +41,7 @@ export function MobileAuthButtons() {
 
   // Log authentication state for debugging
   useEffect(() => {
-    console.log("Mobile Auth state:", {
+    console.log('Mobile Auth state:', {
       isConnected,
       hasAddress: !!address,
       isAuthenticated,
@@ -59,13 +59,13 @@ export function MobileAuthButtons() {
   const handleAuthenticate = async () => {
     // Skip if already authenticated
     if (isAuthenticated) {
-      console.log("Already authenticated, skipping authentication");
+      console.log('Already authenticated, skipping authentication');
       return;
     }
 
     // Skip if no address or not connected
     if (!address || !isConnected) {
-      console.log("No address or not connected, skipping authentication");
+      console.log('No address or not connected, skipping authentication');
       return;
     }
 
@@ -76,85 +76,85 @@ export function MobileAuthButtons() {
       // Get the current URL's hostname to display to the user
       const currentHostname = window.location.hostname;
       console.log(
-        `Initiating SIWE authentication for ${address} on ${currentHostname}`
+        `Initiating SIWE authentication for ${address} on ${currentHostname}`,
       );
 
       // Show a toast to inform the user about the signature request
       toast.info(
         `Please check your wallet for a signature request from ${currentHostname}`,
-        { duration: 10000 }
+        { duration: 10000 },
       );
 
       // Generate SIWE message
-      console.log("Generating SIWE challenge...");
+      console.log('Generating SIWE challenge...');
       const message = await generateSiweChallenge(address as `0x${string}`);
-      console.log("SIWE challenge generated");
+      console.log('SIWE challenge generated');
 
       // Request signature from wallet
-      console.log("Requesting signature from wallet...");
+      console.log('Requesting signature from wallet...');
       const signature = await signMessageAsync({
         message,
         account: address as `0x${string}`,
       });
-      console.log("Signature received");
+      console.log('Signature received');
 
       // Verify signature
-      console.log("Verifying signature...");
+      console.log('Verifying signature...');
       const result = await verifySiwe(message, signature as `0x${string}`);
-      console.log("Verification result:", result);
+      console.log('Verification result:', result);
 
-      if (result.status === "failed") {
-        console.error("Authentication failed:", result.error);
-        if (result.error?.includes("Domain mismatch")) {
+      if (result.status === 'failed') {
+        console.error('Authentication failed:', result.error);
+        if (result.error?.includes('Domain mismatch')) {
           toast.error(
-            "Authentication failed: The domain in the signature request doesn't match the site you're using. This could be due to a misconfiguration."
+            "Authentication failed: The domain in the signature request doesn't match the site you're using. This could be due to a misconfiguration.",
           );
         } else {
           toast.error(
-            "Authentication failed: " + (result.error || "Unknown error")
+            `Authentication failed: ${result.error || 'Unknown error'}`,
           );
         }
       } else {
-        console.log("Authentication successful");
-        toast.success("Successfully authenticated!");
+        console.log('Authentication successful');
+        toast.success('Successfully authenticated!');
 
         // Reload the page to update auth state
-        console.log("Reloading page to update auth state...");
+        console.log('Reloading page to update auth state...');
         setTimeout(() => {
           window.location.reload();
         }, 500);
       }
     } catch (err: any) {
-      console.error("Authentication error:", err);
+      console.error('Authentication error:', err);
 
       // Handle user rejection
-      if (err.message?.includes("rejected") || err.code === 4001) {
+      if (err.message?.includes('rejected') || err.code === 4001) {
         toast.error(
-          "You rejected the signature request. Authentication canceled."
+          'You rejected the signature request. Authentication canceled.',
         );
       }
       // Handle popup/window issues
       else if (
-        err.message?.includes("window") ||
-        err.message?.includes("popup")
+        err.message?.includes('window') ||
+        err.message?.includes('popup')
       ) {
         toast.error(
-          "Failed to open signature window. Please check if pop-ups are blocked."
+          'Failed to open signature window. Please check if pop-ups are blocked.',
         );
       }
       // Handle domain mismatch issues
       else if (
-        err.message?.includes("domain") ||
-        err.message?.includes("site")
+        err.message?.includes('domain') ||
+        err.message?.includes('site')
       ) {
         toast.error(
-          "There appears to be a domain mismatch. Please ensure you're using the correct URL."
+          "There appears to be a domain mismatch. Please ensure you're using the correct URL.",
         );
       }
       // Generic error
       else {
         toast.error(
-          "Failed to authenticate: " + (err.message || "Unknown error")
+          `Failed to authenticate: ${err.message || 'Unknown error'}`,
         );
       }
     } finally {
@@ -168,8 +168,8 @@ export function MobileAuthButtons() {
       return (
         <div
           className={cn(
-            "flex items-center gap-1.5 py-1 px-1",
-            getRegionStyle("Africa", "medium", "text")
+            'flex items-center gap-1.5 py-1 px-1',
+            getRegionStyle('Africa', 'medium', 'text'),
           )}
         >
           <CheckCircle className="size-3.5" />
@@ -185,12 +185,12 @@ export function MobileAuthButtons() {
               size="sm"
               variant="outline"
               className={cn(
-                "text-xs py-1 px-2.5 h-auto min-h-[28px]",
-                "active:scale-95 transition-all duration-150"
+                'text-xs py-1 px-2.5 h-auto min-h-[28px]',
+                'active:scale-95 transition-all duration-150',
               )}
             >
               <Wallet className="mr-1 size-3.5" />
-              {ensName || (address ? `${address.slice(0, 4)}...` : "Wallet")}
+              {ensName || (address ? `${address.slice(0, 4)}...` : 'Wallet')}
             </Button>
           )}
         </ConnectKitButton.Custom>
@@ -206,13 +206,13 @@ export function MobileAuthButtons() {
         disabled={isAuthenticating}
         size="sm"
         className={cn(
-          "text-xs py-1 px-2.5 h-auto min-h-[28px]",
-          "active:scale-95 transition-all duration-150"
+          'text-xs py-1 px-2.5 h-auto min-h-[28px]',
+          'active:scale-95 transition-all duration-150',
         )}
       >
         {isAuthenticating ? (
           <>
-            <Loader2 className={cn("mr-1 size-3.5", getAnimationStyle())} />
+            <Loader2 className={cn('mr-1 size-3.5', getAnimationStyle())} />
             Signing...
           </>
         ) : (
@@ -233,8 +233,8 @@ export function MobileAuthButtons() {
           onClick={show}
           size="sm"
           className={cn(
-            "text-xs py-1 px-2.5 h-auto min-h-[28px]",
-            "active:scale-95 transition-all duration-150"
+            'text-xs py-1 px-2.5 h-auto min-h-[28px]',
+            'active:scale-95 transition-all duration-150',
           )}
         >
           <Wallet className="mr-1 size-3.5" />

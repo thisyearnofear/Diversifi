@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { useCcopSwap } from "@/hooks/use-celo-ccop";
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { useCcopSwap } from '@/hooks/use-celo-ccop';
 import {
   CheckCircle,
   ChevronDown,
@@ -13,7 +13,7 @@ import {
   ExternalLink,
   Info,
   Loader2,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface CeloCcopSwapCardCompactProps {
   isRegistered?: boolean;
@@ -23,7 +23,7 @@ export function CeloCcopSwapCardCompact({
   isRegistered = false,
 }: CeloCcopSwapCardCompactProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [amount, setAmount] = useState("10");
+  const [amount, setAmount] = useState('10');
 
   const {
     status,
@@ -38,17 +38,17 @@ export function CeloCcopSwapCardCompact({
   } = useCcopSwap();
 
   const canSwap =
-    isRegistered && isCorrectNetwork && amount && parseFloat(amount) > 0;
+    isRegistered && isCorrectNetwork && amount && Number.parseFloat(amount) > 0;
 
   const calculateEstimatedOutput = () => {
-    if (!amount || isNaN(parseFloat(amount))) return "0";
-    const output = parseFloat(amount) * exchangeRate;
+    if (!amount || Number.isNaN(Number.parseFloat(amount))) return '0';
+    const output = Number.parseFloat(amount) * exchangeRate;
     return output.toFixed(2);
   };
 
   const handleSwap = () => {
     if (canSwap) {
-      swap({ amount: parseFloat(amount) });
+      swap({ amount: Number.parseFloat(amount) });
     }
   };
 
@@ -88,9 +88,9 @@ export function CeloCcopSwapCardCompact({
             <div className="shrink-0">
               {/* Status indicator icon */}
               {isRegistered ? (
-                status === "swapping" ||
-                status === "completing" ||
-                status === "switching-network" ? (
+                status === 'swapping' ||
+                status === 'completing' ||
+                status === 'switching-network' ? (
                   <Loader2 className="size-5 text-purple-500 animate-spin" />
                 ) : (
                   <div className="size-5 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
@@ -184,7 +184,7 @@ export function CeloCcopSwapCardCompact({
                       Switching Network...
                     </>
                   ) : (
-                    "Switch to Celo Network"
+                    'Switch to Celo Network'
                   )}
                 </Button>
               </div>
@@ -221,18 +221,18 @@ export function CeloCcopSwapCardCompact({
                 <Button
                   onClick={handleSwap}
                   disabled={
-                    !canSwap || status === "swapping" || status === "approving"
+                    !canSwap || status === 'swapping' || status === 'approving'
                   }
                   size="sm"
                   className="w-full"
                 >
-                  {status === "swapping" || status === "approving" ? (
+                  {status === 'swapping' || status === 'approving' ? (
                     <>
                       <Loader2 className="mr-2 size-3 animate-spin" />
-                      {status === "approving" ? "Approving..." : "Swapping..."}
+                      {status === 'approving' ? 'Approving...' : 'Swapping...'}
                     </>
                   ) : (
-                    "Swap to cCOP"
+                    'Swap to cCOP'
                   )}
                 </Button>
               </div>

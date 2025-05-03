@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Loader2,
   ChevronDown,
@@ -11,20 +11,20 @@ import {
   ExternalLink,
   CheckCircle,
   Info,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useVelodromeSwap } from "@/hooks/use-velodrome-swap";
-import { useOptimismDivviRegistration } from "@/hooks/use-optimism-divvi-registration";
-import { useTokenPrice } from "@/hooks/use-token-price";
-import { toast } from "sonner";
+} from '@/components/ui/select';
+import { useVelodromeSwap } from '@/hooks/use-velodrome-swap';
+import { useOptimismDivviRegistration } from '@/hooks/use-optimism-divvi-registration';
+import { useTokenPrice } from '@/hooks/use-token-price';
+import { toast } from 'sonner';
 
 interface VelodromeSwapCardCompactProps {
   onComplete?: () => void;
@@ -49,8 +49,8 @@ export function VelodromeSwapCardCompact({
   } = useVelodromeSwap();
 
   // State for the swap form
-  const [sourceToken, setSourceToken] = useState("ETH");
-  const [amount, setAmount] = useState("");
+  const [sourceToken, setSourceToken] = useState('ETH');
+  const [amount, setAmount] = useState('');
   const [isReviewing, setIsReviewing] = useState(false);
 
   // Get real-time exchange rates from CoinGecko with Moralis fallback
@@ -59,7 +59,7 @@ export function VelodromeSwapCardCompact({
     isLoading: isPriceLoading,
     error: priceError,
     source: priceSource,
-  } = useTokenPrice(["ETH", "USDC", "EURA"], "usd", "0xa"); // 0xa is Optimism
+  } = useTokenPrice(['ETH', 'USDC', 'EURA'], 'usd', '0xa'); // 0xa is Optimism
 
   // Update expanded state when registration status changes
   useEffect(() => {
@@ -72,20 +72,20 @@ export function VelodromeSwapCardCompact({
 
   // Calculate estimated EURA output
   const calculateEstimatedOutput = () => {
-    if (!amount || parseFloat(amount) <= 0) return "0";
+    if (!amount || Number.parseFloat(amount) <= 0) return '0';
 
     try {
-      const inputAmount = parseFloat(amount);
+      const inputAmount = Number.parseFloat(amount);
       let estimatedOutput = 0;
 
       // Get the EURA price from the API or use fallback
       const euraPrice = prices?.EURA?.usd || 1.08; // Default to 1.08 USD if not available
 
-      if (sourceToken === "ETH") {
+      if (sourceToken === 'ETH') {
         const ethPrice = prices?.ETH?.usd || 0;
-        if (ethPrice === 0) return "Price unavailable";
+        if (ethPrice === 0) return 'Price unavailable';
         estimatedOutput = (inputAmount * ethPrice) / euraPrice;
-      } else if (sourceToken === "USDC") {
+      } else if (sourceToken === 'USDC') {
         const usdcPrice = prices?.USDC?.usd || 1; // USDC should be ~$1
         estimatedOutput = (inputAmount * usdcPrice) / euraPrice;
       }
@@ -95,53 +95,53 @@ export function VelodromeSwapCardCompact({
 
       return estimatedOutput.toFixed(2);
     } catch (error) {
-      console.error("Error calculating estimated output:", error);
-      return "Error";
+      console.error('Error calculating estimated output:', error);
+      return 'Error';
     }
   };
 
   // Determine if we're in a loading state
-  const isLoading = ["swapping", "completing", "switching-network"].includes(
-    status
+  const isLoading = ['swapping', 'completing', 'switching-network'].includes(
+    status,
   );
 
   // Handle the swap
   const handleSwap = async () => {
     try {
       if (!address) {
-        toast.error("Please connect your wallet first");
+        toast.error('Please connect your wallet first');
         return;
       }
 
       // Double-check network before proceeding
       if (!isCorrectNetwork) {
-        toast.info("Switching to Optimism network...");
+        toast.info('Switching to Optimism network...');
         await switchToOptimism();
 
         // Verify the switch was successful
         if (!isCorrectNetwork) {
-          toast.error("Please switch to the Optimism network to continue");
+          toast.error('Please switch to the Optimism network to continue');
           return;
         }
       }
 
-      if (!amount || parseFloat(amount) <= 0) {
-        toast.error("Please enter a valid amount");
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        toast.error('Please enter a valid amount');
         return;
       }
 
       // Call the swap function from the hook
       await swap({
         sourceToken,
-        amount: parseFloat(amount),
+        amount: Number.parseFloat(amount),
       });
 
       if (onComplete) {
         onComplete();
       }
     } catch (error) {
-      console.error("Error performing swap:", error);
-      toast.error("Failed to perform swap");
+      console.error('Error performing swap:', error);
+      toast.error('Failed to perform swap');
     }
   };
 
@@ -181,9 +181,9 @@ export function VelodromeSwapCardCompact({
             <div className="shrink-0">
               {/* Status indicator icon */}
               {isRegistered ? (
-                status === "swapping" ||
-                status === "completing" ||
-                status === "switching-network" ? (
+                status === 'swapping' ||
+                status === 'completing' ||
+                status === 'switching-network' ? (
                   <Loader2 className="size-5 text-purple-500 animate-spin" />
                 ) : (
                   <div className="size-5 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
@@ -215,12 +215,12 @@ export function VelodromeSwapCardCompact({
                   Complete registration in Step 1 to unlock this step
                 </p>
               )}
-              {isRegistered && status === "wrong-network" && (
+              {isRegistered && status === 'wrong-network' && (
                 <p className="text-xs text-amber-600 mt-1">
                   You need to switch to the Optimism network to continue
                 </p>
               )}
-              {status === "switching-network" && (
+              {status === 'switching-network' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Switching to Optimism network...
                 </p>
@@ -264,7 +264,7 @@ export function VelodromeSwapCardCompact({
               </div>
             </div>
 
-            {status === "wrong-network" ? (
+            {status === 'wrong-network' ? (
               <div className="space-y-3">
                 <Button
                   onClick={switchToOptimism}
@@ -278,7 +278,7 @@ export function VelodromeSwapCardCompact({
                       Switching Network...
                     </>
                   ) : (
-                    "Switch to Optimism Network"
+                    'Switch to Optimism Network'
                   )}
                 </Button>
               </div>
@@ -309,12 +309,12 @@ export function VelodromeSwapCardCompact({
                 {/* Display price source */}
                 <div className="mt-1">
                   <p className="text-xs text-gray-500">
-                    Price source:{" "}
-                    {priceSource === "coingecko"
-                      ? "CoinGecko"
-                      : priceSource === "moralis"
-                      ? "Moralis"
-                      : "Fallback"}
+                    Price source:{' '}
+                    {priceSource === 'coingecko'
+                      ? 'CoinGecko'
+                      : priceSource === 'moralis'
+                        ? 'Moralis'
+                        : 'Fallback'}
                     {isPriceLoading && (
                       <span className="ml-1">
                         <Loader2 className="inline size-3 animate-spin" />
@@ -330,7 +330,7 @@ export function VelodromeSwapCardCompact({
                     </label>
                     <span className="text-xs text-gray-500">
                       {isPriceLoading
-                        ? "Loading..."
+                        ? 'Loading...'
                         : calculateEstimatedOutput()}
                     </span>
                   </div>
@@ -342,7 +342,7 @@ export function VelodromeSwapCardCompact({
 
                 <Button
                   onClick={() => setIsReviewing(true)}
-                  disabled={!amount || parseFloat(amount) <= 0 || !canSwap}
+                  disabled={!amount || Number.parseFloat(amount) <= 0 || !canSwap}
                   size="sm"
                   className="w-full"
                 >
@@ -391,7 +391,7 @@ export function VelodromeSwapCardCompact({
                         Processing...
                       </>
                     ) : (
-                      "Confirm Swap"
+                      'Confirm Swap'
                     )}
                   </Button>
                 </div>

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
 // Import the polygon action message component
-import { PolygonActionMessage } from "./polygon-action-message";
-import { usePolygonDivviRegistration } from "@/hooks/use-polygon-divvi-registration";
-import { usePolygonDaiSwap } from "@/hooks/use-polygon-dai-swap";
-import { useEffect } from "react";
+import { PolygonActionMessage } from './polygon-action-message';
+import { usePolygonDivviRegistration } from '@/hooks/use-polygon-divvi-registration';
+import { usePolygonDaiSwap } from '@/hooks/use-polygon-dai-swap';
+import { useEffect } from 'react';
 
 interface PolygonActionHandlerProps {
   args?: any[];

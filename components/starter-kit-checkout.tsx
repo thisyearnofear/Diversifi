@@ -3,24 +3,24 @@ import {
   CheckoutButton,
   CheckoutStatus,
   type LifecycleStatus,
-} from "@coinbase/onchainkit/checkout";
-import { useCallback, useRef } from "react";
-import useSWRMutation from "swr/mutation";
-import { toast } from "sonner";
+} from '@coinbase/onchainkit/checkout';
+import { useCallback, useRef } from 'react';
+import useSWRMutation from 'swr/mutation';
+import { toast } from 'sonner';
 
 async function verifyCharge(
   _url: string,
-  { arg }: { arg: { chargeId: string; productId: string } }
+  { arg }: { arg: { chargeId: string; productId: string } },
 ) {
   const response = await fetch(
     `/api/commerce/verify/${arg.productId}/${arg.chargeId}`,
     {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    }
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    },
   );
-  if (!response.ok) throw new Error("Failed to verify charge");
+  if (!response.ok) throw new Error('Failed to verify charge');
   return response.json();
 }
 
@@ -33,7 +33,7 @@ export function StarterKitCheckout({
   onSuccess,
   isGift = false,
 }: StarterKitCheckoutProps) {
-  const { trigger } = useSWRMutation("/api/commerce/verify", verifyCharge);
+  const { trigger } = useSWRMutation('/api/commerce/verify', verifyCharge);
 
   const productId = isGift
     ? process.env.NEXT_PUBLIC_COINBASE_COMMERCE_PRODUCT_STARTER_KIT_GIFT
@@ -51,7 +51,7 @@ export function StarterKitCheckout({
       const { statusName, statusData } = status;
 
       try {
-        if (statusName !== "error" && statusData?.chargeId && productId) {
+        if (statusName !== 'error' && statusData?.chargeId && productId) {
           // Check if we've recently processed this charge
           const now = Date.now();
           const minInterval = 2000; // 2 seconds between calls
@@ -64,7 +64,7 @@ export function StarterKitCheckout({
             (statusData.chargeId === processedChargeRef.current.chargeId &&
               now - lastProcessed < minInterval) ||
             (statusData.chargeId === processedChargeRef.current.chargeId &&
-              processedChargeRef.current.status === "success")
+              processedChargeRef.current.status === 'success')
           ) {
             return;
           }
@@ -83,28 +83,28 @@ export function StarterKitCheckout({
         }
 
         switch (statusName) {
-          case "success":
-            toast.success("Payment successful!");
+          case 'success':
+            toast.success('Payment successful!');
             onSuccess?.();
             break;
-          case "pending":
-            console.log("Payment pending...");
+          case 'pending':
+            console.log('Payment pending...');
             break;
-          case "error":
-            toast.error("Something went wrong");
+          case 'error':
+            toast.error('Something went wrong');
             break;
           default:
-            console.log("Payment initialized");
+            console.log('Payment initialized');
         }
       } catch (error) {
-        console.error("Error handling charge status:", error);
+        console.error('Error handling charge status:', error);
       }
     },
-    [trigger, onSuccess, productId]
+    [trigger, onSuccess, productId],
   );
 
   if (!productId) {
-    console.error("Product ID is not defined in environment variables");
+    console.error('Product ID is not defined in environment variables');
     return null;
   }
 
@@ -113,7 +113,7 @@ export function StarterKitCheckout({
       <Checkout productId={productId} onStatus={statusHandler}>
         <CheckoutButton
           text={
-            isGift ? "Buy Starter Kit as Gift" : "Buy Starter Kit for Yourself"
+            isGift ? 'Buy Starter Kit as Gift' : 'Buy Starter Kit for Yourself'
           }
         />
         <CheckoutStatus />

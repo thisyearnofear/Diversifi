@@ -1,10 +1,10 @@
-import type { StarterKit } from "@/lib/db/schema";
-import { useAuth } from "@/hooks/use-auth";
+
+import { useAuth } from '@/hooks/use-auth';
 import {
   useAvailableStarterKits,
   useClaimedStarterKits,
-  useCreatedStarterKits
-} from "./api/use-starter-kit-queries";
+  useCreatedStarterKits,
+} from './api/use-starter-kit-queries';
 
 export function useStarterKit() {
   const { isAuthenticated } = useAuth();
@@ -13,19 +13,19 @@ export function useStarterKit() {
   const {
     data: availableKits = [],
     isLoading: isLoadingAvailable,
-    error: availableError
+    error: availableError,
   } = useAvailableStarterKits();
 
   const {
     data: claimedKits = [],
     isLoading: isLoadingClaimed,
-    error: claimedError
+    error: claimedError,
   } = useClaimedStarterKits();
 
   const {
     data: createdKits = [],
     isLoading: isLoadingCreated,
-    error: createdError
+    error: createdError,
   } = useCreatedStarterKits();
 
   const isLoading = isLoadingAvailable || isLoadingClaimed || isLoadingCreated;

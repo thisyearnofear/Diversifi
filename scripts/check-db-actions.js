@@ -6,8 +6,8 @@ const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL_NON_POOLING,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 async function checkActions() {
@@ -25,7 +25,7 @@ async function checkActions() {
           AND table_name = 'Action'
         );
       `);
-      
+
       const tableExists = tableResult.rows[0].exists;
       console.log(`Action table exists: ${tableExists}`);
 
@@ -34,17 +34,26 @@ async function checkActions() {
         const result = await client.query('SELECT * FROM "Action" LIMIT 10;');
         console.log('Actions in the database:');
         console.log(result.rows);
-        
+
         // Check for specific actions
-        const ckesResult = await client.query('SELECT * FROM "Action" WHERE title = $1;', ['Get cKES Stablecoins']);
+        const ckesResult = await client.query(
+          'SELECT * FROM "Action" WHERE title = $1;',
+          ['Get cKES Stablecoins'],
+        );
         console.log('\nGet cKES Stablecoins action:');
         console.log(ckesResult.rows);
-        
-        const euraResult = await client.query('SELECT * FROM "Action" WHERE title = $1;', ['Get EURA Stablecoins']);
+
+        const euraResult = await client.query(
+          'SELECT * FROM "Action" WHERE title = $1;',
+          ['Get EURA Stablecoins'],
+        );
         console.log('\nGet EURA Stablecoins action:');
         console.log(euraResult.rows);
-        
-        const optimismResult = await client.query('SELECT * FROM "Action" WHERE title = $1;', ['Register on Optimism']);
+
+        const optimismResult = await client.query(
+          'SELECT * FROM "Action" WHERE title = $1;',
+          ['Register on Optimism'],
+        );
         console.log('\nRegister on Optimism action:');
         console.log(optimismResult.rows);
       }

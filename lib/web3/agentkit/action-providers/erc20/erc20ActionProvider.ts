@@ -1,13 +1,13 @@
-import type { z } from "zod";
+import type { z } from 'zod';
 import {
   ActionProvider,
   CreateAction,
-  EvmWalletProvider,
-} from "@coinbase/agentkit";
-import type { Network } from "../types";
-import { GetBalanceSchema, TransferSchema } from "./schemas";
-import { abi } from "./constants";
-import { encodeFunctionData, type Hex } from "viem";
+  type EvmWalletProvider,
+} from '@coinbase/agentkit';
+import type { Network } from '../types';
+import { GetBalanceSchema, TransferSchema } from './schemas';
+import { abi } from './constants';
+import { encodeFunctionData, type Hex } from 'viem';
 
 /**
  * ERC20ActionProvider is an action provider for ERC20 tokens.
@@ -17,7 +17,7 @@ export class ERC20ActionProvider extends ActionProvider {
    * Constructor for the ERC20ActionProvider.
    */
   constructor() {
-    super("erc20", []);
+    super('erc20', []);
   }
 
   /**
@@ -28,7 +28,7 @@ export class ERC20ActionProvider extends ActionProvider {
    * @returns A message containing the balance.
    */
   @CreateAction({
-    name: "get_balance",
+    name: 'get_balance',
     description: `
     This tool will get the balance of an ERC20 asset at a given address. 
     It takes the following inputs, both are addresses:
@@ -39,13 +39,13 @@ export class ERC20ActionProvider extends ActionProvider {
   })
   async getBalance(
     walletProvider: EvmWalletProvider,
-    args: z.infer<typeof GetBalanceSchema>
+    args: z.infer<typeof GetBalanceSchema>,
   ): Promise<string> {
     try {
       const balance = await walletProvider.readContract({
         address: args.contractAddress as Hex,
         abi,
-        functionName: "balanceOf",
+        functionName: 'balanceOf',
         args: [args.address || walletProvider.getAddress()],
       });
 
@@ -63,7 +63,7 @@ export class ERC20ActionProvider extends ActionProvider {
    * @returns A message containing the transfer details.
    */
   @CreateAction({
-    name: "transfer",
+    name: 'transfer',
     description: `
     This tool will transfer an ERC20 token from the wallet to another onchain address.
 
@@ -80,14 +80,14 @@ Important notes:
   })
   async transfer(
     walletProvider: EvmWalletProvider,
-    args: z.infer<typeof TransferSchema>
+    args: z.infer<typeof TransferSchema>,
   ): Promise<string> {
     try {
       const hash = await walletProvider.sendTransaction({
         to: args.contractAddress as Hex,
         data: encodeFunctionData({
           abi,
-          functionName: "transfer",
+          functionName: 'transfer',
           args: [args.destination as Hex, BigInt(args.amount)],
         }),
       });

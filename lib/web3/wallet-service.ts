@@ -3,8 +3,8 @@ let Coinbase: any;
 let Wallet: any;
 
 // Configuration for different environments
-const API_KEY = process.env.COINBASE_CDP_API_KEY || "";
-const API_SECRET = process.env.COINBASE_CDP_API_SECRET || "";
+const API_KEY = process.env.COINBASE_CDP_API_KEY || '';
+const API_SECRET = process.env.COINBASE_CDP_API_SECRET || '';
 
 // Initialize the SDK
 let isInitialized = false;
@@ -13,25 +13,25 @@ const initializeSdk = async () => {
   if (!isInitialized) {
     try {
       // Log environment variables (without revealing full secrets)
-      console.log("API_KEY available:", !!API_KEY);
-      console.log("API_SECRET available:", !!API_SECRET);
+      console.log('API_KEY available:', !!API_KEY);
+      console.log('API_SECRET available:', !!API_SECRET);
 
       if (!API_KEY || !API_SECRET) {
-        console.error("Coinbase API keys not found in environment variables");
-        throw new Error("Coinbase API keys not configured");
+        console.error('Coinbase API keys not found in environment variables');
+        throw new Error('Coinbase API keys not configured');
       }
 
       // Dynamically import the SDK to avoid issues with server-side rendering
-      const sdk = await import("@coinbase/coinbase-sdk");
+      const sdk = await import('@coinbase/coinbase-sdk');
       Coinbase = sdk.Coinbase;
       Wallet = sdk.Wallet;
 
       // Configure the SDK with API keys
       Coinbase.configure(API_KEY, API_SECRET);
       isInitialized = true;
-      console.log("Coinbase SDK initialized with API keys");
+      console.log('Coinbase SDK initialized with API keys');
     } catch (error) {
-      console.error("Error initializing Coinbase SDK:", error);
+      console.error('Error initializing Coinbase SDK:', error);
       throw error;
     }
   }
@@ -45,7 +45,7 @@ export const createWallet = async () => {
   try {
     await initializeSdk();
 
-    console.log("Creating wallet with Coinbase SDK...");
+    console.log('Creating wallet with Coinbase SDK...');
 
     // For testing purposes, let's create a developer-managed wallet (1-of-1) instead
     // This is simpler and more likely to work without additional configuration
@@ -69,11 +69,11 @@ export const createWallet = async () => {
     return {
       walletId,
       address: addressString,
-      networkId: "base-sepolia",
+      networkId: 'base-sepolia',
     };
   } catch (error: any) {
-    console.error("Error creating wallet:", error);
-    console.error("Error details:", {
+    console.error('Error creating wallet:', error);
+    console.error('Error details:', {
       message: error.message,
       stack: error.stack,
       httpCode: error.httpCode,
@@ -113,7 +113,7 @@ export const fundWalletFromFaucet = async (walletId: string) => {
       status,
     };
   } catch (error) {
-    console.error("Error funding wallet:", error);
+    console.error('Error funding wallet:', error);
     throw error;
   }
 };
@@ -135,8 +135,8 @@ export const getWalletBalance = async (walletId: string) => {
     const balances = await wallet.listBalances();
 
     // Get ETH balance specifically
-    const ethBalance = balances.find((b: any) => b.symbol === "ETH");
-    const balance = ethBalance ? ethBalance.amount : "0";
+    const ethBalance = balances.find((b: any) => b.symbol === 'ETH');
+    const balance = ethBalance ? ethBalance.amount : '0';
 
     return {
       walletId,
@@ -144,7 +144,7 @@ export const getWalletBalance = async (walletId: string) => {
       balance,
     };
   } catch (error) {
-    console.error("Error getting wallet balance:", error);
+    console.error('Error getting wallet balance:', error);
     throw error;
   }
 };
@@ -159,7 +159,7 @@ export const getWalletBalance = async (walletId: string) => {
 export const transferFunds = async (
   sourceWalletId: string,
   destinationAddress: string,
-  amount: number
+  amount: number,
 ) => {
   try {
     await initializeSdk();
@@ -187,7 +187,7 @@ export const transferFunds = async (
       status,
     };
   } catch (error) {
-    console.error("Error transferring funds:", error);
+    console.error('Error transferring funds:', error);
     throw error;
   }
 };

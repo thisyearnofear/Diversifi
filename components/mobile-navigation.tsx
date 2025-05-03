@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Menu,
@@ -7,14 +7,14 @@ import {
   Coins,
   Globe,
   Rocket,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useSidebar } from "@/components/ui/sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { eventBus, EVENTS } from "@/lib/events";
-import { getAnimationStyle } from "@/lib/styles/style-utils";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useSidebar } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { eventBus, EVENTS } from '@/lib/events';
+import { getAnimationStyle } from '@/lib/styles/style-utils';
 
 export function MobileNavigation() {
   const { setOpenMobile } = useSidebar();
@@ -27,9 +27,9 @@ export function MobileNavigation() {
 
   const triggerActionPrompt = (category: string, message: string) => {
     // If we're not on the home page, navigate there first
-    if (window.location.pathname !== "/") {
+    if (window.location.pathname !== '/') {
       // Navigate to home page
-      router.push("/");
+      router.push('/');
 
       // Wait for navigation to complete before sending the message
       setTimeout(() => {
@@ -43,56 +43,56 @@ export function MobileNavigation() {
 
   const navItems = [
     {
-      name: "Menu",
+      name: 'Menu',
       icon: Menu,
       action: () => setOpenMobile(true),
       primary: true,
     },
     {
-      name: "New Chat",
+      name: 'New Chat',
       icon: MessageSquare,
-      action: () => router.push("/"),
+      action: () => router.push('/'),
     },
 
     {
-      name: "Starter Kits",
+      name: 'Starter Kits',
       icon: Sparkles,
-      action: () => router.push("/starter-kits"),
+      action: () => router.push('/starter-kits'),
     },
     {
-      name: "Get USDbC",
+      name: 'Get USDbC',
       icon: Rocket,
       action: () =>
         triggerActionPrompt(
-          "BASE",
-          "I want to get USD-backed stablecoins on Base. Can you help me directly in this chat?"
+          'BASE',
+          'I want to get USD-backed stablecoins on Base. Can you help me directly in this chat?',
         ),
     },
     {
-      name: "Get EURA",
+      name: 'Get EURA',
       icon: Rocket,
       action: () =>
         triggerActionPrompt(
-          "OPTIMISM",
-          "I want to get Euro-backed stablecoins on Optimism. Can you help me directly in this chat?"
+          'OPTIMISM',
+          'I want to get Euro-backed stablecoins on Optimism. Can you help me directly in this chat?',
         ),
     },
     {
-      name: "Get cUSD",
+      name: 'Get cUSD',
       icon: Coins,
       action: () =>
         triggerActionPrompt(
-          "CELO",
-          "I want to get USD-backed stablecoins on Celo. Can you help me directly in this chat?"
+          'CELO',
+          'I want to get USD-backed stablecoins on Celo. Can you help me directly in this chat?',
         ),
     },
     {
-      name: "Social",
+      name: 'Social',
       icon: Globe,
       action: () =>
         triggerActionPrompt(
-          "SOCIAL",
-          "Show me social actions like Farcaster and Lens that I can set up directly in this chat."
+          'SOCIAL',
+          'Show me social actions like Farcaster and Lens that I can set up directly in this chat.',
         ),
     },
   ];
@@ -100,43 +100,43 @@ export function MobileNavigation() {
   return (
     <nav
       className={cn(
-        "fixed bottom-4 left-1/2 -translate-x-1/2 z-50",
-        "md:hidden",
-        "bg-background/90 backdrop-blur-sm",
-        "rounded-xl shadow-lg",
-        "px-2 py-1.5",
-        "w-[95vw] max-w-md",
-        "flex justify-center items-end pointer-events-none"
+        'fixed bottom-4 left-1/2 -translate-x-1/2 z-50',
+        'md:hidden',
+        'bg-background/90 backdrop-blur-sm',
+        'rounded-xl shadow-lg',
+        'px-2 py-1.5',
+        'w-[95vw] max-w-md',
+        'flex justify-center items-end pointer-events-none',
       )}
     >
       <div className="flex flex-row justify-around items-end w-full pointer-events-auto">
         {navItems.map((item, index) => (
           <Button
             key={item.name}
-            variant={item.primary ? "default" : "ghost"}
+            variant={item.primary ? 'default' : 'ghost'}
             size="icon"
             className={cn(
-              "h-14 w-14 rounded-full flex flex-col items-center justify-center px-0 py-0 bg-background/90",
-              "transition-all duration-150 active:scale-95", // Add touch feedback
+              'size-14 rounded-full flex flex-col items-center justify-center px-0 py-0 bg-background/90',
+              'transition-all duration-150 active:scale-95', // Add touch feedback
               item.primary
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "hover:bg-accent",
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                : 'hover:bg-accent',
               // Add animation with appropriate delay based on index
               getAnimationStyle(
                 index === 1
                   ? 100
                   : index === 2
-                  ? 200
-                  : index === 3
-                  ? 300
-                  : index === 4
-                  ? 400
-                  : index === 5
-                  ? 500
-                  : index === 6
-                  ? 500
-                  : undefined
-              )
+                    ? 200
+                    : index === 3
+                      ? 300
+                      : index === 4
+                        ? 400
+                        : index === 5
+                          ? 500
+                          : index === 6
+                            ? 500
+                            : undefined,
+              ),
             )}
             onClick={() => {
               // Add haptic feedback if available

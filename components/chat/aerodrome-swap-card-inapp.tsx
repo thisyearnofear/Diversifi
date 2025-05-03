@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Loader2,
   ChevronDown,
@@ -11,20 +11,20 @@ import {
   ExternalLink,
   CheckCircle,
   Info,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useAerodromeSwap } from "@/hooks/use-aerodrome-swap-inapp";
-import { useDivviRegistration } from "@/hooks/use-divvi-registration";
-import { useTokenPrice } from "@/hooks/use-token-price";
-import { toast } from "sonner";
+} from '@/components/ui/select';
+import { useAerodromeSwap } from '@/hooks/use-aerodrome-swap-inapp';
+import { useDivviRegistration } from '@/hooks/use-divvi-registration';
+import { useTokenPrice } from '@/hooks/use-token-price';
+import { toast } from 'sonner';
 
 interface AerodromeSwapCardInappProps {
   onComplete?: () => void;
@@ -50,8 +50,8 @@ export function AerodromeSwapCardInapp({
   } = useAerodromeSwap();
 
   // State for the swap form
-  const [sourceToken, setSourceToken] = useState("ETH");
-  const [amount, setAmount] = useState("");
+  const [sourceToken, setSourceToken] = useState('ETH');
+  const [amount, setAmount] = useState('');
   const [isReviewing, setIsReviewing] = useState(false);
 
   // Get real-time exchange rates from CoinGecko
@@ -59,13 +59,13 @@ export function AerodromeSwapCardInapp({
     prices,
     isLoading: isPriceLoading,
     error: priceError,
-  } = useTokenPrice(["ETH", "USDC"]);
+  } = useTokenPrice(['ETH', 'USDC']);
 
   // Calculate exchange rate based on CoinGecko prices
-  let exchangeRate = sourceToken === "ETH" ? 2000 : 1; // Fallback rates
+  let exchangeRate = sourceToken === 'ETH' ? 2000 : 1; // Fallback rates
 
-  if (prices && prices.ETH && prices.USDC) {
-    if (sourceToken === "ETH") {
+  if (prices?.ETH && prices.USDC) {
+    if (sourceToken === 'ETH') {
       // 1 ETH = x USDbC (where USDbC is pegged to USD)
       exchangeRate = prices.ETH.usd / prices.USDC.usd;
     }
@@ -81,27 +81,27 @@ export function AerodromeSwapCardInapp({
     }
   }, [isRegistered]);
 
-  const estimatedOutput = parseFloat(amount || "0") * exchangeRate;
+  const estimatedOutput = Number.parseFloat(amount || '0') * exchangeRate;
 
   // Determine if we're in a loading state
   const isLoading = [
-    "swapping",
-    "transaction-pending",
-    "transaction-submitted",
-    "transaction-confirming",
-    "completing",
+    'swapping',
+    'transaction-pending',
+    'transaction-submitted',
+    'transaction-confirming',
+    'completing',
   ].includes(status);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (/^\d*\.?\d*$/.test(value) || value === "") {
+    if (/^\d*\.?\d*$/.test(value) || value === '') {
       setAmount(value);
     }
   };
 
   const handleReview = () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      toast.error("Please enter a valid amount");
+    if (!amount || Number.parseFloat(amount) <= 0) {
+      toast.error('Please enter a valid amount');
       return;
     }
     setIsReviewing(true);
@@ -114,39 +114,39 @@ export function AerodromeSwapCardInapp({
   const handleSwap = async () => {
     try {
       if (!address) {
-        toast.error("Please connect your wallet first");
+        toast.error('Please connect your wallet first');
         return;
       }
 
       // Double-check network before proceeding
       if (!isCorrectNetwork) {
-        toast.info("Switching to Base network...");
+        toast.info('Switching to Base network...');
         await switchToBase();
 
         // Verify the switch was successful
         if (!isCorrectNetwork) {
-          toast.error("Please switch to the Base network to continue");
+          toast.error('Please switch to the Base network to continue');
           return;
         }
       }
 
-      if (!amount || parseFloat(amount) <= 0) {
-        toast.error("Please enter a valid amount");
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        toast.error('Please enter a valid amount');
         return;
       }
 
       // Call the swap function from the hook
       await swap({
         sourceToken,
-        amount: parseFloat(amount),
+        amount: Number.parseFloat(amount),
       });
 
       if (onComplete) {
         onComplete();
       }
     } catch (error) {
-      console.error("Error performing swap:", error);
-      toast.error("Failed to perform swap");
+      console.error('Error performing swap:', error);
+      toast.error('Failed to perform swap');
     }
   };
 
@@ -185,9 +185,9 @@ export function AerodromeSwapCardInapp({
             <div className="shrink-0">
               {/* Status indicator icon */}
               {isRegistered ? (
-                status === "transaction-pending" ||
-                status === "transaction-submitted" ||
-                status === "transaction-confirming" ? (
+                status === 'transaction-pending' ||
+                status === 'transaction-submitted' ||
+                status === 'transaction-confirming' ? (
                   <Loader2 className="size-5 text-blue-500 animate-spin" />
                 ) : (
                   <div className="size-5 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
@@ -219,27 +219,27 @@ export function AerodromeSwapCardInapp({
                   Complete registration in Step 1 to unlock this step
                 </p>
               )}
-              {isRegistered && status === "wrong-network" && (
+              {isRegistered && status === 'wrong-network' && (
                 <p className="text-xs text-amber-600 mt-1">
                   You need to switch to the Base network to continue
                 </p>
               )}
-              {status === "switching-network" && (
+              {status === 'switching-network' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Switching to Base network...
                 </p>
               )}
-              {status === "transaction-pending" && (
+              {status === 'transaction-pending' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction pending...
                 </p>
               )}
-              {status === "transaction-submitted" && (
+              {status === 'transaction-submitted' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction submitted, waiting for confirmation...
                 </p>
               )}
-              {status === "transaction-confirming" && (
+              {status === 'transaction-confirming' && (
                 <p className="text-xs text-amber-600 mt-1">
                   Transaction confirming on the blockchain...
                 </p>
@@ -289,7 +289,7 @@ export function AerodromeSwapCardInapp({
       </div>
 
       <div className="p-4 space-y-4">
-        {status === "wrong-network" ? (
+        {status === 'wrong-network' ? (
           <div className="space-y-3">
             <Button
               onClick={switchToBase}
@@ -302,7 +302,7 @@ export function AerodromeSwapCardInapp({
                   Switching Network...
                 </>
               ) : (
-                "Switch to Base Network"
+                'Switch to Base Network'
               )}
             </Button>
           </div>
@@ -339,7 +339,7 @@ export function AerodromeSwapCardInapp({
                   onChange={handleAmountChange}
                   disabled={isLoading || !isRegistered}
                 />
-                {amount && !isNaN(parseFloat(amount)) && (
+                {amount && !Number.isNaN(Number.parseFloat(amount)) && (
                   <p className="text-xs text-gray-500 mt-1">
                     ≈ {estimatedOutput.toFixed(2)} USDbC
                   </p>
@@ -352,7 +352,7 @@ export function AerodromeSwapCardInapp({
                 onClick={handleReview}
                 disabled={
                   !amount ||
-                  parseFloat(amount) <= 0 ||
+                  Number.parseFloat(amount) <= 0 ||
                   isLoading ||
                   !isRegistered
                 }
@@ -388,19 +388,19 @@ export function AerodromeSwapCardInapp({
                     Exchange rate:
                   </span>
                   <span className="text-sm">
-                    1 {sourceToken} ={" "}
-                    {sourceToken === "ETH"
+                    1 {sourceToken} ={' '}
+                    {sourceToken === 'ETH'
                       ? exchangeRate.toFixed(2)
-                      : exchangeRate}{" "}
+                      : exchangeRate}{' '}
                     USDbC
                   </span>
                 </div>
-                {sourceToken === "ETH" && (
+                {sourceToken === 'ETH' && (
                   <div className="flex justify-between items-center text-xs text-gray-500 mt-1">
                     <span>
                       {prices?.ETH
-                        ? "Price data by CoinGecko"
-                        : "Using estimated price"}
+                        ? 'Price data by CoinGecko'
+                        : 'Using estimated price'}
                     </span>
                     {prices?.ETH && (
                       <a
@@ -447,37 +447,37 @@ export function AerodromeSwapCardInapp({
                 onClick={handleSwap}
                 disabled={isLoading || !isRegistered}
               >
-                {status === "transaction-pending" && (
+                {status === 'transaction-pending' && (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     Preparing Transaction...
                   </>
                 )}
-                {status === "transaction-submitted" && (
+                {status === 'transaction-submitted' && (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     Waiting for Confirmation...
                   </>
                 )}
-                {status === "transaction-confirming" && (
+                {status === 'transaction-confirming' && (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     Confirming Transaction...
                   </>
                 )}
-                {status === "swapping" && (
+                {status === 'swapping' && (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     Processing Swap...
                   </>
                 )}
-                {status === "completing" && (
+                {status === 'completing' && (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     Completing Swap...
                   </>
                 )}
-                {!isLoading && "Confirm Swap"}
+                {!isLoading && 'Confirm Swap'}
               </Button>
             </div>
           </>

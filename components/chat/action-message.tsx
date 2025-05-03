@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ActionCardCompact } from "./action-card-compact";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from 'react';
+import { ActionCardCompact } from './action-card-compact';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ActionMessageProps {
   actions: {
@@ -31,8 +31,8 @@ export function ActionMessage({ actions, onComplete }: ActionMessageProps) {
     <div className="flex flex-col w-full">
       <div className="mb-2 text-sm font-medium">
         {actions.length === 1
-          ? "I recommend this action:"
-          : "I recommend these actions:"}
+          ? 'I recommend this action:'
+          : 'I recommend these actions:'}
       </div>
 
       {visibleActions.map((action, index) => (
@@ -54,8 +54,8 @@ export function ActionMessage({ actions, onComplete }: ActionMessageProps) {
           ) : (
             <>
               <ChevronDown className="mr-1 size-4" />
-              Show {actions.length - 1} more{" "}
-              {actions.length - 1 === 1 ? "action" : "actions"}
+              Show {actions.length - 1} more{' '}
+              {actions.length - 1 === 1 ? 'action' : 'actions'}
             </>
           )}
         </Button>

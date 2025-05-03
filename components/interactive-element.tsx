@@ -1,24 +1,24 @@
-import { Button } from "./ui/button";
-import { FundButton } from "@coinbase/onchainkit/fund";
-import { ConnectButton } from "./connect-button-new";
-import { useCallback } from "react";
-import type { UserAction, ActionData } from "@/lib/utils/message-helpers";
-import { useChatContext } from "@/contexts/chat-context";
-import { StarterKitCheckout } from "./starter-kit-checkout";
-import { NFTCard } from "@coinbase/onchainkit/nft";
-import { NFTMedia, NFTNetwork, NFTTitle } from "@coinbase/onchainkit/nft/view";
-import { ActionMessage } from "./chat/action-message";
-import { WalletSetupCompact } from "./chat/wallet-setup-compact";
-import { FarcasterActionCardCompact } from "./chat/farcaster-action-card-compact";
-import { LensActionCardCompact } from "./chat/lens-action-card-compact";
+import { Button } from './ui/button';
+import { FundButton } from '@coinbase/onchainkit/fund';
+import { ConnectButton } from './connect-button-new';
+import { useCallback } from 'react';
+import type { UserAction, ActionData } from '@/lib/utils/message-helpers';
+import { useChatContext } from '@/contexts/chat-context';
+import { StarterKitCheckout } from './starter-kit-checkout';
+import { NFTCard } from '@coinbase/onchainkit/nft';
+import { NFTMedia, NFTNetwork, NFTTitle } from '@coinbase/onchainkit/nft/view';
+import { ActionMessage } from './chat/action-message';
+import { WalletSetupCompact } from './chat/wallet-setup-compact';
+import { FarcasterActionCardCompact } from './chat/farcaster-action-card-compact';
+import { LensActionCardCompact } from './chat/lens-action-card-compact';
 // Removed import for unused component
-import { BaseActionMessage } from "./chat/base-action-message";
-import { OptimismActionHandler } from "./chat/optimism-action-handler";
-import { CeloActionHandler } from "./chat/celo-action-handler";
-import { CeloCkesActionHandler } from "./chat/celo-ckes-action-handler";
-import { CeloCcopActionHandler } from "./chat/celo-ccop-action-handler";
-import { CeloPusoActionHandler } from "./chat/celo-puso-action-handler";
-import { PolygonActionHandler } from "./chat/polygon-action-handler";
+import { BaseActionMessage } from './chat/base-action-message';
+import { OptimismActionHandler } from './chat/optimism-action-handler';
+import { CeloActionHandler } from './chat/celo-action-handler';
+import { CeloCkesActionHandler } from './chat/celo-ckes-action-handler';
+import { CeloCcopActionHandler } from './chat/celo-ccop-action-handler';
+import { CeloPusoActionHandler } from './chat/celo-puso-action-handler';
+import { PolygonActionHandler } from './chat/polygon-action-handler';
 
 interface ActionButtonsProps {
   args: Array<Record<string, any>>;
@@ -31,11 +31,11 @@ function ActionButtons({ args, chatId }: ActionButtonsProps) {
   const handleSelect = useCallback(
     (option: Record<string, any>) => {
       append({
-        role: "user",
+        role: 'user',
         content: option.label,
       });
     },
-    [append]
+    [append],
   );
 
   return (
@@ -43,7 +43,7 @@ function ActionButtons({ args, chatId }: ActionButtonsProps) {
       {args.map((arg) => (
         <Button
           key={arg.value}
-          variant={arg.value === "selected" ? "default" : "outline"}
+          variant={arg.value === 'selected' ? 'default' : 'outline'}
           onClick={() => handleSelect(arg)}
           className="justify-start"
         >
@@ -75,69 +75,69 @@ export function InteractiveElement({
   const handleAction = useCallback(
     (message: string) => {
       append({
-        role: "user",
+        role: 'user',
         content: message,
       });
     },
-    [append]
+    [append],
   );
 
   // Find the first action that matches each type
   const connectWalletAction = actions.find(
-    (a) => a.action === "connect-wallet"
+    (a) => a.action === 'connect-wallet',
   );
-  const fundWalletAction = actions.find((a) => a.action === "fund-wallet");
+  const fundWalletAction = actions.find((a) => a.action === 'fund-wallet');
   const buyStarterKitAction = actions.find(
-    (a) => a.action === "buy-starter-kit"
+    (a) => a.action === 'buy-starter-kit',
   );
   const giftStarterKitAction = actions.find(
-    (a) => a.action === "gift-starter-kit"
+    (a) => a.action === 'gift-starter-kit',
   );
-  const transactionAction = actions.find((a) => a.action === "transaction");
-  const optionsAction = actions.find((a) => a.action === "options");
-  const helpAction = actions.find((a) => a.action === "help");
-  const showNftActions = actions.filter((a) => a.action === "show-nft");
-  const actionCardActions = actions.filter((a) => a.action === "action-card");
-  const setupWalletAction = actions.find((a) => a.action === "setup-wallet");
-  const baseAction = actions.find((a) => a.action === "base-action");
-  const optimismAction = actions.find((a) => a.action === "optimism-action");
-  const farcasterAction = actions.find((a) => a.action === "farcaster-action");
-  const lensAction = actions.find((a) => a.action === "lens-action");
+  const transactionAction = actions.find((a) => a.action === 'transaction');
+  const optionsAction = actions.find((a) => a.action === 'options');
+  const helpAction = actions.find((a) => a.action === 'help');
+  const showNftActions = actions.filter((a) => a.action === 'show-nft');
+  const actionCardActions = actions.filter((a) => a.action === 'action-card');
+  const setupWalletAction = actions.find((a) => a.action === 'setup-wallet');
+  const baseAction = actions.find((a) => a.action === 'base-action');
+  const optimismAction = actions.find((a) => a.action === 'optimism-action');
+  const farcasterAction = actions.find((a) => a.action === 'farcaster-action');
+  const lensAction = actions.find((a) => a.action === 'lens-action');
   // Also check for Farcaster/Lens actions in action-card format
   // Remove any Farcaster/Lens actions from actionCardActions to avoid duplication
   const farcasterActionCard = actionCardActions.find(
-    (a) => a.args?.[0]?.chain === "FARCASTER"
+    (a) => a.args?.[0]?.chain === 'FARCASTER',
   );
   const lensActionCard = actionCardActions.find(
-    (a) => a.args?.[0]?.title === "Set up Lens Account"
+    (a) => a.args?.[0]?.title === 'Set up Lens Account',
   );
 
   // Find Base action card
   const baseActionCard = actionCardActions.find(
-    (a) => a.args?.[0]?.title === "Swap to USDbC on Aerodrome"
+    (a) => a.args?.[0]?.title === 'Swap to USDbC on Aerodrome',
   );
 
   // Find Optimism action card
   const optimismActionCard = actionCardActions.find(
-    (a) => a.args?.[0]?.title === "Swap to EURA on Velodrome"
+    (a) => a.args?.[0]?.title === 'Swap to EURA on Velodrome',
   );
 
   // Find Celo action card
   const celoActionCard = actionCardActions.find(
-    (a) => a.args?.[0]?.chain === "CELO"
+    (a) => a.args?.[0]?.chain === 'CELO',
   );
 
   // Find Polygon action card
   const polygonActionCard = actionCardActions.find(
-    (a) => a.args?.[0]?.chain === "POLYGON"
+    (a) => a.args?.[0]?.chain === 'POLYGON',
   );
 
   // Find dedicated Celo actions
-  const celoAction = actions.find((a) => a.action === "celo-action");
-  const celoCkesAction = actions.find((a) => a.action === "celo-ckes-action");
-  const celoCcopAction = actions.find((a) => a.action === "celo-ccop-action");
-  const celoPusoAction = actions.find((a) => a.action === "celo-puso-action");
-  const polygonAction = actions.find((a) => a.action === "polygon-action");
+  const celoAction = actions.find((a) => a.action === 'celo-action');
+  const celoCkesAction = actions.find((a) => a.action === 'celo-ckes-action');
+  const celoCcopAction = actions.find((a) => a.action === 'celo-ccop-action');
+  const celoPusoAction = actions.find((a) => a.action === 'celo-puso-action');
+  const polygonAction = actions.find((a) => a.action === 'polygon-action');
 
   // Filter out Farcaster, Lens, Base, Optimism, Celo, and Polygon actions from actionCardActions to avoid duplication
   const filteredActionCards = actionCardActions.filter(
@@ -147,7 +147,7 @@ export function InteractiveElement({
       a !== baseActionCard &&
       a !== optimismActionCard &&
       a !== celoActionCard &&
-      a !== polygonActionCard
+      a !== polygonActionCard,
   );
 
   return (
@@ -159,7 +159,7 @@ export function InteractiveElement({
       {buyStarterKitAction && (
         <StarterKitCheckout
           onSuccess={() => {
-            console.log("successfully bought a starter kit");
+            console.log('successfully bought a starter kit');
           }}
         />
       )}
@@ -168,7 +168,7 @@ export function InteractiveElement({
         <StarterKitCheckout
           isGift={true}
           onSuccess={() => {
-            console.log("successfully bought a starter kit as a gift");
+            console.log('successfully bought a starter kit as a gift');
           }}
         />
       )}
@@ -218,7 +218,7 @@ export function InteractiveElement({
       {filteredActionCards.length > 0 && (
         <ActionMessage
           actions={filteredActionCards.map(
-            (action) => action.args?.[0] as ActionData
+            (action) => action.args?.[0] as ActionData,
           )}
           onComplete={() => {
             handleAction("I've completed the action!");
@@ -234,40 +234,40 @@ export function InteractiveElement({
           title={
             farcasterAction?.args?.[0]?.title ||
             farcasterActionCard?.args?.[0]?.title ||
-            "Set up a Farcaster account"
+            'Set up a Farcaster account'
           }
           description={
             farcasterAction?.args?.[0]?.description ||
             farcasterActionCard?.args?.[0]?.description ||
-            "Create a Farcaster account and join the decentralized social network"
+            'Create a Farcaster account and join the decentralized social network'
           }
           steps={
             farcasterAction?.args?.[0]?.steps ||
             farcasterActionCard?.args?.[0]?.steps || [
-              "Go to https://www.farcaster.xyz on mobile and sign up",
-              "Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC",
-              "Say hi to @papa as your first cast and he will send you starter packs",
+              'Go to https://www.farcaster.xyz on mobile and sign up',
+              'Use an invite code e.g. EC235BN6F, MFRACUEJK, T3QOBXWTC',
+              'Say hi to @papa as your first cast and he will send you starter packs',
             ]
           }
           reward={
             farcasterAction?.args?.[0]?.reward ||
             farcasterActionCard?.args?.[0]?.reward ||
-            "Starter packs from @papa"
+            'Starter packs from @papa'
           }
           actionUrl={
             farcasterAction?.args?.[0]?.actionUrl ||
             farcasterActionCard?.args?.[0]?.actionUrl ||
-            "https://www.farcaster.xyz"
+            'https://www.farcaster.xyz'
           }
           proofFieldLabel={
             farcasterAction?.args?.[0]?.proofFieldLabel ||
             farcasterActionCard?.args?.[0]?.proofFieldLabel ||
-            "Your Warpcast URL"
+            'Your Warpcast URL'
           }
           proofFieldPlaceholder={
             farcasterAction?.args?.[0]?.proofFieldPlaceholder ||
             farcasterActionCard?.args?.[0]?.proofFieldPlaceholder ||
-            "https://warpcast.com/yourusername/0x..."
+            'https://warpcast.com/yourusername/0x...'
           }
           onComplete={() => {
             handleAction("I've completed the Farcaster action!");
@@ -325,63 +325,63 @@ export function InteractiveElement({
         <LensActionCardCompact
           title={
             lensAction?.args?.[0]?.title ||
-            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === 'string'
               ? JSON.parse(lensAction.args[0]).title
               : undefined) ||
             lensActionCard?.args?.[0]?.title ||
-            "Set up a Lens account"
+            'Set up a Lens account'
           }
           description={
             lensAction?.args?.[0]?.description ||
-            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === 'string'
               ? JSON.parse(lensAction.args[0]).description
               : undefined) ||
             lensActionCard?.args?.[0]?.description ||
-            "Create a Lens account and join the decentralized social network"
+            'Create a Lens account and join the decentralized social network'
           }
           steps={
             lensAction?.args?.[0]?.steps ||
-            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === 'string'
               ? JSON.parse(lensAction.args[0]).steps
               : undefined) ||
             lensActionCard?.args?.[0]?.steps || [
-              "Go to https://onboarding.lens.xyz and sign up",
-              "Connect your wallet",
-              "Create your profile",
-              "Copy your profile URL (e.g. https://hey.xyz/u/username)",
+              'Go to https://onboarding.lens.xyz and sign up',
+              'Connect your wallet',
+              'Create your profile',
+              'Copy your profile URL (e.g. https://hey.xyz/u/username)',
             ]
           }
           reward={
             lensAction?.args?.[0]?.reward ||
-            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === 'string'
               ? JSON.parse(lensAction.args[0]).reward
               : undefined) ||
             lensActionCard?.args?.[0]?.reward ||
-            "Access to the Lens ecosystem"
+            'Access to the Lens ecosystem'
           }
           actionUrl={
             lensAction?.args?.[0]?.actionUrl ||
-            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === 'string'
               ? JSON.parse(lensAction.args[0]).actionUrl
               : undefined) ||
             lensActionCard?.args?.[0]?.actionUrl ||
-            "https://onboarding.lens.xyz"
+            'https://onboarding.lens.xyz'
           }
           proofFieldLabel={
             lensAction?.args?.[0]?.proofFieldLabel ||
-            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === 'string'
               ? JSON.parse(lensAction.args[0]).proofFieldLabel
               : undefined) ||
             lensActionCard?.args?.[0]?.proofFieldLabel ||
-            "Your Lens Profile URL"
+            'Your Lens Profile URL'
           }
           proofFieldPlaceholder={
             lensAction?.args?.[0]?.proofFieldPlaceholder ||
-            (lensAction?.args?.[0] && typeof lensAction.args[0] === "string"
+            (lensAction?.args?.[0] && typeof lensAction.args[0] === 'string'
               ? JSON.parse(lensAction.args[0]).proofFieldPlaceholder
               : undefined) ||
             lensActionCard?.args?.[0]?.proofFieldPlaceholder ||
-            "https://hey.xyz/u/yourusername"
+            'https://hey.xyz/u/yourusername'
           }
           onComplete={() => {
             handleAction("I've completed the Lens action!");

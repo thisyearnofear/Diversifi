@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db/queries";
-import { action } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db/queries';
+import { action } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 const categoryToChain = {
-  "social-actions": "BASE",
-  "stable-actions": "CELO",
-  "global-actions": "ETHEREUM",
+  'social-actions': 'BASE',
+  'stable-actions': 'CELO',
+  'global-actions': 'ETHEREUM',
 } as const;
 
 export async function GET(request: Request, context: any) {
@@ -16,13 +16,13 @@ export async function GET(request: Request, context: any) {
       categoryToChain[params.category as keyof typeof categoryToChain];
 
     if (!chain) {
-      return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function GET(request: Request, context: any) {
     const errorMessage =
       error instanceof Error
         ? error.message
-        : "Failed to get actions by category";
+        : 'Failed to get actions by category';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

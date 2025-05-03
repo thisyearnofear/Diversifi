@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { fundWalletFromFaucet } from "@/lib/web3/wallet-service";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { wallet } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { fundWalletFromFaucet } from '@/lib/web3/wallet-service';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { wallet } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function POST() {
   try {
@@ -12,15 +12,15 @@ export async function POST() {
 
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -32,8 +32,8 @@ export async function POST() {
 
     if (userWallets.length === 0) {
       return NextResponse.json(
-        { error: "User does not have a wallet" },
-        { status: 404 }
+        { error: 'User does not have a wallet' },
+        { status: 404 },
       );
     }
 
@@ -52,15 +52,15 @@ export async function POST() {
 
     return NextResponse.json(
       {
-        message: "Wallet funded successfully",
+        message: 'Wallet funded successfully',
         transaction: fundingResult,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    console.error("Error funding wallet:", error);
+    console.error('Error funding wallet:', error);
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to fund wallet";
+      error instanceof Error ? error.message : 'Failed to fund wallet';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

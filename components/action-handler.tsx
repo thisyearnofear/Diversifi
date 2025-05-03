@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { eventBus, EVENTS } from "@/lib/events";
-import { toast } from "sonner";
-import { useChatContext } from "@/contexts/chat-context";
-import { useAuth } from "@/hooks/use-auth";
+import { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { eventBus, EVENTS } from '@/lib/events';
+import { toast } from 'sonner';
+import { useChatContext } from '@/contexts/chat-context';
+import { useAuth } from '@/hooks/use-auth';
 
 export function ActionHandler() {
   const { append } = useChatContext();
@@ -14,7 +14,7 @@ export function ActionHandler() {
   const { isAuthenticated } = useAuth();
 
   // Check if we're in a chat
-  const isInChat = pathname?.startsWith("/chat/");
+  const isInChat = pathname?.startsWith('/chat/');
 
   useEffect(() => {
     const unsubscribe = eventBus.on(
@@ -24,14 +24,14 @@ export function ActionHandler() {
 
         if (message) {
           // If we're not in a chat, we need to navigate to home first
-          if (!isInChat && pathname !== "/") {
+          if (!isInChat && pathname !== '/') {
             // We'll handle this in the sidebar component
             return;
           }
 
           // If we're authenticated, update the URL
           if (isAuthenticated) {
-            window.history.replaceState({}, "", pathname);
+            window.history.replaceState({}, '', pathname);
           }
 
           // Show toast notification
@@ -39,11 +39,11 @@ export function ActionHandler() {
 
           // Append the message directly to the chat
           await append({
-            role: "user",
+            role: 'user',
             content: message,
           });
         }
-      }
+      },
     );
 
     return () => {

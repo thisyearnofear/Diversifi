@@ -1,39 +1,39 @@
-import { db } from "../queries";
-import { action } from "../schema";
-import { eq } from "drizzle-orm";
-import type { InferInsertModel } from "drizzle-orm";
+import { db } from '../queries';
+import { action } from '../schema';
+import { eq } from 'drizzle-orm';
+import type { InferInsertModel } from 'drizzle-orm';
 
 type ActionInsert = InferInsertModel<typeof action>;
 
-const polygonActions: Omit<ActionInsert, "id" | "createdAt" | "updatedAt">[] = [
+const polygonActions: Omit<ActionInsert, 'id' | 'createdAt' | 'updatedAt'>[] = [
   {
-    title: "Get DAI Stablecoins",
-    description: "Secure USD-backed tokens on Polygon",
-    category: "STABLECOIN",
-    chain: "POLYGON",
-    difficulty: "BEGINNER",
-    prerequisites: ["Wallet with MATIC"],
+    title: 'Get DAI Stablecoins',
+    description: 'Secure USD-backed tokens on Polygon',
+    category: 'STABLECOIN',
+    chain: 'POLYGON',
+    difficulty: 'BEGINNER',
+    prerequisites: ['Wallet with MATIC'],
     steps: [
-      "Register on Polygon to unlock features",
-      "Switch to the Polygon network",
-      "Set the amount of MATIC to swap",
-      "Execute the swap transaction",
-      "Wait for the transaction to complete"
+      'Register on Polygon to unlock features',
+      'Switch to the Polygon network',
+      'Set the amount of MATIC to swap',
+      'Execute the swap transaction',
+      'Wait for the transaction to complete',
     ],
     rewards: [
       {
-        type: "TOKEN",
-        description: "Access to DAI stablecoins on Polygon"
-      }
+        type: 'TOKEN',
+        description: 'Access to DAI stablecoins on Polygon',
+      },
     ],
   },
 ];
 
 export async function seedPolygonActions() {
-  console.log("Seeding Polygon actions...");
+  console.log('Seeding Polygon actions...');
 
   if (!db) {
-    console.warn("⚠️ Database not available. Cannot seed Polygon actions.");
+    console.warn('⚠️ Database not available. Cannot seed Polygon actions.');
     return;
   }
 
@@ -56,5 +56,5 @@ export async function seedPolygonActions() {
     }
   }
 
-  console.log("Polygon action seeding complete!");
+  console.log('Polygon action seeding complete!');
 }

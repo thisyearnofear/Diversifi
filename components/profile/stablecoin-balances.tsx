@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Globe,
   MapPin,
@@ -10,23 +10,23 @@ import {
   Euro,
   Gem,
   Loader2,
-} from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { UserProfile } from "./user-profile";
-import { useRegion, type Region } from "@/contexts/region-context";
-import { Badge } from "@/components/ui/badge";
-import { DiversifiVisualizer } from "./diversifi-visualizer";
-import { getAvailableTokensByRegion } from "@/lib/tokens/token-data";
-import { useTokenBalances, TOKEN_REGIONS } from "@/hooks/use-token-balances";
+} from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { UserProfile } from './user-profile';
+import { useRegion, type Region } from '@/contexts/region-context';
+import { Badge } from '@/components/ui/badge';
+import { DiversifiVisualizer } from './diversifi-visualizer';
+import { getAvailableTokensByRegion } from '@/lib/tokens/token-data';
+import { useTokenBalances, TOKEN_REGIONS } from '@/hooks/use-token-balances';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 // Region data with icons and colors
 const regions: {
@@ -35,27 +35,27 @@ const regions: {
   icon: React.ElementType;
   color: string;
 }[] = [
-  { id: "All", name: "All Regions", icon: Globe, color: "text-blue-500" },
-  { id: "Africa", name: "Africa", icon: MapPin, color: "text-green-500" },
-  { id: "Europe", name: "Europe", icon: Euro, color: "text-blue-500" },
-  { id: "USA", name: "USA", icon: DollarSign, color: "text-red-500" },
+  { id: 'All', name: 'All Regions', icon: Globe, color: 'text-blue-500' },
+  { id: 'Africa', name: 'Africa', icon: MapPin, color: 'text-green-500' },
+  { id: 'Europe', name: 'Europe', icon: Euro, color: 'text-blue-500' },
+  { id: 'USA', name: 'USA', icon: DollarSign, color: 'text-red-500' },
   {
-    id: "LatAm",
-    name: "Latin America",
+    id: 'LatAm',
+    name: 'Latin America',
     icon: Banknote,
-    color: "text-yellow-500",
+    color: 'text-yellow-500',
   },
-  { id: "Asia", name: "Asia", icon: Coins, color: "text-purple-500" },
-  { id: "RWA", name: "Real World Assets", icon: Gem, color: "text-amber-500" },
+  { id: 'Asia', name: 'Asia', icon: Coins, color: 'text-purple-500' },
+  { id: 'RWA', name: 'Real World Assets', icon: Gem, color: 'text-amber-500' },
 ];
 
 // Helper function to format balance for display
 const formatBalance = (balance: string): string => {
-  if (!balance || balance === "NaN") return "0.00";
+  if (!balance || balance === 'NaN') return '0.00';
 
-  const num = parseFloat(balance);
-  if (isNaN(num)) return "0.00";
-  if (num === 0) return "0.00";
+  const num = Number.parseFloat(balance);
+  if (Number.isNaN(num)) return '0.00';
+  if (num === 0) return '0.00';
 
   // Handle very small values
   if (num < 0.01) {
@@ -73,29 +73,29 @@ const formatBalance = (balance: string): string => {
 
 // Helper function to format percentage
 const formatPercentage = (amount: number, total: number): string => {
-  if (total === 0 || amount === 0) return "0%";
+  if (total === 0 || amount === 0) return '0%';
   const percentage = (amount / total) * 100;
-  if (percentage < 0.1) return "<0.1%";
+  if (percentage < 0.1) return '<0.1%';
   return `${percentage.toFixed(1)}%`;
 };
 
 // Helper functions for DiversiFi component
 const getRegionColor = (region: string): string => {
   switch (region) {
-    case "USA":
-      return "bg-red-400 dark:bg-red-600";
-    case "Europe":
-      return "bg-blue-400 dark:bg-blue-600";
-    case "Africa":
-      return "bg-green-400 dark:bg-green-600";
-    case "LatAm":
-      return "bg-yellow-400 dark:bg-yellow-600";
-    case "Asia":
-      return "bg-purple-400 dark:bg-purple-600";
-    case "RWA":
-      return "bg-amber-400 dark:bg-amber-600";
+    case 'USA':
+      return 'bg-red-400 dark:bg-red-600';
+    case 'Europe':
+      return 'bg-blue-400 dark:bg-blue-600';
+    case 'Africa':
+      return 'bg-green-400 dark:bg-green-600';
+    case 'LatAm':
+      return 'bg-yellow-400 dark:bg-yellow-600';
+    case 'Asia':
+      return 'bg-purple-400 dark:bg-purple-600';
+    case 'RWA':
+      return 'bg-amber-400 dark:bg-amber-600';
     default:
-      return "bg-gray-400 dark:bg-gray-600";
+      return 'bg-gray-400 dark:bg-gray-600';
   }
 };
 
@@ -104,21 +104,21 @@ const calculateRegionTotals = (
   balances: Record<
     string,
     { amount: string; value: number; loading: boolean; error: string | null }
-  >
+  >,
 ) => {
   const totals: Record<string, number> = {};
   let totalValue = 0;
 
   // Initialize all regions with 0
   Object.keys(TOKEN_REGIONS).forEach((region) => {
-    if (region !== "All") {
+    if (region !== 'All') {
       totals[region] = 0;
     }
   });
 
   // Calculate totals for each region
   Object.entries(TOKEN_REGIONS).forEach(([region, tokens]) => {
-    if (region !== "All") {
+    if (region !== 'All') {
       tokens.forEach((token) => {
         if (balances[token]) {
           totals[region] += balances[token].value;
@@ -145,7 +145,7 @@ function DiversiScore({
         <Tooltip>
           <TooltipTrigger asChild>
             <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded cursor-pointer">
-              DiversiScore{hasData && score !== null ? `: ${score}/10` : ""}
+              DiversiScore{hasData && score !== null ? `: ${score}/10` : ''}
             </span>
           </TooltipTrigger>
           <TooltipContent side="top" className="text-xs">
@@ -279,35 +279,35 @@ function DesktopStablecoinBalances({
                 key={region.id}
                 onClick={() => setSelectedRegion(region.id)}
                 className={cn(
-                  "flex items-center gap-1.5 text-sm p-2 rounded-md transition-colors",
+                  'flex items-center gap-1.5 text-sm p-2 rounded-md transition-colors',
                   selectedRegion === region.id
-                    ? region.id === "Africa"
-                      ? "bg-green-100 dark:bg-green-900/30 font-medium"
-                      : region.id === "Europe"
-                      ? "bg-blue-100 dark:bg-blue-900/30 font-medium"
-                      : region.id === "USA"
-                      ? "bg-red-100 dark:bg-red-900/30 font-medium"
-                      : region.id === "LatAm"
-                      ? "bg-yellow-100 dark:bg-yellow-900/30 font-medium"
-                      : region.id === "Asia"
-                      ? "bg-purple-100 dark:bg-purple-900/30 font-medium"
-                      : region.id === "RWA"
-                      ? "bg-amber-100 dark:bg-amber-900/30 font-medium"
-                      : "bg-blue-100 dark:bg-blue-900/30 font-medium"
-                    : "hover:bg-muted"
+                    ? region.id === 'Africa'
+                      ? 'bg-green-100 dark:bg-green-900/30 font-medium'
+                      : region.id === 'Europe'
+                        ? 'bg-blue-100 dark:bg-blue-900/30 font-medium'
+                        : region.id === 'USA'
+                          ? 'bg-red-100 dark:bg-red-900/30 font-medium'
+                          : region.id === 'LatAm'
+                            ? 'bg-yellow-100 dark:bg-yellow-900/30 font-medium'
+                            : region.id === 'Asia'
+                              ? 'bg-purple-100 dark:bg-purple-900/30 font-medium'
+                              : region.id === 'RWA'
+                                ? 'bg-amber-100 dark:bg-amber-900/30 font-medium'
+                                : 'bg-blue-100 dark:bg-blue-900/30 font-medium'
+                    : 'hover:bg-muted',
                 )}
                 title={`${region.name} - ${availableCount} available tokens`}
               >
-                <region.icon className={cn("size-4", region.color)} />
+                <region.icon className={cn('size-4', region.color)} />
                 <span>{region.name}</span>
                 {availableCount > 0 && (
                   <Badge
                     variant="outline"
                     className={cn(
-                      "text-xs px-1 py-0 h-5 ml-1",
+                      'text-xs px-1 py-0 h-5 ml-1',
                       selectedRegion === region.id
-                        ? "bg-primary/20 border-primary/30"
-                        : "bg-muted border-muted-foreground/20"
+                        ? 'bg-primary/20 border-primary/30'
+                        : 'bg-muted border-muted-foreground/20',
                     )}
                   >
                     {availableCount}
@@ -327,12 +327,12 @@ function DesktopStablecoinBalances({
             <h3 className="font-medium">Stablecoin Portfolio</h3>
           </div>
         </div>
-        {selectedRegion === "All" && (
+        {selectedRegion === 'All' && (
           <>
             <DiversiScore score={diversiScore} hasData={hasBalanceData} />
             <div className="my-4 min-h-[300px] flex flex-col items-center justify-center">
               {isLoading ? (
-                <div className="flex flex-col items-center justify-center h-full w-full">
+                <div className="flex flex-col items-center justify-center size-full">
                   <Loader2 className="animate-spin mb-2 size-8 text-blue-400" />
                   <span className="text-sm text-gray-500">
                     Loading portfolio data...
@@ -350,18 +350,18 @@ function DesktopStablecoinBalances({
                 disabled={isLoading}
               >
                 <Loader2
-                  className={cn("size-4 mr-2", isLoading ? "animate-spin" : "")}
+                  className={cn('size-4 mr-2', isLoading ? 'animate-spin' : '')}
                 />
-                {isLoading ? "Refreshing..." : "Refresh Data"}
+                {isLoading ? 'Refreshing...' : 'Refresh Data'}
               </Button>
             </div>
             <div className="flex justify-end mt-2">
               <button
                 onClick={toggleBalanceVisibility}
                 className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                title={showBalances ? "Hide balances" : "Show balances"}
+                title={showBalances ? 'Hide balances' : 'Show balances'}
               >
-                {showBalances ? "Hide" : "Show"}
+                {showBalances ? 'Hide' : 'Show'}
               </button>
             </div>
           </>
@@ -388,7 +388,7 @@ function DesktopStablecoinBalances({
         {/* Balances Loaded - All Regions View */}
         {!isLoading &&
           Object.keys(balances).length > 0 &&
-          selectedRegion === "All" && (
+          selectedRegion === 'All' && (
             <div>
               {/* Region List with Balances */}
               {(() => {
@@ -396,7 +396,7 @@ function DesktopStablecoinBalances({
                 // Get all regions, not just ones with balances
                 // Exclude 'All' and 'RWA' (empty region)
                 const allRegions = Object.keys(TOKEN_REGIONS).filter(
-                  (r) => r !== "All" && r !== "RWA"
+                  (r) => r !== 'All' && r !== 'RWA',
                 );
 
                 // If no balances at all, show a message
@@ -422,9 +422,9 @@ function DesktopStablecoinBalances({
                         >
                           <div
                             className={`w-1 h-full rounded-full ${getRegionColor(
-                              region
+                              region,
                             )}`}
-                            style={{ height: "24px" }}
+                            style={{ height: '24px' }}
                           />
                           <div className="flex-1">
                             <div className="flex justify-between items-center">
@@ -448,15 +448,15 @@ function DesktopStablecoinBalances({
         {/* Balances Loaded - Specific Region View */}
         {!isLoading &&
           Object.keys(balances).length > 0 &&
-          selectedRegion !== "All" && (
+          selectedRegion !== 'All' && (
             <div>
               {/* Region Header */}
               <div className="flex items-center gap-2 p-2 rounded-md bg-gray-50 dark:bg-gray-800/50 mb-4">
                 <div
                   className={`w-1 h-full rounded-full ${getRegionColor(
-                    selectedRegion
+                    selectedRegion,
                   )}`}
-                  style={{ height: "24px" }}
+                  style={{ height: '24px' }}
                 />
                 <div className="flex-1">
                   <div className="flex justify-between items-center">
@@ -502,18 +502,18 @@ function DesktopStablecoinBalances({
                         <span className="font-medium">{token}</span>
                         <span>
                           {(() => {
-                            if (!tokenData) return "0.00";
+                            if (!tokenData) return '0.00';
 
                             if (!showBalances) {
                               // Calculate token's percentage of region total
                               const { totals } =
                                 calculateRegionTotals(balances);
                               const regionTotal = totals[selectedRegion] || 0;
-                              if (regionTotal === 0) return "0%";
+                              if (regionTotal === 0) return '0%';
 
                               return formatPercentage(
                                 tokenData.value,
-                                regionTotal
+                                regionTotal,
                               );
                             }
 
@@ -563,9 +563,9 @@ export function StablecoinBalances() {
   const { selectedRegion, setSelectedRegion } = useRegion();
   const { balances, isLoading, refreshBalances } = useTokenBalances();
   const [showBalances, setShowBalances] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("showBalances");
-      return stored === null ? true : stored === "true";
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('showBalances');
+      return stored === null ? true : stored === 'true';
     }
     return true;
   });
@@ -581,7 +581,7 @@ export function StablecoinBalances() {
 
       // Count regions with non-zero balances
       const activeRegionsCount = Object.values(totals).filter(
-        (v) => v > 0
+        (v) => v > 0,
       ).length;
 
       // Check if we have any actual balance data
@@ -604,8 +604,8 @@ export function StablecoinBalances() {
   const toggleBalanceVisibility = () => {
     const newValue = !showBalances;
     setShowBalances(newValue);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("showBalances", String(newValue));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('showBalances', String(newValue));
     }
   };
 

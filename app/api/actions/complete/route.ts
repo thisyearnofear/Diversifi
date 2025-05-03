@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { getDb } from "@/lib/db/connection";
-import { userAction, userReward, action } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { getDb } from '@/lib/db/connection';
+import { userAction, userReward, action } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -15,16 +15,16 @@ export async function POST(request: Request) {
 
     if (!actionId && !title) {
       return NextResponse.json(
-        { error: "Either actionId or title is required" },
-        { status: 400 }
+        { error: 'Either actionId or title is required' },
+        { status: 400 },
       );
     }
 
     const db = getDb();
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -41,27 +41,29 @@ export async function POST(request: Request) {
         if (actions.length > 0) {
           actionIdToUse = actions[0].id;
         } else {
-          console.log(`Action with title "${title}" not found, creating a synthetic record`);
+          console.log(
+            `Action with title "${title}" not found, creating a synthetic record`,
+          );
           // List of all known actions that might not be in the database yet
           const knownActions = [
             // Registration actions
-            "Register on Optimism",
-            "Register on Celo",
-            "Register on Polygon",
-            "Register on Base",
+            'Register on Optimism',
+            'Register on Celo',
+            'Register on Polygon',
+            'Register on Base',
 
             // Stablecoin actions
-            "Get EURA Stablecoins",
-            "Get cKES Stablecoins",
-            "Get cCOP Stablecoins",
-            "Get PUSO Stablecoins",
-            "Get cUSD Stablecoins",
-            "Get DAI Stablecoins",
-            "Get USDbC Stablecoins",
+            'Get EURA Stablecoins',
+            'Get cKES Stablecoins',
+            'Get cCOP Stablecoins',
+            'Get PUSO Stablecoins',
+            'Get cUSD Stablecoins',
+            'Get DAI Stablecoins',
+            'Get USDbC Stablecoins',
 
             // Social actions
-            "Set Up Lens Account",
-            "Set Up Farcaster Account"
+            'Set Up Lens Account',
+            'Set Up Farcaster Account',
           ];
 
           // For known actions, we'll create a synthetic record
@@ -69,14 +71,17 @@ export async function POST(request: Request) {
             // Create a synthetic ID for these known actions
             actionIdToUse = `synthetic-${title.replace(/\s+/g, '-').toLowerCase()}`;
           } else {
-            return NextResponse.json({ error: "Action not found" }, { status: 404 });
+            return NextResponse.json(
+              { error: 'Action not found' },
+              { status: 404 },
+            );
           }
         }
       } catch (error) {
-        console.error("Error finding action by title:", error);
+        console.error('Error finding action by title:', error);
         return NextResponse.json(
-          { error: "Failed to find action by title" },
-          { status: 500 }
+          { error: 'Failed to find action by title' },
+          { status: 500 },
         );
       }
     }
@@ -88,18 +93,18 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(userAction.userId, session.user.id),
-          eq(userAction.actionId, actionIdToUse)
-        )
+          eq(userAction.actionId, actionIdToUse),
+        ),
       )
       .limit(1);
 
     if (
       existingUserAction.length > 0 &&
-      existingUserAction[0].status === "COMPLETED"
+      existingUserAction[0].status === 'COMPLETED'
     ) {
       return NextResponse.json(
-        { error: "Action already completed" },
-        { status: 400 }
+        { error: 'Action already completed' },
+        { status: 400 },
       );
     }
 
@@ -110,7 +115,7 @@ export async function POST(request: Request) {
       await db
         .update(userAction)
         .set({
-          status: "COMPLETED",
+          status: 'COMPLETED',
           completedAt: now,
           proof: proof || null,
           updatedAt: now,
@@ -120,7 +125,7 @@ export async function POST(request: Request) {
       await db.insert(userAction).values({
         userId: session.user.id,
         actionId: actionIdToUse,
-        status: "COMPLETED",
+        status: 'COMPLETED',
         startedAt: now,
         completedAt: now,
         proof: proof || null,
@@ -154,9 +159,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in /api/actions/complete:", error);
+    console.error('Error in /api/actions/complete:', error);
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to complete action";
+      error instanceof Error ? error.message : 'Failed to complete action';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

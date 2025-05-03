@@ -1,10 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import { PolygonDivviRegistrationCardCompact } from "./polygon-divvi-registration-card-compact";
-import { PolygonSwapCardCompact } from "./polygon-swap-card-compact";
-import { usePolygonDivviRegistration } from "@/hooks/use-polygon-divvi-registration";
-import { usePolygonDaiSwap } from "@/hooks/use-polygon-dai-swap";
+'use client';
+import { PolygonDivviRegistrationCardCompact } from './polygon-divvi-registration-card-compact';
+import { PolygonSwapCardCompact } from './polygon-swap-card-compact';
+import { usePolygonDivviRegistration } from '@/hooks/use-polygon-divvi-registration';
+import { usePolygonDaiSwap } from '@/hooks/use-polygon-dai-swap';
 
 interface PolygonActionMessageProps {
   onComplete?: () => void;
@@ -25,12 +23,12 @@ export function PolygonActionMessage({
   // Actions for getting DAI on Polygon
   const actions = [
     {
-      id: "polygon-divvi-registration",
+      id: 'polygon-divvi-registration',
       component: <PolygonDivviRegistrationCardCompact onComplete={() => {}} />,
       isCompleted: isRegistered,
     },
     {
-      id: "polygon-swap",
+      id: 'polygon-swap',
       component: <PolygonSwapCardCompact onComplete={onComplete} />,
       isCompleted: isSwapCompleted,
     },
@@ -62,7 +60,7 @@ export function PolygonActionMessage({
           <div
             className="h-full bg-purple-500 rounded-full transition-all duration-300 ease-in-out"
             style={{ width: `${progressPercentage}%` }}
-          ></div>
+          />
         </div>
       </div>
 

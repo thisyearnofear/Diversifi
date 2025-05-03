@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/app/auth";
-import { db } from "@/lib/db/queries";
-import { userAction } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { auth } from '@/app/auth';
+import { db } from '@/lib/db/queries';
+import { userAction } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -15,15 +15,15 @@ export async function POST(request: Request) {
 
     if (!actionId) {
       return NextResponse.json(
-        { error: "actionId is required" },
-        { status: 400 }
+        { error: 'actionId is required' },
+        { status: 400 },
       );
     }
 
     if (!db) {
       return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 500 }
+        { error: 'Database connection not available' },
+        { status: 500 },
       );
     }
 
@@ -34,15 +34,15 @@ export async function POST(request: Request) {
       .where(
         and(
           eq(userAction.userId, session.user.id),
-          eq(userAction.actionId, actionId)
-        )
+          eq(userAction.actionId, actionId),
+        ),
       )
       .limit(1);
 
     if (existingUserAction.length > 0) {
       return NextResponse.json(
-        { error: "Action already started" },
-        { status: 400 }
+        { error: 'Action already started' },
+        { status: 400 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     await db.insert(userAction).values({
       userId: session.user.id,
       actionId,
-      status: "IN_PROGRESS",
+      status: 'IN_PROGRESS',
       startedAt: now,
       createdAt: now,
       updatedAt: now,
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to start action";
+      error instanceof Error ? error.message : 'Failed to start action';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

@@ -1,8 +1,8 @@
 'use client';
 
-import { ModelSelector } from "@/components/model-selector";
-import { memo } from "react";
-import { type VisibilityType, VisibilitySelector } from "./visibility-selector";
+import { ModelSelector } from '@/components/model-selector';
+import { memo } from 'react';
+import { type VisibilityType, VisibilitySelector } from './visibility-selector';
 function PureChatHeader({
   chatId,
   selectedModelId,

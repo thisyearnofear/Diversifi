@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileAuthButtons } from "./mobile-auth-buttons";
-import { User, UserCheck } from "lucide-react";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileAuthButtons } from './mobile-auth-buttons';
+import { User, UserCheck } from 'lucide-react';
+import Link from 'next/link';
 
 export function MobileAuthComponent() {
   const [showSuccess, setShowSuccess] = useState(false);
