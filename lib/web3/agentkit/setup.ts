@@ -18,10 +18,16 @@ import { celoActionProvider } from './action-providers/celo';
 import { polygonActionProvider } from './action-providers/polygon';
 
 export const setupAgentKit = async () => {
-  const activeChain =
-    process.env.NEXT_PUBLIC_ACTIVE_CHAIN === 'base'
-      ? 'base-mainnet'
-      : 'base-sepolia';
+  let activeChain = 'celo-mainnet';
+
+  // Determine the active chain based on environment variable
+  if (process.env.NEXT_PUBLIC_ACTIVE_CHAIN === 'base') {
+    activeChain = 'base-mainnet';
+  } else if (process.env.NEXT_PUBLIC_ACTIVE_CHAIN === 'base-sepolia') {
+    activeChain = 'base-sepolia';
+  } else if (process.env.NEXT_PUBLIC_ACTIVE_CHAIN === 'celo') {
+    activeChain = 'celo-mainnet';
+  }
 
   let walletProvider: WalletProvider;
 

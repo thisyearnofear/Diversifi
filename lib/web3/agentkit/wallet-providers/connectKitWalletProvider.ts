@@ -1,5 +1,5 @@
 import { WalletProvider, type Network } from '@coinbase/agentkit';
-import { baseSepolia, base } from 'viem/chains';
+import { baseSepolia, base, celo } from 'viem/chains';
 import {
   getAccount,
   signMessage,
@@ -54,10 +54,18 @@ export class ConnectKitWalletProvider extends WalletProvider {
 
   getNetwork(): Network {
     // Return a Network object as required by the interface
+    let chainId = '84532'; // Default to Base Sepolia
+
+    if (this.networkId === 'base-mainnet') {
+      chainId = '8453'; // Base Mainnet
+    } else if (this.networkId === 'celo-mainnet') {
+      chainId = '42220'; // Celo Mainnet
+    }
+
     return {
       protocolFamily: 'EVM',
       networkId: this.networkId,
-      chainId: this.networkId === 'base-mainnet' ? '8453' : '84532', // Base or Base Sepolia chain ID
+      chainId: chainId,
     };
   }
 
@@ -125,7 +133,15 @@ export class ConnectKitWalletProvider extends WalletProvider {
   }
 
   async getWallet() {
-    const chain = this.networkId === 'base-mainnet' ? base : baseSepolia;
+    let chain;
+    if (this.networkId === 'base-mainnet') {
+      chain = base;
+    } else if (this.networkId === 'celo-mainnet') {
+      chain = celo;
+    } else {
+      chain = baseSepolia;
+    }
+
     let address: `0x${string}` = '0x0000000000000000000000000000000000000000';
 
     try {
