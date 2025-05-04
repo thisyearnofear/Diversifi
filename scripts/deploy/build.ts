@@ -13,7 +13,7 @@ try {
   // Ensure required dependencies are installed
   if (isNetlify) {
     console.log('Installing required dependencies for Netlify build...');
-    execSync('pnpm add -D stream-browserify buffer crypto-browserify util', { stdio: 'inherit' });
+    execSync('pnpm add -D -w stream-browserify buffer crypto-browserify util', { stdio: 'inherit' });
   }
 
   // Skip migrations on Netlify completely

@@ -39,11 +39,14 @@ To deploy this project on Netlify:
 2. Set the build command to `pnpm install --no-frozen-lockfile && pnpm build`
 3. Set the publish directory to `.next`
 4. Add the following environment variables:
-   - `OPENAI_API_KEY`: Your OpenAI API key
-   - `POSTGRES_URL`: Your PostgreSQL connection string (if using database features)
-   - `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`: Your WalletConnect project ID
-   - `BRIAN_API_KEY`: Your Brian API key for Polygon DAI swaps
-   - Other environment variables as needed
+
+Note: If you're adding dependencies during the build process, make sure to use the `-w` flag with pnpm to add them to the workspace root. For example: `pnpm add -D -w package-name`
+
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `POSTGRES_URL`: Your PostgreSQL connection string (if using database features)
+- `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`: Your WalletConnect project ID
+- `BRIAN_API_KEY`: Your Brian API key for Polygon DAI swaps
+- Other environment variables as needed
 
 The build process is configured to skip database migrations during the Netlify build process to avoid connection issues. Instead, you should run migrations manually after deployment using one of these methods:
 
