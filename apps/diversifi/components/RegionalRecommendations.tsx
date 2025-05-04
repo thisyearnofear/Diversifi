@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import type { Region } from "../hooks/use-user-region";
-
-// Region colors for visualization
-const REGION_COLORS: Record<string, string> = {
-  USA: "#4299E1", // blue
-  Europe: "#48BB78", // green
-  LatAm: "#F6AD55", // orange
-  Africa: "#F56565", // red
-  Asia: "#9F7AEA", // purple
-};
+import RegionalIconography, { RegionalPattern } from "./RegionalIconography";
+import { REGION_COLORS } from "../constants/regions";
 
 // Region-specific insights
 const REGION_INSIGHTS: Record<
@@ -168,75 +161,89 @@ export default function RegionalRecommendations({
   const difference = currentAllocations ? calculateDifference() : null;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">{regionData.title}</h2>
-        <span className="text-xs text-gray-500">
+    <div className="relative overflow-hidden bg-white rounded-card shadow-card p-4 mb-4">
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center">
+          <RegionalIconography
+            region={selectedRegion}
+            size="sm"
+            className="mr-2"
+          />
+          <h2 className="text-lg font-semibold text-text-primary">
+            Historical Data
+          </h2>
+        </div>
+        <span className="text-xs text-text-muted">
           Data: World Bank, Alpha Vantage
         </span>
       </div>
-      <p className="text-gray-600 mb-4">{regionData.description}</p>
 
       {/* Region selector tabs */}
       <div className="flex overflow-x-auto mb-4 pb-1">
         {Object.keys(REGION_INSIGHTS).map((region) => (
           <button
             key={region}
-            className={`px-3 py-1 mr-2 text-sm rounded-md whitespace-nowrap ${
+            className={`px-3 py-1 mr-2 text-sm rounded-md whitespace-nowrap flex items-center ${
               selectedRegion === region
-                ? "bg-blue-100 text-blue-800 font-medium"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? `bg-region-${region.toLowerCase()}-light text-region-${region.toLowerCase()}-dark font-medium`
+                : "bg-background-subtle text-text-secondary hover:bg-background-muted"
             }`}
             onClick={() => setSelectedRegion(region as Region)}
           >
-            {region}
+            <RegionalIconography
+              region={region as Region}
+              size="sm"
+              className="mr-1"
+            />
+            <span>{region}</span>
           </button>
         ))}
       </div>
 
-      <div className="bg-blue-50 p-3 rounded-md mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="font-medium text-blue-700">Region Profile</h3>
-          <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-            {selectedRegion}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div>
-            <span className="text-blue-600">Inflation Rate:</span>
-            <span className="font-medium ml-1">
-              {regionData.inflationRate}%
+      <div
+        className={`relative overflow-hidden bg-region-${selectedRegion.toLowerCase()}-light bg-opacity-20 p-4 rounded-card mb-4`}
+      >
+        <RegionalPattern region={selectedRegion} />
+        <div className="relative">
+          <div className="flex items-center justify-between mb-3">
+            <h3
+              className={`font-medium text-region-${selectedRegion.toLowerCase()}-dark`}
+            >
+              {regionData.title}
+            </h3>
+            <span
+              className={`text-xs bg-region-${selectedRegion.toLowerCase()}-medium text-white px-2 py-1 rounded-full`}
+            >
+              {selectedRegion}
             </span>
           </div>
-          <div>
-            <span className="text-blue-600">Volatility:</span>
-            <span className="font-medium ml-1">
-              {regionData.volatilityLevel}
-            </span>
-          </div>
-          <div className="col-span-2">
-            <span className="text-blue-600">Local Stablecoins:</span>
-            <span className="font-medium ml-1">
-              {regionData.localCurrencies.join(", ")}
-            </span>
-          </div>
+
+          <p className="text-sm text-text-secondary mb-4">
+            {regionData.description}
+          </p>
         </div>
       </div>
 
-      <h3 className="font-medium mb-2">Typical Allocation Pattern</h3>
-      <div className="bg-gray-50 p-3 rounded-md mb-4">
-        <div className="flex mb-2">
+      <h3 className="font-medium text-text-primary mb-2">
+        Typical Allocation Pattern
+      </h3>
+      <div className="bg-background-subtle p-3 rounded-card mb-4">
+        <div className="flex mb-2 h-8 rounded-md overflow-hidden">
           {Object.entries(regionData.typicalAllocation).map(
             ([region, allocation]) => (
               <div
                 key={region}
-                className="h-6"
+                className="h-full flex items-center justify-center text-xs text-white font-medium"
                 style={{
                   width: `${allocation}%`,
-                  backgroundColor: REGION_COLORS[region] || "#CBD5E0",
+                  backgroundColor:
+                    REGION_COLORS[region as keyof typeof REGION_COLORS] ||
+                    "#CBD5E0",
                 }}
                 title={`${region}: ${allocation}%`}
-              />
+              >
+                {allocation >= 10 ? `${allocation}%` : ""}
+              </div>
             )
           )}
         </div>
@@ -247,11 +254,16 @@ export default function RegionalRecommendations({
                 <div
                   className="size-3 rounded-full mr-1"
                   style={{
-                    backgroundColor: REGION_COLORS[region] || "#CBD5E0",
+                    backgroundColor:
+                      REGION_COLORS[region as keyof typeof REGION_COLORS] ||
+                      "#CBD5E0",
                   }}
                 />
-                <span>
-                  {region}: {allocation}%
+                <span className="text-text-secondary">
+                  {region}:{" "}
+                  <span className="font-medium text-text-primary">
+                    {allocation}%
+                  </span>
                 </span>
               </div>
             )
@@ -261,13 +273,15 @@ export default function RegionalRecommendations({
 
       {difference && (
         <div
-          className={`p-3 rounded-md mb-4 ${
-            difference.isClose ? "bg-green-50" : "bg-gray-50"
+          className={`p-3 rounded-card mb-4 ${
+            difference.isClose
+              ? "bg-accent-success bg-opacity-5 border border-accent-success border-opacity-10"
+              : "bg-background-subtle"
           }`}
         >
           <h3
             className={`font-medium mb-2 ${
-              difference.isClose ? "text-green-700" : "text-gray-700"
+              difference.isClose ? "text-accent-success" : "text-text-primary"
             }`}
           >
             {difference.isClose
@@ -285,15 +299,18 @@ export default function RegionalRecommendations({
                   className="flex items-center justify-between text-sm"
                 >
                   <div className="flex items-center">
-                    <div
-                      className="size-3 rounded-full mr-1"
-                      style={{
-                        backgroundColor: REGION_COLORS[region] || "#CBD5E0",
-                      }}
+                    <RegionalIconography
+                      region={region as Region}
+                      size="sm"
+                      className="mr-1"
                     />
-                    <span>{region}</span>
+                    <span className="text-text-secondary">{region}</span>
                   </div>
-                  <div className="text-gray-700">
+                  <div
+                    className={
+                      diff > 0 ? "text-accent-warning" : "text-accent-success"
+                    }
+                  >
                     {diff > 0
                       ? `${diff.toFixed(0)}% less than typical`
                       : `${Math.abs(diff).toFixed(0)}% more than typical`}
@@ -304,24 +321,28 @@ export default function RegionalRecommendations({
         </div>
       )}
 
-      <h3 className="font-medium mb-2">Key Considerations</h3>
-      <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600 mb-4">
-        {regionData.considerations.map((consideration, index) => (
-          <li key={index}>{consideration}</li>
-        ))}
-      </ul>
-
-      <div className="bg-yellow-50 p-3 rounded-md">
-        <h3 className="font-medium text-yellow-700 mb-1">Historical Context</h3>
-        <p className="text-sm text-yellow-600">
-          Data shows that residents of {selectedRegion} who diversified their
-          savings across multiple stablecoins preserved up to{" "}
-          {selectedRegion === "Africa" || selectedRegion === "LatAm"
-            ? "15%"
-            : "8%"}{" "}
-          more purchasing power during recent economic volatility compared to
-          those who held only local currency.
-        </p>
+      <div
+        className={`relative overflow-hidden bg-region-${selectedRegion.toLowerCase()}-light bg-opacity-10 p-3 rounded-card`}
+      >
+        <RegionalPattern region={selectedRegion} />
+        <div className="relative">
+          <h3
+            className={`font-medium text-region-${selectedRegion.toLowerCase()}-dark mb-2`}
+          >
+            Historical Context
+          </h3>
+          <p className="text-sm text-text-secondary">
+            Data shows that residents of {selectedRegion} who diversified their
+            savings across multiple stablecoins preserved up to{" "}
+            <span className="font-bold text-accent-success">
+              {selectedRegion === "Africa" || selectedRegion === "LatAm"
+                ? "15%"
+                : "8%"}
+            </span>{" "}
+            more purchasing power during recent economic volatility compared to
+            those who held only local currency.
+          </p>
+        </div>
       </div>
     </div>
   );

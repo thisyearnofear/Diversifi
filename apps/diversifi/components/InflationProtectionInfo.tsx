@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useInflationData } from "../hooks/use-inflation-data";
 import type { Region } from "../hooks/use-user-region";
+import RegionalIconography, { RegionalPattern } from "./RegionalIconography";
+import RealLifeScenario from "./RealLifeScenario";
 
 // Calculate potential savings from diversification
 const calculateSavings = (
@@ -34,6 +36,55 @@ const calculateSavings = (
   return diversifiedValueAfterYear - homeValueAfterYear;
 };
 
+// Get a real-world example of what the savings could buy
+const getSavingsExample = (savings: number, region: Region): string => {
+  if (savings <= 0) return "";
+
+  switch (region) {
+    case "Africa":
+      if (savings < 10) return "a few days of mobile data";
+      if (savings < 50) return "a week of groceries for a small family";
+      if (savings < 100) return "school supplies for a child";
+      if (savings < 500) return "a month of rent in some areas";
+      return "several months of living expenses";
+
+    case "USA":
+      if (savings < 10) return "a few coffee shop visits";
+      if (savings < 50) return "a tank of gas";
+      if (savings < 100) return "a week of groceries";
+      if (savings < 500) return "a month of utility bills";
+      return "a month of rent in some areas";
+
+    case "Europe":
+      if (savings < 10) return "a few public transport tickets";
+      if (savings < 50) return "a nice meal out";
+      if (savings < 100) return "a week of groceries";
+      if (savings < 500) return "a weekend getaway";
+      return "a month of expenses in some areas";
+
+    case "LatAm":
+      if (savings < 10) return "a week of public transport";
+      if (savings < 50) return "a week of groceries for a small family";
+      if (savings < 100) return "a month of mobile and internet service";
+      if (savings < 500) return "a month of rent in some areas";
+      return "several months of living expenses";
+
+    case "Asia":
+      if (savings < 10) return "several street food meals";
+      if (savings < 50) return "a week of groceries";
+      if (savings < 100) return "a month of utility bills";
+      if (savings < 500) return "a month of rent in some areas";
+      return "several months of living expenses";
+
+    default:
+      if (savings < 10) return "a few small items";
+      if (savings < 50) return "a week of small expenses";
+      if (savings < 100) return "a significant purchase";
+      if (savings < 500) return "a major monthly expense";
+      return "a large portion of monthly living costs";
+  }
+};
+
 interface InflationProtectionInfoProps {
   homeRegion?: Region;
   currentRegions?: Array<Region>;
@@ -50,6 +101,9 @@ export default function InflationProtectionInfo({
   // Use our custom hook to get real inflation data
   const { inflationData, dataSource } = useInflationData();
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
+  const [activeScenario, setActiveScenario] = useState<
+    "education" | "remittance" | "business" | "travel" | "savings"
+  >("savings");
 
   // Calculate potential savings
   const savings = calculateSavings(
@@ -96,64 +150,87 @@ export default function InflationProtectionInfo({
     }
   };
 
+  // Get savings example
+  const savingsExample = getSavingsExample(savings, homeRegion);
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">Inflation Protection</h2>
+    <div className="relative overflow-hidden bg-white rounded-card shadow-card p-4 mb-4">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center">
+          <RegionalIconography region={homeRegion} size="sm" className="mr-2" />
+          <h2 className="text-lg font-semibold text-text-primary">
+            Protect Your Money
+          </h2>
+        </div>
         <div className="flex items-center">
           {dataSource === "api" && (
-            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+            <span className="text-xs bg-accent-success bg-opacity-10 text-accent-success px-2 py-1 rounded-full">
               Live Data
             </span>
           )}
           {dataSource === "cache" && (
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+            <span className="text-xs bg-accent-info bg-opacity-10 text-accent-info px-2 py-1 rounded-full">
               Cached Data
             </span>
           )}
         </div>
       </div>
 
-      {/* Home Region Selector */}
+      {/* Home Region Selector - MOVED TO TOP */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="font-medium">Choose Home Region</h3>
-          <span className="text-xs text-gray-500">Data from World Bank</span>
+          <h3 className="font-medium text-text-primary">Your Location</h3>
+          <span className="text-xs text-text-muted">
+            Based on World Bank data
+          </span>
         </div>
 
         <div className="grid grid-cols-5 gap-1 mb-3">
           {Object.keys(inflationData).map((region) => (
             <button
               key={region}
-              className={`p-1 text-xs rounded-md transition-colors ${
+              className={`p-2 text-xs rounded-md transition-colors flex flex-col items-center ${
                 region === homeRegion
-                  ? "bg-blue-100 border-blue-300 border text-blue-700 font-medium"
-                  : "bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
+                  ? `bg-region-${region.toLowerCase()}-light border-region-${region.toLowerCase()}-medium border text-region-${region.toLowerCase()}-dark font-medium`
+                  : "bg-background-subtle border border-background-muted text-text-secondary hover:bg-background-muted"
               }`}
               onClick={() => onChangeHomeRegion?.(region as Region)}
             >
-              {region}
+              <RegionalIconography
+                region={region as Region}
+                size="sm"
+                className="mb-1"
+              />
+              <span>{region}</span>
             </button>
           ))}
         </div>
 
-        <div className="bg-blue-50 p-3 rounded-md">
-          <div className="flex justify-between items-center">
+        <div
+          className={`relative overflow-hidden bg-region-${homeRegion.toLowerCase()}-light p-4 rounded-card`}
+        >
+          <RegionalPattern region={homeRegion} />
+          <div className="relative flex justify-between items-center">
             <div>
-              <p className="text-sm text-blue-700 font-medium">
+              <p
+                className={`text-sm text-region-${homeRegion.toLowerCase()}-dark font-medium`}
+              >
                 {homeRegion} inflation:{" "}
                 <span className="font-bold">
                   {homeInflationRate.toFixed(1)}%
                 </span>
+                <span className="text-xs ml-1">per year</span>
               </p>
               {currentRegions.length > 0 && (
-                <p className="text-xs text-blue-600 mt-1">
-                  Portfolio avg:{" "}
+                <p
+                  className={`text-xs text-region-${homeRegion.toLowerCase()}-dark mt-1`}
+                >
+                  Your portfolio:{" "}
                   <span className="font-bold">
                     {avgPortfolioInflation.toFixed(1)}%
                   </span>
                   {avgPortfolioInflation < homeInflationRate && (
-                    <span className="ml-1 text-green-600">
+                    <span className="ml-1 text-accent-success">
                       ({(homeInflationRate - avgPortfolioInflation).toFixed(1)}%
                       better)
                     </span>
@@ -163,42 +240,70 @@ export default function InflationProtectionInfo({
             </div>
             {savings > 0 && (
               <div className="text-right">
-                <p className="text-xs text-green-600 font-medium">
-                  Potential savings:
+                <p className="text-xs text-accent-success font-medium">
+                  You could save:
                 </p>
-                <p className="text-sm text-green-700 font-bold">
-                  ${savings.toFixed(2)}/yr
+                <p className="text-sm text-accent-success font-bold">
+                  ${savings.toFixed(0)}/year
                 </p>
+                {savingsExample && (
+                  <p className="text-xs text-text-secondary">
+                    That's {savingsExample}
+                  </p>
+                )}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Regional Inflation Rates */}
+      {/* Available Stablecoins - MOVED UP */}
       <div className="mb-4">
-        <h3 className="font-medium mb-2">Choose Insights</h3>
+        <h3 className="font-medium text-text-primary mb-2">
+          Available Stablecoins
+        </h3>
         <div className="grid grid-cols-2 gap-2">
           {Object.entries(inflationData).map(
             ([region, data]: [string, any]) => (
               <div
                 key={region}
-                className={`p-2 rounded-md border cursor-pointer transition-colors ${
+                className={`relative overflow-hidden p-3 rounded-card border cursor-pointer transition-colors ${
                   region === homeRegion
-                    ? "border-blue-300 bg-blue-50"
+                    ? `border-region-${region.toLowerCase()}-medium bg-region-${region.toLowerCase()}-light`
                     : currentRegions.includes(region as Region)
-                    ? "border-green-300 bg-green-50"
-                    : "border-gray-200 hover:border-gray-300"
-                } ${selectedRegion === region ? "ring-2 ring-blue-400" : ""}`}
+                    ? "border-accent-success bg-accent-success bg-opacity-5"
+                    : "border-background-muted hover:border-text-muted"
+                } ${
+                  selectedRegion === region
+                    ? `ring-2 ring-region-${region.toLowerCase()}-medium`
+                    : ""
+                }`}
                 onClick={() => setSelectedRegion(region as Region)}
               >
-                <div className="font-medium">{region}</div>
-                <div className="text-sm">
-                  Inflation:{" "}
-                  <span className="font-bold">{data.avgRate.toFixed(1)}%</span>
+                <div className="relative flex items-center">
+                  <RegionalIconography
+                    region={region as Region}
+                    size="sm"
+                    className="mr-2"
+                  />
+                  <div>
+                    <div className="font-medium text-text-primary">
+                      {region}
+                    </div>
+                    <div className="text-sm text-text-secondary">
+                      {data.avgRate.toFixed(1)}% inflation/year
+                    </div>
+                  </div>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  {data.stablecoins.join(", ")}
+                <div className="text-xs text-text-muted mt-2 flex flex-wrap gap-1">
+                  {data.stablecoins.map((coin: string) => (
+                    <span
+                      key={coin}
+                      className="inline-block px-1.5 py-0.5 bg-background-subtle rounded"
+                    >
+                      {coin}
+                    </span>
+                  ))}
                 </div>
               </div>
             )
@@ -206,49 +311,102 @@ export default function InflationProtectionInfo({
         </div>
       </div>
 
+      {/* Real-life scenario */}
+      <div className="mb-4">
+        <h3 className="font-medium text-text-primary mb-2">
+          How Inflation Affects You
+        </h3>
+        <div className="text-xs text-text-muted mb-2">
+          “Inflation is when you pay fifteen dollars for the ten-dollar haircut
+          you used to get for five dollars when you had hair.”
+          <br /> ― Sam Ewing
+        </div>
+
+        {/* Scenario selector */}
+        <div className="flex overflow-x-auto mb-3 pb-1">
+          {["savings", "education", "remittance", "business", "travel"].map(
+            (scenario) => (
+              <button
+                key={scenario}
+                className={`px-3 py-1 mr-2 text-xs rounded-full whitespace-nowrap ${
+                  activeScenario === scenario
+                    ? `bg-region-${homeRegion.toLowerCase()}-medium text-white font-medium`
+                    : `bg-region-${homeRegion.toLowerCase()}-light text-region-${homeRegion.toLowerCase()}-dark hover:bg-region-${homeRegion.toLowerCase()}-light hover:bg-opacity-70`
+                }`}
+                onClick={() => setActiveScenario(scenario as any)}
+              >
+                {scenario.charAt(0).toUpperCase() + scenario.slice(1)}
+              </button>
+            )
+          )}
+        </div>
+
+        <RealLifeScenario
+          region={homeRegion}
+          scenarioType={activeScenario}
+          inflationRate={homeInflationRate}
+          amount={amount}
+        />
+      </div>
+
       {/* Region Insights */}
       {selectedRegion && regionInsights && (
-        <div className="bg-gray-50 p-3 rounded-md mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-medium">{selectedRegion} Insights</h3>
-            <button
-              className="text-xs text-blue-600 hover:text-blue-800"
-              onClick={() => setSelectedRegion(null)}
-            >
-              Close
-            </button>
-          </div>
-          <div className="text-sm space-y-2">
-            <p>
-              Inflation rate:{" "}
-              <span className="font-medium">
-                {regionInsights.inflationRate.toFixed(1)}%
-              </span>
-              {regionInsights.comparisonToHome < 0 && (
-                <span className="text-green-600 ml-1">
-                  ({Math.abs(regionInsights.comparisonToHome).toFixed(1)}% lower
-                  than {homeRegion})
+        <div
+          className={`relative overflow-hidden bg-region-${selectedRegion.toLowerCase()}-light bg-opacity-30 p-4 rounded-card mb-4`}
+        >
+          <RegionalPattern region={selectedRegion} />
+          <div className="relative">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center">
+                <RegionalIconography
+                  region={selectedRegion}
+                  size="sm"
+                  className="mr-2"
+                />
+                <h3
+                  className={`font-medium text-region-${selectedRegion.toLowerCase()}-dark`}
+                >
+                  {selectedRegion} Details
+                </h3>
+              </div>
+              <button
+                className={`text-xs text-region-${selectedRegion.toLowerCase()}-dark hover:text-region-${selectedRegion.toLowerCase()}-contrast px-2 py-1 rounded-full bg-white bg-opacity-50`}
+                onClick={() => setSelectedRegion(null)}
+              >
+                Close
+              </button>
+            </div>
+            <div className="text-sm space-y-3 bg-white bg-opacity-70 p-3 rounded-md">
+              <p className="flex justify-between">
+                <span className="text-text-secondary">Inflation rate:</span>
+                <span className="font-medium text-text-primary">
+                  {regionInsights.inflationRate.toFixed(1)}%
+                  {regionInsights.comparisonToHome < 0 && (
+                    <span className="text-accent-success ml-1">
+                      ({Math.abs(regionInsights.comparisonToHome).toFixed(1)}%
+                      lower)
+                    </span>
+                  )}
+                  {regionInsights.comparisonToHome > 0 && (
+                    <span className="text-accent-error ml-1">
+                      ({regionInsights.comparisonToHome.toFixed(1)}% higher)
+                    </span>
+                  )}
                 </span>
-              )}
-              {regionInsights.comparisonToHome > 0 && (
-                <span className="text-red-600 ml-1">
-                  ({regionInsights.comparisonToHome.toFixed(1)}% higher than{" "}
-                  {homeRegion})
+              </p>
+              <p className="flex justify-between">
+                <span className="text-text-secondary">Available coins:</span>
+                <span className="font-medium text-text-primary">
+                  {regionInsights.stablecoins.join(", ")}
                 </span>
-              )}
-            </p>
-            <p>
-              Available stablecoins:{" "}
-              <span className="font-medium">
-                {regionInsights.stablecoins.join(", ")}
-              </span>
-            </p>
+              </p>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="flex justify-between items-center text-xs text-gray-500 mt-2">
-        <span>Data sources: World Bank, Alpha Vantage</span>
+      <div className="flex justify-between items-center text-xs text-text-muted mt-3">
+        <span>Data: World Bank, Alpha Vantage</span>
         <span>Updated daily</span>
       </div>
     </div>

@@ -59,12 +59,22 @@ pnpm run fix:frame-paths
 
 ### 5. Farcaster Frame Html Component Issue
 
-**Problem**: The Farcaster frame app has an error related to the Html component being imported outside of pages/_document.js.
+**Problem**: The Farcaster frame app has an error related to the Html component being imported outside of pages/\_document.js.
 
 **Solution**:
 
 - This is a non-critical issue for the main application
 - To fix it, the 404.tsx page in the Farcaster frame app needs to be updated to use the correct Next.js components
+
+### 6. PNPM Workspace Root Dependencies
+
+**Problem**: When adding dependencies in a monorepo with pnpm, the `-w` flag is required to add dependencies to the workspace root. Without this flag, the build process fails with `ERR_PNPM_ADDING_TO_ROOT` errors.
+
+**Solution**:
+
+- Always use the `-w` flag when adding dependencies to the workspace root: `pnpm add -D -w package-name`
+- Update build scripts in `netlify.toml` and `scripts/deploy/build.ts` to include the `-w` flag
+- For Netlify builds, ensure the build command explicitly includes the `-w` flag for any dependency installations
 
 ## Maintenance Scripts
 
@@ -77,6 +87,16 @@ The project includes several maintenance scripts to help manage technical debt:
 5. **`lint:fix`**: Runs ESLint with auto-fix to address code style issues
 6. **`fix:all`**: Runs all the above scripts in sequence to fix all issues at once
 
+When adding new dependencies to the project, always use the `-w` flag for workspace root dependencies:
+
+```bash
+# Add a dependency to the workspace root
+pnpm add -D -w package-name
+
+# Add a dependency to a specific workspace package
+pnpm --filter package-name add dependency-name
+```
+
 ## Best Practices
 
 To prevent technical debt from accumulating:
@@ -86,6 +106,7 @@ To prevent technical debt from accumulating:
 3. **Consistent Coding Standards**: Follow the established patterns in the codebase
 4. **Incremental Refactoring**: Address technical debt in small, manageable chunks
 5. **Test Coverage**: Maintain good test coverage to catch issues early
+6. **PNPM Workspace Management**: Always use the `-w` flag when adding dependencies to the workspace root, especially in CI/CD scripts
 
 ## Future Improvements
 

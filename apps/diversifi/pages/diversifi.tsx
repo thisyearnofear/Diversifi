@@ -100,15 +100,17 @@ export default function DiversiFiPage() {
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold">DiversiFi</h1>
+            <h1 className="text-2xl font-bold text-gray-900 bg-white px-2 py-1 rounded-md shadow-sm">
+              DiversiFi
+            </h1>
             {isInMiniPay && (
-              <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+              <span className="ml-2 bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-medium shadow-sm border border-blue-700">
                 MiniPay
               </span>
             )}
           </div>
           {address && (
-            <div className="text-sm bg-gray-100 px-2 py-1 rounded-full text-gray-700">
+            <div className="text-sm bg-white px-3 py-1.5 rounded-full text-gray-800 shadow-sm border border-gray-200">
               {formatAddress(address)}
             </div>
           )}
@@ -168,6 +170,7 @@ export default function DiversiFiPage() {
             regionData={regionData}
             totalValue={totalValue}
             userRegion={userRegion}
+            setUserRegion={setUserRegion}
           />
         )}
 

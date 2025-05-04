@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import type { Region } from "../hooks/use-user-region";
 
-// Region colors for visualization
+// Region colors for visualization - brighter, more vibrant colors
 const REGION_COLORS: Record<Region, string> = {
   USA: "#4299E1", // blue
   Europe: "#48BB78", // green
@@ -115,8 +115,11 @@ export default function CurrencyPerformanceChart({
       ctx.fillText(formattedDate, x, canvas.height - padding.bottom + 5);
     }
 
-    // Draw lines for each currency
+    // Draw lines for each currency with enhanced styling
     data.currencies.forEach((currency) => {
+      const color = REGION_COLORS[currency.region] || "#A0AEC0";
+
+      // Draw shadow for depth effect
       ctx.beginPath();
       ctx.strokeStyle = REGION_COLORS[currency.region] || "#A0AEC0";
       ctx.lineWidth = 2;
@@ -138,6 +141,9 @@ export default function CurrencyPerformanceChart({
       }
 
       ctx.stroke();
+
+      // Reset shadow
+      ctx.shadowBlur = 0;
     });
 
     // Draw legend
@@ -179,17 +185,19 @@ export default function CurrencyPerformanceChart({
     <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
-          <h3 className="text-lg font-semibold">{title}</h3>
-          <span className="text-xs text-gray-500 ml-2">Alpha Vantage</span>
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <span className="text-xs text-gray-700 font-medium ml-2 bg-gray-100 px-2 py-0.5 rounded">
+            Alpha Vantage
+          </span>
         </div>
         <div>
           {data.source === "api" && (
-            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">
               Live Data
             </span>
           )}
           {data.source === "cache" && (
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
               Cached Data
             </span>
           )}
@@ -206,14 +214,11 @@ export default function CurrencyPerformanceChart({
           />
 
           <div className="mt-4">
-            <h4 className="text-sm font-medium mb-2">
-              Value of $1 over 30 days
-            </h4>
             <div className="grid grid-cols-2 gap-2">
               {dollarPerformance.map((item) => (
                 <div
                   key={item.symbol}
-                  className="border rounded p-2"
+                  className="border rounded p-2 bg-gray-50"
                   style={{
                     borderColor: REGION_COLORS[item.region] || "#CBD5E0",
                   }}
@@ -221,13 +226,19 @@ export default function CurrencyPerformanceChart({
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <div
-                        className="size-3 rounded-full mr-1"
+                        className="size-4 rounded-full mr-1 flex items-center justify-center"
                         style={{
                           backgroundColor:
                             REGION_COLORS[item.region] || "#CBD5E0",
                         }}
-                      />
-                      <span className="text-sm font-medium">{item.symbol}</span>
+                      >
+                        <span className="text-white text-xs font-bold">
+                          {item.symbol.charAt(0)}
+                        </span>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">
+                        {item.symbol}
+                      </span>
                     </div>
                     <span
                       className={`text-sm font-medium ${
@@ -241,7 +252,7 @@ export default function CurrencyPerformanceChart({
                     </span>
                   </div>
                   <div className="mt-1">
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs font-medium text-gray-700">
                       $1.00 → ${item.currentValue.toFixed(2)}
                     </div>
                   </div>

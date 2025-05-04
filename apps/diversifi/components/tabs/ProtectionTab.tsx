@@ -16,14 +16,21 @@ export default function ProtectionTab({
   regionData,
   totalValue,
 }: ProtectionTabProps) {
+  // Convert regionData to the format needed by our components
+  const currentRegions = Object.entries(regionData)
+    .filter(([_, data]) => data.value > 0)
+    .map(([region]) => region as Region);
+
+  const currentAllocations = Object.fromEntries(
+    regionData.map((item) => [item.region, item.value / 100])
+  );
+
   return (
     <div className="space-y-4">
       {/* Inflation Protection Info */}
       <InflationProtectionInfo
-        homeRegion={userRegion as any}
-        currentRegions={Object.entries(regionData)
-          .filter(([_, data]) => data.value > 0)
-          .map(([region]) => region as any)}
+        homeRegion={userRegion}
+        currentRegions={currentRegions}
         amount={totalValue || 1000}
         onChangeHomeRegion={setUserRegion}
       />
@@ -31,9 +38,7 @@ export default function ProtectionTab({
       {/* Regional Recommendations */}
       <RegionalRecommendations
         userRegion={userRegion}
-        currentAllocations={Object.fromEntries(
-          regionData.map((item) => [item.region, item.value / 100])
-        )}
+        currentAllocations={currentAllocations}
       />
     </div>
   );

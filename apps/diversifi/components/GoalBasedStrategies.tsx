@@ -57,10 +57,26 @@ const GOAL_TYPES = [
 
 // Strategy options
 const STRATEGY_OPTIONS = [
-  { id: "conservative", name: "Conservative", description: "Lower risk, stable returns" },
-  { id: "balanced", name: "Balanced", description: "Moderate risk and returns" },
-  { id: "growth", name: "Growth", description: "Higher risk, potential for better returns" },
-  { id: "inflationHedge", name: "Inflation Hedge", description: "Optimized for inflation protection" },
+  {
+    id: "conservative",
+    name: "Conservative",
+    description: "Lower risk, stable returns",
+  },
+  {
+    id: "balanced",
+    name: "Balanced",
+    description: "Moderate risk and returns",
+  },
+  {
+    id: "growth",
+    name: "Growth",
+    description: "Higher risk, potential for better returns",
+  },
+  {
+    id: "inflationHedge",
+    name: "Inflation Hedge",
+    description: "Optimized for inflation protection",
+  },
 ];
 
 interface GoalBasedStrategiesProps {
@@ -76,25 +92,26 @@ export default function GoalBasedStrategies({
   const [goalAmount, setGoalAmount] = useState<number>(10000);
   const [timeframeMonths, setTimeframeMonths] = useState<number>(36);
   const [selectedStrategy, setSelectedStrategy] = useState<string>("balanced");
-  
+
   // Find the currently active goal
-  const currentGoal = GOAL_TYPES.find(goal => goal.id === activeGoal) || GOAL_TYPES[0];
-  
+  const currentGoal =
+    GOAL_TYPES.find((goal) => goal.id === activeGoal) || GOAL_TYPES[0];
+
   // Calculate monthly savings needed
   const monthlySavingsNeeded = goalAmount / timeframeMonths;
-  
+
   // Calculate estimated value after timeframe (with a simple 3% annual inflation protection)
-  const estimatedValue = goalAmount * (1 + (0.03 * timeframeMonths / 12));
-  
+  const estimatedValue = goalAmount * (1 + (0.03 * timeframeMonths) / 12);
+
   // Handle strategy change
   const handleStrategyChange = (strategy: string) => {
     setSelectedStrategy(strategy);
     onSelectStrategy(strategy);
   };
-  
+
   // Handle goal selection
   const handleGoalSelect = (goalId: string) => {
-    const goal = GOAL_TYPES.find(g => g.id === goalId);
+    const goal = GOAL_TYPES.find((g) => g.id === goalId);
     if (goal) {
       setActiveGoal(goalId);
       setGoalAmount(goal.defaultAmount);
@@ -104,10 +121,14 @@ export default function GoalBasedStrategies({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Goal-Based Strategies</h2>
-        <span className="text-xs text-gray-500">Based on World Bank data</span>
+        <h2 className="text-lg font-bold text-gray-900">
+          Goal-Based Strategies
+        </h2>
+        <span className="text-xs text-gray-700 bg-gray-100 px-2 py-1 rounded-full">
+          Based on World Bank data
+        </span>
       </div>
 
       {/* Goal Type Tabs */}
@@ -138,11 +159,11 @@ export default function GoalBasedStrategies({
             </p>
             <div className="mt-2 flex flex-wrap gap-1">
               {currentGoal.regions.map((region) => (
-                <span 
-                  key={region} 
+                <span
+                  key={region}
                   className={`inline-block text-xs px-2 py-1 rounded-full ${
-                    region === userRegion 
-                      ? "bg-blue-200 text-blue-800 font-medium" 
+                    region === userRegion
+                      ? "bg-blue-200 text-blue-800 font-medium"
                       : "bg-blue-100 text-blue-700"
                   }`}
                 >
@@ -157,25 +178,25 @@ export default function GoalBasedStrategies({
       {/* Goal Calculator */}
       <div className="space-y-4 mb-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-bold text-gray-900 mb-1">
             Goal Amount
           </label>
           <div className="relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-500 sm:text-sm">$</span>
+              <span className="text-gray-700 font-medium sm:text-sm">$</span>
             </div>
             <input
               type="number"
-              className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+              className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md shadow-sm text-gray-900 font-medium"
               placeholder="0.00"
               value={goalAmount}
               onChange={(e) => setGoalAmount(Number(e.target.value))}
             />
           </div>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-bold text-gray-900 mb-1">
             Timeframe (months)
           </label>
           <input
@@ -186,19 +207,19 @@ export default function GoalBasedStrategies({
             onChange={(e) => setTimeframeMonths(Number(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-gray-700 font-medium mt-1">
             <span>1 month</span>
             <span>{timeframeMonths} months</span>
             <span>5 years</span>
           </div>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-bold text-gray-900 mb-1">
             Recommended Strategy
           </label>
           <select
-            className="focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+            className="focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md shadow-sm text-gray-900"
             value={selectedStrategy}
             onChange={(e) => handleStrategyChange(e.target.value)}
           >
@@ -219,7 +240,7 @@ export default function GoalBasedStrategies({
             ${monthlySavingsNeeded.toFixed(2)}
           </div>
         </div>
-        
+
         <div className="bg-gray-50 p-3 rounded-md">
           <div className="text-sm text-gray-500">Estimated Value</div>
           <div className="text-xl font-semibold text-green-600">
@@ -235,13 +256,16 @@ export default function GoalBasedStrategies({
       <div className="bg-green-50 p-3 rounded-md">
         <h3 className="font-medium text-green-700 mb-2">Strategy Benefits</h3>
         <ul className="text-sm text-green-600 list-disc pl-5 space-y-1">
-          <li>Protection against inflation in {currentGoal.regions.join(" and ")} regions</li>
+          <li>
+            Protection against inflation in {currentGoal.regions.join(" and ")}{" "}
+            regions
+          </li>
           <li>Optimized for {currentGoal.title.toLowerCase()} expenses</li>
           <li>Automatic monthly savings recommendations</li>
           <li>Flexible timeframe to meet your goals</li>
         </ul>
       </div>
-      
+
       <div className="mt-4 flex justify-between">
         <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
           Start Saving Plan

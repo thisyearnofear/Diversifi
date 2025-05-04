@@ -173,8 +173,8 @@ export default function PerformanceChart({
     <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
-          <h3 className="text-lg font-semibold">{title}</h3>
-          <span className="text-xs text-gray-500 ml-2">
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <span className="text-xs text-gray-700 font-medium ml-2 bg-gray-100 px-2 py-0.5 rounded">
             World Bank, Alpha Vantage
           </span>
         </div>
@@ -186,9 +186,11 @@ export default function PerformanceChart({
           >
             {data.percentChange >= 0 ? "+" : ""}
             {data.percentChange.toFixed(2)}%
-            <span className="text-gray-500 text-xs ml-1">30d</span>
+            <span className="text-gray-700 text-xs font-medium ml-1 bg-gray-100 px-1 rounded">
+              30d
+            </span>
           </div>
-          <div className="text-sm font-medium text-gray-600">
+          <div className="text-sm font-medium text-gray-800 bg-gray-100 px-2 py-0.5 rounded">
             Vol: {data.volatility.toFixed(2)}%
           </div>
         </div>
@@ -204,7 +206,7 @@ export default function PerformanceChart({
           />
 
           <div className="grid grid-cols-2 gap-2 w-full">
-            <div className="col-span-2 text-sm text-gray-500 mb-2">
+            <div className="col-span-2 text-sm font-medium text-gray-900 mb-2 bg-gray-50 p-2 rounded-md">
               Regional Allocation (Current)
             </div>
             {Object.entries(REGION_COLORS).map(([region, color]) => {
@@ -216,12 +218,19 @@ export default function PerformanceChart({
               const percentage = (latestValue / totalValue) * 100;
 
               return (
-                <div key={region} className="flex items-center">
+                <div
+                  key={region}
+                  className="flex items-center p-1 rounded hover:bg-gray-50"
+                >
                   <div
-                    className="size-3 rounded-full mr-2"
+                    className="size-4 rounded-full mr-2 flex items-center justify-center"
                     style={{ backgroundColor: color }}
-                  />
-                  <span className="text-sm">
+                  >
+                    <span className="text-white text-xs font-bold">
+                      {region.charAt(0)}
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-800">
                     {region}: {percentage.toFixed(1)}%
                   </span>
                 </div>
@@ -230,10 +239,12 @@ export default function PerformanceChart({
           </div>
         </div>
       ) : (
-        <div className="text-center py-10 text-gray-500">
+        <div className="text-center py-10 bg-gray-50 rounded-lg">
           <div className="text-center">
-            <p className="mb-2">No performance data available</p>
-            <p className="text-xs text-gray-400">
+            <p className="mb-2 text-gray-800 font-medium">
+              No performance data available
+            </p>
+            <p className="text-xs text-gray-700">
               Connect your wallet to view portfolio performance
             </p>
           </div>

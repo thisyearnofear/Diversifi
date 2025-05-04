@@ -7,6 +7,8 @@ import {
   handleMentoError,
 } from "../utils/mento-utils";
 import { useInflationData } from "../hooks/use-inflation-data";
+import RegionalIconography, { RegionalPattern } from "./RegionalIconography";
+import { REGION_COLORS } from "../constants/regions";
 
 interface Token {
   symbol: string;
@@ -24,6 +26,8 @@ interface SwapInterfaceProps {
   ) => Promise<void>;
   title?: string;
   address?: string | null;
+  preferredFromRegion?: string;
+  preferredToRegion?: string;
 }
 
 export default function SwapInterface({
@@ -31,18 +35,30 @@ export default function SwapInterface({
   onSwap,
   title = "Swap Stablecoins",
   address,
+  preferredFromRegion,
+  preferredToRegion,
 }: SwapInterfaceProps) {
-  const [fromToken, setFromToken] = useState<string>(
-    availableTokens[0]?.symbol || ""
-  );
-  const [toToken, setToToken] = useState<string>(
-    availableTokens[1]?.symbol || ""
-  );
+  // Find tokens from preferred regions if specified
+  const defaultFromToken = preferredFromRegion
+    ? availableTokens.find((token) => token.region === preferredFromRegion)
+        ?.symbol ||
+      availableTokens[0]?.symbol ||
+      ""
+    : availableTokens[0]?.symbol || "";
+
+  const defaultToToken = preferredToRegion
+    ? availableTokens.find((token) => token.region === preferredToRegion)
+        ?.symbol ||
+      availableTokens[1]?.symbol ||
+      ""
+    : availableTokens[1]?.symbol || "";
+
+  const [fromToken, setFromToken] = useState<string>(defaultFromToken);
+  const [toToken, setToToken] = useState<string>(defaultToToken);
   const [amount, setAmount] = useState<string>("10");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
-  const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [status, setStatus] = useState<
     "idle" | "approving" | "swapping" | "completed" | "error"
   >("idle");
@@ -192,14 +208,12 @@ export default function SwapInterface({
     setIsLoading(true);
     setError(null);
     setTxHash(null);
-    setIsCompleted(false);
     setStatus("approving");
 
     try {
       if (onSwap) {
         // Use the provided onSwap function if available
         await onSwap(fromToken, toToken, amount);
-        setIsCompleted(true);
         setStatus("completed");
       } else {
         // Otherwise, perform the swap directly
@@ -358,7 +372,6 @@ export default function SwapInterface({
         throw new Error("Swap transaction failed");
       }
 
-      setIsCompleted(true);
       setStatus("completed");
     } catch (swapError) {
       console.error(
@@ -389,7 +402,6 @@ export default function SwapInterface({
         throw new Error("Swap transaction failed");
       }
 
-      setIsCompleted(true);
       setStatus("completed");
     }
   };
@@ -414,329 +426,685 @@ export default function SwapInterface({
   const inflationDifference = fromTokenInflationRate - toTokenInflationRate;
   const hasInflationBenefit = inflationDifference > 0;
 
+  // Get region colors for the selected tokens
+  const fromRegion = fromTokenRegion?.toLowerCase() || "";
+  const toRegion = toTokenRegion?.toLowerCase() || "";
+
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        {inflationDataSource === "api" && (
-          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-            Live Inflation Data
-          </span>
-        )}
-        {inflationDataSource === "cache" && (
-          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-            Cached Inflation Data
-          </span>
-        )}
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            From
-          </label>
-          <div className="flex space-x-2">
-            <select
-              value={fromToken}
-              onChange={(e) => setFromToken(e.target.value)}
-              className="block w-1/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-              disabled={isLoading}
-            >
-              {availableTokens.map((token) => (
-                <option key={token.symbol} value={token.symbol}>
-                  {token.symbol} - {token.region}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="block w-2/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-              placeholder="Amount"
-              min="0"
-              step="0.01"
-              disabled={isLoading}
-            />
-          </div>
-          {fromToken && (
-            <div className="mt-1 text-xs text-gray-500 flex items-center">
-              <span className="mr-1">Region: {fromTokenRegion}</span>
-              <span className="ml-auto">
-                Inflation:{" "}
-                <span className="font-medium">
-                  {fromTokenInflationRate.toFixed(1)}%
-                </span>
-              </span>
-            </div>
+    <div
+      className={`relative bg-white p-5 rounded-lg shadow-md overflow-hidden ${
+        fromTokenRegion && toTokenRegion
+          ? `border-2 border-region-${toTokenRegion.toLowerCase()}-medium`
+          : "border border-gray-200"
+      }`}
+    >
+      {fromTokenRegion && toTokenRegion && (
+        <div className="absolute inset-0">
+          <RegionalPattern
+            region={toTokenRegion as any}
+            className="opacity-5"
+          />
+        </div>
+      )}
+      <div className="relative">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+          {inflationDataSource === "api" && (
+            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium border border-green-200">
+              Live Inflation Data
+            </span>
           )}
         </div>
 
-        <div className="flex justify-center">
-          <button
-            onClick={handleSwitchTokens}
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
-            disabled={isLoading}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="size-5 text-gray-500 dark:text-gray-400"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M16 10a1 1 0 01-1 1H5.414l2.293 2.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L5.414 9H15a1 1 0 011 1z"
-                transform="rotate(90 10 10)"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            To
-          </label>
-          <div className="flex items-center space-x-2">
-            <select
-              value={toToken}
-              onChange={(e) => setToToken(e.target.value)}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-              disabled={isLoading}
-            >
-              {availableTokens.map((token) => (
-                <option key={token.symbol} value={token.symbol}>
-                  {token.symbol} - {token.region}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {toToken && (
-            <div className="mt-1 text-xs text-gray-500 flex items-center">
-              <span className="mr-1">Region: {toTokenRegion}</span>
-              <span className="ml-auto">
-                Inflation:{" "}
-                <span className="font-medium">
-                  {toTokenInflationRate.toFixed(1)}%
-                </span>
-              </span>
-            </div>
-          )}
-
-          {expectedOutput && Number.parseFloat(expectedOutput) > 0 && (
-            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Expected output:{" "}
-              <span className="font-medium">
-                {Number.parseFloat(expectedOutput).toFixed(6)} {toToken}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Inflation benefit information */}
-        {fromToken && toToken && hasInflationBenefit && (
-          <div className="p-3 bg-green-50 rounded-md">
-            <h3 className="text-sm font-medium text-green-800 mb-1">
-              Inflation Protection Benefit
-            </h3>
-            <p className="text-xs text-green-700">
-              By swapping from {fromToken} to {toToken}, you could save
-              approximately{" "}
-              <span className="font-bold">
-                {inflationDifference.toFixed(1)}%
-              </span>{" "}
-              in purchasing power per year due to lower inflation in{" "}
-              {toTokenRegion}.
-            </p>
-          </div>
-        )}
-
-        {/* Slippage Tolerance */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Slippage Tolerance
-          </label>
-          <div className="flex space-x-2">
-            {[0.1, 0.5, 1.0, 2.0].map((tolerance) => (
-              <button
-                key={tolerance}
-                onClick={() => setSlippageTolerance(tolerance)}
-                className={`px-3 py-1 text-sm rounded-md ${
-                  slippageTolerance === tolerance
-                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                    : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-bold text-gray-900 mb-1 flex items-center">
+              <span className="mr-2">From</span>
+              {fromTokenRegion && (
+                <RegionalIconography
+                  region={fromTokenRegion as any}
+                  size="sm"
+                />
+              )}
+            </label>
+            <div className="flex space-x-2">
+              <select
+                value={fromToken}
+                onChange={(e) => setFromToken(e.target.value)}
+                className={`block w-1/3 rounded-md border shadow-sm focus:ring-2 text-gray-900 font-medium ${
+                  fromTokenRegion
+                    ? `border-region-${fromTokenRegion.toLowerCase()}-medium focus:border-region-${fromTokenRegion.toLowerCase()}-medium focus:ring-region-${fromTokenRegion.toLowerCase()}-light`
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 }`}
                 disabled={isLoading}
               >
-                {tolerance}%
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Transaction Status */}
-        {status !== "idle" && (
-          <div
-            className={`p-3 rounded-md ${
-              status === "error"
-                ? "bg-red-50 text-red-700 border border-red-100"
-                : status === "completed"
-                ? "bg-green-50 text-green-700 border border-green-100"
-                : "bg-blue-50 text-blue-700 border border-blue-100"
-            }`}
-          >
-            <div className="flex items-center">
-              {status === "approving" && (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 size-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  <span>Approving token transfer...</span>
-                </>
-              )}
-
-              {status === "swapping" && (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 size-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  <span>Executing swap transaction...</span>
-                </>
-              )}
-
-              {status === "completed" && (
-                <>
-                  <svg
-                    className="size-4 mr-2 text-green-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Swap completed successfully!</span>
-                </>
-              )}
-
-              {status === "error" && (
-                <>
-                  <svg
-                    className="size-4 mr-2 text-red-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>{error || "An error occurred during the swap"}</span>
-                </>
-              )}
+                {availableTokens.map((token) => (
+                  <option key={token.symbol} value={token.symbol}>
+                    {token.symbol} - {token.region}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className={`block w-2/3 rounded-md border shadow-sm focus:ring-2 text-gray-900 font-medium ${
+                  fromTokenRegion
+                    ? `border-region-${fromTokenRegion.toLowerCase()}-medium focus:border-region-${fromTokenRegion.toLowerCase()}-medium focus:ring-region-${fromTokenRegion.toLowerCase()}-light`
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                }`}
+                placeholder="Amount"
+                min="0"
+                step="0.01"
+                disabled={isLoading}
+              />
             </div>
-
-            {txHash && (
-              <div className="mt-2 text-xs">
-                <a
-                  href={`https://explorer.celo.org/mainnet/tx/${txHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  View transaction on explorer
-                </a>
+            {fromToken && (
+              <div
+                className={`relative mt-2 text-sm px-3 py-2 rounded-md overflow-hidden ${
+                  fromTokenRegion
+                    ? `bg-region-${fromTokenRegion.toLowerCase()}-light/20 border border-region-${fromTokenRegion.toLowerCase()}-medium`
+                    : "bg-white border border-gray-200"
+                } shadow-sm flex items-center`}
+              >
+                {fromTokenRegion && (
+                  <RegionalPattern region={fromTokenRegion as any} />
+                )}
+                <div className="relative flex w-full justify-between items-center">
+                  <span
+                    className={`mr-1 font-medium ${
+                      fromTokenRegion
+                        ? `text-region-${fromTokenRegion.toLowerCase()}-dark`
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <span className="flex items-center">
+                      {fromTokenRegion && (
+                        <div
+                          className="mr-1 size-4 rounded-full flex items-center justify-center"
+                          style={{
+                            backgroundColor: fromTokenRegion
+                              ? REGION_COLORS[
+                                  fromTokenRegion as keyof typeof REGION_COLORS
+                                ]
+                              : undefined,
+                          }}
+                        >
+                          <RegionalIconography
+                            region={fromTokenRegion as any}
+                            size="sm"
+                            className="text-white scale-50"
+                          />
+                        </div>
+                      )}
+                      <span className="font-bold">
+                        {fromTokenRegion || "Unknown"}
+                      </span>
+                    </span>
+                  </span>
+                  <span
+                    className={`font-medium ${
+                      fromTokenRegion
+                        ? `text-region-${fromTokenRegion.toLowerCase()}-dark`
+                        : "text-gray-700"
+                    }`}
+                  >
+                    Inflation:{" "}
+                    <span
+                      className={`font-bold ${
+                        fromTokenInflationRate > 5
+                          ? "text-red-600"
+                          : fromTokenRegion
+                          ? `text-region-${fromTokenRegion.toLowerCase()}-dark`
+                          : "text-gray-900"
+                      }`}
+                    >
+                      {fromTokenInflationRate.toFixed(1)}%
+                    </span>
+                  </span>
+                </div>
               </div>
             )}
           </div>
-        )}
 
-        <div className="pt-2">
-          <button
-            onClick={handleSwap}
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={
-              isLoading ||
-              !fromToken ||
-              !toToken ||
-              !amount ||
-              Number.parseFloat(amount) <= 0 ||
-              fromToken === toToken
-            }
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center">
-                <svg
-                  className="animate-spin -ml-1 mr-3 size-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                {status === "approving"
-                  ? "Approving..."
-                  : status === "swapping"
-                  ? "Swapping..."
-                  : "Processing..."}
-              </span>
-            ) : (
-              "Swap"
+          <div className="flex justify-center my-2">
+            <button
+              onClick={handleSwitchTokens}
+              className={`p-2 rounded-full transition-colors ${
+                fromTokenRegion && toTokenRegion
+                  ? `bg-region-${fromTokenRegion.toLowerCase()}-light hover:bg-region-${fromTokenRegion.toLowerCase()}-medium`
+                  : "bg-gray-100 hover:bg-gray-200"
+              }`}
+              disabled={isLoading}
+              aria-label="Switch tokens"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`size-6 ${
+                  fromTokenRegion
+                    ? `text-region-${fromTokenRegion.toLowerCase()}-dark`
+                    : "text-gray-600"
+                }`}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16 10a1 1 0 01-1 1H5.414l2.293 2.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L5.414 9H15a1 1 0 011 1z"
+                  transform="rotate(180 10 10)"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div>
+            <label className="text-sm font-bold text-gray-900 mb-1 flex items-center">
+              <span className="mr-2">To</span>
+              {toTokenRegion && (
+                <RegionalIconography region={toTokenRegion as any} size="sm" />
+              )}
+            </label>
+            <div className="flex items-center space-x-2">
+              <select
+                value={toToken}
+                onChange={(e) => setToToken(e.target.value)}
+                className={`block w-full rounded-md border shadow-sm focus:ring-2 text-gray-900 font-medium ${
+                  toTokenRegion
+                    ? `border-region-${toTokenRegion.toLowerCase()}-medium focus:border-region-${toTokenRegion.toLowerCase()}-medium focus:ring-region-${toTokenRegion.toLowerCase()}-light`
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                }`}
+                disabled={isLoading}
+              >
+                {availableTokens.map((token) => (
+                  <option key={token.symbol} value={token.symbol}>
+                    {token.symbol} - {token.region}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {toToken && (
+              <div
+                className={`relative mt-2 text-sm px-3 py-2 rounded-md overflow-hidden ${
+                  toTokenRegion
+                    ? `bg-region-${toTokenRegion.toLowerCase()}-light/20 border border-region-${toTokenRegion.toLowerCase()}-medium`
+                    : "bg-white border border-gray-200"
+                } shadow-sm flex items-center`}
+              >
+                {toTokenRegion && (
+                  <RegionalPattern region={toTokenRegion as any} />
+                )}
+                <div className="relative flex w-full justify-between items-center">
+                  <span
+                    className={`mr-1 font-medium ${
+                      toTokenRegion
+                        ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <span className="flex items-center">
+                      {toTokenRegion && (
+                        <div
+                          className="mr-1 size-4 rounded-full flex items-center justify-center"
+                          style={{
+                            backgroundColor: toTokenRegion
+                              ? REGION_COLORS[
+                                  toTokenRegion as keyof typeof REGION_COLORS
+                                ]
+                              : undefined,
+                          }}
+                        >
+                          <RegionalIconography
+                            region={toTokenRegion as any}
+                            size="sm"
+                            className="text-white scale-50"
+                          />
+                        </div>
+                      )}
+                      <span className="font-bold">
+                        {toTokenRegion || "Unknown"}
+                      </span>
+                    </span>
+                  </span>
+                  <span
+                    className={`font-medium ${
+                      toTokenRegion
+                        ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                        : "text-gray-700"
+                    }`}
+                  >
+                    Inflation:{" "}
+                    <span
+                      className={`font-bold ${
+                        toTokenInflationRate > 5
+                          ? "text-red-600"
+                          : toTokenRegion
+                          ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                          : "text-gray-900"
+                      }`}
+                    >
+                      {toTokenInflationRate.toFixed(1)}%
+                    </span>
+                  </span>
+                </div>
+              </div>
             )}
-          </button>
+
+            {expectedOutput && Number.parseFloat(expectedOutput) > 0 && (
+              <div
+                className={`relative mt-3 text-sm p-3 rounded-md overflow-hidden ${
+                  toTokenRegion
+                    ? `bg-region-${toTokenRegion.toLowerCase()}-light/30 border border-region-${toTokenRegion.toLowerCase()}-medium`
+                    : "bg-gray-50 border border-gray-200"
+                } shadow-sm`}
+              >
+                {toTokenRegion && (
+                  <RegionalPattern region={toTokenRegion as any} />
+                )}
+                <div className="relative">
+                  <div
+                    className={`text-xs font-medium mb-1 ${
+                      toTokenRegion
+                        ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                        : "text-gray-700"
+                    }`}
+                  >
+                    Expected output:
+                  </div>
+                  <div className="font-medium flex items-center justify-between">
+                    <span
+                      className={`font-bold text-lg ${
+                        toTokenRegion
+                          ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                          : "text-gray-900"
+                      }`}
+                    >
+                      {Number.parseFloat(expectedOutput).toFixed(4)}
+                    </span>
+                    <div className="flex items-center">
+                      {toTokenRegion && (
+                        <div
+                          className="mr-2 size-5 rounded-full flex items-center justify-center"
+                          style={{
+                            backgroundColor: toTokenRegion
+                              ? REGION_COLORS[
+                                  toTokenRegion as keyof typeof REGION_COLORS
+                                ]
+                              : undefined,
+                          }}
+                        >
+                          <RegionalIconography
+                            region={toTokenRegion as any}
+                            size="sm"
+                            className="text-white scale-75"
+                          />
+                        </div>
+                      )}
+                      <span
+                        className={`font-bold ${
+                          toTokenRegion
+                            ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                            : "text-blue-600"
+                        }`}
+                      >
+                        {toToken}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Inflation benefit information */}
+          {fromToken && toToken && hasInflationBenefit && (
+            <div
+              className={`relative p-4 rounded-lg overflow-hidden border-2 shadow-md ${
+                toTokenRegion
+                  ? `border-region-${toTokenRegion.toLowerCase()}-medium bg-region-${toTokenRegion.toLowerCase()}-light/10`
+                  : "border-green-500 bg-green-50"
+              }`}
+            >
+              {toTokenRegion && (
+                <RegionalPattern region={toTokenRegion as any} />
+              )}
+              <div className="relative">
+                <h3
+                  className={`text-sm font-bold mb-2 flex items-center ${
+                    toTokenRegion
+                      ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                      : "text-green-800"
+                  }`}
+                >
+                  <span className="mr-2 text-lg">✨</span>
+                  Inflation Protection Benefit
+                </h3>
+                <div className="flex items-center mb-3">
+                  <div className="flex items-center">
+                    {fromTokenRegion && (
+                      <div
+                        className="size-6 rounded-full flex items-center justify-center mr-1"
+                        style={{
+                          backgroundColor: fromTokenRegion
+                            ? REGION_COLORS[
+                                fromTokenRegion as keyof typeof REGION_COLORS
+                              ]
+                            : undefined,
+                        }}
+                      >
+                        <RegionalIconography
+                          region={fromTokenRegion as any}
+                          size="sm"
+                          className="text-white scale-75"
+                        />
+                      </div>
+                    )}
+                    <span
+                      className={`font-bold mx-1 ${
+                        fromTokenRegion
+                          ? `text-region-${fromTokenRegion.toLowerCase()}-dark`
+                          : "text-gray-900"
+                      }`}
+                    >
+                      {fromToken}
+                    </span>
+                  </div>
+                  <span className="mx-2 text-gray-500">→</span>
+                  <div className="flex items-center">
+                    {toTokenRegion && (
+                      <div
+                        className="size-6 rounded-full flex items-center justify-center mr-1"
+                        style={{
+                          backgroundColor: toTokenRegion
+                            ? REGION_COLORS[
+                                toTokenRegion as keyof typeof REGION_COLORS
+                              ]
+                            : undefined,
+                        }}
+                      >
+                        <RegionalIconography
+                          region={toTokenRegion as any}
+                          size="sm"
+                          className="text-white scale-75"
+                        />
+                      </div>
+                    )}
+                    <span
+                      className={`font-bold mx-1 ${
+                        toTokenRegion
+                          ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                          : "text-gray-900"
+                      }`}
+                    >
+                      {toToken}
+                    </span>
+                  </div>
+                </div>
+                <p
+                  className={`text-sm ${
+                    toTokenRegion
+                      ? `text-region-${toTokenRegion.toLowerCase()}-dark`
+                      : "text-gray-700"
+                  }`}
+                >
+                  You could save approximately{" "}
+                  <span className="font-bold text-green-600 text-lg">
+                    {inflationDifference.toFixed(1)}%
+                  </span>{" "}
+                  in purchasing power per year due to lower inflation in{" "}
+                  <span className="font-bold">{toTokenRegion}</span>.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Slippage Tolerance */}
+          <div>
+            <label className="block text-sm font-bold text-gray-900 mb-1">
+              Slippage Tolerance
+            </label>
+            <div className="flex space-x-2">
+              {[0.1, 0.5, 1.0, 2.0].map((tolerance) => (
+                <button
+                  key={tolerance}
+                  onClick={() => setSlippageTolerance(tolerance)}
+                  className={`px-3 py-1 text-sm rounded-md shadow-sm ${
+                    slippageTolerance === tolerance
+                      ? toTokenRegion
+                        ? `bg-region-${toTokenRegion.toLowerCase()}-medium text-white border border-region-${toTokenRegion.toLowerCase()}-dark font-medium`
+                        : `bg-blue-600 text-white border border-blue-700 font-medium`
+                      : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+                  }`}
+                  disabled={isLoading}
+                >
+                  {tolerance}%
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Transaction Status */}
+          {status !== "idle" && (
+            <div
+              className={`p-3 rounded-card ${
+                status === "error"
+                  ? "bg-accent-error/5 text-accent-error border border-accent-error/10"
+                  : status === "completed"
+                  ? "bg-accent-success/5 text-accent-success border border-accent-success/10"
+                  : "bg-accent-info/5 text-accent-info border border-accent-info/10"
+              }`}
+            >
+              <div className="flex items-center">
+                {status === "approving" && (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 size-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Approving token transfer...</span>
+                  </>
+                )}
+
+                {status === "swapping" && (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 size-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Executing swap transaction...</span>
+                  </>
+                )}
+
+                {status === "completed" && (
+                  <>
+                    <svg
+                      className="size-4 mr-2 text-accent-success"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>Swap completed successfully!</span>
+                  </>
+                )}
+
+                {status === "error" && (
+                  <>
+                    <svg
+                      className="size-4 mr-2 text-accent-error"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>{error || "An error occurred during the swap"}</span>
+                  </>
+                )}
+              </div>
+
+              {txHash && (
+                <div className="mt-2 text-xs">
+                  <a
+                    href={`https://explorer.celo.org/mainnet/tx/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent-info hover:underline"
+                  >
+                    View transaction on explorer
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="pt-2">
+            <button
+              onClick={handleSwap}
+              className={`relative w-full py-3 px-4 border rounded-lg shadow-md text-sm font-medium text-white overflow-hidden ${
+                fromToken && toToken && fromToken !== toToken && toTokenRegion
+                  ? `border-region-${toTokenRegion.toLowerCase()}-dark bg-region-${toTokenRegion.toLowerCase()}-medium hover:bg-region-${toTokenRegion.toLowerCase()}-dark`
+                  : "border-blue-700 bg-blue-600 hover:bg-blue-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                toTokenRegion
+                  ? `focus:ring-region-${toTokenRegion.toLowerCase()}-light`
+                  : "focus:ring-blue-300"
+              } transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+              disabled={
+                isLoading ||
+                !fromToken ||
+                !toToken ||
+                !amount ||
+                Number.parseFloat(amount) <= 0 ||
+                fromToken === toToken
+              }
+            >
+              {toTokenRegion && !isLoading && (
+                <div className="absolute inset-0 opacity-10">
+                  <RegionalPattern region={toTokenRegion as any} />
+                </div>
+              )}
+              <div className="relative">
+                {isLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-3 size-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    {status === "approving"
+                      ? "Approving..."
+                      : status === "swapping"
+                      ? "Swapping..."
+                      : "Processing..."}
+                  </span>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    {fromTokenRegion && toTokenRegion && (
+                      <div className="flex items-center mr-2">
+                        <div
+                          className="size-5 rounded-full flex items-center justify-center mr-1"
+                          style={{
+                            backgroundColor: fromTokenRegion
+                              ? REGION_COLORS[
+                                  fromTokenRegion as keyof typeof REGION_COLORS
+                                ]
+                              : undefined,
+                          }}
+                        >
+                          <RegionalIconography
+                            region={fromTokenRegion as any}
+                            size="sm"
+                            className="text-white scale-75"
+                          />
+                        </div>
+                        <span className="mx-1">→</span>
+                        <div
+                          className="size-5 rounded-full flex items-center justify-center ml-1"
+                          style={{
+                            backgroundColor: toTokenRegion
+                              ? REGION_COLORS[
+                                  toTokenRegion as keyof typeof REGION_COLORS
+                                ]
+                              : undefined,
+                          }}
+                        >
+                          <RegionalIconography
+                            region={toTokenRegion as any}
+                            size="sm"
+                            className="text-white scale-75"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <span className="font-bold">Swap</span>
+                    {fromToken && toToken && fromToken !== toToken && (
+                      <span className="ml-2 text-sm bg-white/20 px-2 py-0.5 rounded-full">
+                        {fromToken} → {toToken}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>

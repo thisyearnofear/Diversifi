@@ -194,16 +194,18 @@ export default function PortfolioRecommendations({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200">
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">Portfolio Strategies</h2>
-        <span className="text-xs text-gray-500">
+        <h2 className="text-lg font-bold text-gray-900">
+          Portfolio Strategies
+        </h2>
+        <span className="text-xs text-gray-700 bg-gray-100 px-2 py-1 rounded-full">
           Analysis: World Bank, Alpha Vantage
         </span>
       </div>
 
       <div className="mb-4">
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-800 mb-4 font-medium">
           Explore different portfolio strategies and see how they compare to
           your current allocation.
         </p>
@@ -215,10 +217,10 @@ export default function PortfolioRecommendations({
               onClick={() =>
                 handleStrategyChange(key as keyof typeof PORTFOLIO_STRATEGIES)
               }
-              className={`p-2 text-sm rounded-md transition-colors ${
+              className={`p-2 text-sm rounded-md transition-colors shadow-sm ${
                 selectedStrategy === key
-                  ? "bg-blue-100 border-blue-300 border text-blue-700"
-                  : "bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
+                  ? "bg-blue-600 border-blue-700 border text-white font-medium"
+                  : "bg-gray-50 border border-gray-200 text-gray-800 hover:bg-gray-100"
               }`}
             >
               <div className="font-medium">{strategy.name}</div>
@@ -229,8 +231,8 @@ export default function PortfolioRecommendations({
       </div>
 
       <div className="mb-4">
-        <h3 className="font-medium mb-2">Strategy Allocation</h3>
-        <div className="bg-gray-50 p-3 rounded-md">
+        <h3 className="font-bold text-gray-900 mb-2">Strategy Allocation</h3>
+        <div className="bg-white p-3 rounded-md border border-gray-200 shadow-sm">
           <div className="flex mb-2">
             {Object.entries(
               PORTFOLIO_STRATEGIES[selectedStrategy].allocations
@@ -254,14 +256,14 @@ export default function PortfolioRecommendations({
             ).map(([region, allocation]) => (
               <div key={region} className="flex items-center">
                 <div
-                  className="size-3 rounded-full mr-1"
+                  className="size-4 rounded-full mr-1 border border-gray-200"
                   style={{
                     backgroundColor:
                       REGION_METADATA[region as keyof typeof REGION_METADATA]
                         ?.color || "#CBD5E0",
                   }}
                 />
-                <span>
+                <span className="font-medium text-gray-900">
                   {region}: {(allocation * 100).toFixed(0)}%
                 </span>
               </div>
@@ -272,14 +274,19 @@ export default function PortfolioRecommendations({
 
       {potentialAdjustments.length > 0 ? (
         <div className="mb-4">
-          <h3 className="font-medium mb-2">Potential Adjustments</h3>
+          <h3 className="font-bold text-gray-900 mb-2">
+            Potential Adjustments
+          </h3>
           <div className="space-y-2">
             {potentialAdjustments.map((swap, index) => (
-              <div key={index} className="bg-blue-50 p-3 rounded-md">
+              <div
+                key={index}
+                className="bg-white p-3 rounded-md border border-blue-200 shadow-sm"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div
-                      className="size-3 rounded-full mr-1"
+                      className="size-4 rounded-full mr-1 border border-gray-200"
                       style={{
                         backgroundColor:
                           REGION_METADATA[
@@ -287,12 +294,14 @@ export default function PortfolioRecommendations({
                           ]?.color || "#CBD5E0",
                       }}
                     />
-                    <span>{swap.from}</span>
+                    <span className="font-medium text-gray-900">
+                      {swap.from}
+                    </span>
                   </div>
-                  <div className="mx-2">→</div>
+                  <div className="mx-2 text-gray-800 font-bold">→</div>
                   <div className="flex items-center">
                     <div
-                      className="size-3 rounded-full mr-1"
+                      className="size-4 rounded-full mr-1 border border-gray-200"
                       style={{
                         backgroundColor:
                           REGION_METADATA[
@@ -300,11 +309,13 @@ export default function PortfolioRecommendations({
                           ]?.color || "#CBD5E0",
                       }}
                     />
-                    <span>{swap.to}</span>
+                    <span className="font-medium text-gray-900">{swap.to}</span>
                   </div>
-                  <div className="ml-auto font-medium">{swap.percentage}%</div>
+                  <div className="ml-auto font-bold text-blue-600">
+                    {swap.percentage}%
+                  </div>
                 </div>
-                <div className="text-xs text-blue-600 mt-1">
+                <div className="text-sm text-gray-800 mt-2 font-medium">
                   Moving {swap.percentage}% from {swap.from} to {swap.to} would
                   align with the {PORTFOLIO_STRATEGIES[selectedStrategy].name}{" "}
                   strategy.
@@ -314,21 +325,32 @@ export default function PortfolioRecommendations({
           </div>
         </div>
       ) : (
-        <div className="bg-green-50 p-3 rounded-md mb-4">
-          <p className="text-sm text-green-600">
+        <div className="bg-green-50 p-3 rounded-md mb-4 border border-green-200 shadow-sm">
+          <p className="text-sm text-green-800 font-medium">
             Your current portfolio is already similar to the{" "}
-            {PORTFOLIO_STRATEGIES[selectedStrategy].name} strategy.
+            <span className="font-bold">
+              {PORTFOLIO_STRATEGIES[selectedStrategy].name}
+            </span>{" "}
+            strategy.
           </p>
         </div>
       )}
 
-      <div className="bg-yellow-50 p-3 rounded-md">
-        <h3 className="font-medium text-yellow-700 mb-1">Strategy Benefits</h3>
-        <ul className="text-sm text-yellow-600 list-disc pl-5 space-y-1">
-          <li>Reduce exposure to high-inflation regions</li>
-          <li>Maintain purchasing power across different economies</li>
-          <li>Protect against currency devaluation in any single region</li>
-          <li>Create a more resilient savings portfolio</li>
+      <div className="bg-blue-50 p-4 rounded-md border border-blue-200 shadow-sm">
+        <h3 className="font-bold text-gray-900 mb-2">Strategy Benefits</h3>
+        <ul className="text-sm text-gray-800 list-disc pl-5 space-y-2">
+          <li className="font-medium">
+            Reduce exposure to high-inflation regions
+          </li>
+          <li className="font-medium">
+            Maintain purchasing power across different economies
+          </li>
+          <li className="font-medium">
+            Protect against currency devaluation in any single region
+          </li>
+          <li className="font-medium">
+            Create a more resilient savings portfolio
+          </li>
         </ul>
       </div>
     </div>

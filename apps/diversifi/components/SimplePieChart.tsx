@@ -77,8 +77,8 @@ export default function SimplePieChart({
   }, [data]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-      <h3 className="text-lg font-semibold mb-4">{title}</h3>
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4 border border-gray-200">
+      <h3 className="text-lg font-bold text-gray-900 mb-4">{title}</h3>
 
       {data.length > 0 ? (
         <div className="flex flex-col items-center">
@@ -88,16 +88,18 @@ export default function SimplePieChart({
             {data.map((item, index) => (
               <div key={index} className="flex items-center">
                 <div
-                  className="size-3 rounded-full mr-2"
+                  className="size-4 rounded-full mr-2 border border-gray-200"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="text-sm">
+                <span className="text-sm font-medium text-gray-900">
                   {item.region}:{" "}
-                  {(
-                    (item.value / data.reduce((sum, d) => sum + d.value, 0)) *
-                    100
-                  ).toFixed(1)}
-                  %
+                  <span className="font-bold">
+                    {(
+                      (item.value / data.reduce((sum, d) => sum + d.value, 0)) *
+                      100
+                    ).toFixed(1)}
+                    %
+                  </span>
                 </span>
               </div>
             ))}
