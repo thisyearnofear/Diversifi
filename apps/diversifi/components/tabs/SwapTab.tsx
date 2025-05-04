@@ -1,5 +1,5 @@
 import React from "react";
-import SwapInterface from "@/components/SwapInterface";
+import SwapInterface from "../SwapInterface";
 import { useInflationData } from "@/hooks/use-inflation-data";
 import type { Region } from "@/hooks/use-user-region";
 

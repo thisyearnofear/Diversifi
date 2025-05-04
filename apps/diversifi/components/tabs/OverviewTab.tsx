@@ -1,5 +1,5 @@
 import React from "react";
-import SimplePieChart from "@/components/SimplePieChart";
+import SimplePieChart from "../SimplePieChart";
 import { useDiversification } from "@/hooks/use-diversification";
 import { REGION_COLORS } from "@/constants/regions";
 import type { Region } from "@/hooks/use-user-region";
@@ -53,10 +53,10 @@ export default function OverviewTab({
       {!address && !isConnecting && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-4 text-center">
           <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="size-24 bg-blue-100 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-blue-500"
+                className="size-12 text-blue-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -92,9 +92,9 @@ export default function OverviewTab({
       {isConnecting && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-4 text-center">
           <div className="animate-pulse flex flex-col items-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full mb-4 flex items-center justify-center">
+            <div className="size-16 bg-blue-100 rounded-full mb-4 flex items-center justify-center">
               <svg
-                className="animate-spin h-8 w-8 text-blue-500"
+                className="animate-spin size-8 text-blue-500"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -124,7 +124,7 @@ export default function OverviewTab({
           <div className="flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="size-5mr-2"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -161,10 +161,10 @@ export default function OverviewTab({
               // Empty state when no stablecoins are found
               <div className="text-center py-8">
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
+                  <div className="size-16 bg-blue-50 rounded-full flex items-center justify-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-8 w-8 text-blue-500"
+                      className="size-8 text-blue-500"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -287,7 +287,7 @@ export default function OverviewTab({
                   <div className="flex items-center mb-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 text-blue-500 mr-1"
+                      className="size-5text-blue-500 mr-1"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -339,7 +339,7 @@ export default function OverviewTab({
                     <div className="flex justify-between mb-2">
                       <div className="flex items-center">
                         <div
-                          className="w-4 h-4 rounded-full mr-2"
+                          className="size-4 rounded-full mr-2"
                           style={{
                             backgroundColor:
                               REGION_COLORS[
@@ -382,7 +382,7 @@ export default function OverviewTab({
 
             <div className="flex items-center mb-4 bg-gray-50 p-3 rounded-lg">
               <div
-                className="w-10 h-10 rounded-full mr-3 flex items-center justify-center text-white font-bold"
+                className="size-10 rounded-full mr-3 flex items-center justify-center text-white font-bold"
                 style={{
                   backgroundColor:
                     REGION_COLORS[userRegion as keyof typeof REGION_COLORS] ||

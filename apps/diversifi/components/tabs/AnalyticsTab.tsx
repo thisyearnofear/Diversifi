@@ -1,6 +1,6 @@
 import React from "react";
-import PerformanceChart from "@/components/PerformanceChart";
-import CurrencyPerformanceChart from "@/components/CurrencyPerformanceChart";
+import PerformanceChart from "../PerformanceChart";
+import CurrencyPerformanceChart from "../CurrencyPerformanceChart";
 import { useDiversification } from "@/hooks/use-diversification";
 
 interface AnalyticsTabProps {
@@ -143,9 +143,7 @@ export default function AnalyticsTab({
 
       {/* Diversification Score */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <h2 className="text-lg font-semibold mb-2">
-          Diversification Score
-        </h2>
+        <h2 className="text-lg font-semibold mb-2">Diversification Score</h2>
 
         <div className="relative pt-1">
           <div className="flex mb-2 items-center justify-between">
@@ -173,9 +171,7 @@ export default function AnalyticsTab({
         </p>
 
         <div className="bg-blue-50 p-3 rounded-md">
-          <h3 className="font-medium text-blue-700 mb-1">
-            How to Improve
-          </h3>
+          <h3 className="font-medium text-blue-700 mb-1">How to Improve</h3>
           <ul className="text-sm text-blue-600 list-disc pl-5 space-y-1">
             {diversificationTips.map((tip, index) => (
               <li key={index}>{tip}</li>

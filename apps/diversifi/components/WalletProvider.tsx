@@ -1,6 +1,6 @@
-import { createContext, useContext, type ReactNode } from 'react';
-import { useWallet } from '@/hooks/use-wallet';
-import type { Address, WalletClient } from 'viem';
+import { createContext, useContext, type ReactNode } from "react";
+import { useWallet } from "../hooks/use-wallet";
+import type { Address, WalletClient } from "viem";
 
 // Define the context type
 interface WalletContextType {
@@ -31,9 +31,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const wallet = useWallet();
 
   return (
-    <WalletContext.Provider value={wallet}>
-      {children}
-    </WalletContext.Provider>
+    <WalletContext.Provider value={wallet}>{children}</WalletContext.Provider>
   );
 }
 

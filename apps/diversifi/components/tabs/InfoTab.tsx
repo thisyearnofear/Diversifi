@@ -1,5 +1,5 @@
 import React from "react";
-import { REGION_COLORS } from "@/constants/regions";
+import { REGION_COLORS } from "../../constants/regions";
 
 interface InfoTabProps {
   availableTokens: Array<{
@@ -42,24 +42,18 @@ export default function InfoTab({
         </div>
 
         <div className="bg-green-50 p-3 rounded-md">
-          <h3 className="font-medium text-green-700 mb-1">
-            How It Works
-          </h3>
+          <h3 className="font-medium text-green-700 mb-1">How It Works</h3>
           <ol className="text-sm text-green-600 list-decimal pl-5 space-y-1">
             <li>Connect your MiniPay wallet</li>
             <li>View your current stablecoin portfolio</li>
-            <li>
-              See personalized recommendations based on your home region
-            </li>
+            <li>See personalized recommendations based on your home region</li>
             <li>Swap stablecoins to optimize your portfolio</li>
           </ol>
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <h2 className="text-lg font-semibold mb-2">
-          Supported Stablecoins
-        </h2>
+        <h2 className="text-lg font-semibold mb-2">Supported Stablecoins</h2>
 
         <div className="grid grid-cols-2 gap-2">
           {availableTokens.map((token) => (
@@ -68,9 +62,7 @@ export default function InfoTab({
               className="p-2 rounded-md border border-gray-200"
               style={{
                 borderLeftColor:
-                  REGION_COLORS[
-                    token.region as keyof typeof REGION_COLORS
-                  ],
+                  REGION_COLORS[token.region as keyof typeof REGION_COLORS],
                 borderLeftWidth: "4px",
               }}
             >
@@ -98,16 +90,13 @@ export default function InfoTab({
             <strong>Is MiniPay:</strong> {isInMiniPay ? "Yes" : "No"}
           </div>
           <div>
-            <strong>Chain ID:</strong>{" "}
-            {chainId ? chainId.toString() : "N/A"}
+            <strong>Chain ID:</strong> {chainId ? chainId.toString() : "N/A"}
             {chainId === 44787 && " (Celo Alfajores Testnet)"}
             {chainId === 42220 && " (Celo Mainnet)"}
           </div>
           <div>
             <strong>Has Ethereum Provider:</strong>{" "}
-            {typeof window !== "undefined" && window.ethereum
-              ? "Yes"
-              : "No"}
+            {typeof window !== "undefined" && window.ethereum ? "Yes" : "No"}
           </div>
           <div>
             <strong>Connected Address:</strong>{" "}

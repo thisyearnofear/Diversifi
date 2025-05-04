@@ -1,10 +1,10 @@
-import "@/styles/globals.css";
+import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { isMiniPayEnvironment } from "@/utils/environment";
+import { isMiniPayEnvironment } from "../utils/environment";
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { WalletProvider } from "@/components/WalletProvider";
+import ErrorBoundary from "../components/ErrorBoundary";
+import { WalletProvider } from "../components/WalletProvider";
 import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {

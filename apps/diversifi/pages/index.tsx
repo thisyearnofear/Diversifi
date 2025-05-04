@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { isMiniPayEnvironment } from "@/utils/environment";
+import { isMiniPayEnvironment } from "../utils/environment";
 import Head from "next/head";
 import { useRouter } from "next/router";
 

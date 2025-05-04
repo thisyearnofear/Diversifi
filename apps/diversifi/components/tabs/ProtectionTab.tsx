@@ -1,6 +1,6 @@
 import React from "react";
-import InflationProtectionInfo from "@/components/InflationProtectionInfo";
-import RegionalRecommendations from "@/components/RegionalRecommendations";
+import InflationProtectionInfo from "../InflationProtectionInfo";
+import RegionalRecommendations from "../RegionalRecommendations";
 import type { Region } from "@/hooks/use-user-region";
 
 interface ProtectionTabProps {

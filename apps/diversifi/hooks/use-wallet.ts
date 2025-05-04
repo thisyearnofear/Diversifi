@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createWalletClient, custom, type Address, type WalletClient } from 'viem';
 import { celo, celoAlfajores } from 'viem/chains';
-import { isMiniPayEnvironment } from '@/utils/environment';
+import { isMiniPayEnvironment } from '../utils/environment';
 
 export function useWallet() {
   const [client, setClient] = useState<WalletClient | null>(null);
@@ -32,12 +32,12 @@ export function useWallet() {
           chain,
           transport: custom(window.ethereum),
         });
-        
+
         setClient(walletClient);
-        
+
         // Log for debugging
-        console.log('Wallet client initialized', { 
-          inMiniPay, 
+        console.log('Wallet client initialized', {
+          inMiniPay,
           chain: chain.name,
           chainId: chain.id
         });
@@ -102,7 +102,7 @@ export function useWallet() {
     try {
       // Request accounts
       const accounts = await client.requestAddresses();
-      
+
       if (accounts && accounts.length > 0) {
         setAddress(accounts[0]);
         setIsConnected(true);

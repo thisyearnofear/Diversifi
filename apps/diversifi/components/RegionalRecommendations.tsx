@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Region } from "@/hooks/use-user-region";
+import type { Region } from "../hooks/use-user-region";
 
 // Region colors for visualization
 const REGION_COLORS: Record<string, string> = {

@@ -1,0 +1,16 @@
+[build]
+  command = "pnpm install --no-frozen-lockfile && pnpm add -D stream-browserify buffer crypto-browserify util && pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--version"
+  NEXT_TELEMETRY_DISABLED = "1"
+  NETLIFY_NEXT_PLUGIN_SKIP = "false"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  # Increase the timeout for functions that need more time
+  node_bundler = "esbuild"

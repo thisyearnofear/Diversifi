@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useInflationData } from "@/hooks/use-inflation-data";
-import type { Region } from "@/hooks/use-user-region";
+import { useInflationData } from "../hooks/use-inflation-data";
+import type { Region } from "../hooks/use-user-region";
 
 // Calculate potential savings from diversification
 const calculateSavings = (
@@ -130,9 +130,7 @@ export default function InflationProtectionInfo({
                   ? "bg-blue-100 border-blue-300 border text-blue-700 font-medium"
                   : "bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() =>
-                onChangeHomeRegion?.(region as Region)
-              }
+              onClick={() => onChangeHomeRegion?.(region as Region)}
             >
               {region}
             </button>

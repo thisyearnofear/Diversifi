@@ -1,6 +1,6 @@
 import React from "react";
-import GoalBasedStrategies from "@/components/GoalBasedStrategies";
-import PortfolioRecommendations from "@/components/PortfolioRecommendations";
+import GoalBasedStrategies from "../GoalBasedStrategies";
+import PortfolioRecommendations from "../PortfolioRecommendations";
 import type { Region } from "@/hooks/use-user-region";
 
 interface StrategiesTabProps {

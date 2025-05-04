@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface PieChartData {
   region: string;
@@ -11,93 +11,93 @@ interface SimplePieChartProps {
   title?: string;
 }
 
-export default function SimplePieChart({ 
-  data, 
-  title = 'Portfolio Distribution' 
+export default function SimplePieChart({
+  data,
+  title = "Portfolio Distribution",
 }: SimplePieChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   useEffect(() => {
     if (!canvasRef.current || data.length === 0) return;
-    
+
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    
+
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Calculate total value
     const total = data.reduce((sum, item) => sum + item.value, 0);
     if (total <= 0) return;
-    
+
     // Calculate center and radius
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     const radius = Math.min(centerX, centerY) - 10;
-    
+
     // Draw pie chart
     let startAngle = 0;
-    data.forEach(item => {
+    data.forEach((item) => {
       const sliceAngle = (item.value / total) * 2 * Math.PI;
-      
+
       // Draw slice
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
       ctx.closePath();
-      
+
       // Fill slice
       ctx.fillStyle = item.color;
       ctx.fill();
-      
+
       // Draw border
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 2;
       ctx.stroke();
-      
+
       // Calculate label position
       const labelAngle = startAngle + sliceAngle / 2;
       const labelRadius = radius * 0.7;
       const labelX = centerX + Math.cos(labelAngle) * labelRadius;
       const labelY = centerY + Math.sin(labelAngle) * labelRadius;
-      
+
       // Only draw label if slice is big enough
       if (sliceAngle > 0.2) {
         // Draw label
-        ctx.font = 'bold 12px Arial';
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.font = "bold 12px Arial";
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillText(item.region, labelX, labelY);
       }
-      
+
       startAngle += sliceAngle;
     });
   }, [data]);
-  
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      
+
       {data.length > 0 ? (
         <div className="flex flex-col items-center">
-          <canvas 
-            ref={canvasRef} 
-            width={200} 
-            height={200} 
-            className="mb-4"
-          />
-          
+          <canvas ref={canvasRef} width={200} height={200} className="mb-4" />
+
           <div className="grid grid-cols-2 gap-2 w-full">
             {data.map((item, index) => (
               <div key={index} className="flex items-center">
-                <div 
-                  className="w-3 h-3 rounded-full mr-2"
+                <div
+                  className="size-3 rounded-full mr-2"
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-sm">
-                  {item.region}: {((item.value / data.reduce((sum, d) => sum + d.value, 0)) * 100).toFixed(1)}%
+                  {item.region}:{" "}
+                  {(
+                    (item.value / data.reduce((sum, d) => sum + d.value, 0)) *
+                    100
+                  ).toFixed(1)}
+                  %
                 </span>
               </div>
             ))}

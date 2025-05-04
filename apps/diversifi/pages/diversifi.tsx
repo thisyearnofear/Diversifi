@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { useWalletConnection } from "@/hooks/wallet/use-wallet-connection";
-import { useUserRegion, type Region, REGIONS } from "@/hooks/use-user-region";
-import { useStablecoinBalances } from "@/hooks/use-stablecoin-balances";
-import { useHistoricalPerformance } from "@/hooks/use-historical-performance";
-import { useInflationData } from "@/hooks/use-inflation-data";
-import { useCurrencyPerformance } from "@/hooks/use-currency-performance";
+import { useWalletConnection } from "../hooks/wallet/use-wallet-connection";
+import { useUserRegion, type Region, REGIONS } from "../hooks/use-user-region";
+import { useStablecoinBalances } from "../hooks/use-stablecoin-balances";
+import { useHistoricalPerformance } from "../hooks/use-historical-performance";
+import { useInflationData } from "../hooks/use-inflation-data";
+import { useCurrencyPerformance } from "../hooks/use-currency-performance";
 import {
   AVAILABLE_TOKENS,
   MOCK_REGION_DATA,
   REGION_COLORS,
-} from "@/constants/regions";
-import TabNavigation from "@/components/TabNavigation";
-import OverviewTab from "@/components/tabs/OverviewTab";
-import ProtectionTab from "@/components/tabs/ProtectionTab";
-import AnalyticsTab from "@/components/tabs/AnalyticsTab";
-import StrategiesTab from "@/components/tabs/StrategiesTab";
-import SwapTab from "@/components/tabs/SwapTab";
-import InfoTab from "@/components/tabs/InfoTab";
+} from "../constants/regions";
+import TabNavigation from "../components/TabNavigation";
+import OverviewTab from "../components/tabs/OverviewTab";
+import ProtectionTab from "../components/tabs/ProtectionTab";
+import AnalyticsTab from "../components/tabs/AnalyticsTab";
+import StrategiesTab from "../components/tabs/StrategiesTab";
+import SwapTab from "../components/tabs/SwapTab";
+import InfoTab from "../components/tabs/InfoTab";
 
 export default function DiversiFiPage() {
   // Tab state

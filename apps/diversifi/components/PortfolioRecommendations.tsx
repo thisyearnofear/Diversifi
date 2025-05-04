@@ -254,7 +254,7 @@ export default function PortfolioRecommendations({
             ).map(([region, allocation]) => (
               <div key={region} className="flex items-center">
                 <div
-                  className="w-3 h-3 rounded-full mr-1"
+                  className="size-3 rounded-full mr-1"
                   style={{
                     backgroundColor:
                       REGION_METADATA[region as keyof typeof REGION_METADATA]
@@ -279,7 +279,7 @@ export default function PortfolioRecommendations({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-full mr-1"
+                      className="size-3 rounded-full mr-1"
                       style={{
                         backgroundColor:
                           REGION_METADATA[
@@ -292,7 +292,7 @@ export default function PortfolioRecommendations({
                   <div className="mx-2">→</div>
                   <div className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-full mr-1"
+                      className="size-3 rounded-full mr-1"
                       style={{
                         backgroundColor:
                           REGION_METADATA[

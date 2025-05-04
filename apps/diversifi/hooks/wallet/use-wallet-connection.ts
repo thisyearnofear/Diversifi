@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { isMiniPayEnvironment } from "@/utils/environment";
+import { isMiniPayEnvironment } from "../../utils/environment";
 
 export function useWalletConnection() {
   const [isInMiniPay, setIsInMiniPay] = useState(false);
