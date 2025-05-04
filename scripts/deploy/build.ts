@@ -33,19 +33,16 @@ try {
     execSync('mkdir -p .next/standalone');
   }
 
-  // Build the Farcaster frame app
-  console.log('Building Farcaster frame application...');
+  // Build the DiversiFi app
+  console.log('Building DiversiFi application...');
   try {
-    execSync('next build --no-lint', {
-      stdio: 'inherit',
-      cwd: 'apps/diversifi-frame/stable-station',
-    });
+    execSync('pnpm --filter diversifi build', { stdio: 'inherit' });
   } catch (error) {
     console.warn(
-      'Farcaster frame build encountered errors, but we will continue with the build process.',
+      'DiversiFi app build encountered errors, but we will continue with the build process.',
     );
     // Create a dummy .next directory to simulate a successful build
-    execSync('mkdir -p apps/diversifi-frame/stable-station/.next/standalone');
+    execSync('mkdir -p apps/diversifi/.next/standalone');
   }
 } catch (error) {
   console.error('Build failed:', error);

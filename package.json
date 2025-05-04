@@ -1,16 +1,25 @@
 {
   "name": "ai-chatbot",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
+    "dev:diversifi": "pnpm --filter diversifi dev",
+    "dev:packages": "pnpm --filter \"./packages/**\" dev",
     "build": "tsx scripts/deploy/build.ts",
+    "build:all": "pnpm -r build",
+    "build:packages": "pnpm --filter \"./packages/**\" build",
+    "build:apps": "pnpm --filter \"./apps/**\" build",
+    "build:diversifi": "pnpm --filter diversifi build",
     "start": "next start",
+    "start:diversifi": "pnpm --filter diversifi start",
     "lint": "next lint && biome lint --write --unsafe",
     "lint:fix": "next lint --fix && biome lint --write --unsafe",
+    "lint:all": "pnpm -r lint",
     "format": "biome format --write",
     "db:migrate": "tsx scripts/db/run-migrations.ts",
     "db:generate": "drizzle-kit generate",
@@ -150,6 +159,7 @@
     "eslint-plugin-tailwindcss": "^3.17.5",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.1",
+    "tsup": "^8.4.0",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3"
   }

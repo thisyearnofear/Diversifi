@@ -119,6 +119,55 @@ pnpm db:seed
 pnpm dev
 ```
 
+### Monorepo Structure
+
+The project is organized as a monorepo using pnpm workspaces:
+
+```
+/
+├── apps/
+│   ├── diversifi/         # MiniPay DiversiFi app
+│   └── web/               # Main web app (if needed)
+├── packages/
+│   ├── mento-utils/       # Shared Mento utilities
+│   ├── ui/                # Shared UI components
+│   ├── config/            # Shared configs (TS, ESLint, etc.)
+│   └── api/               # Shared API utilities
+├── package.json           # Root package.json
+└── pnpm-workspace.yaml    # Workspace config
+```
+
+#### Working with the Monorepo
+
+```bash
+# Install dependencies for all workspaces
+pnpm install
+
+# Run development server for the main app
+pnpm dev
+
+# Run development server for the DiversiFi app
+pnpm dev:diversifi
+
+# Run development server for all packages
+pnpm dev:packages
+
+# Build all workspaces
+pnpm build:all
+
+# Build only packages
+pnpm build:packages
+
+# Build only apps
+pnpm build:apps
+
+# Build only the DiversiFi app
+pnpm build:diversifi
+
+# Lint all workspaces
+pnpm lint:all
+```
+
 ### Neynar MCP Setup
 
 To set up the Neynar MCP (Mintlify Command Palette) for enhanced documentation search:
@@ -192,6 +241,77 @@ The full DiversiFi feature will include:
    - Customizable visualization options
    - Detailed token information and regional context
    - Educational content about the benefits of geographical diversification
+
+### MiniPay Integration Plan for DiversiFi
+
+We're participating in the Global Stablecoin Hackathon focused on MiniPay and Mento local stablecoins. Our plan is to adapt DiversiFi for MiniPay with a focus on the "Inflation Protection and Swapping" track.
+
+#### Architecture Plan
+
+1. **Project Structure**
+
+   ```
+   /
+   ├── apps/
+   │   ├── diversifi/           # New MiniPay-focused DiversiFi app
+   │   │   ├── components/      # UI components specific to DiversiFi
+   │   │   ├── hooks/           # Hooks for DiversiFi functionality
+   │   │   ├── pages/           # Next.js pages for DiversiFi
+   │   │   └── ...              # Other necessary files
+   │   │
+   │   └── main/                # Your existing main app (optional reorganization)
+   │
+   ├── packages/                # Shared packages
+   │   ├── mento-utils/         # Your existing Mento utilities as a shared package
+   │   ├── ui/                  # Shared UI components
+   │   └── config/              # Shared configuration
+   ```
+
+2. **Environment Detection**
+
+   - Automatically detect when the app is running in MiniPay
+   - Render appropriate UI based on environment
+   - Support URL-based routing for direct access
+
+3. **Core Features for MiniPay**
+   - Simple, mobile-optimized UI
+   - Portfolio visualization (pie chart, world map, grid view)
+   - Stablecoin swapping with Mento
+   - Inflation protection education
+   - Diversification metrics
+
+#### Implementation Phases
+
+1. **Phase 1: Project Setup (2-3 days)**
+
+   - Create project structure
+   - Extract shared code
+   - Set up environment detection
+
+2. **Phase 2: Core Implementation (5-7 days)**
+
+   - Implement mobile-first UI
+   - Create visualization components
+   - Integrate stablecoin data and swapping
+
+3. **Phase 3: MiniPay Integration (3-5 days)**
+
+   - Implement MiniPay wallet detection
+   - Add fee currency support
+   - Test with MiniPay using ngrok
+
+4. **Phase 4: Finalization (2-3 days)**
+   - Create documentation
+   - Record demo video
+   - Deploy to production
+
+#### MiniPay-Specific Considerations
+
+- Mobile-responsive design is critical
+- Use viem/wagmi for wallet integration
+- Hide wallet connect button when in MiniPay
+- Support fee currency for transactions
+- Optimize for small screens and touch interfaces
 
 ### Implementation Plan
 

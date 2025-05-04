@@ -38,19 +38,11 @@ async function seedBaseActions() {
       console.log("Inserting Divvi registration action...");
       const divviAction = {
         id: uuidv4(),
-        title: "Set up Base Account",
-        description: "Enable portfolio tracking on Base",
         category: "STABLECOIN",
         chain: "BASE",
         difficulty: "BEGINNER",
         prerequisites: '{}',
-        steps: '{'
-            title: "Connect wallet",
-            description: "Connect your wallet to continue",,
-            title: "Set up Base Account",
-            description: "Click 'Set Up Account' to enable portfolio tracking",,
-            title: "Confirm transaction",
-            description: "Confirm the transaction in your wallet",,
+        steps: '{',,,
             title: "Complete setup",
             description: "Click 'Complete Setup' to finish",,
         ]),
@@ -90,24 +82,11 @@ async function seedBaseActions() {
       console.log("Inserting Aerodrome swap action...");
       const aerodromeAction = {
         id: uuidv4(),
-        title: "Get USDbC Stablecoins",
-        description: "Secure USD-backed tokens on Base",
         category: "STABLECOIN",
         chain: "BASE",
         difficulty: "BEGINNER",
         prerequisites: '{}',
-        steps: '{'
-            title: "Get USDbC",
-            description: "Click 'Get USDbC' to go to the swap interface",,
-            title: "Connect wallet",
-            description: "Connect your wallet to Aerodrome",,
-            title: "Swap ETH for USDbC",
-            description: "Swap ETH for USDbC (already pre-selected)",,
-            title: "Confirm transaction",
-            description: "Confirm the transaction in your wallet",,
-            title: "Copy transaction hash",
-            description:
-              "Copy the transaction hash from your wallet or explorer",,
+        steps: '{',,,,,
             title: "Complete action",
             description:
               "Paste the transaction hash and click 'Complete Action'",,
