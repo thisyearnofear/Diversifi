@@ -128,19 +128,48 @@ export default function SwapTab({
 
       // Refresh token balances after successful swap
       console.log("Refreshing token balances after successful swap");
-      setTimeout(() => {
-        // First try to refresh using the parent component's refreshBalances function
-        if (refreshBalances) {
-          refreshBalances();
+
+      // Use a more reliable approach with multiple retries
+      const refreshWithRetries = async (retries = 3, delay = 2000) => {
+        for (let i = 0; i < retries; i++) {
+          try {
+            // Wait for the specified delay
+            await new Promise((resolve) => setTimeout(resolve, delay));
+
+            console.log(`Refresh attempt ${i + 1} of ${retries}`);
+
+            // First refresh chain ID if available
+            if (refreshChainId) {
+              await refreshChainId();
+            }
+
+            // Then refresh balances using the parent component's function if available
+            if (refreshBalances) {
+              await refreshBalances();
+            }
+            // Otherwise use the SwapInterface component's function
+            else if (
+              swapInterfaceRef.current &&
+              swapInterfaceRef.current.refreshBalances
+            ) {
+              await swapInterfaceRef.current.refreshBalances();
+            }
+
+            // If we get here without an error, we can break the loop
+            console.log(`Refresh attempt ${i + 1} successful`);
+            break;
+          } catch (error) {
+            console.error(`Refresh attempt ${i + 1} failed:`, error);
+            // If this is the last attempt, log a more detailed error
+            if (i === retries - 1) {
+              console.error("All refresh attempts failed");
+            }
+          }
         }
-        // Also refresh through the SwapInterface component
-        else if (
-          swapInterfaceRef.current &&
-          swapInterfaceRef.current.refreshBalances
-        ) {
-          swapInterfaceRef.current.refreshBalances();
-        }
-      }, 2000); // Wait 2 seconds to allow the blockchain to update
+      };
+
+      // Start the refresh process
+      refreshWithRetries();
     } else if (swapTxHash || localSwapTxHash) {
       if (swapStep === "approving") {
         setSwapStatus("Approval confirmed. Now executing swap...");

@@ -266,14 +266,7 @@ export default function GoalBasedStrategies({
         </ul>
       </div>
 
-      <div className="mt-4 flex justify-between">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
-          Start Saving Plan
-        </button>
-        <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md transition-colors">
-          Share Plan
-        </button>
-      </div>
+      <div className="mt-4 flex justify-between"></div>
     </div>
   );
 }

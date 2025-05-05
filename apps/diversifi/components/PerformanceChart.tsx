@@ -174,9 +174,36 @@ export default function PerformanceChart({
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          <span className="text-xs text-gray-700 font-medium ml-2 bg-gray-100 px-2 py-0.5 rounded">
-            World Bank, Alpha Vantage
-          </span>
+          <div className="flex items-center">
+            <span className="text-xs text-gray-700 font-medium ml-2 bg-gray-100 px-2 py-0.5 rounded">
+              World Bank, Alpha Vantage
+            </span>
+            <div className="relative ml-2 group">
+              <span className="cursor-help text-blue-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="size-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </span>
+              <div className="absolute left-0 bottom-full mb-2 w-64 bg-white p-2 rounded-md shadow-lg border border-gray-200 text-xs text-gray-700 hidden group-hover:block z-10">
+                <p className="font-medium text-gray-900 mb-1">Simulated Data</p>
+                <p>
+                  This chart shows a simulation based on your current portfolio
+                  allocation. It is not actual historical performance data.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="flex space-x-4">
           <div

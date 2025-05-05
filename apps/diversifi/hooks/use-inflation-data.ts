@@ -293,9 +293,19 @@ export function useInflationData() {
 
   // Get inflation rate for a specific stablecoin
   const getInflationRateForStablecoin = (stablecoin: string): number => {
+    // Normalize stablecoin name (handle both CXOF and EXOF)
+    const normalizedStablecoin = stablecoin.toUpperCase();
+
+    // Special case for CFA Franc (handle both CXOF and EXOF)
+    if (normalizedStablecoin === 'CXOF' || normalizedStablecoin === 'EXOF') {
+      // Get the inflation rate for XOF directly
+      const xofData = inflationData['Africa']?.countries.find(c => c.currency === 'XOF');
+      return xofData ? xofData.rate : inflationData['Africa']?.avgRate || 3.5; // Fallback to region average or 3.5%
+    }
+
     // Find the currency that corresponds to this stablecoin
     const currency = Object.keys(CURRENCY_TO_STABLECOIN).find(
-      key => CURRENCY_TO_STABLECOIN[key] === stablecoin
+      key => CURRENCY_TO_STABLECOIN[key].toUpperCase() === normalizedStablecoin
     );
 
     if (!currency) return 0;

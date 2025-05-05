@@ -64,14 +64,33 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
           </div>
         )}
       </label>
-      {/* Balance display - only show for "From" tokens with amount input */}
-      {showAmountInput && (
-        <div className="flex justify-end mb-1">
-          <div className="text-xs text-gray-600 font-medium">
-            Balance: {parseFloat(currentBalance).toFixed(4)} {selectedToken}
-          </div>
+      {/* Balance display - show for all tokens */}
+      <div className="flex justify-end mb-1">
+        <div
+          className={`text-xs ${
+            tokenRegion
+              ? `text-region-${tokenRegion.toLowerCase()}-dark`
+              : "text-gray-600"
+          } font-medium px-2 py-0.5 bg-gray-100 rounded-md flex items-center`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="size-3 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+            />
+          </svg>
+          <span className="mr-1">Balance:</span>
+          {parseFloat(currentBalance).toFixed(4)} {selectedToken}
         </div>
-      )}
+      </div>
 
       <div className="flex space-x-2">
         <select

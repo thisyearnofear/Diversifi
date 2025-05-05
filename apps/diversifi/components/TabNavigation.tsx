@@ -22,7 +22,7 @@ export default function TabNavigation({
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="size-5mb-1"
+          className="size-6 mb-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -42,7 +42,7 @@ export default function TabNavigation({
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="size-5mb-1"
+          className="size-6 mb-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -62,7 +62,7 @@ export default function TabNavigation({
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="size-5mb-1"
+          className="size-6 mb-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -82,7 +82,7 @@ export default function TabNavigation({
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="size-5mb-1"
+          className="size-6 mb-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -108,7 +108,7 @@ export default function TabNavigation({
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="size-5mb-1"
+          className="size-6 mb-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -128,7 +128,7 @@ export default function TabNavigation({
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="size-5mb-1"
+          className="size-6 mb-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -146,19 +146,19 @@ export default function TabNavigation({
 
   return (
     <div className="mb-6">
-      <div className="flex border-b border-gray-200 overflow-x-auto">
+      <div className="flex border-b border-gray-200 overflow-x-auto bg-white rounded-t-lg shadow-sm">
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`flex-1 p-2 text-center whitespace-nowrap flex flex-col items-center ${
+            className={`flex-1 p-3 text-center whitespace-nowrap flex flex-col items-center transition-colors duration-200 ${
               activeTab === tab.id
-                ? "border-b-2 border-blue-500 text-blue-600"
-                : "text-gray-500"
+                ? "border-b-2 border-blue-500 text-blue-600 font-semibold"
+                : "text-gray-600 hover:text-gray-800"
             }`}
             onClick={() => setActiveTab(tab.id)}
           >
             {tab.icon}
-            <span className="text-xs">{tab.label}</span>
+            <span className="text-xs font-medium">{tab.label}</span>
           </button>
         ))}
       </div>

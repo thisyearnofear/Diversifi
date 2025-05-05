@@ -163,9 +163,37 @@ const SwapInterface = forwardRef<
 
           // Refresh token balances after successful swap
           console.log("Refreshing token balances after successful swap");
-          setTimeout(() => {
-            refreshBalances();
-          }, 2000); // Wait 2 seconds to allow the blockchain to update
+
+          // Use a more reliable approach with multiple retries
+          const refreshWithRetries = async (retries = 3, delay = 2000) => {
+            for (let i = 0; i < retries; i++) {
+              try {
+                // Wait for the specified delay
+                await new Promise((resolve) =>
+                  setTimeout(resolve, delay * (i + 1))
+                ); // Increase delay with each retry
+
+                console.log(
+                  `SwapInterface refresh attempt ${i + 1} of ${retries}`
+                );
+                await refreshBalances();
+
+                // If we get here without an error, we can break the loop
+                console.log(
+                  `SwapInterface refresh attempt ${i + 1} successful`
+                );
+                break;
+              } catch (error) {
+                console.error(
+                  `SwapInterface refresh attempt ${i + 1} failed:`,
+                  error
+                );
+              }
+            }
+          };
+
+          // Start the refresh process
+          refreshWithRetries();
         }
       }
     } catch (error) {

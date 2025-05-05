@@ -37,19 +37,19 @@ export default function InfoTab({
           </h3>
           <ul className="text-sm text-gray-800 list-disc pl-5 space-y-2">
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 flex-shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
               <span>Protect against inflation in your local currency</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 flex-shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
               <span>Reduce risk from any single region's economic issues</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 flex-shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
               <span>Maintain purchasing power across different economies</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 flex-shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
               <span>Create a more resilient savings portfolio</span>
             </li>
           </ul>
@@ -59,19 +59,19 @@ export default function InfoTab({
           <h3 className="font-bold text-green-800 mb-2">How It Works</h3>
           <ol className="text-sm text-gray-800 list-none pl-0 space-y-2">
             <li className="flex items-start">
-              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 flex-shrink-0 font-bold text-xs">
+              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 shrink-0 font-bold text-xs">
                 1
               </span>
               <span>Connect your MiniPay wallet</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 flex-shrink-0 font-bold text-xs">
+              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 shrink-0 font-bold text-xs">
                 2
               </span>
               <span>View your current stablecoin portfolio</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 flex-shrink-0 font-bold text-xs">
+              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 shrink-0 font-bold text-xs">
                 3
               </span>
               <span>
@@ -79,7 +79,7 @@ export default function InfoTab({
               </span>
             </li>
             <li className="flex items-start">
-              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 flex-shrink-0 font-bold text-xs">
+              <span className="inline-flex items-center justify-center bg-green-500 text-white rounded-full size-5 mr-2 shrink-0 font-bold text-xs">
                 4
               </span>
               <span>Swap stablecoins to optimize your portfolio</span>
@@ -265,7 +265,7 @@ export default function InfoTab({
                     <span>{formatAddress(address)}</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 ml-1 text-gray-500"
+                      className="size-4 ml-1 text-gray-500"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

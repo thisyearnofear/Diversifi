@@ -63,15 +63,17 @@ export default function InflationVisualizer({
               className={`absolute top-0 left-0 h-full bg-region-${region.toLowerCase()}-medium rounded-md`}
               style={{ width: "100%" }}
             >
-              <div className="h-full flex items-center justify-start pl-3 text-white font-bold text-base">
-                ${initialAmount}
+              <div className="h-full flex items-center justify-start pl-3">
+                <span className="text-white font-bold text-base bg-black/30 px-2 py-0.5 rounded">
+                  ${initialAmount}
+                </span>
               </div>
             </div>
             <div
               className="absolute top-0 right-0 h-full bg-gray-200 rounded-r-md flex items-center justify-end pr-2"
               style={{ width: `${100 - valueOverTime[years].percentage}%` }}
             >
-              <span className="text-gray-700 font-medium">
+              <span className="text-white font-bold bg-red-600 px-2 py-0.5 rounded shadow-sm">
                 -${totalLoss.toFixed(2)}
               </span>
             </div>
@@ -92,20 +94,20 @@ export default function InflationVisualizer({
                 Year {data.year}
               </div>
               <div
-                className={`mx-auto rounded-full flex items-center justify-center text-xs font-medium shadow-sm ${
+                className={`mx-auto rounded-full flex items-center justify-center text-xs font-bold shadow-sm ${
                   data.year === 0
                     ? `bg-region-${region.toLowerCase()}-dark text-white border-2 border-white`
-                    : `bg-region-${region.toLowerCase()}-light text-region-${region.toLowerCase()}-dark`
+                    : `bg-region-${region.toLowerCase()}-light border border-gray-300`
                 }`}
                 style={{
                   width: data.year === 0 ? "42px" : "36px",
                   height: data.year === 0 ? "42px" : "36px",
-                  opacity: data.year === 0 ? 1 : 1 - (data.year / years) * 0.3,
+                  opacity: data.year === 0 ? 1 : 1 - (data.year / years) * 0.2,
                 }}
               >
-                ${data.value.toFixed(0)}
+                <span className="text-black">${data.value.toFixed(0)}</span>
               </div>
-              <div className="text-xs mt-1 font-medium text-gray-900">
+              <div className="text-xs mt-1 font-bold bg-white px-1 rounded text-gray-900 shadow-sm border border-gray-100">
                 {data.percentage}%
               </div>
             </div>
