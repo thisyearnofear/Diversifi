@@ -22,6 +22,8 @@ interface OverviewTabProps {
   REGIONS: readonly Region[];
   isBalancesLoading: boolean;
   setActiveTab: (tab: string) => void;
+  refreshBalances?: () => Promise<void>;
+  refreshChainId?: () => Promise<number | null>;
 }
 
 export default function OverviewTab({
@@ -41,6 +43,8 @@ export default function OverviewTab({
   REGIONS,
   isBalancesLoading,
   setActiveTab,
+  refreshBalances,
+  refreshChainId,
 }: OverviewTabProps) {
   const {
     diversificationScore,
@@ -154,14 +158,47 @@ export default function OverviewTab({
               <h2 className="text-lg font-bold text-gray-900">
                 Portfolio Overview
               </h2>
-              <div className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium border border-blue-200">
-                {chainId === 44787
-                  ? "Celo Alfajores"
-                  : chainId === 42220
-                  ? "Celo Mainnet"
-                  : chainId
-                  ? `Chain ID: ${chainId}`
-                  : "Unknown"}
+              <div className="flex items-center space-x-2">
+                {refreshBalances && refreshChainId && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        // First refresh the chain ID
+                        await refreshChainId();
+                        // Then refresh the balances
+                        await refreshBalances();
+                      } catch (err) {
+                        console.error("Error refreshing data:", err);
+                      }
+                    }}
+                    className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 p-1 rounded-full transition-colors"
+                    title="Refresh balances and network"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="size-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                  </button>
+                )}
+                <div className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium border border-blue-200">
+                  {chainId === 44787
+                    ? "Celo Alfajores"
+                    : chainId === 42220
+                    ? "Celo Mainnet"
+                    : chainId
+                    ? `Chain ID: ${chainId}`
+                    : "Unknown"}
+                </div>
               </div>
             </div>
 
@@ -395,7 +432,11 @@ export default function OverviewTab({
                           Portfolio Allocation
                         </div>
                         <div className="text-xs font-medium text-gray-800">
-                          {((value / (totalValue || 1)) * 100).toFixed(1)}%
+                          {/* Calculate percentage based on actual USD value */}
+                          {totalValue > 0
+                            ? ((value / totalValue) * 100).toFixed(1)
+                            : "0.0"}
+                          %
                         </div>
                       </div>
                     </div>

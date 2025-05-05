@@ -62,3 +62,38 @@ export const MOCK_REGION_DATA = [
   { region: "Africa", value: 26, color: REGION_COLORS.Africa },
   { region: "Asia", value: 9, color: REGION_COLORS.Asia },
 ];
+
+// Exchange rates for stablecoins to USD (for fallback calculations)
+export const EXCHANGE_RATES: Record<string, number> = {
+  // Standard format - updated rates for mainnet tokens
+  CUSD: 1,
+  CEUR: 1.08,
+  CREAL: 0.2, // 1 BRL = $0.20
+  CKES: 0.0078, // 1 KES = $0.0078
+  CCOP: 0.00025, // 1 COP = $0.00025
+  PUSO: 0.0179, // 1 PHP = $0.0179
+  CGHS: 0.069, // 1 GHS = $0.069
+  CXOF: 0.0016, // 1 XOF = $0.0016
+
+  // Mento v2.0 Alfajores tokens
+  CPESO: 0.0179, // 1 PHP = $0.0179
+  CGBP: 1.27, // 1 GBP = $1.27
+  CZAR: 0.055, // 1 ZAR = $0.055
+  CCAD: 0.74, // 1 CAD = $0.74
+  CAUD: 0.66, // 1 AUD = $0.66
+
+  // Lowercase versions
+  cusd: 1,
+  ceur: 1.08,
+  creal: 0.2,
+  ckes: 0.0078,
+  ccop: 0.00025,
+  puso: 0.0179,
+  cghs: 0.069,
+  cxof: 0.0016,
+  cpeso: 0.0179,
+  cgbp: 1.27,
+  czar: 0.055,
+  ccad: 0.74,
+  caud: 0.66,
+};

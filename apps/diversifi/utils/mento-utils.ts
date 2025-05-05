@@ -5,6 +5,7 @@ export const CELO_TOKENS = {
   CELO: '0x471ece3750da237f93b8e339c536989b8978a438',
   CUSD: '0x765de816845861e75a25fca122bb6898b8b1282a',
   CEUR: '0xd8763cba276a3738e6de85b4b3bf5fded6d6ca73',
+  CREAL: '0xe8537a3d056DA446677B9E9d6c5dB704EaAb4787',
   CKES: '0x456a3d042c0dbd3db53d5489e98dfb038553b0d0',
   CCOP: '0x8a567e2ae79ca692bd748ab832081c45de4041ea',
   PUSO: '0x105d4a9306d2e55a71d2eb95b81553ae1dc20d7b',
@@ -25,6 +26,9 @@ export const ALFAJORES_TOKENS = {
   CZAR: '0x1e5b44015Ff90610b54000DAad31C89b3284df4d',
   CCAD: '0x02EC9E0D2Fd73e89168C1709e542a48f58d7B133',
   CAUD: '0x84CBD49F5aE07632B6B88094E81Cce8236125Fe0',
+
+  // Add PUSO to Alfajores tokens for consistency
+  PUSO: '0x105d4a9306d2e55a71d2eb95b81553ae1dc20d7b',
 };
 
 // Mento Broker addresses
@@ -37,13 +41,27 @@ export const ALFAJORES_BROKER_ADDRESS =
 
 // ABIs
 export const MENTO_ABIS = {
-  ERC20_BALANCE: ['function balanceOf(address) view returns (uint256)'],
+  // Standard ERC20 interface
+  ERC20_FULL: [
+    'function balanceOf(address owner) view returns (uint256)',
+    'function allowance(address owner, address spender) view returns (uint256)',
+    'function approve(address spender, uint256 amount) returns (bool)',
+    'function transfer(address to, uint256 amount) returns (bool)',
+    'function transferFrom(address from, address to, uint256 amount) returns (bool)',
+    'event Transfer(address indexed from, address indexed to, uint256 value)',
+    'event Approval(address indexed owner, address indexed spender, uint256 value)'
+  ],
+
+  // Individual function ABIs for specific use cases
+  ERC20_BALANCE: ['function balanceOf(address owner) view returns (uint256)'],
   ERC20_ALLOWANCE: [
     'function allowance(address owner, address spender) view returns (uint256)',
   ],
   ERC20_APPROVE: [
     'function approve(address spender, uint256 amount) returns (bool)',
   ],
+
+  // Mento specific ABIs
   BROKER_PROVIDERS: [
     'function getExchangeProviders() view returns (address[])',
   ],
@@ -60,6 +78,7 @@ export const MENTO_ABIS = {
 
 // Default exchange rates (USD to local currency)
 export const DEFAULT_EXCHANGE_RATES = {
+  CREAL: 5, // 1 USD ≈ 5 BRL
   CKES: 140, // 1 USD ≈ 140 KES
   CCOP: 4000, // 1 USD ≈ 4000 COP
   PUSO: 56, // 1 USD ≈ 56 PHP
@@ -67,6 +86,7 @@ export const DEFAULT_EXCHANGE_RATES = {
 
 // Cache keys
 export const CACHE_KEYS = {
+  EXCHANGE_RATE_CREAL: 'mento-creal-exchange-rate-cache',
   EXCHANGE_RATE_CKES: 'mento-ckes-exchange-rate-cache',
   EXCHANGE_RATE_CCOP: 'mento-ccop-exchange-rate-cache',
   EXCHANGE_RATE_PUSO: 'mento-puso-exchange-rate-cache',
@@ -278,6 +298,44 @@ export const handleMentoError = (error: unknown, context: string): string => {
     return 'Transaction error. Please wait for pending transactions to complete.';
   } else if (errorMsg.includes('execution reverted')) {
     return 'Transaction failed. This may be due to price slippage or liquidity issues.';
+  } else if (errorMsg.includes('timeout') || errorMsg.includes('timed out')) {
+    return 'Transaction timed out. The network may be congested, but your transaction might still complete. Please check your wallet for updates.';
+  } else if (errorMsg.includes('no valid median')) {
+    return 'No valid price data available for this token pair. This is common on testnets. Please try a different token pair.';
+  } else if (errorMsg.includes('No exchange found')) {
+    // Special handling for common token pairs on Alfajores
+    if (errorMsg.toLowerCase().includes('alfajores') || errorMsg.includes('44787')) {
+      if (errorMsg.includes('Two-step swap on Alfajores failed')) {
+        return 'Attempting a two-step swap via CELO failed. Falling back to simulated swap for demonstration purposes.';
+      } else if (errorMsg.includes('CUSD/CELO on Alfajores') || errorMsg.includes('CELO/CEUR on Alfajores')) {
+        return 'Attempting a two-step swap via CELO. If this fails, the swap will be simulated for demonstration purposes.';
+      } else if (errorMsg.includes('CUSD/CEUR') || errorMsg.includes('CEUR/CUSD')) {
+        return 'Attempting to swap CUSD/CEUR on Alfajores using a two-step process via CELO. If this fails, the swap will be simulated.';
+      } else if (errorMsg.includes('CUSD/CREAL') || errorMsg.includes('CREAL/CUSD')) {
+        return 'Attempting to swap CUSD/CREAL on Alfajores using a two-step process via CELO. If this fails, the swap will be simulated.';
+      } else {
+        return 'No exchange found for this token pair on Alfajores. Some token pairs are not directly swappable on the testnet. The swap will be simulated for demonstration purposes.';
+      }
+    } else if (errorMsg.includes('Two-step swap failed')) {
+      return 'The two-step swap process failed. This could be due to insufficient liquidity or contract restrictions. Please try again with a different amount or token pair.';
+    } else if (errorMsg.includes('CUSD/CEUR') || errorMsg.includes('CEUR/CUSD')) {
+      return 'Attempting to swap CUSD/CEUR using a two-step process via CELO. This may take longer than a direct swap.';
+    } else if (errorMsg.includes('CUSD/CREAL') || errorMsg.includes('CREAL/CUSD')) {
+      return 'Attempting to swap CUSD/CREAL using a two-step process via CELO. This may take longer than a direct swap.';
+    } else if (errorMsg.includes('Invalid token selection')) {
+      return 'This token is not available on the current network. Please try a different token pair.';
+    } else {
+      return 'No exchange found for this token pair. This token pair may not be directly swappable on this network.';
+    }
+  } else if (errorMsg.includes('transaction underpriced')) {
+    return 'Transaction underpriced. Please try again with a higher gas price or wait for network congestion to decrease.';
+  } else if (errorMsg.includes('always failing transaction')) {
+    return 'Transaction would fail. This could be due to contract restrictions or insufficient liquidity.';
+  }
+
+  // Check if we're on Alfajores testnet
+  if (errorMsg.toLowerCase().includes('alfajores') || errorMsg.includes('44787')) {
+    return 'Testnet transaction error. Alfajores testnet may have limited liquidity or temporary issues. For demonstration purposes, some swaps will be simulated.';
   }
 
   return `Failed to ${context}. Please try again.`;

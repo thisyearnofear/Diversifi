@@ -26,9 +26,10 @@ const FALLBACK_INFLATION_DATA: Record<string, RegionalInflationData> = {
       { country: 'Kenya', region: 'Africa', currency: 'KES', rate: 6.8, year: 2023, source: 'fallback' },
       { country: 'Ghana', region: 'Africa', currency: 'GHS', rate: 23.2, year: 2023, source: 'fallback' },
       { country: 'CFA Zone', region: 'Africa', currency: 'XOF', rate: 3.5, year: 2023, source: 'fallback' },
+      { country: 'South Africa', region: 'Africa', currency: 'ZAR', rate: 5.2, year: 2023, source: 'fallback' },
     ],
-    avgRate: 11.2,
-    stablecoins: ['cKES', 'cGHS', 'eXOF'],
+    avgRate: 9.7,
+    stablecoins: ['cKES', 'cGHS', 'eXOF', 'cZAR'],
   },
   LatAm: {
     region: 'LatAm',
@@ -43,25 +44,28 @@ const FALLBACK_INFLATION_DATA: Record<string, RegionalInflationData> = {
     region: 'Asia',
     countries: [
       { country: 'Philippines', region: 'Asia', currency: 'PHP', rate: 3.9, year: 2023, source: 'fallback' },
+      { country: 'Australia', region: 'Asia', currency: 'AUD', rate: 3.6, year: 2023, source: 'fallback' },
     ],
-    avgRate: 3.9,
-    stablecoins: ['PUSO'],
+    avgRate: 3.8,
+    stablecoins: ['PUSO', 'cAUD', 'cPESO'],
   },
   Europe: {
     region: 'Europe',
     countries: [
       { country: 'Euro Zone', region: 'Europe', currency: 'EUR', rate: 2.4, year: 2023, source: 'fallback' },
+      { country: 'United Kingdom', region: 'Europe', currency: 'GBP', rate: 2.0, year: 2023, source: 'fallback' },
     ],
-    avgRate: 2.4,
-    stablecoins: ['cEUR'],
+    avgRate: 2.2,
+    stablecoins: ['cEUR', 'cGBP'],
   },
   USA: {
     region: 'USA',
     countries: [
       { country: 'United States', region: 'USA', currency: 'USD', rate: 3.1, year: 2023, source: 'fallback' },
+      { country: 'Canada', region: 'USA', currency: 'CAD', rate: 3.4, year: 2023, source: 'fallback' },
     ],
-    avgRate: 3.1,
-    stablecoins: ['cUSD'],
+    avgRate: 3.25,
+    stablecoins: ['cUSD', 'cCAD'],
   },
 };
 
@@ -102,6 +106,7 @@ const COUNTRY_TO_REGION: Record<string, string> = {
   'KOR': 'Asia', // South Korea
   'VNM': 'Asia', // Vietnam
   'SGP': 'Asia', // Singapore
+  'AUS': 'Asia', // Australia (geographically Oceania, but grouped with Asia for simplicity)
 
   // Europe
   'DEU': 'Europe', // Germany (Euro)
@@ -130,6 +135,10 @@ const CURRENCY_TO_COUNTRY: Record<string, string> = {
   'PHP': 'PHL', // Philippine Peso
   'EUR': 'DEU', // Euro (using Germany as representative)
   'USD': 'USA', // US Dollar
+  'CAD': 'CAN', // Canadian Dollar
+  'AUD': 'AUS', // Australian Dollar
+  'GBP': 'GBR', // British Pound
+  'ZAR': 'ZAF', // South African Rand
 };
 
 // Currency to stablecoin mapping
@@ -140,8 +149,12 @@ const CURRENCY_TO_STABLECOIN: Record<string, string> = {
   'BRL': 'cREAL',
   'COP': 'cCOP',
   'PHP': 'PUSO',
-  'EUR': 'cEUR',
-  'USD': 'cUSD',
+  'EUR': 'CEUR',
+  'USD': 'CUSD',
+  'CAD': 'CCAD',
+  'AUD': 'CAUD',
+  'GBP': 'CGBP',
+  'ZAR': 'CZAR',
 };
 
 export function useInflationData() {
@@ -246,14 +259,18 @@ export function useInflationData() {
       'GHA': 'GHS', // Ghana
       'SEN': 'XOF', // Senegal (CFA)
       'CIV': 'XOF', // Ivory Coast (CFA)
+      'ZAF': 'ZAR', // South Africa
       'BRA': 'BRL', // Brazil
       'COL': 'COP', // Colombia
       'PHL': 'PHP', // Philippines
+      'AUS': 'AUD', // Australia
       'DEU': 'EUR', // Germany (Euro)
       'FRA': 'EUR', // France (Euro)
       'ITA': 'EUR', // Italy (Euro)
       'ESP': 'EUR', // Spain (Euro)
+      'GBR': 'GBP', // United Kingdom
       'USA': 'USD', // United States
+      'CAN': 'CAD', // Canada
     };
 
     return currencyMap[countryCode] || 'Unknown';
@@ -288,9 +305,36 @@ export function useInflationData() {
 
   // Get region for a specific stablecoin
   const getRegionForStablecoin = (stablecoin: string): string => {
-    // Find the currency that corresponds to this stablecoin
+    // Make case-insensitive by converting to uppercase
+    const stablecoinUpper = stablecoin.toUpperCase();
+
+    // Try direct mapping first based on known stablecoin patterns
+    // USA region (North America)
+    if (stablecoinUpper === 'CUSD') return 'USA';
+    if (stablecoinUpper === 'CCAD') return 'USA'; // Canadian Dollar (could be "North America" in future)
+
+    // Europe region
+    if (stablecoinUpper === 'CEUR') return 'Europe';
+    if (stablecoinUpper === 'CGBP') return 'Europe'; // British Pound
+
+    // Latin America region
+    if (stablecoinUpper === 'CREAL') return 'LatAm';
+    if (stablecoinUpper === 'CCOP') return 'LatAm';
+
+    // Africa region
+    if (stablecoinUpper === 'CKES') return 'Africa';
+    if (stablecoinUpper === 'CGHS') return 'Africa';
+    if (stablecoinUpper === 'CZAR') return 'Africa'; // South African Rand
+    if (stablecoinUpper === 'CXOF' || stablecoinUpper === 'EXOF') return 'Africa';
+
+    // Asia region
+    if (stablecoinUpper === 'PUSO') return 'Asia';
+    if (stablecoinUpper === 'CAUD') return 'Asia'; // Australian Dollar
+    if (stablecoinUpper === 'CPESO') return 'Asia'; // Philippine Peso (alternative name)
+
+    // Fallback to the original lookup method (case-insensitive)
     const currency = Object.keys(CURRENCY_TO_STABLECOIN).find(
-      key => CURRENCY_TO_STABLECOIN[key] === stablecoin
+      key => CURRENCY_TO_STABLECOIN[key].toUpperCase() === stablecoinUpper
     );
 
     if (!currency) return 'Unknown';

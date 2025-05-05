@@ -163,7 +163,55 @@ export default function InfoTab({
             </div>
 
             <div className="bg-white p-3 rounded-md shadow-sm border border-gray-200">
-              <div className="text-xs text-gray-500 mb-1">Network</div>
+              <div className="flex justify-between items-center">
+                <div className="text-xs text-gray-500 mb-1">Network</div>
+                <button
+                  onClick={async () => {
+                    if (typeof window !== "undefined" && window.ethereum) {
+                      try {
+                        const chainIdHex = await window.ethereum.request({
+                          method: "eth_chainId",
+                        });
+                        const detectedChainId = Number.parseInt(
+                          chainIdHex as string,
+                          16
+                        );
+                        alert(
+                          `Network refreshed: ${
+                            detectedChainId === 44787
+                              ? "Celo Alfajores Testnet"
+                              : detectedChainId === 42220
+                              ? "Celo Mainnet"
+                              : `Chain ID: ${detectedChainId}`
+                          }`
+                        );
+                        // Force a page refresh to update all components
+                        window.location.reload();
+                      } catch (err) {
+                        console.warn("Error refreshing chain ID:", err);
+                        alert("Failed to refresh network information");
+                      }
+                    }
+                  }}
+                  className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 p-1 rounded-full transition-colors"
+                  title="Refresh network"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="size-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                </button>
+              </div>
               <div className="font-bold">
                 {chainId ? (
                   <span
@@ -206,7 +254,30 @@ export default function InfoTab({
               <div className="text-xs text-gray-500 mb-1">Wallet Address</div>
               <div className="font-bold text-gray-900">
                 {address ? (
-                  <span className="font-mono">{formatAddress(address)}</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(address);
+                      alert("Wallet address copied to clipboard!");
+                    }}
+                    className="flex items-center font-mono bg-gray-50 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+                    title="Click to copy wallet address"
+                  >
+                    <span>{formatAddress(address)}</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 ml-1 text-gray-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </button>
                 ) : (
                   <span className="text-gray-500">Not Connected</span>
                 )}

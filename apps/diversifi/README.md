@@ -34,11 +34,23 @@ pnpm dev
 Create a `.env.local` file with the following variables:
 
 ```
+# Celo RPC URL
 NEXT_PUBLIC_CELO_RPC=https://forno.celo.org
+
+# Wallet Connect Project ID
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
+
+# CoinGecko API Key (for token prices)
 NEXT_PUBLIC_COINGECKO_API_KEY=your_coingecko_api_key
+
+# App URL
 NEXT_PUBLIC_APP_URL=http://localhost:3001
+
+# Alpha Vantage API Key (for currency data)
+NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your_alpha_vantage_api_key
 ```
+
+> **Important for Production**: When deploying to Netlify or other hosting platforms, make sure to set these environment variables in your hosting platform's dashboard or configuration files. For Netlify specifically, these can be set in the `netlify.toml` file or in the Netlify dashboard under "Site settings" > "Build & deploy" > "Environment".
 
 ## Testing with MiniPay
 

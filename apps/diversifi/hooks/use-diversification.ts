@@ -11,11 +11,13 @@ export function useDiversification(regionData: RegionData[], userRegion: string)
   const diversificationScore = useMemo(() => {
     if (regionData.length === 0) return 0;
 
-    // Count regions with significant allocation (>5%)
-    const significantRegions = regionData.filter((r) => r.value >= 5).length;
+    // Calculate total value
+    const totalValue = regionData.reduce((sum, r) => sum + r.value, 0);
+
+    // Count regions with significant allocation (>5% of total)
+    const significantRegions = regionData.filter((r) => (r.value / totalValue) * 100 >= 5).length;
 
     // Calculate distribution evenness
-    const totalValue = regionData.reduce((sum, r) => sum + r.value, 0);
     const idealPerRegion = totalValue / 5; // 5 regions total
 
     let distributionScore = 0;
@@ -69,9 +71,12 @@ export function useDiversification(regionData: RegionData[], userRegion: string)
       tips.push("Aim to have at least 3 different regions in your portfolio.");
     }
 
-    // Region-specific tips
+    // Calculate total value for percentage calculations
+    const totalValue = Object.values(regionCounts).reduce((sum, value) => sum + value, 0);
+
+    // Region-specific tips - regions with less than 5% allocation
     const missingRegions = ["USA", "Europe", "LatAm", "Africa", "Asia"].filter(
-      (r) => !regionCounts[r] || regionCounts[r] < 5
+      (r) => !regionCounts[r] || (totalValue > 0 && (regionCounts[r] / totalValue) * 100 < 5)
     );
     if (missingRegions.length > 0) {
       tips.push(
@@ -81,9 +86,9 @@ export function useDiversification(regionData: RegionData[], userRegion: string)
       );
     }
 
-    // Check for over-concentration
+    // Check for over-concentration (>40% in one region)
     const highConcentrationRegions = Object.entries(regionCounts)
-      .filter(([_, value]) => value > 40)
+      .filter(([_, value]) => totalValue > 0 && (value / totalValue) * 100 > 40)
       .map(([region]) => region);
 
     if (highConcentrationRegions.length > 0) {
@@ -94,8 +99,9 @@ export function useDiversification(regionData: RegionData[], userRegion: string)
       );
     }
 
-    // User region specific advice
-    if (userRegion && regionCounts[userRegion] > 50) {
+    // User region specific advice (>50% in home region)
+    if (userRegion && regionCounts[userRegion] && totalValue > 0 &&
+        (regionCounts[userRegion] / totalValue) * 100 > 50) {
       tips.push(
         `You have high exposure to your home region (${userRegion}). Consider diversifying more internationally.`
       );

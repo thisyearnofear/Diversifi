@@ -26,8 +26,11 @@ export const AlphaVantageService = {
    * Get API key from environment variables
    */
   getApiKey: (): string => {
-    if (typeof process === 'undefined') return '';
-    return process.env.NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY || '';
+    // In Next.js, process.env with NEXT_PUBLIC_ prefix is available in the browser
+    // We don't need to check if process is defined
+    const apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY || '';
+    console.log('Alpha Vantage API Key:', apiKey ? 'Found (not showing for security)' : 'Not found');
+    return apiKey;
   },
 
   /**

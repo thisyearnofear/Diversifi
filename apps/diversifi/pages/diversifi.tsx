@@ -43,6 +43,8 @@ export default function DiversiFiPage() {
     isLoading: isBalancesLoading,
     regionTotals,
     totalValue,
+    refreshBalances,
+    refreshChainId,
   } = useStablecoinBalances(address);
   const { data: performanceData, isLoading: isPerformanceLoading } =
     useHistoricalPerformance(address);
@@ -69,7 +71,8 @@ export default function DiversiFiPage() {
       const newRegionData = Object.entries(regionTotals).map(
         ([region, value]) => ({
           region,
-          value: Math.round(value * 100), // Convert to percentage
+          // Use actual USD value for the pie chart, not percentage
+          value: value,
           color:
             REGION_COLORS[region as keyof typeof REGION_COLORS] || "#CBD5E0",
         })
@@ -110,9 +113,29 @@ export default function DiversiFiPage() {
             )}
           </div>
           {address && (
-            <div className="text-sm bg-white px-3 py-1.5 rounded-full text-gray-800 shadow-sm border border-gray-200">
-              {formatAddress(address)}
-            </div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(address);
+                alert("Wallet address copied to clipboard!");
+              }}
+              className="text-sm bg-white px-3 py-1.5 rounded-full text-gray-800 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors flex items-center"
+            >
+              <span>{formatAddress(address)}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 ml-1 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
           )}
         </div>
 
@@ -138,6 +161,8 @@ export default function DiversiFiPage() {
             REGIONS={REGIONS}
             isBalancesLoading={isBalancesLoading}
             setActiveTab={setActiveTab}
+            refreshBalances={refreshBalances}
+            refreshChainId={refreshChainId}
           />
         )}
 
@@ -185,6 +210,9 @@ export default function DiversiFiPage() {
             userRegion={userRegion}
             selectedStrategy={selectedStrategy}
             inflationData={inflationData}
+            refreshBalances={refreshBalances}
+            refreshChainId={refreshChainId}
+            isBalancesLoading={isBalancesLoading}
           />
         )}
 
