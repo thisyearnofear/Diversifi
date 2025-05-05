@@ -245,76 +245,53 @@ The full DiversiFi feature will include:
    - Detailed token information and regional context
    - Educational content about the benefits of geographical diversification
 
-### MiniPay Integration Plan for DiversiFi
+### 🏆 MiniPay Hackathon Submission: DiversiFi
 
-We're participating in the Global Stablecoin Hackathon focused on MiniPay and Mento local stablecoins. Our plan is to adapt DiversiFi for MiniPay with a focus on the "Inflation Protection and Swapping" track.
+We've completed our DiversiFi app for the "Build on MiniPay with Mento Local Stablecoins" hackathon, focusing on the "Inflation Protection and Swapping" track.
 
-#### Architecture Plan
+> **IMPORTANT**: For hackathon judges and reviewers, please refer to the [apps/diversifi/README.md](apps/diversifi/README.md) file for comprehensive documentation about our submission, including features, implementation details, and technical requirements compliance.
 
-1. **Project Structure**
+#### Key Features
 
-   ```
-   /
-   ├── apps/
-   │   ├── diversifi/           # New MiniPay-focused DiversiFi app
-   │   │   ├── components/      # UI components specific to DiversiFi
-   │   │   ├── hooks/           # Hooks for DiversiFi functionality
-   │   │   ├── pages/           # Next.js pages for DiversiFi
-   │   │   └── ...              # Other necessary files
-   │   │
-   │   └── main/                # Your existing main app (optional reorganization)
-   │
-   ├── packages/                # Shared packages
-   │   ├── mento-utils/         # Your existing Mento utilities as a shared package
-   │   ├── ui/                  # Shared UI components
-   │   └── config/              # Shared configuration
-   ```
+- **Inflation Protection Dashboard**: Visual tools to understand how inflation affects savings across different regions
+- **Portfolio Visualization**: Interactive charts showing stablecoin distribution by region
+- **Personalized Recommendations**: Portfolio suggestions based on home region and inflation data
+- **Seamless Stablecoin Swaps**: Direct integration with Mento protocol for easy swapping between regional stablecoins
+- **MiniPay Optimization**: Built specifically for the MiniPay environment with auto-detection and connection
+- **Real-Time Data**: Integration with World Bank and Alpha Vantage APIs for current inflation and currency data
 
-2. **Environment Detection**
+#### Live Demo
 
-   - Automatically detect when the app is running in MiniPay
-   - Render appropriate UI based on environment
-   - Support URL-based routing for direct access
+You can access the live demo of DiversiFi at: [https://stable-station.netlify.app/diversifi](https://stable-station.netlify.app/diversifi)
 
-3. **Core Features for MiniPay**
-   - Simple, mobile-optimized UI
-   - Portfolio visualization (pie chart, world map, grid view)
-   - Stablecoin swapping with Mento
-   - Inflation protection education
-   - Diversification metrics
+#### Implementation
 
-#### Implementation Phases
+The DiversiFi app is implemented as a standalone application within our monorepo structure:
 
-1. **Phase 1: Project Setup (2-3 days)**
-
-   - Create project structure
-   - Extract shared code
-   - Set up environment detection
-
-2. **Phase 2: Core Implementation (5-7 days)**
-
-   - Implement mobile-first UI
-   - Create visualization components
-   - Integrate stablecoin data and swapping
-
-3. **Phase 3: MiniPay Integration (3-5 days)**
-
-   - Implement MiniPay wallet detection
-   - Add fee currency support
-   - Test with MiniPay using ngrok
-
-4. **Phase 4: Finalization (2-3 days)**
-   - Create documentation
-   - Record demo video
-   - Deploy to production
+```
+/
+├── apps/
+│   ├── diversifi/           # MiniPay-focused DiversiFi app (HACKATHON SUBMISSION)
+│   │   ├── components/      # UI components specific to DiversiFi
+│   │   ├── hooks/           # Hooks for DiversiFi functionality
+│   │   ├── pages/           # Next.js pages for DiversiFi
+│   │   └── README.md        # Detailed documentation for hackathon submission
+│   │
+│   └── web/                 # Main web app
+│
+├── packages/                # Shared packages
+│   ├── mento-utils/         # Shared Mento utilities
+│   ├── ui/                  # Shared UI components
+│   └── config/              # Shared configuration
+```
 
 #### MiniPay-Specific Considerations
 
-- Mobile-responsive design is critical
-- Use viem/wagmi for wallet integration
-- Hide wallet connect button when in MiniPay
-- Support fee currency for transactions
-- Optimize for small screens and touch interfaces
+- Mobile-responsive design optimized for small screens
+- Uses viem/wagmi for wallet integration
+- Auto-connects when in MiniPay environment
+- Supports custom fee abstraction with cUSD
+- Accepts legacy transactions only
 
 ### Implementation Plan
 

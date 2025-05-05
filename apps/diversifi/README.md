@@ -1,37 +1,57 @@
 # DiversiFi - Inflation Protection Through Stablecoin Diversification
 
-DiversiFi is a MiniPay-compatible application that helps users protect their savings from inflation by diversifying their stablecoin portfolio across different geographical regions.
+DiversiFi is a MiniPay-optimized application that helps users protect their savings from inflation by strategically diversifying their stablecoin portfolio across different geographical regions using Mento's local stablecoins.
 
-## Features
+![DiversiFi Banner](https://i.imgur.com/placeholder.png) <!-- Replace with actual banner image -->
 
-- **Inflation Protection**: Protect your savings from local currency inflation by diversifying across regions
-- **Portfolio Visualization**: View your stablecoin holdings across different regions with intuitive visualizations
-- **Personalized Recommendations**: Get tailored portfolio recommendations based on your home region
-- **Real-World Use Cases**: See concrete examples of how stablecoin diversification helps in everyday life
-- **Stablecoin Swaps**: Easily swap between different regional stablecoins to optimize your portfolio
-- **MiniPay Integration**: Seamless integration with MiniPay wallet
-- **Mobile-First Design**: Optimized for mobile devices
+## 🏆 Global Stablecoin Hackathon Submission
 
-## Getting Started
+This project is a submission for the "Build on MiniPay with Mento Local Stablecoins" hackathon, focusing primarily on the **Inflation Protection and Swapping** track, with relevance to other tracks including Cross-border Payments, Multi-currency management, and Everyday Use Cases.
+
+## 🌟 Key Features
+
+- **Inflation Protection Dashboard**: Visual tools to understand how inflation affects your savings across different regions
+- **Portfolio Visualization**: Interactive charts showing your stablecoin distribution by region with diversification metrics
+- **Personalized Recommendations**: AI-driven portfolio suggestions based on your home region and inflation data
+- **Real-World Use Cases**: Practical examples of how stablecoin diversification helps in everyday scenarios like:
+  - Remittances to family members
+  - Paying for education expenses
+  - Business payments across borders
+  - Travel preparation
+  - Long-term savings protection
+- **Seamless Stablecoin Swaps**: Direct integration with Mento protocol for easy swapping between regional stablecoins
+- **MiniPay Optimization**: Built specifically for the MiniPay environment with auto-detection and connection
+- **Real-Time Data**: Integration with World Bank and Alpha Vantage APIs for current inflation and currency data
+- **Educational Components**: Interactive visualizations showing how money loses value over time in different currencies
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
 - pnpm
+- MiniPay wallet (for testing with real wallet)
 
 ### Installation
 
 ```bash
+# Clone the repository (if not already done)
+git clone https://github.com/yourusername/stables-station.git
+cd stables-station
+
 # Install dependencies
 pnpm install
 
-# Start the development server
+# Start the DiversiFi app specifically
+pnpm dev:diversifi
+# Or from the apps/diversifi directory
+cd apps/diversifi
 pnpm dev
 ```
 
 ### Environment Variables
 
-Create a `.env.local` file with the following variables:
+Create a `.env.local` file in the root directory with the following variables:
 
 ```
 # Celo RPC URL
@@ -52,23 +72,61 @@ NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your_alpha_vantage_api_key
 
 > **Important for Production**: When deploying to Netlify or other hosting platforms, make sure to set these environment variables in your hosting platform's dashboard or configuration files. For Netlify specifically, these can be set in the `netlify.toml` file or in the Netlify dashboard under "Site settings" > "Build & deploy" > "Environment".
 
-## Testing with MiniPay
+### Live Demo
 
-To test your app with MiniPay:
+You can access the live demo of DiversiFi at: [https://stable-station.netlify.app/diversifi](https://stable-station.netlify.app/diversifi)
+
+## 💱 Mento Stablecoins Integration
+
+DiversiFi leverages the Mento Protocol to enable seamless swaps between different regional stablecoins. Our integration includes:
+
+### Supported Stablecoins
+
+| Stablecoin | Region | Description                                          |
+| ---------- | ------ | ---------------------------------------------------- |
+| **cUSD**   | USA    | Celo Dollar - pegged to the US Dollar                |
+| **cEUR**   | Europe | Celo Euro - pegged to the Euro                       |
+| **cREAL**  | LatAm  | Celo Brazilian Real - pegged to the Brazilian Real   |
+| **cKES**   | Africa | Celo Kenyan Shilling - pegged to the Kenyan Shilling |
+| **cCOP**   | LatAm  | Celo Colombian Peso - pegged to the Colombian Peso   |
+| **PUSO**   | Asia   | Philippine Peso - pegged to the Philippine Peso      |
+| **cGHS**   | Africa | Celo Ghana Cedi - pegged to the Ghanaian Cedi        |
+| **eXOF**   | Africa | CFA Franc - pegged to the West African CFA Franc     |
+
+### Swap Implementation
+
+Our swap functionality uses a multi-tiered approach:
+
+1. **Direct Swaps**: When available, we use direct swaps through the Mento broker contract
+2. **Two-Step Swaps**: For pairs without direct liquidity, we route through an intermediary token
+3. **Simulated Swaps**: For demonstration purposes on testnets, we simulate swaps for pairs without liquidity
+
+### Exchange Rate Discovery
+
+- Real-time exchange rate calculations using the Mento broker
+- Caching system to reduce API calls and improve performance
+- Fallback rates for reliability when the network is unavailable
+
+## 📱 Testing with MiniPay
+
+To test DiversiFi with MiniPay:
 
 1. Start your development server:
 
-   ```
+   ```bash
+   pnpm dev:diversifi  # From the root directory
+   # Or from the apps/diversifi directory
    pnpm dev -p 3003  # Use any available port
    ```
 
 2. Use ngrok to expose your local server:
 
-   ```
+   ```bash
    ngrok http 3003  # Use the same port as your dev server
    ```
 
 3. Open the MiniPay app on your Android device:
+
    - Go to Settings
    - Tap the version number repeatedly to enable developer mode
    - Go back to Settings and select "Developer Settings"
@@ -76,6 +134,65 @@ To test your app with MiniPay:
    - Tap "Load Test Page"
    - Enter your ngrok URL: `https://xxxx-xx-xx-xx-xxx.ngrok-free.app/diversifi`
    - Click "Go" to launch your app in MiniPay
+
+4. Alternatively, test with the live demo:
+   - Open MiniPay
+   - Go to Developer Settings as described above
+   - Enter: `https://stable-station.netlify.app/diversifi`
+   - Click "Go" to launch the app
+
+## 👤 User Experience
+
+DiversiFi provides a seamless user journey:
+
+1. **Connect Wallet**: Auto-connects when in MiniPay or connects with a single tap
+2. **View Portfolio**: See your current stablecoin holdings visualized by region
+3. **Get Recommendations**: Receive personalized portfolio suggestions based on your home region
+4. **Understand Inflation Impact**: Explore interactive visualizations showing how inflation erodes purchasing power
+5. **Swap Stablecoins**: Easily swap between different regional stablecoins with real-time rates
+6. **Track Performance**: Monitor how your diversified portfolio performs against your local currency
+
+### User Flows
+
+#### Inflation Protection Flow
+
+1. User connects wallet
+2. System detects user's region (or user selects it)
+3. User views their current portfolio distribution
+4. System provides personalized recommendations based on inflation data
+5. User swaps stablecoins to optimize their portfolio
+6. User can track the performance of their diversified portfolio
+
+#### Remittance Flow
+
+1. User connects wallet
+2. User selects the region where they want to send money
+3. System recommends the optimal stablecoin for that corridor
+4. User swaps to the recommended stablecoin
+5. User can then send the stablecoin to the recipient
+
+## 🏆 Hackathon Submission Details
+
+### Primary Track: Inflation Protection and Swapping
+
+DiversiFi directly addresses the Inflation Protection and Swapping track by enabling MiniPay users to:
+
+- Swap between different Mento stablecoins based on personal financial needs
+- Visualize inflation impacts across different regions
+- Receive personalized portfolio recommendations
+- See real-world use cases demonstrating how local stablecoins solve specific pain points
+
+### Technical Requirements Compliance
+
+- **Mento Integration**: Uses Mento's decentralized stablecoins and broker contract
+- **MiniPay Compatibility**: Mobile responsive, uses viem/wagmi, auto-connects in MiniPay
+- **Documentation**: Comprehensive README with setup instructions and code organization
+
+### Demo Resources
+
+- **Live Demo**: [https://stable-station.netlify.app/diversifi](https://stable-station.netlify.app/diversifi)
+- **GitHub Repository**: [https://github.com/yourusername/stables-station](https://github.com/yourusername/stables-station)
+- **Video Demo**: [Link to 4-minute demo video](https://youtu.be/your-video-id)
 
 ## MiniPay Integration Learnings
 
@@ -152,7 +269,7 @@ To test your app with MiniPay:
    - Test wallet connection separately from app functionality
    - Create a dedicated debug page with detailed environment information
 
-## Project Structure
+## 🏗️ Project Structure
 
 The DiversiFi app follows a modular architecture for better maintainability:
 
@@ -186,112 +303,71 @@ The DiversiFi app follows a modular architecture for better maintainability:
 └── types/                # TypeScript type definitions
 ```
 
-## Project Progress
+## ✅ Implementation Status
 
-### Completed
+### Completed Features
 
-- ✅ Basic project setup with Next.js and Tailwind CSS
-- ✅ MiniPay compatibility implementation
-- ✅ Wallet connection with auto-detection for MiniPay
-- ✅ Mobile-friendly UI with tabbed interface
-- ✅ Environment detection and debugging tools
-- ✅ Chain ID detection and display
-- ✅ Balance checking functionality
-- ✅ Stablecoin portfolio visualization
-- ✅ Inflation protection information and education
-- ✅ Portfolio optimization recommendations
-- ✅ Real-world use cases showcase
-- ✅ Regional distribution visualization
-- ✅ Swap interface implementation
-- ✅ User region detection based on IP and locale
-- ✅ Live stablecoin balance fetching with caching
-- ✅ Historical performance tracking
-- ✅ Portfolio analytics with diversification metrics
-- ✅ Region-specific recommendations
-- ✅ Code refactoring for better maintainability
-- ✅ Component modularization with tab-based architecture
-
-### In Progress
-
-- 🔄 Improved mobile experience with touch-friendly interactions
-- 🔄 Performance optimizations for low-end devices
-- 🔄 Monorepo structure optimization
-
-### Recently Completed
-
-- ✅ Integration with Mento protocol for live stablecoin data
-- ✅ Stablecoin swap transaction execution with the Mento broker
-- ✅ Real-time exchange rate calculations
-- ✅ Slippage tolerance controls for swaps
+- ✅ MiniPay compatibility with auto-detection and connection
+- ✅ Mobile-first UI with touch-friendly interactions
+- ✅ Wallet connection with support for Celo and Alfajores networks
+- ✅ Stablecoin balance fetching with regional categorization
+- ✅ Portfolio visualization with regional distribution charts
+- ✅ Inflation data integration with World Bank API
+- ✅ Currency performance tracking with Alpha Vantage API
+- ✅ Personalized portfolio recommendations based on user region
+- ✅ Inflation impact visualizations showing value erosion over time
+- ✅ Stablecoin swap interface with Mento protocol integration
+- ✅ Real-world use case scenarios for different regions
+- ✅ Educational components explaining inflation protection
+- ✅ Portfolio diversification metrics (HHI, Shannon Entropy, Geographic Spread)
 - ✅ Transaction status tracking and error handling
-- ✅ Real-time inflation data integration with World Bank API
-- ✅ Currency performance visualization showing value of $1 over time
-- ✅ Enhanced swap interface with inflation impact information
-- ✅ Alpha Vantage API integration for real currency exchange rates
-- ✅ Comprehensive API services with caching and error handling
-- ✅ Visual indicators for live vs. cached data
+- ✅ Comprehensive API services with caching for performance
 
-### Upcoming
+### Upcoming Features
 
 - 📅 Transaction history tracking
-- 📅 Offline support
-- 📅 Multi-language support
+- 📅 Offline support for basic functionality
+- 📅 Multi-language support for regional users
 - 📅 Push notifications for portfolio alerts
 - 📅 Social sharing of portfolio performance
+- 📅 Enhanced analytics with historical performance tracking
 
-## Differentiation Strategy
+## 🔍 Differentiation Strategy
 
 DiversiFi stands out from similar applications by focusing on:
 
-1. **Practical Inflation Protection**: Instead of abstract diversification metrics, we emphasize concrete benefits like "protect your savings from local currency inflation" with real examples and data.
+1. **Practical Approach**: Instead of abstract financial concepts, we focus on concrete benefits and real-world use cases that users can immediately understand.
 
-2. **Simplicity First**: The app is extremely simple to use with clear, actionable steps rather than complex metrics.
+2. **Educational Value**: We help users understand inflation and currency dynamics through simple visualizations that make complex economic concepts accessible.
 
-3. **Educational Component**: We include simple, visual explanations of how local inflation affects purchasing power and how stablecoin diversification helps.
+3. **Regional Personalization**: All recommendations and insights are tailored to the user's specific region, making the app immediately relevant to their financial situation.
 
-4. **Personalized Recommendations**: We provide tailored suggestions based on the user's country/region rather than generic diversification advice.
+4. **MiniPay Optimization**: Built specifically for the MiniPay environment with careful attention to mobile UX, ensuring a seamless experience for users in emerging markets.
 
-5. **Real-World Use Cases**: We show specific scenarios where diversification helps (e.g., "If you had diversified your portfolio this way last year, here's how much purchasing power you would have preserved").
+5. **Data-Driven Decisions**: All recommendations are based on real economic data from trusted sources like the World Bank and Alpha Vantage, not arbitrary allocations.
 
-## Mento Protocol Integration
+## 🛠️ Technologies Used
 
-DiversiFi leverages the Mento Protocol to enable seamless swaps between different regional stablecoins. The integration includes:
+- **Frontend**: Next.js, React, Tailwind CSS
+- **Blockchain Integration**: viem/wagmi, Mento Protocol
+- **Data Visualization**: Chart.js
+- **API Integration**: World Bank API, Alpha Vantage API
+- **Deployment**: Netlify with CI/CD
 
-### Exchange Rate Discovery
+## 🔮 Future Roadmap
 
-- Real-time exchange rate calculations using the Mento broker
-- Caching system to reduce API calls and improve performance
-- Fallback rates for reliability when the network is unavailable
+1. **Enhanced Analytics**: Add more sophisticated portfolio analysis tools
+2. **Multi-Chain Support**: Expand beyond Celo to other networks with stablecoins
+3. **Fiat On/Off Ramps**: Integrate with local payment methods for easier access
+4. **AI-Powered Recommendations**: Use machine learning to improve portfolio suggestions
+5. **Community Features**: Add social elements for sharing strategies and performance
 
-### Swap Execution
+## 📝 Conclusion
 
-- Direct integration with the Mento broker contract
-- Automatic token approval process
-- Slippage tolerance controls to protect users from price movements
-- Transaction status tracking with clear user feedback
-- Error handling with user-friendly messages
+DiversiFi transforms how MiniPay users interact with stablecoins, moving beyond simple payments to intelligent portfolio management for inflation protection. By making it easy to diversify across Mento's local stablecoins, DiversiFi helps users in emerging markets preserve their purchasing power and make more informed financial decisions.
 
-### Supported Stablecoins
+The app demonstrates the power of local stablecoins to solve real-world problems, particularly in regions with high inflation or currency volatility. By combining educational elements with practical tools, DiversiFi makes sophisticated financial strategies accessible to everyday users.
 
-- **cUSD** (Celo Dollar) - USA region
-- **cEUR** (Celo Euro) - Europe region
-- **cREAL** (Celo Brazilian Real) - LatAm region
-- **cKES** (Celo Kenyan Shilling) - Africa region
-- **cCOP** (Celo Colombian Peso) - LatAm region
-- **PUSO** (Philippine Peso) - Asia region
-- **cGHS** (Celo Ghana Cedi) - Africa region
-- **eXOF** (CFA Franc) - Africa region
-
-## Built With
-
-- Next.js
-- React
-- Tailwind CSS
-- Chart.js
-- viem/wagmi
-- Mento Protocol
-- ethers.js
-
-## License
+## 📄 License
 
 This project is licensed under the MIT License.
