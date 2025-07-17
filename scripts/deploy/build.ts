@@ -1,13 +1,14 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-// Check if we're in a production environment (like Netlify)
+// Check if we're in a production environment (like Netlify or Vercel)
 const isProduction =
-  process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
+  process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true' || process.env.VERCEL === '1';
 const isNetlify = process.env.NETLIFY === 'true';
+const isVercel = process.env.VERCEL === '1';
 
 console.log(`Building in ${isProduction ? 'production' : 'development'} mode`);
-console.log(`Building on ${isNetlify ? 'Netlify' : 'local/other'} environment`);
+console.log(`Building on ${isNetlify ? 'Netlify' : isVercel ? 'Vercel' : 'local/other'} environment`);
 
 try {
   // Ensure required dependencies are installed
@@ -16,11 +17,11 @@ try {
     execSync('pnpm add -D -w stream-browserify buffer crypto-browserify util', { stdio: 'inherit' });
   }
 
-  // Skip migrations on Netlify completely
-  if (isNetlify) {
-    console.log('Building on Netlify - skipping database migrations');
+  // Skip migrations on Netlify and Vercel completely
+  if (isNetlify || isVercel) {
+    console.log(`Building on ${isNetlify ? 'Netlify' : 'Vercel'} - skipping database migrations`);
   }
-  // Only run migrations if we're not in production or if POSTGRES_URL is defined and we're not on Netlify
+  // Only run migrations if we're not in production or if POSTGRES_URL is defined and we're not on deployment platforms
   else if (!isProduction || process.env.POSTGRES_URL) {
     console.log('Running database migrations...');
     execSync('tsx lib/db/migrate', { stdio: 'inherit' });
