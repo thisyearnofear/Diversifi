@@ -5,14 +5,16 @@ import fs from 'node:fs';
 const isProduction =
   process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
 const isNetlify = process.env.NETLIFY === 'true';
+const isVercel = process.env.VERCEL === '1';
 
 console.log(`Building in ${isProduction ? 'production' : 'development'} mode`);
 console.log(`Building on ${isNetlify ? 'Netlify' : 'local/other'} environment`);
 
 try {
-  // Ensure required dependencies are installed
-  if (isNetlify) {
-    console.log('Installing required dependencies for Netlify build...');
+  // Ensure required dependencies are installed for Web3 functionality
+  if (isNetlify || isVercel) {
+    const platform = isNetlify ? 'Netlify' : 'Vercel';
+    console.log(`Installing required Web3 polyfills for ${platform} build...`);
     execSync('pnpm add -D -w stream-browserify buffer crypto-browserify util', { stdio: 'inherit' });
   }
 
