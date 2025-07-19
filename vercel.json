@@ -1,0 +1,10 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "tsx scripts/deploy/build.ts",
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+}
