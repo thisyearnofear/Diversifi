@@ -43,7 +43,7 @@ export function useWalletConnection() {
           method: 'eth_chainId' 
         });
         
-        setChainId(parseInt(chainIdHex, 16));
+        setChainId(Number.parseInt(chainIdHex, 16));
       } else {
         setError('No accounts found');
       }

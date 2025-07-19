@@ -6,7 +6,6 @@ import {
   MENTO_BROKER_ADDRESS,
   ALFAJORES_BROKER_ADDRESS,
   MENTO_ABIS,
-  DEFAULT_EXCHANGE_RATES,
 } from '../utils/mento-utils';
 import { EXCHANGE_RATES } from '../constants/regions';
 

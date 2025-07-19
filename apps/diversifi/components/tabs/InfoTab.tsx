@@ -37,19 +37,19 @@ export default function InfoTab({
           </h3>
           <ul className="text-sm text-gray-800 list-disc pl-5 space-y-2">
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0" />
               <span>Protect against inflation in your local currency</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0" />
               <span>Reduce risk from any single region's economic issues</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0" />
               <span>Maintain purchasing power across different economies</span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0"></span>
+              <span className="inline-block bg-blue-500 rounded-full size-4 mt-0.5 mr-2 shrink-0" />
               <span>Create a more resilient savings portfolio</span>
             </li>
           </ul>
@@ -150,12 +150,12 @@ export default function InfoTab({
               <div className="font-bold flex items-center">
                 {isInMiniPay ? (
                   <>
-                    <span className="inline-block size-3 bg-green-500 rounded-full mr-2"></span>
+                    <span className="inline-block size-3 bg-green-500 rounded-full mr-2" />
                     <span className="text-green-700">Detected</span>
                   </>
                 ) : (
                   <>
-                    <span className="inline-block size-3 bg-gray-300 rounded-full mr-2"></span>
+                    <span className="inline-block size-3 bg-gray-300 rounded-full mr-2" />
                     <span className="text-gray-700">Not Detected</span>
                   </>
                 )}
@@ -238,12 +238,12 @@ export default function InfoTab({
               <div className="font-bold flex items-center">
                 {typeof window !== "undefined" && window.ethereum ? (
                   <>
-                    <span className="inline-block size-3 bg-green-500 rounded-full mr-2"></span>
+                    <span className="inline-block size-3 bg-green-500 rounded-full mr-2" />
                     <span className="text-green-700">Available</span>
                   </>
                 ) : (
                   <>
-                    <span className="inline-block size-3 bg-red-500 rounded-full mr-2"></span>
+                    <span className="inline-block size-3 bg-red-500 rounded-full mr-2" />
                     <span className="text-red-700">Not Available</span>
                   </>
                 )}

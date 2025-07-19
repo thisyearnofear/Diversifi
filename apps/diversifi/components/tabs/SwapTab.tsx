@@ -149,8 +149,7 @@ export default function SwapTab({
             }
             // Otherwise use the SwapInterface component's function
             else if (
-              swapInterfaceRef.current &&
-              swapInterfaceRef.current.refreshBalances
+              swapInterfaceRef.current?.refreshBalances
             ) {
               await swapInterfaceRef.current.refreshBalances();
             }
@@ -245,7 +244,7 @@ export default function SwapTab({
       });
 
       // Note: Most status updates are handled by the useEffect and callbacks
-      if (result && result.swapTxHash) {
+      if (result?.swapTxHash) {
         console.log(
           `Swap completed with transaction hash: ${result.swapTxHash}`
         );
@@ -341,7 +340,7 @@ export default function SwapTab({
           // For any other error, show the message but truncate if too long
           const truncatedMsg =
             errorMsg.length > 100
-              ? errorMsg.substring(0, 100) + "..."
+              ? `${errorMsg.substring(0, 100)}...`
               : errorMsg;
           setSwapStatus(`Error: ${truncatedMsg}`);
         }
@@ -792,7 +791,7 @@ export default function SwapTab({
                                   userRegion as keyof typeof REGION_COLORS
                                 ],
                             }}
-                          ></div>
+                          />
                           From {userRegion}:
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -827,7 +826,7 @@ export default function SwapTab({
                                   targetRegion as keyof typeof REGION_COLORS
                                 ],
                             }}
-                          ></div>
+                          />
                           To {targetRegion}:
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -902,7 +901,7 @@ export default function SwapTab({
                       <p className="text-sm text-gray-700">
                         European inflation is{" "}
                         <span className="font-bold">
-                          {(inflationData["Europe"]?.avgRate || 0).toFixed(1)}%
+                          {(inflationData.Europe?.avgRate || 0).toFixed(1)}%
                         </span>{" "}
                         compared to{" "}
                         <span className="font-bold">
@@ -949,7 +948,7 @@ export default function SwapTab({
                       <p className="text-sm text-gray-700">
                         US inflation is{" "}
                         <span className="font-bold">
-                          {(inflationData["USA"]?.avgRate || 0).toFixed(1)}%
+                          {(inflationData.USA?.avgRate || 0).toFixed(1)}%
                         </span>{" "}
                         compared to{" "}
                         <span className="font-bold">
@@ -1074,7 +1073,7 @@ export default function SwapTab({
                       <p className="text-sm text-gray-700">
                         US inflation is{" "}
                         <span className="font-bold">
-                          {(inflationData["USA"]?.avgRate || 0).toFixed(1)}%
+                          {(inflationData.USA?.avgRate || 0).toFixed(1)}%
                         </span>{" "}
                         compared to{" "}
                         <span className="font-bold">

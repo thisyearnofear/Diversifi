@@ -266,7 +266,7 @@ export default function GoalBasedStrategies({
         </ul>
       </div>
 
-      <div className="mt-4 flex justify-between"></div>
+      <div className="mt-4 flex justify-between" />
     </div>
   );
 }

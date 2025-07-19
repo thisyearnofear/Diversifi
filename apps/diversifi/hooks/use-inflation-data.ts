@@ -299,8 +299,8 @@ export function useInflationData() {
     // Special case for CFA Franc (handle both CXOF and EXOF)
     if (normalizedStablecoin === 'CXOF' || normalizedStablecoin === 'EXOF') {
       // Get the inflation rate for XOF directly
-      const xofData = inflationData['Africa']?.countries.find(c => c.currency === 'XOF');
-      return xofData ? xofData.rate : inflationData['Africa']?.avgRate || 3.5; // Fallback to region average or 3.5%
+      const xofData = inflationData.Africa?.countries.find(c => c.currency === 'XOF');
+      return xofData ? xofData.rate : inflationData.Africa?.avgRate || 3.5; // Fallback to region average or 3.5%
     }
 
     // Find the currency that corresponds to this stablecoin

@@ -88,7 +88,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
             />
           </svg>
           <span className="mr-1">Balance:</span>
-          {parseFloat(currentBalance).toFixed(4)} {selectedToken}
+          {Number.parseFloat(currentBalance).toFixed(4)} {selectedToken}
         </div>
       </div>
 
