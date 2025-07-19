@@ -10,15 +10,14 @@ import type { Vote } from '@/lib/db/schema';
 import { fetcher, generateUUID } from '@/lib/utils';
 
 import { Block } from './block';
-import { MultimodalInput } from './multimodal-input';
-import { Messages } from './messages';
 import { ActionHandler } from './action-handler';
 import type { VisibilityType } from './visibility-selector';
-import { useBlockSelector } from '@/hooks/use-block';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
 import { ChatProvider } from '@/contexts/chat-context';
 import { useChatForm } from '@/hooks/use-chat-form';
+import { ChatForm } from './chat/chat-form';
+import { ChatMessages } from './chat/chat-messages';
 
 export function Chat({
   id,
@@ -60,7 +59,6 @@ export function Chat({
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
-  const isBlockVisible = useBlockSelector((state) => state.isVisible);
 
   const { submitForm } = useChatForm({
     chatId: id,
@@ -80,28 +78,9 @@ export function Chat({
             isReadonly={isReadonly}
           />
 
-          <Messages
-            chatId={id}
-            isLoading={chatMethods.isLoading}
-            votes={votes}
-            messages={chatMethods.messages}
-            setMessages={chatMethods.setMessages}
-            reload={chatMethods.reload}
-            isReadonly={isReadonly}
-            isBlockVisible={isBlockVisible}
-          />
+          <ChatMessages chatId={id} votes={votes} isReadonly={isReadonly} />
 
-          <form className="flex w-full px-4 bg-background pb-4 md:pb-6 gap-2">
-            {!isReadonly && (
-              <MultimodalInput
-                chatId={id}
-                input={chatMethods.input}
-                isLoading={chatMethods.isLoading}
-                attachments={attachments}
-                setAttachments={setAttachments}
-              />
-            )}
-          </form>
+          <ChatForm chatId={id} isReadonly={isReadonly} />
 
           <Block
             chatId={id}
