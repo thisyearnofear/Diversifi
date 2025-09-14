@@ -7,7 +7,8 @@ import {
 } from '@coinbase/agentkit';
 import type { Network } from '../types';
 import { mint1155Schema, type Mint1155Response } from './schemas';
-import { mint } from '@zoralabs/protocol-sdk';
+// Temporarily disabled - @zoralabs/protocol-sdk removed during build optimization
+// import { mint } from '@zoralabs/protocol-sdk';
 import { createPublicClient, http, encodeFunctionData, type Hex } from 'viem';
 
 /**

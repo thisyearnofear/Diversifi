@@ -4,11 +4,12 @@ import {
   type EvmWalletProvider,
   type Network,
 } from '@coinbase/agentkit';
-import Safe, {
-  type OnchainAnalyticsProps,
-  type PredictedSafeProps,
-  type SafeAccountConfig,
-} from '@safe-global/protocol-kit';
+// Temporarily disabled - @safe-global/protocol-kit removed during build optimization
+// import Safe, {
+//   type OnchainAnalyticsProps,
+//   type PredictedSafeProps,
+//   type SafeAccountConfig,
+// } from '@safe-global/protocol-kit';
 import { waitForTransactionReceipt } from 'viem/actions';
 import { baseSepolia } from 'viem/chains';
 import { CreateSafeSchema } from './schemas';

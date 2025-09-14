@@ -21,10 +21,11 @@ const initializeSdk = async () => {
         throw new Error('Coinbase API keys not configured');
       }
 
-      // Dynamically import the SDK to avoid issues with server-side rendering
-      const sdk = await import('@coinbase/coinbase-sdk');
-      Coinbase = sdk.Coinbase;
-      Wallet = sdk.Wallet;
+      // Temporarily disabled - @coinbase/coinbase-sdk removed during build optimization
+      // const sdk = await import('@coinbase/coinbase-sdk');
+      // Coinbase = sdk.Coinbase;
+      // Wallet = sdk.Wallet;
+      throw new Error('Coinbase SDK temporarily disabled during build optimization');
 
       // Configure the SDK with API keys
       Coinbase.configure(API_KEY, API_SECRET);

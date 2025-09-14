@@ -1,6 +1,6 @@
 
 [build]
-  command = "pnpm install --no-frozen-lockfile && node scripts/fixes/radical-build-fix.js && pnpm build:simple"
+  command = "pnpm install --no-frozen-lockfile && node scripts/fixes/radical-build-fix.js && ESLINT_CONFIG_FILE=.eslintrc.production.json pnpm build:simple"
   publish = ".next"
 
 [build.environment]

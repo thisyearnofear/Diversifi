@@ -56,9 +56,7 @@ const nextConfig: NextConfig = {
   },
   skipTrailingSlashRedirect: true,
   output: 'standalone',
-  experimental: {
-    esmExternals: 'loose',
-  },
+  // Removed experimental.esmExternals as it's not recommended
 };
 
 export default nextConfig;
