@@ -300,8 +300,6 @@ export async function POST(request: Request) {
           },
         });
 
-    });
-
     return result.toDataStreamResponse();
   } catch (error) {
     console.error('Unhandled error in chat API:', error);
