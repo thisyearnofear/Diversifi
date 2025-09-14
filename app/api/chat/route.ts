@@ -126,12 +126,10 @@ export async function POST(request: Request) {
     }
 
     const result = streamText({
-      execute: (dataStream) => {
-        const result = streamText({
-          model: myProvider.languageModel(selectedChatModel),
-          system: generateSystemPrompt({ selectedChatModel }) + userProfile,
-          messages,
-          maxSteps: 10,
+      model: myProvider.languageModel(selectedChatModel),
+      system: generateSystemPrompt({ selectedChatModel }) + userProfile,
+      messages,
+      maxSteps: 10,
           // experimental_activeTools:
           //   selectedChatModel === "chat-model-reasoning"
           //     ? []
@@ -302,15 +300,9 @@ export async function POST(request: Request) {
           },
         });
 
-        result.mergeIntoDataStream(dataStream, {
-          sendReasoning: true,
-        });
-      },
-      onError: (error) => {
-        console.error('Error in chat stream:', error);
-        return `I'm sorry, but I encountered an error while processing your request. Please try again or contact support if the issue persists.`;
-      },
     });
+
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error('Unhandled error in chat API:', error);
     return new Response(
