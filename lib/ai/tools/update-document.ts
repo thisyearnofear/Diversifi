@@ -1,7 +1,7 @@
 import {
   type DataStreamWriter,
-  experimental_generateImage,
-  smoothStream,
+  // experimental_generateImage, // Removed for AI SDK v3 compatibility
+  // smoothStream, // Removed for AI SDK v3 compatibility
   streamObject,
   streamText,
   tool,

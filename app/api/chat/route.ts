@@ -1,4 +1,4 @@
-import { type Message, createDataStreamResponse, streamText, Output } from 'ai';
+import { type Message, streamText } from 'ai';
 
 import { auth } from '@/app/auth';
 import type { Session } from 'next-auth';
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       // Continue without AgentKit tools
     }
 
-    return createDataStreamResponse({
+    const result = streamText({
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
