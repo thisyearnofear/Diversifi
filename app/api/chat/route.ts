@@ -134,24 +134,7 @@ export async function POST(request: Request) {
           //   selectedChatModel === "chat-model-reasoning"
           //     ? []
           //     : ["createDocument", "updateDocument", "requestSuggestions"],
-          experimental_output: Output.object({
-            schema: z.object({
-              agent: z.string(),
-              content: z.string(),
-              userActions: z.array(
-                z.object({
-                  action: z.string(),
-                  label: z
-                    .string()
-                    .optional()
-                    .describe(
-                      'An additional label with more context about the action for the user',
-                    ),
-                  args: z.array(z.record(z.any())).optional(),
-                }),
-              ),
-            }),
-          }),
+          // experimental_output removed for AI SDK v3 compatibility
           // experimental_transform: smoothStream({ chunking: "word" }),
           experimental_generateMessageId: generateUUID,
           tools: session
