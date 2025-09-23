@@ -1,0 +1,24 @@
+diff --git a/esm/utils.js b/esm/utils.js
+index 1234567..abcdefg 100644
+--- a/esm/utils.js
++++ b/esm/utils.js
+@@ -100,3 +100,7 @@ export function wrapXOFConstructorWithOpts(hashCons) {
+     return hashCons(opts);
+   };
+ }
++// Missing exports for @noble/curves compatibility
++export const abytes = (data) => data;
++export const bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
++export const ahash = (data) => data;
+diff --git a/utils.js b/utils.js
+index 1234567..abcdefg 100644
+--- a/utils.js
++++ b/utils.js
+@@ -100,3 +100,7 @@ function wrapXOFConstructorWithOpts(hashCons) {
+     return hashCons(opts);
+   };
+ }
++// Missing exports for @noble/curves compatibility
++exports.abytes = (data) => data;
++exports.bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
++exports.ahash = (data) => data;

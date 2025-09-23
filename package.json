@@ -172,6 +172,9 @@
       "tailwindcss": "^3.4.0",
       "ai": "^3.4.9",
       "zod": "^3.24.1"
+    },
+    "patchedDependencies": {
+      "@noble/hashes@1.7.1": "patches/@noble__hashes@1.7.1.patch"
     }
   }
 }

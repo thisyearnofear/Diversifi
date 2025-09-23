@@ -33,11 +33,23 @@ const nextConfig: NextConfig = {
       };
     }
     
-    // Add alias for noble packages compatibility
+    // Add alias for noble packages compatibility - handle both .js and non-.js imports
     config.resolve.alias = {
       ...config.resolve.alias,
+      '@noble/hashes/utils.js': path.resolve(__dirname, 'lib/noble-compat.ts'),
       '@noble/hashes/utils': path.resolve(__dirname, 'lib/noble-compat.ts'),
     };
+    
+    // Also add webpack externals to prevent server-side issues
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push({
+        '@noble/curves': '@noble/curves',
+        '@noble/hashes': '@noble/hashes',
+        '@scure/bip32': '@scure/bip32',
+        '@scure/bip39': '@scure/bip39',
+      });
+    }
     
     // Ignore problematic modules during build
     config.externals = config.externals || [];

@@ -142,7 +142,7 @@ export async function POST(request: Request) {
           //     : ["createDocument", "updateDocument", "requestSuggestions"],
           // experimental_output removed for AI SDK v3 compatibility
           // experimental_transform: smoothStream({ chunking: "word" }),
-          experimental_generateMessageId: generateUUID,
+          // experimental_generateMessageId removed for AI SDK v3 compatibility
           tools: session
             ? {
                 ...tools,
