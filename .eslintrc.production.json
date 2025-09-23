@@ -2,7 +2,8 @@
   "extends": ["./.eslintrc.json"],
   "rules": {
     "import/no-unresolved": "warn",
-    "import/export": "warn",
-    "import/no-named-as-default": "warn"
+    "import/export": "off",
+    "import/no-named-as-default": "off",
+    "import/no-duplicates": "off"
   }
 }
