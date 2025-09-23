@@ -22,7 +22,6 @@ import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { agentKitToTools } from '@/lib/web3/agentkit/framework-extensions/ai-sdk';
-import { z } from 'zod';
 import { tool } from 'ai';
 import {
   saveUserInformation,
@@ -124,6 +123,13 @@ export async function POST(request: Request) {
       console.error('Failed to setup AgentKit:', error);
       // Continue without AgentKit tools
     }
+
+    const dataStream = {
+      writeData: (data: any) => {
+        // Placeholder for data stream functionality
+        console.log('Data stream:', data);
+      }
+    };
 
     const result = streamText({
       model: myProvider.languageModel(selectedChatModel),
