@@ -1,4 +1,3 @@
-
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -18,6 +17,8 @@ const nextConfig: NextConfig = {
     ],
   },
   webpack: (config, { isServer }) => {
+    const path = require('path');
+    
     // Basic polyfills
     if (!isServer) {
       config.resolve.fallback = {
@@ -32,6 +33,12 @@ const nextConfig: NextConfig = {
       };
     }
     
+    // Add alias for noble packages compatibility
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@noble/hashes/utils': path.resolve(__dirname, 'lib/noble-compat.ts'),
+    };
+    
     // Ignore problematic modules during build
     config.externals = config.externals || [];
     if (isServer) {
@@ -42,9 +49,9 @@ const nextConfig: NextConfig = {
       );
     }
     
-    // Handle ESM modules
+    // Handle ESM modules and ignore parse errors in noble packages
     config.module.rules.push({
-      test: /.m?js$/,
+      test: /\.m?js$/,
       include: /node_modules/,
       type: 'javascript/auto',
       resolve: {
@@ -52,11 +59,19 @@ const nextConfig: NextConfig = {
       },
     });
     
+    // Ignore webpack warnings for noble packages
+    config.ignoreWarnings = [
+      /Module parse failed.*@noble/,
+      /Identifier.*has already been declared/,
+    ];
+    
     return config;
   },
   skipTrailingSlashRedirect: true,
   output: 'standalone',
-  // Removed experimental.esmExternals as it's not recommended
+  experimental: {
+    esmExternals: 'loose',
+  },
 };
 
 export default nextConfig;
