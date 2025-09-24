@@ -3,7 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('Fixing @noble packages compatibility issues...');
+console.log('🔧 Fixing @noble packages compatibility issues...');
+console.log('Node version:', process.version);
+console.log('Working directory:', process.cwd());
 
 // Find all @noble/hashes installations
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
@@ -96,43 +98,55 @@ function patchNobleHashes(installPath) {
     console.log(`Patched package.json at ${packageJsonPath}`);
   }
   
-  // Patch ESM utils.js
-  const esmUtilsPath = path.join(installPath, 'esm', 'utils.js');
-  if (fs.existsSync(esmUtilsPath)) {
-    let content = fs.readFileSync(esmUtilsPath, 'utf8');
-    
-    // Check if our exports are already there (abytes is imported, so we re-export it)
-    if (!content.includes('export const bytesToUtf8')) {
-      content += `
-// Missing exports for @noble/curves compatibility
-export { abytes };
+    // Patch ESM utils.js
+    const esmUtilsPath = path.join(installPath, 'esm', 'utils.js');
+    if (fs.existsSync(esmUtilsPath)) {
+      let esmContent = fs.readFileSync(esmUtilsPath, 'utf8');
+      
+      // Remove any existing patches first
+      esmContent = esmContent.replace(
+        /\/\/ Missing exports for @noble\/curves compatibility[\s\S]*?(?=\/\/# sourceMappingURL)/g,
+        ''
+      );
+      
+      if (!esmContent.includes('export { abytes, anumber }')) {
+        esmContent = esmContent.replace(
+          '//# sourceMappingURL=utils.js.map',
+          `// Missing exports for @noble/curves compatibility
+export { abytes, anumber } from './_assert.js';
 export const bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
-export const ahash = (data) => data;
-export const anumber = (data) => data;
-`;
-      fs.writeFileSync(esmUtilsPath, content);
-      console.log(`Patched ESM utils.js at ${esmUtilsPath}`);
-    } else {
-      console.log('ESM utils.js already patched');
+export { ahash } from './_assert.js';
+//# sourceMappingURL=utils.js.map`
+        );
+        fs.writeFileSync(esmUtilsPath, esmContent);
+        console.log(`ESM utils.js patched at ${esmUtilsPath}`);
+      } else {
+        console.log('ESM utils.js already patched');
+      }
     }
-  }
   
   // Patch CommonJS utils.js
   const cjsUtilsPath = path.join(installPath, 'utils.js');
   if (fs.existsSync(cjsUtilsPath)) {
-    let content = fs.readFileSync(cjsUtilsPath, 'utf8');
+    let cjsContent = fs.readFileSync(cjsUtilsPath, 'utf8');
     
-    // Check if our exports are already there
-    if (!content.includes('exports.abytes')) {
-      content += `
-// Missing exports for @noble/curves compatibility
-exports.abytes = (data) => data;
+    // Remove any existing patches first
+    cjsContent = cjsContent.replace(
+      /\/\/ Missing exports for @noble\/curves compatibility[\s\S]*?(?=\/\/# sourceMappingURL)/g,
+      ''
+    );
+    
+    if (!cjsContent.includes('exports.abytes = abytes')) {
+      cjsContent = cjsContent.replace(
+        '//# sourceMappingURL=utils.js.map',
+        `// Missing exports for @noble/curves compatibility
+const { abytes, anumber, ahash } = require('./_assert.js');
+exports.abytes = abytes; exports.anumber = anumber; exports.ahash = ahash;
 exports.bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
-exports.ahash = (data) => data;
-exports.anumber = (data) => data;
-`;
-      fs.writeFileSync(cjsUtilsPath, content);
-      console.log(`Patched CommonJS utils.js at ${cjsUtilsPath}`);
+//# sourceMappingURL=utils.js.map`
+      );
+      fs.writeFileSync(cjsUtilsPath, cjsContent);
+      console.log(`CommonJS utils.js patched at ${cjsUtilsPath}`);
     } else {
       console.log('CommonJS utils.js already patched');
     }
@@ -167,6 +181,22 @@ try {
   }
   
   console.log('✅ @noble packages patching completed');
+  
+  // Verify patches are working
+  console.log('🔍 Verifying patches...');
+  try {
+    const utilsPath = path.join(process.cwd(), 'node_modules/@noble/hashes/esm/utils.js');
+    if (fs.existsSync(utilsPath)) {
+      const content = fs.readFileSync(utilsPath, 'utf8');
+      if (content.includes('export { abytes, anumber }')) {
+        console.log('✅ ESM utils.js patch verified');
+      } else {
+        console.log('❌ ESM utils.js patch NOT found');
+      }
+    }
+  } catch (error) {
+    console.log('⚠️ Verification error:', error.message);
+  }
 } catch (error) {
   console.error('Error patching @noble packages:', error);
   // Don't fail the build, just warn

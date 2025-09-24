@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
       };
     }
     
-    // Noble packages are now patched directly, no need for aliases
+    // Noble packages are now patched directly via postinstall script
     
     // Ignore problematic modules during build
     config.externals = config.externals || [];
