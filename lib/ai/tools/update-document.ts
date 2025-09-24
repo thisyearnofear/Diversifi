@@ -1,5 +1,4 @@
 import {
-  type DataStreamWriter,
   // experimental_generateImage, // Removed for AI SDK v3 compatibility
   // smoothStream, // Removed for AI SDK v3 compatibility
   streamObject,
@@ -11,6 +10,10 @@ import { z } from 'zod';
 import { getDocumentById, saveDocument } from '@/lib/db/queries';
 import { updateDocumentPrompt } from '../prompts';
 import { myProvider } from '../models';
+
+interface DataStreamWriter {
+  writeData: (data: any) => void;
+}
 
 interface UpdateDocumentProps {
   session: Session;
@@ -44,22 +47,13 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
       });
 
       if (document.kind === 'text') {
-        const { fullStream } = streamText({
+        const result = await streamText({
           model: myProvider.languageModel('block-model'),
           system: updateDocumentPrompt(currentContent, 'text'),
-          experimental_transform: smoothStream({ chunking: 'word' }),
           prompt: description,
-          experimental_providerMetadata: {
-            openai: {
-              prediction: {
-                type: 'content',
-                content: currentContent,
-              },
-            },
-          },
         });
 
-        for await (const delta of fullStream) {
+        for await (const delta of result.fullStream) {
           const { type } = delta;
 
           if (type === 'text-delta') {
@@ -75,7 +69,7 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
 
         dataStream.writeData({ type: 'finish', content: '' });
       } else if (document.kind === 'code') {
-        const { fullStream } = streamObject({
+        const result = await streamObject({
           model: myProvider.languageModel('block-model'),
           system: updateDocumentPrompt(currentContent, 'code'),
           prompt: description,
@@ -84,7 +78,7 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
           }),
         });
 
-        for await (const delta of fullStream) {
+        for await (const delta of result.fullStream) {
           const { type } = delta;
 
           if (type === 'object') {
@@ -104,22 +98,17 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
 
         dataStream.writeData({ type: 'finish', content: '' });
       } else if (document.kind === 'image') {
-        const { image } = await experimental_generateImage({
-          model: myProvider.imageModel('image-model'),
-          prompt: description,
-          n: 1,
-        });
-
-        draftText = image.base64;
+        // Image generation not available in AI SDK v3
+        draftText = 'Image generation is currently not available.';
 
         dataStream.writeData({
           type: 'image-delta',
-          content: image.base64,
+          content: draftText,
         });
 
         dataStream.writeData({ type: 'finish', content: '' });
       } else if (document.kind === 'sheet') {
-        const { fullStream } = streamObject({
+        const result = await streamObject({
           model: myProvider.languageModel('block-model'),
           system: updateDocumentPrompt(currentContent, 'sheet'),
           prompt: description,
@@ -128,7 +117,7 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
           }),
         });
 
-        for await (const delta of fullStream) {
+        for await (const delta of result.fullStream) {
           const { type } = delta;
 
           if (type === 'object') {

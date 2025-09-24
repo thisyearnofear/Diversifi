@@ -1,6 +1,5 @@
 import { generateUUID } from '@/lib/utils';
 import {
-  type DataStreamWriter,
   // experimental_generateImage, // Removed for AI SDK v3 compatibility
   // smoothStream, // Removed for AI SDK v3 compatibility
   streamObject,
@@ -13,6 +12,10 @@ import { sheetPrompt } from '../prompts/constants/sheet';
 import { saveDocument } from '@/lib/db/queries';
 import type { Session } from 'next-auth';
 import { myProvider } from '../models';
+
+interface DataStreamWriter {
+  writeData: (data: any) => void;
+}
 
 interface CreateDocumentProps {
   session: Session;
@@ -52,15 +55,14 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
       });
 
       if (kind === 'text') {
-        const { fullStream } = streamText({
+        const result = await streamText({
           model: myProvider.languageModel('block-model'),
           system:
             'Write about the given topic. Markdown is supported. Use headings wherever appropriate.',
-          experimental_transform: smoothStream({ chunking: 'word' }),
           prompt: title,
         });
 
-        for await (const delta of fullStream) {
+        for await (const delta of result.fullStream) {
           const { type } = delta;
 
           if (type === 'text-delta') {
@@ -76,7 +78,7 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
 
         dataStream.writeData({ type: 'finish', content: '' });
       } else if (kind === 'code') {
-        const { fullStream } = streamObject({
+        const result = await streamObject({
           model: myProvider.languageModel('block-model'),
           system: codePrompt,
           prompt: title,
@@ -85,7 +87,7 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
           }),
         });
 
-        for await (const delta of fullStream) {
+        for await (const delta of result.fullStream) {
           const { type } = delta;
 
           if (type === 'object') {
@@ -105,22 +107,17 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
 
         dataStream.writeData({ type: 'finish', content: '' });
       } else if (kind === 'image') {
-        const { image } = await experimental_generateImage({
-          model: myProvider.imageModel('small-model'),
-          prompt: title,
-          n: 1,
-        });
-
-        draftText = image.base64;
+        // Image generation not available in AI SDK v3
+        draftText = 'Image generation is currently not available.';
 
         dataStream.writeData({
           type: 'image-delta',
-          content: image.base64,
+          content: draftText,
         });
 
         dataStream.writeData({ type: 'finish', content: '' });
       } else if (kind === 'sheet') {
-        const { fullStream } = streamObject({
+        const result = await streamObject({
           model: myProvider.languageModel('block-model'),
           system: sheetPrompt,
           prompt: title,
@@ -129,7 +126,7 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
           }),
         });
 
-        for await (const delta of fullStream) {
+        for await (const delta of result.fullStream) {
           const { type } = delta;
 
           if (type === 'object') {

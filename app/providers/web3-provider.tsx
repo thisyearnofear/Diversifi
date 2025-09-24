@@ -2,7 +2,7 @@
 
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { WalletSessionManager } from "@/components/wallet/wallet-session-manager";
 import { config } from '@/lib/web3/wagmi-config';
 
@@ -16,10 +16,16 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
-          theme="dark"
+          theme={darkTheme()}
           appInfo={{
             appName: 'DiversiFi',
-            disclaimer: 'By connecting your wallet, you agree to the Terms of Service and Privacy Policy',
+            disclaimer: ({ Text, Link }) => (
+              <Text>
+                By connecting your wallet, you agree to the{' '}
+                <Link href="#">Terms of Service</Link> and{' '}
+                <Link href="#">Privacy Policy</Link>
+              </Text>
+            ),
           }}
         >
           <WalletSessionManager />

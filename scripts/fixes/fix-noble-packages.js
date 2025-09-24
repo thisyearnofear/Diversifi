@@ -73,8 +73,8 @@ function patchNobleHashes(installPath) {
         "require": "./sha512.js"
       },
       './legacy': {
-        "import": "./esm/sha1.js",
-        "require": "./sha1.js"
+        "import": "./legacy.js",
+        "require": "./legacy.js"
       },
       './ripemd160.js': {
         "import": "./esm/ripemd160.js",
@@ -87,7 +87,7 @@ function patchNobleHashes(installPath) {
     };
     
     for (const [exportPath, exportConfig] of Object.entries(missingExports)) {
-      if (!packageJson.exports[exportPath]) {
+      if (!packageJson.exports[exportPath] || exportPath === './legacy') {
         packageJson.exports[exportPath] = exportConfig;
       }
     }
@@ -136,6 +136,16 @@ exports.anumber = (data) => data;
     } else {
       console.log('CommonJS utils.js already patched');
     }
+  }
+  
+  // Create legacy.js file for ripemd160 compatibility
+  const legacyPath = path.join(installPath, 'legacy.js');
+  if (!fs.existsSync(legacyPath)) {
+    const legacyContent = `export { ripemd160 } from './esm/ripemd160.js';`;
+    fs.writeFileSync(legacyPath, legacyContent);
+    console.log(`Created legacy.js at ${legacyPath}`);
+  } else {
+    console.log('legacy.js already exists');
   }
   
   // Create additional compatibility files

@@ -136,7 +136,7 @@ export function sanitizeResponseMessages({
   messages,
   reasoning,
 }: {
-  messages: Array<ResponseMessage>;
+  messages: Array<ResponseMessageWithoutId>;
   reasoning: string | undefined;
 }) {
   const toolResultIds: Array<string> = [];

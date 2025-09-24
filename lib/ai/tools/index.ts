@@ -1,5 +1,4 @@
 import type { Session } from 'next-auth';
-import type { DataStreamWriter } from 'ai';
 import { createDocument } from './create-document';
 import { updateDocument } from './update-document';
 import { requestSuggestions } from './request-suggestions';
@@ -10,6 +9,10 @@ import {
 } from './user-information';
 import { agentKitToTools } from '@/lib/web3/agentkit/framework-extensions/ai-sdk';
 import type { AgentKit } from '@coinbase/agentkit';
+
+interface DataStreamWriter {
+  writeData: (data: any) => void;
+}
 
 export const setupTools = async ({
   session,

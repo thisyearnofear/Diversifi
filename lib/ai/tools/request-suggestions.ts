@@ -1,10 +1,14 @@
 import { z } from 'zod';
 import type { Session } from 'next-auth';
-import { type DataStreamWriter, streamObject, tool } from 'ai';
+import { streamObject, tool } from 'ai';
 import { getDocumentById, saveSuggestions } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import { generateUUID } from '@/lib/utils';
 import { myProvider } from '../models';
+
+interface DataStreamWriter {
+  writeData: (data: any) => void;
+}
 
 interface RequestSuggestionsProps {
   session: Session;
@@ -35,7 +39,7 @@ export const requestSuggestions = ({
         Omit<Suggestion, 'userId' | 'createdAt' | 'documentCreatedAt'>
       > = [];
 
-      const { elementStream } = streamObject({
+      const result = await streamObject({
         model: myProvider.languageModel('block-model'),
         system:
           'You are a help writing assistant. Given a piece of writing, please offer suggestions to improve the piece of writing and describe the change. It is very important for the edits to contain full sentences instead of just words. Max 5 suggestions.',
@@ -48,7 +52,7 @@ export const requestSuggestions = ({
         }),
       });
 
-      for await (const element of elementStream) {
+      for await (const element of result.elementStream) {
         const suggestion = {
           originalText: element.originalSentence,
           suggestedText: element.suggestedSentence,
