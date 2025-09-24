@@ -1,5 +1,6 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { base, mainnet, celo, optimism, polygon } from 'wagmi/chains';
+import { http } from 'wagmi';
 
 // Validate required environment variables
 if (!process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID) {
@@ -11,11 +12,11 @@ export const config = getDefaultConfig({
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   chains: [base, mainnet, celo, optimism, polygon],
   transports: {
-    [base.id]: process.env.NEXT_PUBLIC_BASE_RPC || undefined,
-    [mainnet.id]: process.env.NEXT_PUBLIC_ETHEREUM_RPC || undefined,
-    [celo.id]: process.env.NEXT_PUBLIC_CELO_RPC || undefined,
-    [optimism.id]: process.env.NEXT_PUBLIC_OPTIMISM_RPC || undefined,
-    [polygon.id]: process.env.NEXT_PUBLIC_POLYGON_RPC || undefined,
+    [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC),
+    [mainnet.id]: http(process.env.NEXT_PUBLIC_ETHEREUM_RPC),
+    [celo.id]: http(process.env.NEXT_PUBLIC_CELO_RPC),
+    [optimism.id]: http(process.env.NEXT_PUBLIC_OPTIMISM_RPC),
+    [polygon.id]: http(process.env.NEXT_PUBLIC_POLYGON_RPC),
   },
   ssr: true, // Enable SSR support
 });

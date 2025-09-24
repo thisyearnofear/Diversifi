@@ -49,62 +49,12 @@ export class ZoraActionProvider extends ActionProvider {
     walletProvider: EvmWalletProvider,
     args: z.infer<typeof mint1155Schema>,
   ): Promise<Mint1155Response> {
-    try {
-      const network = walletProvider.getNetwork();
-      const publicClient = createPublicClient({
-        // biome-ignore lint: networkId is not null
-        chain: NETWORK_ID_TO_VIEM_CHAIN[network.networkId!],
-        transport: http(),
-      });
-
-      const recipient = args.mintRecipient || walletProvider.getAddress();
-
-      // Prepare mint parameters
-      const { parameters } = await mint({
-        tokenContract: args.tokenContract as `0x${string}`,
-        mintType: '1155',
-        tokenId: BigInt(args.tokenId),
-        quantityToMint: args.quantityToMint,
-        minterAccount: recipient,
-        publicClient,
-      });
-
-      // Execute the mint transaction
-      const hash = await walletProvider.sendTransaction({
-        to: parameters.address as Hex,
-        from: walletProvider.getAddress() as `0x${string}`,
-        data: encodeFunctionData({
-          abi: parameters.abi,
-          functionName: parameters.functionName,
-          args: parameters.args,
-        }),
-        value: parameters.value,
-      });
-
-      // Wait for transaction confirmation
-      const receipt = await walletProvider.waitForTransactionReceipt(hash);
-
-      return {
-        success: true,
-        message: 'Successfully minted tokens',
-        data: {
-          tokenContract: args.tokenContract,
-          tokenId: args.tokenId,
-          quantity: args.quantityToMint,
-          recipient,
-          transactionHash: hash,
-          blockNumber: String(receipt.blockNumber),
-          value: parameters.value ? String(parameters.value) : undefined,
-        },
-      };
-    } catch (error) {
-      console.log('Error minting tokens', error);
-      return {
-        success: false,
-        message: 'Failed to mint tokens',
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
+    // Zora minting functionality is temporarily disabled during build optimization
+    return {
+      success: false,
+      message: 'Zora minting is currently not available. The @zoralabs/protocol-sdk has been temporarily disabled for build optimization.',
+      error: 'Zora minting functionality is temporarily disabled',
+    };
   }
 
   /**

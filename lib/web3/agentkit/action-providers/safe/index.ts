@@ -15,6 +15,31 @@ import { baseSepolia } from 'viem/chains';
 import { CreateSafeSchema } from './schemas';
 import type { z } from 'zod';
 
+// Temporary types while @safe-global/protocol-kit is disabled
+type OnchainAnalyticsProps = {
+  project: string;
+  platform: string;
+};
+
+type SafeAccountConfig = {
+  owners: string[];
+  threshold: number;
+};
+
+type PredictedSafeProps = {
+  safeAccountConfig: SafeAccountConfig;
+};
+
+type Safe = any; // Placeholder type
+
+type CreateSafeReturnType = {
+  safeAddress?: string;
+  transactionHash?: string;
+  threshold?: number;
+  owners?: string[];
+  error?: any;
+};
+
 const onchainAnalytics: OnchainAnalyticsProps = {
   project: 'HELLO_WORLD_COMPUTER', // Required. Always use the same value for your project.
   platform: 'WEB', // Optional
@@ -46,67 +71,10 @@ export class SafeActionProvider extends ActionProvider {
     walletProvider: EvmWalletProvider,
     args: z.infer<typeof CreateSafeSchema>,
   ): Promise<CreateSafeReturnType> {
-    try {
-      const safeAccountConfig: SafeAccountConfig = {
-        owners: args.owners,
-        threshold: args.threshold,
-        // ...
-      };
-
-      const predictedSafe: PredictedSafeProps = {
-        safeAccountConfig,
-        // ...
-      };
-
-      const protocolKit = await Safe.init({
-        provider: baseSepolia.rpcUrls.default.http[0],
-        signer: walletProvider.getAddress() as `0x${string}`,
-        predictedSafe,
-        onchainAnalytics, // Optional
-        // ...
-      });
-
-      const predictedSafeAddress = await protocolKit.getAddress();
-
-      const deploymentTransaction =
-        await protocolKit.createSafeDeploymentTransaction();
-
-      const client = await protocolKit.getSafeProvider().getExternalSigner();
-
-      const tx = await client?.prepareTransactionRequest({
-        to: deploymentTransaction.to as `0x${string}`,
-        value: BigInt(deploymentTransaction.value),
-        data: deploymentTransaction.data as `0x${string}`,
-        chain: baseSepolia,
-      });
-
-      if (!tx) {
-        throw new Error('Failed to prepare transaction request');
-      }
-
-      const transactionHash = await walletProvider.sendTransaction(tx);
-
-      await waitForTransactionReceipt(
-        // biome-ignore lint: client is not null
-        client!,
-        { hash: transactionHash },
-      );
-
-      const newProtocolKit = await protocolKit.connect({
-        safeAddress: predictedSafeAddress,
-      });
-
-      const deployedSafeAddress = await newProtocolKit.getAddress();
-
-      return {
-        safeAddress: deployedSafeAddress,
-        transactionHash,
-        threshold: args.threshold,
-        owners: args.owners,
-      };
-    } catch (error: any) {
-      return { error };
-    }
+    // Safe functionality is temporarily disabled during build optimization
+    return {
+      error: 'Safe creation is currently not available. The @safe-global/protocol-kit has been temporarily disabled for build optimization.',
+    };
   }
 
   /**

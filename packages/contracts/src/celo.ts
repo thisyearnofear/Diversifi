@@ -44,7 +44,7 @@ export async function getStablecoinBalance(
 ) {
   try {
     // Create a read-only provider for Celo mainnet
-    const provider = new ethers.JsonRpcProvider(
+    const provider = new ethers.providers.JsonRpcProvider(
       'https://forno.celo.org',
     );
 
