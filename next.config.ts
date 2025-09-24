@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import path from 'path';
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['twitter-api-v2'],
@@ -33,13 +34,7 @@ const nextConfig: NextConfig = {
       };
     }
     
-    // Ignore @noble packages warnings - let the postinstall script handle compatibility
-    config.ignoreWarnings = [
-      ...(config.ignoreWarnings || []),
-      /Module parse failed.*@noble/,
-      /export.*was not found in.*@noble/,
-      /Attempted import error.*@noble/,
-    ];
+    // Noble packages are now patched directly, no need for aliases
     
     // Ignore problematic modules during build
     config.externals = config.externals || [];

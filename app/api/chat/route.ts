@@ -1,4 +1,5 @@
-import { type Message, streamText } from 'ai';
+import { streamText } from 'ai';
+import type { Message } from '@/lib/types';
 
 import { auth } from '@/app/auth';
 import type { Session } from 'next-auth';
@@ -241,13 +242,25 @@ export async function POST(request: Request) {
                   },
                 }),
               },
-          onFinish: async ({ response, reasoning, text }) => {
-            // currently the content of the last message is truncated, so passing in the text as a partial fix
+          onFinish: async ({ response, text }) => {
+            // Extract reasoning from response messages if available
+            let reasoning: string | undefined = undefined;
             const assistantMessages = response.messages.filter(
               (message) => message.role === 'assistant',
             );
             const lastAssistantMessage =
               assistantMessages[assistantMessages.length - 1];
+            
+            // Check for reasoning in the message content
+            if (lastAssistantMessage && Array.isArray(lastAssistantMessage.content)) {
+              for (const content of lastAssistantMessage.content) {
+                if ('type' in content && (content as any).type === 'reasoning') {
+                  reasoning = (content as any).reasoning;
+                  break;
+                }
+              }
+            }
+            
             if (lastAssistantMessage) {
               response.messages[response.messages.length - 1] = {
                 ...lastAssistantMessage,
@@ -289,7 +302,7 @@ export async function POST(request: Request) {
           },
         });
 
-    return result.toDataStreamResponse();
+    return (await result).toDataStreamResponse();
   } catch (error) {
     console.error('Unhandled error in chat API:', error);
     return new Response(

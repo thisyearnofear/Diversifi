@@ -1,19 +1,10 @@
-import type { Message as AIMessage } from 'ai';
+// Extended types for AI SDK compatibility
+import type { Message as BaseMessage } from 'ai';
 
-export interface InteractiveOptions {
-  type: 'connect-wallet' | 'fund-wallet' | 'transaction' | 'options' | 'help';
-  options?: Array<{
-    label: string;
-    value: string;
-    description?: string;
-  }>;
-  transactionData?: {
-    to: string;
-    value: string;
-    data?: string;
-  };
+// Extend the Message type to include reasoning
+export interface Message extends BaseMessage {
+  reasoning?: string;
 }
 
-export interface Message extends AIMessage {
-  interactive?: InteractiveOptions;
-}
+// Re-export other types
+export type { ChatRequest, ChatRequestOptions } from 'ai';

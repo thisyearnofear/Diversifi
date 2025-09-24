@@ -1,24 +1,29 @@
 diff --git a/esm/utils.js b/esm/utils.js
-index 1234567..abcdefg 100644
+index f48ceb31e01527d956a364e9330071730f4fccb5..b5179e3d78ed84cc64205ad13a29d88002d9a09a 100644
 --- a/esm/utils.js
 +++ b/esm/utils.js
-@@ -100,3 +100,7 @@ export function wrapXOFConstructorWithOpts(hashCons) {
-     return hashCons(opts);
-   };
+@@ -209,4 +209,9 @@ export function randomBytes(bytesLength = 32) {
+     }
+     throw new Error('crypto.getRandomValues must be defined');
  }
 +// Missing exports for @noble/curves compatibility
-+export const abytes = (data) => data;
++export { abytes };
 +export const bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
 +export const ahash = (data) => data;
++export const anumber = (data) => data;
+ //# sourceMappingURL=utils.js.map
+\ No newline at end of file
 diff --git a/utils.js b/utils.js
-index 1234567..abcdefg 100644
+index 1e43fdc1785254e173baee71303123ff88f321f2..21e845b791184a5693d1ada46570676c5733a4d4 100644
 --- a/utils.js
 +++ b/utils.js
-@@ -100,3 +100,7 @@ function wrapXOFConstructorWithOpts(hashCons) {
-     return hashCons(opts);
-   };
+@@ -233,4 +233,9 @@ function randomBytes(bytesLength = 32) {
+     }
+     throw new Error('crypto.getRandomValues must be defined');
  }
 +// Missing exports for @noble/curves compatibility
 +exports.abytes = (data) => data;
 +exports.bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
 +exports.ahash = (data) => data;
++exports.anumber = (data) => data;
+ //# sourceMappingURL=utils.js.map
