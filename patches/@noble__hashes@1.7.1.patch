@@ -1,29 +1,40 @@
 diff --git a/esm/utils.js b/esm/utils.js
-index f48ceb31e01527d956a364e9330071730f4fccb5..b5179e3d78ed84cc64205ad13a29d88002d9a09a 100644
+index f48ceb31e01527d956a364e9330071730f4fccb5..a099df21aac085c901ac769bd3a678ef5a9e0edf 100644
 --- a/esm/utils.js
 +++ b/esm/utils.js
-@@ -209,4 +209,9 @@ export function randomBytes(bytesLength = 32) {
+@@ -209,4 +209,8 @@ export function randomBytes(bytesLength = 32) {
      }
      throw new Error('crypto.getRandomValues must be defined');
  }
 +// Missing exports for @noble/curves compatibility
-+export { abytes };
++export { abytes, anumber } from './_assert.js';
 +export const bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
-+export const ahash = (data) => data;
-+export const anumber = (data) => data;
++export { ahash } from './_assert.js';
  //# sourceMappingURL=utils.js.map
 \ No newline at end of file
 diff --git a/utils.js b/utils.js
-index 1e43fdc1785254e173baee71303123ff88f321f2..21e845b791184a5693d1ada46570676c5733a4d4 100644
+index 1e43fdc1785254e173baee71303123ff88f321f2..315cb18b7c77334b74bea23c97e4f2652e5984b2 100644
 --- a/utils.js
 +++ b/utils.js
-@@ -233,4 +233,9 @@ function randomBytes(bytesLength = 32) {
+@@ -224,13 +224,17 @@ function wrapXOFConstructorWithOpts(hashCons) {
+ }
+ /** Cryptographically secure PRNG. Uses internal OS-level `crypto.getRandomValues`. */
+ function randomBytes(bytesLength = 32) {
+-    if (crypto_1.crypto && typeof crypto_1.crypto.getRandomValues === 'function') {
+-        return crypto_1.crypto.getRandomValues(new Uint8Array(bytesLength));
++    if (crypto && typeof crypto.getRandomValues === 'function') {
++        return crypto.getRandomValues(new Uint8Array(bytesLength));
+     }
+     // Legacy Node.js compatibility
+-    if (crypto_1.crypto && typeof crypto_1.crypto.randomBytes === 'function') {
+-        return crypto_1.crypto.randomBytes(bytesLength);
++    if (crypto && typeof crypto.randomBytes === 'function') {
++        return crypto.randomBytes(bytesLength);
      }
      throw new Error('crypto.getRandomValues must be defined');
  }
 +// Missing exports for @noble/curves compatibility
-+exports.abytes = (data) => data;
++const { abytes, anumber, ahash } = require('./_assert.js');
++exports.abytes = abytes; exports.anumber = anumber; exports.ahash = ahash;
 +exports.bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
-+exports.ahash = (data) => data;
-+exports.anumber = (data) => data;
  //# sourceMappingURL=utils.js.map

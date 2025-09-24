@@ -66,9 +66,9 @@ const nextConfig: NextConfig = {
   },
   skipTrailingSlashRedirect: true,
   output: 'standalone',
-  experimental: {
-    esmExternals: 'loose',
-  },
+  // experimental: {
+  //   esmExternals: 'loose', // Removed - not supported by Turbopack and no longer needed
+  // },
 };
 
 export default nextConfig;
