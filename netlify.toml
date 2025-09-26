@@ -1,4 +1,3 @@
-
 [build]
   command = "pnpm install --no-frozen-lockfile && pnpm patch @noble/hashes@1.7.1 || true && node scripts/fixes/fix-noble-packages.js && node scripts/fixes/radical-build-fix.js && ESLINT_CONFIG_FILE=.eslintrc.production.json pnpm build:simple"
   publish = ".next"

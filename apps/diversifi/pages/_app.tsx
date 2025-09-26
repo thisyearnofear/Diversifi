@@ -13,45 +13,65 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     // Small delay to ensure everything is loaded properly
-    setTimeout(() => {
-      // Check if we're in MiniPay environment
-      const inMiniPay = isMiniPayEnvironment();
-      setIsInMiniPay(inMiniPay);
+    const timer = setTimeout(() => {
+      try {
+        // Check if we're in MiniPay environment
+        const inMiniPay = isMiniPayEnvironment();
+        setIsInMiniPay(inMiniPay);
 
-      // Log basic info for development
-      if (process.env.NODE_ENV === "development") {
-        console.log("App initialized", {
+        // Log basic info for development
+        if (process.env.NODE_ENV === "development") {
+          console.log("App initialized", {
+            inMiniPay,
+            path: router.pathname,
+          });
+        }
+
+        // Log when app loads with proper guards
+        console.log("DiversiFi app loaded", {
           inMiniPay,
-          path: router.pathname,
+          userAgent:
+            typeof navigator !== "undefined" ? navigator.userAgent : "N/A",
+          hasEthereum:
+            typeof window !== "undefined" &&
+            typeof window.ethereum !== "undefined",
+          ethereumIsMiniPay:
+            typeof window !== "undefined" &&
+            window.ethereum &&
+            "isMiniPay" in window.ethereum
+              ? window.ethereum.isMiniPay
+              : false,
+          inIframe:
+            typeof window !== "undefined" ? window !== window.parent : false,
+          referrer:
+            typeof document !== "undefined"
+              ? document.referrer || "None"
+              : "N/A",
+          url: typeof window !== "undefined" ? window.location.href : "N/A",
+          pathname:
+            typeof window !== "undefined" ? window.location.pathname : "N/A",
         });
-      }
 
-      // Log when app loads
-      console.log("DiversiFi app loaded", {
-        inMiniPay,
-        userAgent: navigator.userAgent,
-        hasEthereum: typeof window.ethereum !== "undefined",
-        ethereumIsMiniPay: window.ethereum?.isMiniPay || false,
-        inIframe: window !== window.parent,
-        referrer: document.referrer || "None",
-        url: window.location.href,
-        pathname: window.location.pathname,
-      });
+        // If in MiniPay and on the main page, redirect to the minipay-test page
+        if (inMiniPay && router.pathname === "/") {
+          console.log("Redirecting to /minipay-test page");
+          router.push("/minipay-test");
+        }
 
-      // If in MiniPay and on the main page, redirect to the minipay-test page
-      if (inMiniPay && router.pathname === "/") {
-        console.log("Redirecting to /minipay-test page");
-        router.push("/minipay-test");
-      }
-
-      // Note: Auto-connect is now handled by the useWallet hook
-      // We'll keep this log for debugging
-      if (inMiniPay && window.ethereum) {
-        console.log(
-          "MiniPay detected, wallet connection will be handled by useWallet hook"
-        );
+        // Note: Auto-connect is now handled by the useWallet hook
+        // We'll keep this log for debugging
+        if (inMiniPay && typeof window !== "undefined" && window.ethereum) {
+          console.log(
+            "MiniPay detected, wallet connection will be handled by useWallet hook"
+          );
+        }
+      } catch (error) {
+        console.error("Error during app initialization:", error);
       }
     }, 500);
+
+    // Cleanup timer
+    return () => clearTimeout(timer);
   }, [router]);
 
   return (
