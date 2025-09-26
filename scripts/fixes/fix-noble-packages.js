@@ -47,123 +47,151 @@ function patchNobleHashes(installPath) {
   // Patch package.json to add missing exports
   const packageJsonPath = path.join(installPath, "package.json");
   if (fs.existsSync(packageJsonPath)) {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
-    // Add missing exports if they don't exist
-    if (!packageJson.exports) {
-      packageJson.exports = {};
-    }
-
-    // Add all the missing exports that @noble/curves expects
-    const missingExports = {
-      "./utils.js": {
-        import: "./esm/utils.js",
-        require: "./utils.js",
-      },
-      "./hmac.js": {
-        import: "./esm/hmac.js",
-        require: "./hmac.js",
-      },
-      "./sha2.js": {
-        import: "./esm/sha2.js",
-        require: "./sha2.js",
-      },
-      "./sha3.js": {
-        import: "./esm/sha3.js",
-        require: "./sha3.js",
-      },
-      "./sha256.js": {
-        import: "./esm/sha256.js",
-        require: "./sha256.js",
-      },
-      "./sha512.js": {
-        import: "./esm/sha512.js",
-        require: "./sha512.js",
-      },
-      "./legacy": {
-        import: "./legacy.js",
-        require: "./legacy.js",
-      },
-      "./ripemd160.js": {
-        import: "./esm/ripemd160.js",
-        require: "./ripemd160.js",
-      },
-      "./pbkdf2.js": {
-        import: "./esm/pbkdf2.js",
-        require: "./pbkdf2.js",
-      },
-    };
-
-    for (const [exportPath, exportConfig] of Object.entries(missingExports)) {
-      if (!packageJson.exports[exportPath] || exportPath === "./legacy") {
-        packageJson.exports[exportPath] = exportConfig;
+      // Add missing exports if they don't exist
+      if (!packageJson.exports) {
+        packageJson.exports = {};
       }
-    }
 
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    console.log(`Patched package.json at ${packageJsonPath}`);
+      // Add all the missing exports that @noble/curves expects
+      const missingExports = {
+        "./utils.js": {
+          import: "./esm/utils.js",
+          require: "./utils.js",
+        },
+        "./hmac.js": {
+          import: "./esm/hmac.js",
+          require: "./hmac.js",
+        },
+        "./sha2.js": {
+          import: "./esm/sha2.js",
+          require: "./sha2.js",
+        },
+        "./sha3.js": {
+          import: "./esm/sha3.js",
+          require: "./sha3.js",
+        },
+        "./sha256.js": {
+          import: "./esm/sha256.js",
+          require: "./sha256.js",
+        },
+        "./sha512.js": {
+          import: "./esm/sha512.js",
+          require: "./sha512.js",
+        },
+        "./legacy": {
+          import: "./legacy.js",
+          require: "./legacy.js",
+        },
+        "./ripemd160.js": {
+          import: "./esm/ripemd160.js",
+          require: "./ripemd160.js",
+        },
+        "./pbkdf2.js": {
+          import: "./esm/pbkdf2.js",
+          require: "./pbkdf2.js",
+        },
+      };
+
+      for (const [exportPath, exportConfig] of Object.entries(missingExports)) {
+        if (!packageJson.exports[exportPath] || exportPath === "./legacy") {
+          packageJson.exports[exportPath] = exportConfig;
+        }
+      }
+
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+      console.log(`Patched package.json at ${packageJsonPath}`);
+    } catch (error) {
+      console.warn(
+        `Failed to patch package.json at ${packageJsonPath}:`,
+        error.message
+      );
+    }
   }
 
   // Patch ESM utils.js
   const esmUtilsPath = path.join(installPath, "esm", "utils.js");
   if (fs.existsSync(esmUtilsPath)) {
-    let esmContent = fs.readFileSync(esmUtilsPath, "utf8");
+    try {
+      let esmContent = fs.readFileSync(esmUtilsPath, "utf8");
 
-    // Remove any existing patches first
-    esmContent = esmContent.replace(
-      /\/\/ Missing exports for @noble\/curves compatibility[\s\S]*?(?=\/\/# sourceMappingURL)/g,
-      ""
-    );
-
-    if (!esmContent.includes("export { abytes, anumber }")) {
+      // Remove any existing patches first
       esmContent = esmContent.replace(
-        "//# sourceMappingURL=utils.js.map",
-        `// Missing exports for @noble/curves compatibility
+        /\/\/ Missing exports for @noble\/curves compatibility[\s\S]*?(?=\/\/# sourceMappingURL)/g,
+        ""
+      );
+
+      if (!esmContent.includes("export { abytes, anumber }")) {
+        esmContent = esmContent.replace(
+          "//# sourceMappingURL=utils.js.map",
+          `// Missing exports for @noble/curves compatibility
 export { abytes, anumber } from './_assert.js';
 export const bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
 export { ahash } from './_assert.js';
 //# sourceMappingURL=utils.js.map`
+        );
+        fs.writeFileSync(esmUtilsPath, esmContent);
+        console.log(`ESM utils.js patched at ${esmUtilsPath}`);
+      } else {
+        console.log("ESM utils.js already patched");
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to patch ESM utils.js at ${esmUtilsPath}:`,
+        error.message
       );
-      fs.writeFileSync(esmUtilsPath, esmContent);
-      console.log(`ESM utils.js patched at ${esmUtilsPath}`);
-    } else {
-      console.log("ESM utils.js already patched");
     }
   }
 
   // Patch CommonJS utils.js
   const cjsUtilsPath = path.join(installPath, "utils.js");
   if (fs.existsSync(cjsUtilsPath)) {
-    let cjsContent = fs.readFileSync(cjsUtilsPath, "utf8");
+    try {
+      let cjsContent = fs.readFileSync(cjsUtilsPath, "utf8");
 
-    // Remove any existing patches first
-    cjsContent = cjsContent.replace(
-      /\/\/ Missing exports for @noble\/curves compatibility[\s\S]*?(?=\/\/# sourceMappingURL)/g,
-      ""
-    );
-
-    if (!cjsContent.includes("exports.abytes = abytes")) {
+      // Remove any existing patches first
       cjsContent = cjsContent.replace(
-        "//# sourceMappingURL=utils.js.map",
-        `// Missing exports for @noble/curves compatibility
+        /\/\/ Missing exports for @noble\/curves compatibility[\s\S]*?(?=\/\/# sourceMappingURL)/g,
+        ""
+      );
+
+      if (!cjsContent.includes("exports.abytes = abytes")) {
+        cjsContent = cjsContent.replace(
+          "//# sourceMappingURL=utils.js.map",
+          `// Missing exports for @noble/curves compatibility
 const { abytes, anumber, ahash } = require('./_assert.js');
 exports.abytes = abytes; exports.anumber = anumber; exports.ahash = ahash;
 exports.bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
 //# sourceMappingURL=utils.js.map`
+        );
+        fs.writeFileSync(cjsUtilsPath, cjsContent);
+        console.log(`CommonJS utils.js patched at ${cjsUtilsPath}`);
+      } else {
+        console.log("CommonJS utils.js already patched");
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to patch CommonJS utils.js at ${cjsUtilsPath}:`,
+        error.message
       );
-      fs.writeFileSync(cjsUtilsPath, cjsContent);
-      console.log(`CommonJS utils.js patched at ${cjsUtilsPath}`);
-    } else {
-      console.log("CommonJS utils.js already patched");
     }
   }
 
   // Create legacy.js file for ripemd160 compatibility
   const legacyPath = path.join(installPath, "legacy.js");
   if (!fs.existsSync(legacyPath)) {
-    const legacyContent = `export { ripemd160 } from './esm/ripemd160.js';`;
-    fs.writeFileSync(legacyPath, legacyContent);
-    console.log(`Created legacy.js at ${legacyPath}`);
+    try {
+      const legacyContent = `export { ripemd160 } from './esm/ripemd160.js';`;
+      fs.writeFileSync(legacyPath, legacyContent);
+      console.log(`Created legacy.js at ${legacyPath}`);
+    } catch (error) {
+      console.warn(
+        `Failed to create legacy.js at ${legacyPath}:`,
+        error.message
+      );
+    }
   } else {
     console.log("legacy.js already exists");
   }
@@ -180,8 +208,15 @@ exports.bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
   for (const file of compatFiles) {
     const filePath = path.join(installPath, file.name);
     if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, file.content);
-      console.log(`Created ${file.name} at ${filePath}`);
+      try {
+        fs.writeFileSync(filePath, file.content);
+        console.log(`Created ${file.name} at ${filePath}`);
+      } catch (error) {
+        console.warn(
+          `Failed to create ${file.name} at ${filePath}:`,
+          error.message
+        );
+      }
     }
   }
 }
@@ -189,6 +224,11 @@ exports.bytesToUtf8 = (bytes) => new TextDecoder().decode(bytes);
 try {
   const installations = findNobleHashesInstallations();
   console.log(`Found ${installations.length} @noble/hashes installations`);
+
+  if (installations.length === 0) {
+    console.log("No @noble/hashes installations found, skipping patching");
+    process.exit(0);
+  }
 
   for (const installation of installations) {
     patchNobleHashes(installation);

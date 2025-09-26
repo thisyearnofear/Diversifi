@@ -177,5 +177,6 @@
     "patchedDependencies": {
       "@noble/hashes@1.7.1": "patches/@noble__hashes@1.7.1.patch"
     }
-  }
+  },
+  "packageManager": "pnpm@10.17.1"
 }
