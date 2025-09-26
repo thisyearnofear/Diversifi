@@ -1,5 +1,6 @@
 /**
  * Utility functions for environment detection
+ * NOTE: This file is deprecated. Use @diversifi/shared/src/utils/environment.ts instead
  */
 
 /**
@@ -12,7 +13,8 @@ export function isMiniPayEnvironment(): boolean {
 
   try {
     // Check for MiniPay property with proper guards
-    const hasMiniPayProperty = window.ethereum && 
+    const hasMiniPayProperty = typeof window.ethereum !== 'undefined' && 
+                              window.ethereum && 
                               typeof window.ethereum === 'object' && 
                               'isMiniPay' in window.ethereum && 
                               window.ethereum.isMiniPay === true;

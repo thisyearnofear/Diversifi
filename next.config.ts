@@ -62,6 +62,22 @@ const nextConfig: NextConfig = {
       /Identifier.*has already been declared/,
     ];
     
+    // Explicitly handle noble packages to prevent runtime errors
+    if (!isServer) {
+      try {
+        const nobleHashesPath = path.dirname(require.resolve('@noble/hashes/package.json'));
+        const nobleCurvesPath = path.dirname(require.resolve('@noble/curves/package.json'));
+        
+        config.resolve.alias = {
+          ...config.resolve.alias,
+          '@noble/hashes': nobleHashesPath,
+          '@noble/curves': nobleCurvesPath,
+        };
+      } catch (e: any) {
+        console.warn('Could not resolve noble packages paths:', e.message);
+      }
+    }
+    
     return config;
   },
   skipTrailingSlashRedirect: true,

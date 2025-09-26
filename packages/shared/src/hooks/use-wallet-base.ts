@@ -88,7 +88,7 @@ export function useWalletBase(options: UseWalletOptions = {}): WalletState {
           });
         }
 
-        // Set up event listeners
+        // Set up event listeners with proper guards
         const handleChainChanged = (chainId: string) => {
           console.log('Chain changed:', chainId);
           const newChainId = Number.parseInt(chainId, 16);
@@ -111,22 +111,27 @@ export function useWalletBase(options: UseWalletOptions = {}): WalletState {
           }
         };
 
-        // Add event listeners
-        if (window.ethereum) {
-          window.ethereum.on('chainChanged', handleChainChanged);
-          window.ethereum.on('accountsChanged', handleAccountsChanged);
+        // Add event listeners with proper guards
+        if (typeof window !== 'undefined' && window.ethereum) {
+          // Check if the methods exist before calling them
+          if (window.ethereum.on) {
+            window.ethereum.on('chainChanged', handleChainChanged);
+            window.ethereum.on('accountsChanged', handleAccountsChanged);
+          }
 
           // Get current chain ID
           try {
-            const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
-            setChainId(Number.parseInt(currentChainId as string, 16));
+            if (window.ethereum.request) {
+              const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+              setChainId(Number.parseInt(currentChainId as string, 16));
+            }
           } catch (err) {
             console.warn('Could not get chain ID:', err);
           }
         }
 
         // Auto-connect in MiniPay or if requested
-        if ((inMiniPay || autoConnect) && window.ethereum) {
+        if ((inMiniPay || autoConnect) && typeof window !== 'undefined' && window.ethereum) {
           // Small delay to ensure everything is loaded
           setTimeout(() => {
             connect();
@@ -135,9 +140,12 @@ export function useWalletBase(options: UseWalletOptions = {}): WalletState {
 
         // Cleanup function
         return () => {
-          if (window.ethereum) {
-            window.ethereum.removeListener('chainChanged', handleChainChanged);
-            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+          if (typeof window !== 'undefined' && window.ethereum) {
+            // Check if the methods exist before calling them
+            if (window.ethereum.removeListener) {
+              window.ethereum.removeListener('chainChanged', handleChainChanged);
+              window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+            }
           }
         };
       } catch (err: any) {
@@ -167,10 +175,14 @@ export function useWalletBase(options: UseWalletOptions = {}): WalletState {
         accounts = await client.requestAddresses();
       } else {
         // Use direct ethereum provider for standard environment
-        accounts = await window.ethereum.request({
-          method: 'eth_requestAccounts',
-          params: [],
-        });
+        if (window.ethereum.request) {
+          accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts',
+            params: [],
+          });
+        } else {
+          throw new Error('Ethereum provider does not support request method');
+        }
       }
 
       if (accounts && accounts.length > 0) {
