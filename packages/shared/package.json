@@ -11,16 +11,16 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "viem": "2.37.4"
   },
   "devDependencies": {
-    "@types/node": "^22.8.6",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8.57.0",
-    "tsup": "^8.0.2",
-    "typescript": "^5.6.3"
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "eslint": "^9.36.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
   }
 }

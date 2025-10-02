@@ -61,7 +61,7 @@ export function useStablecoinPortfolio(address?: string) {
 
       try {
         // Create a read-only provider for Celo mainnet
-        const provider = new ethers.providers.JsonRpcProvider(
+        const provider = new ethers.JsonRpcProvider(
           'https://forno.celo.org'
         );
 
@@ -80,7 +80,7 @@ export function useStablecoinPortfolio(address?: string) {
 
               // Get balance
               const balance = await tokenContract.balanceOf(address);
-              const formattedBalance = ethers.utils.formatUnits(balance, 18);
+              const formattedBalance = ethers.formatUnits(balance, 18);
 
               // For demo purposes, we'll use a fixed price
               // In a real implementation, we would get the actual price

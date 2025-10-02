@@ -337,7 +337,7 @@ export function useStablecoinBalances(address: string | undefined | null) {
           : 'https://forno.celo.org'; // Mainnet
 
         console.log(`Using ${isAlfajores ? 'Alfajores' : 'Mainnet'} provider for balance fetching`);
-        const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+        const provider = new ethers.JsonRpcProvider(providerUrl);
 
         // Determine which tokens to fetch based on the network
         const tokensToFetch = isAlfajores
@@ -381,7 +381,7 @@ export function useStablecoinBalances(address: string | undefined | null) {
               try {
                 balance = await contract.balanceOf(address);
                 console.log(`Raw balance for ${symbol}: ${balance.toString()}`);
-                formattedBalance = ethers.utils.formatUnits(balance, 18);
+                formattedBalance = ethers.formatUnits(balance, 18);
                 console.log(`Formatted balance for ${symbol}: ${formattedBalance}`);
               } catch (balanceError) {
                 console.error(`Error fetching balance for ${symbol}:`, balanceError);

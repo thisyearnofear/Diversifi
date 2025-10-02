@@ -150,10 +150,10 @@ export function useExpectedAmountOut({
       }
 
       // Create a read-only provider for Celo
-      const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+      const provider = new ethers.JsonRpcProvider(providerUrl);
 
       // Convert amount to wei
-      const amountInWei = ethers.utils.parseUnits(amount, 18);
+      const amountInWei = ethers.parseUnits(amount, 18);
 
       // Find the exchange for the token pair
       const brokerContract = new ethers.Contract(
@@ -305,7 +305,7 @@ export function useExpectedAmountOut({
               amountInWei
             );
 
-            console.log(`Expected CELO amount: ${ethers.utils.formatUnits(expectedCeloAmount, 18)} CELO`);
+            console.log(`Expected CELO amount: ${ethers.formatUnits(expectedCeloAmount, 18)} CELO`);
 
             // Step 4: Get expected amount out for CELO to toToken
             const expectedFinalAmount = await brokerRateContract.getAmountOut(
@@ -316,7 +316,7 @@ export function useExpectedAmountOut({
               expectedCeloAmount
             );
 
-            const formattedAmount = ethers.utils.formatUnits(expectedFinalAmount, 18);
+            const formattedAmount = ethers.formatUnits(expectedFinalAmount, 18);
             console.log(`Expected final amount via two-step swap: ${formattedAmount} ${toToken}`);
 
             return formattedAmount;
@@ -385,7 +385,7 @@ export function useExpectedAmountOut({
         );
 
         // Format the amount
-        const formattedAmount = ethers.utils.formatUnits(expectedAmountOut, 18);
+        const formattedAmount = ethers.formatUnits(expectedAmountOut, 18);
         console.log(`Expected output from Mento: ${formattedAmount} ${toToken}`);
         return formattedAmount;
       } catch (rateError) {

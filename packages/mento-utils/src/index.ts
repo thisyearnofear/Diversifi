@@ -143,7 +143,7 @@ export const getMentoExchangeRate = async (
     }
 
     // Create a read-only provider for Celo mainnet
-    const provider = new ethers.providers.JsonRpcProvider(
+    const provider = new ethers.JsonRpcProvider(
       'https://forno.celo.org',
     );
 
@@ -201,7 +201,7 @@ export const getMentoExchangeRate = async (
     );
 
     // Get quote for 1 cUSD
-    const oneUSD = ethers.utils.parseUnits('1', 18);
+    const oneUSD = ethers.parseUnits('1', 18);
     const amountOut = await brokerRateContract.getAmountOut(
       exchangeProvider,
       exchangeId,
@@ -211,7 +211,7 @@ export const getMentoExchangeRate = async (
     );
 
     // Convert to number
-    const rate = Number.parseFloat(ethers.utils.formatUnits(amountOut, 18));
+    const rate = Number.parseFloat(ethers.formatUnits(amountOut, 18));
 
     // Cache the result
     if (cacheKey) {
