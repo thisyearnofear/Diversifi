@@ -53,7 +53,6 @@ const nextConfig = {
     ];
   },
 
-  // Noble hashes v1.7.1 compatibility + Force viem version consistency
   webpack: (config, { isServer }) => {
     const path = require("path");
 
@@ -71,16 +70,10 @@ const nextConfig = {
       };
     }
 
-    // Force viem version consistency and Noble compatibility
+    // Force viem version consistency
     config.resolve.alias = {
       ...config.resolve.alias,
-      // Force consistent viem version across all dependencies
       "viem": path.resolve("../../node_modules/viem"),
-
-      // Essential Noble compatibility - only what's needed for build
-      "@noble/hashes/hmac.js": path.resolve("../../lib/noble-compat/hmac.js"),
-      "@noble/hashes/sha2.js": path.resolve("../../lib/noble-compat/sha2.js"),
-      "@noble/hashes/utils.js": path.resolve("../../lib/noble-compat/utils.js"),
     };
 
     // Ignore problematic modules during build
@@ -93,24 +86,13 @@ const nextConfig = {
       );
     }
 
-    // Handle ESM modules and force module resolution
+    // Handle ESM modules
     config.module.rules.push({
       test: /\.m?js$/,
       include: /node_modules/,
       type: "javascript/auto",
       resolve: {
         fullySpecified: false,
-      },
-    });
-
-    // Additional rule to handle viem resolution consistency
-    config.module.rules.push({
-      test: /\.js$/,
-      include: /node_modules.*viem/,
-      resolve: {
-        alias: {
-          "viem": path.resolve("../../node_modules/viem"),
-        }
       },
     });
 

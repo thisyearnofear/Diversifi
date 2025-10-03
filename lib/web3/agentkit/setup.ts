@@ -1,6 +1,3 @@
-// Load early runtime fix before AgentKit imports
-import '@/lib/noble-compat/early-runtime-fix';
-
 import {
   AgentKit,
   pythActionProvider,

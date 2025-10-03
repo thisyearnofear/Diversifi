@@ -1,6 +1,3 @@
-// Load early runtime fix before any other imports
-import '@/lib/noble-compat/early-runtime-fix';
-
 import { streamText } from 'ai';
 import type { Message } from '@/lib/types';
 
