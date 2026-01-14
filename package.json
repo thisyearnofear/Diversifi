@@ -151,8 +151,6 @@
     "@types/react-dom": "^18",
     "@types/react-simple-maps": "^3.0.6",
     "autoprefixer": "^10.4.21",
-    "buffer": "^6.0.3",
-    "crypto-browserify": "^3.12.1",
     "drizzle-kit": "^0.25.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
@@ -160,11 +158,9 @@
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-tailwindcss": "^3.17.5",
     "postcss": "^8.5.3",
-    "stream-browserify": "^3.0.0",
     "tailwindcss": "^3.4.1",
     "tsup": "^8.4.0",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.3",
-    "util": "^0.12.5"
+    "typescript": "^5.6.3"
   }
 }
