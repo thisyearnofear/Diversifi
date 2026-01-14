@@ -1,89 +1,20 @@
 import { execSync } from 'node:child_process';
-import fs from 'node:fs';
 
-// Check if we're in a production environment (like Netlify)
-const isProduction =
-  process.env.NODE_ENV === 'production' || process.env.NETLIFY === 'true';
-const isNetlify = process.env.NETLIFY === 'true';
+// Build the root Next.js app (Stables Station)
+// Note: migrations run separately via 'pnpm db:migrate' in production
 
-console.log(`Building in ${isProduction ? 'production' : 'development'} mode`);
-console.log(`Building on ${isNetlify ? 'Netlify' : 'local/other'} environment`);
+console.log('🏗️  Building Stables Station (root app)...');
 
 try {
-  // Dependencies are managed via package.json - no need to install during build
-
-  // Skip all migrations during build
-  // Migrations should only run in production via manual command or deployment hooks
-  console.log('⏭️  Skipping database migrations during build');
-  console.log('   (Run "pnpm db:migrate" separately after deployment)');
-  
-  // Note: Database schema is defined in lib/db/schema.ts
-  // Migrations are version-controlled SQL files in lib/db/migrations/
-
-  // Build the main Next.js app
-  console.log('Building main Next.js application...');
-  try {
-    execSync('next build', { stdio: 'inherit' });
-  } catch (error) {
-    console.warn(
-      'Main app build encountered errors, but we will continue with the build process.',
-    );
-    // Create a dummy .next directory to simulate a successful build
-    execSync('mkdir -p .next/standalone');
-  }
-
-  // Build the DiversiFi app
-  console.log('Building DiversiFi application...');
-  try {
-    execSync('pnpm --filter diversifi build', { stdio: 'inherit' });
-  } catch (error) {
-    console.warn(
-      'DiversiFi app build encountered errors, but we will continue with the build process.',
-    );
-    // Create a dummy .next directory to simulate a successful build
-    execSync('mkdir -p apps/diversifi/.next/standalone');
-  }
-  // If we're on Netlify, make sure the output is in the correct location
-  if (isNetlify) {
-    console.log('Preparing build output for Netlify...');
-    // Ensure the .next directory exists
-    execSync('mkdir -p .next', { stdio: 'inherit' });
-
-    // If the main app build succeeded, copy its output to the root .next directory
-    if (process.env.NETLIFY_NEXT_PLUGIN_SKIP === 'true') {
-      console.log('Skipping Next.js plugin - using standalone output');
-    } else {
-      console.log('Setting up build output for Netlify Next.js plugin');
-
-      // Copy necessary files for the Netlify Next.js plugin
-      try {
-        // Copy standalone files if they exist
-        execSync('cp -r .next/standalone/* .next/ 2>/dev/null || true', { stdio: 'inherit' });
-        execSync('cp -r .next/static .next/standalone/ 2>/dev/null || true', { stdio: 'inherit' });
-
-        // Create a simple index.html file to help Netlify detect the build
-        const indexHtml = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Stables Station</title>
-  <meta http-equiv="refresh" content="0;url=/diversifi">
-</head>
-<body>
-  <p>Redirecting to <a href="/diversifi">DiversiFi</a>...</p>
-</body>
-</html>`;
-
-        // Write the index.html file to the .next directory
-        fs.writeFileSync('.next/index.html', indexHtml);
-
-        console.log('Created index.html for Netlify');
-      } catch (error) {
-        console.warn('Error setting up Netlify build output:', error);
-      }
-    }
-  }
+  execSync('next build', { stdio: 'inherit' });
+  console.log('✅ Build completed successfully');
+  process.exit(0);
 } catch (error) {
-  console.error('Build failed:', error);
+  console.error('❌ Build failed');
   process.exit(1);
 }
+
+// NOTE: apps/diversifi is a separate MiniPay app that should:
+// - Have its own repository OR
+// - Have its own Vercel/Netlify deployment
+// - NOT be built as part of this monorepo's main deployment
