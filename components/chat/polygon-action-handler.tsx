@@ -1,9 +1,6 @@
 'use client';
 
-// Import the polygon action message component
-import { PolygonActionMessage } from './polygon-action-message';
 import { usePolygonDivviRegistration } from '@/hooks/use-polygon-divvi-registration';
-import { usePolygonDaiSwap } from '@/hooks/use-polygon-dai-swap';
 import { useEffect } from 'react';
 
 interface PolygonActionHandlerProps {
@@ -16,24 +13,21 @@ export function PolygonActionHandler({
   onComplete,
 }: PolygonActionHandlerProps) {
   const { isRegistered } = usePolygonDivviRegistration();
-  const { isCompleted: isSwapCompleted } = usePolygonDaiSwap();
 
-  // If both registration and swap are completed, trigger onComplete
+  // If registration is completed, trigger onComplete
   useEffect(() => {
-    if (isRegistered && isSwapCompleted && onComplete) {
+    if (isRegistered && onComplete) {
       onComplete();
     }
-  }, [isRegistered, isSwapCompleted, onComplete]);
+  }, [isRegistered, onComplete]);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="prose dark:prose-invert">
         <p>
-          I can help you get DAI stablecoins on Polygon. DAI is a decentralized
-          stablecoin pegged to the US Dollar.
+          I can help you with Polygon chain actions. Register to get started.
         </p>
       </div>
-      <PolygonActionMessage onComplete={onComplete} />
     </div>
   );
 }

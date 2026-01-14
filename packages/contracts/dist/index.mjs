@@ -34,9 +34,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// ../../node_modules/.pnpm/bn.js@5.2.1/node_modules/bn.js/lib/bn.js
+// ../../node_modules/.pnpm/bn.js@5.2.2/node_modules/bn.js/lib/bn.js
 var require_bn = __commonJS({
-  "../../node_modules/.pnpm/bn.js@5.2.1/node_modules/bn.js/lib/bn.js"(exports, module) {
+  "../../node_modules/.pnpm/bn.js@5.2.2/node_modules/bn.js/lib/bn.js"(exports, module) {
     "use strict";
     (function(module2, exports2) {
       "use strict";
@@ -344,7 +344,7 @@ var require_bn = __commonJS({
       };
       if (typeof Symbol !== "undefined" && typeof Symbol.for === "function") {
         try {
-          BN3.prototype[Symbol.for("nodejs.util.inspect.custom")] = inspect4;
+          BN3.prototype[/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")] = inspect4;
         } catch (e) {
           BN3.prototype.inspect = inspect4;
         }
@@ -1756,6 +1756,7 @@ var require_bn = __commonJS({
           this.words[i] = carry;
           this.length++;
         }
+        this.length = num === 0 ? 1 : this.length;
         return isNegNum ? this.ineg() : this;
       };
       BN3.prototype.muln = function muln(num) {
@@ -5315,7 +5316,7 @@ var require_aes_js = __commonJS({
         }
         targetArray.set(sourceArray, targetStart);
       }
-      var convertUtf8 = /* @__PURE__ */ function() {
+      var convertUtf8 = /* @__PURE__ */ (function() {
         function toBytes(text) {
           var result = [], i = 0;
           text = encodeURI(text);
@@ -5351,8 +5352,8 @@ var require_aes_js = __commonJS({
           toBytes,
           fromBytes
         };
-      }();
-      var convertHex = /* @__PURE__ */ function() {
+      })();
+      var convertHex = /* @__PURE__ */ (function() {
         function toBytes(text) {
           var result = [];
           for (var i = 0; i < text.length; i += 2) {
@@ -5373,7 +5374,7 @@ var require_aes_js = __commonJS({
           toBytes,
           fromBytes
         };
-      }();
+      })();
       var numberOfRounds = { 16: 10, 24: 12, 32: 14 };
       var rcon = [1, 2, 4, 8, 16, 32, 64, 128, 27, 54, 108, 216, 171, 77, 154, 47, 94, 188, 99, 198, 151, 53, 106, 212, 179, 125, 250, 239, 197, 145];
       var S = [99, 124, 119, 123, 242, 107, 111, 197, 48, 1, 103, 43, 254, 215, 171, 118, 202, 130, 201, 125, 250, 89, 71, 240, 173, 212, 162, 175, 156, 164, 114, 192, 183, 253, 147, 38, 54, 63, 247, 204, 52, 165, 229, 241, 113, 216, 49, 21, 4, 199, 35, 195, 24, 150, 5, 154, 7, 18, 128, 226, 235, 39, 178, 117, 9, 131, 44, 26, 27, 110, 90, 160, 82, 59, 214, 179, 41, 227, 47, 132, 83, 209, 0, 237, 32, 252, 177, 91, 106, 203, 190, 57, 74, 76, 88, 207, 208, 239, 170, 251, 67, 77, 51, 133, 69, 249, 2, 127, 80, 60, 159, 168, 81, 163, 64, 143, 146, 157, 56, 245, 188, 182, 218, 33, 16, 255, 243, 210, 205, 12, 19, 236, 95, 151, 68, 23, 196, 167, 126, 61, 100, 93, 25, 115, 96, 129, 79, 220, 34, 42, 144, 136, 70, 238, 184, 20, 222, 94, 11, 219, 224, 50, 58, 10, 73, 6, 36, 92, 194, 211, 172, 98, 145, 149, 228, 121, 231, 200, 55, 109, 141, 213, 78, 169, 108, 86, 244, 234, 101, 122, 174, 8, 186, 120, 37, 46, 28, 166, 180, 198, 232, 221, 116, 31, 75, 189, 139, 138, 112, 62, 181, 102, 72, 3, 246, 14, 97, 53, 87, 185, 134, 193, 29, 158, 225, 248, 152, 17, 105, 217, 142, 148, 155, 30, 135, 233, 206, 85, 40, 223, 140, 161, 137, 13, 191, 230, 66, 104, 65, 153, 45, 15, 176, 84, 187, 22];
@@ -6427,7 +6428,7 @@ var require_bech32 = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/ethers.js
+// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/ethers.js
 var ethers_exports = {};
 __export(ethers_exports, {
   BaseContract: () => BaseContract,
@@ -13481,9 +13482,9 @@ Signature.prototype.toDER = function toDER(enc) {
 };
 var rand = (
   /*RicMoo:ethers:require(brorand)*/
-  function() {
+  (function() {
     throw new Error("unsupported");
-  }
+  })
 );
 var assert$5 = utils_1$1.assert;
 function EC(options) {
@@ -13685,9 +13686,9 @@ var elliptic_1 = createCommonjsModule(function(module, exports) {
   { version: "6.6.1" }.version;
   elliptic.utils = utils_1$1;
   elliptic.rand = /*RicMoo:ethers:require(brorand)*/
-  function() {
+  (function() {
     throw new Error("unsupported");
-  };
+  });
   elliptic.curve = curve_1;
   elliptic.curves = curves_1;
   elliptic.ec = ec;
@@ -16252,7 +16253,7 @@ function verifyTypedData(domain, types, value, signature2) {
   return recoverAddress(TypedDataEncoder.hash(domain, types, value), signature2);
 }
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/index.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/index.js
 var lib_exports4 = {};
 __export(lib_exports4, {
   AlchemyProvider: () => AlchemyProvider,
@@ -16769,7 +16770,7 @@ function _fetchData(connection, body, processFunc) {
     flatHeaders[header.key] = header.value;
   });
   options.headers = flatHeaders;
-  const runningTimeout = function() {
+  const runningTimeout = (function() {
     let timer2 = null;
     const promise = new Promise(function(resolve, reject) {
       if (timeout) {
@@ -16795,8 +16796,8 @@ function _fetchData(connection, body, processFunc) {
       timer2 = null;
     };
     return { promise, cancel };
-  }();
-  const runningFetch = function() {
+  })();
+  const runningFetch = (function() {
     return __awaiter9(this, void 0, void 0, function* () {
       for (let attempt = 0; attempt < attemptLimit; attempt++) {
         let response = null;
@@ -16889,7 +16890,7 @@ function _fetchData(connection, body, processFunc) {
         url
       });
     });
-  }();
+  })();
   return Promise.race([runningTimeout.promise, runningFetch]);
 }
 function fetchJson(connection, json, processFunc) {
@@ -17001,13 +17002,13 @@ function poll(func, options) {
   });
 }
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/base-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/base-provider.js
 var import_bech32 = __toESM(require_bech32());
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/_version.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/_version.js
 var version23 = "providers/5.8.0";
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/formatter.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/formatter.js
 var logger29 = new Logger(version23);
 var Formatter = class _Formatter {
   constructor() {
@@ -17375,25 +17376,25 @@ var Formatter = class _Formatter {
   }
   // if value is null-ish, nullValue is returned
   static allowNull(format, nullValue) {
-    return function(value) {
+    return (function(value) {
       if (value == null) {
         return nullValue;
       }
       return format(value);
-    };
+    });
   }
   // If value is false-ish, replaceValue is returned
   static allowFalsish(format, replaceValue) {
-    return function(value) {
+    return (function(value) {
       if (!value) {
         return replaceValue;
       }
       return format(value);
-    };
+    });
   }
   // Requires an Array satisfying check
   static arrayOf(format) {
-    return function(array) {
+    return (function(array) {
       if (!Array.isArray(array)) {
         throw new Error("not an array");
       }
@@ -17402,7 +17403,7 @@ var Formatter = class _Formatter {
         result.push(format(value));
       });
       return result;
-    };
+    });
   }
 };
 function isCommunityResourcable(value) {
@@ -17431,7 +17432,7 @@ function showThrottleMessage() {
   console.log("==========================");
 }
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/base-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/base-provider.js
 var __awaiter10 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -19245,7 +19246,7 @@ var BaseProvider = class extends Provider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/json-rpc-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/json-rpc-provider.js
 var __awaiter11 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -19905,7 +19906,7 @@ var JsonRpcProvider = class extends BaseProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/ws.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/ws.js
 var WS = null;
 try {
   WS = WebSocket;
@@ -19921,7 +19922,7 @@ try {
   };
 }
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/websocket-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/websocket-provider.js
 var __awaiter12 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -20194,7 +20195,7 @@ var WebSocketProvider = class extends JsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/url-json-rpc-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/url-json-rpc-provider.js
 var __awaiter13 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -20285,7 +20286,7 @@ var UrlJsonRpcProvider = class _UrlJsonRpcProvider extends StaticJsonRpcProvider
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/alchemy-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/alchemy-provider.js
 var logger34 = new Logger(version23);
 var defaultApiKey = "_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC";
 var AlchemyWebSocketProvider = class extends WebSocketProvider {
@@ -20367,7 +20368,7 @@ var AlchemyProvider = class extends UrlJsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/ankr-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/ankr-provider.js
 var logger35 = new Logger(version23);
 var defaultApiKey2 = "9f7d929b018cdffb338517efa06f58359e86ff1ffd350bc889738523659e7972";
 function getHost(name) {
@@ -20429,7 +20430,7 @@ var AnkrProvider = class extends UrlJsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/cloudflare-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/cloudflare-provider.js
 var __awaiter14 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -20490,7 +20491,7 @@ var CloudflareProvider = class extends UrlJsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/etherscan-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/etherscan-provider.js
 var __awaiter15 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -20909,7 +20910,7 @@ var EtherscanProvider = class extends BaseProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/fallback-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/fallback-provider.js
 var __awaiter16 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -21441,10 +21442,10 @@ var FallbackProvider = class extends BaseProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/ipc-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/ipc-provider.js
 var IpcProvider = null;
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/infura-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/infura-provider.js
 var logger39 = new Logger(version23);
 var defaultProjectId = "84842078b09946638c03157f83405213";
 var InfuraWebSocketProvider = class extends WebSocketProvider {
@@ -21555,7 +21556,7 @@ var InfuraProvider = class extends UrlJsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/json-rpc-batch-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/json-rpc-batch-provider.js
 var JsonRpcBatchProvider = class extends JsonRpcProvider {
   send(method, params) {
     const request = {
@@ -21619,7 +21620,7 @@ var JsonRpcBatchProvider = class extends JsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/nodesmith-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/nodesmith-provider.js
 var logger40 = new Logger(version23);
 var defaultApiKey3 = "ETHERS_JS_SHARED";
 var NodesmithProvider = class extends UrlJsonRpcProvider {
@@ -21655,7 +21656,7 @@ var NodesmithProvider = class extends UrlJsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/pocket-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/pocket-provider.js
 var logger41 = new Logger(version23);
 var defaultApplicationId = "62e1ad51b37b8e00394bda3b";
 var PocketProvider = class extends UrlJsonRpcProvider {
@@ -21722,7 +21723,7 @@ var PocketProvider = class extends UrlJsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/quicknode-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/quicknode-provider.js
 var logger42 = new Logger(version23);
 var defaultApiKey4 = "919b412a057b5e9c9b6dce193c5a60242d6efadb";
 var QuickNodeProvider = class extends UrlJsonRpcProvider {
@@ -21796,7 +21797,7 @@ var QuickNodeProvider = class extends UrlJsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/web3-provider.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/web3-provider.js
 var logger43 = new Logger(version23);
 var _nextId = 1;
 function buildWeb3LegacyFetcher(provider, sendFunc) {
@@ -21919,7 +21920,7 @@ var Web3Provider = class extends JsonRpcProvider {
   }
 };
 
-// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/index.js
+// ../../node_modules/.pnpm/@ethersproject+providers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/@ethersproject/providers/lib.esm/index.js
 var logger44 = new Logger(version23);
 function getDefaultProvider(network, options) {
   if (network == null) {
@@ -21963,7 +21964,7 @@ function getDefaultProvider(network, options) {
   }, options);
 }
 
-// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/utils.js
+// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/utils.js
 var utils_exports = {};
 __export(utils_exports, {
   AbiCoder: () => AbiCoder,
@@ -22231,13 +22232,13 @@ function parseEther(ether) {
   return parseUnits(ether, 18);
 }
 
-// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/_version.js
+// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/_version.js
 var version26 = "ethers/5.8.0";
 
-// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/ethers.js
+// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/ethers.js
 var logger47 = new Logger(version26);
 
-// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.0.9_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/index.js
+// ../../node_modules/.pnpm/ethers@5.8.0_bufferutil@4.1.0_utf-8-validate@5.0.10/node_modules/ethers/lib.esm/index.js
 try {
   const anyGlobal2 = window;
   if (anyGlobal2._ethers == null) {

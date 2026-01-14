@@ -11,13 +11,8 @@ import { ActionMessage } from './chat/action-message';
 import { WalletSetupCompact } from './chat/wallet-setup-compact';
 import { FarcasterActionCardCompact } from './chat/farcaster-action-card-compact';
 import { LensActionCardCompact } from './chat/lens-action-card-compact';
-// Removed import for unused component
 import { BaseActionMessage } from './chat/base-action-message';
 import { OptimismActionHandler } from './chat/optimism-action-handler';
-import { CeloActionHandler } from './chat/celo-action-handler';
-import { CeloCkesActionHandler } from './chat/celo-ckes-action-handler';
-import { CeloCcopActionHandler } from './chat/celo-ccop-action-handler';
-import { CeloPusoActionHandler } from './chat/celo-puso-action-handler';
 import { PolygonActionHandler } from './chat/polygon-action-handler';
 
 interface ActionButtonsProps {
@@ -122,31 +117,21 @@ export function InteractiveElement({
     (a) => a.args?.[0]?.title === 'Swap to EURA on Velodrome',
   );
 
-  // Find Celo action card
-  const celoActionCard = actionCardActions.find(
-    (a) => a.args?.[0]?.chain === 'CELO',
-  );
-
   // Find Polygon action card
   const polygonActionCard = actionCardActions.find(
     (a) => a.args?.[0]?.chain === 'POLYGON',
   );
 
-  // Find dedicated Celo actions
-  const celoAction = actions.find((a) => a.action === 'celo-action');
-  const celoCkesAction = actions.find((a) => a.action === 'celo-ckes-action');
-  const celoCcopAction = actions.find((a) => a.action === 'celo-ccop-action');
-  const celoPusoAction = actions.find((a) => a.action === 'celo-puso-action');
+  // Find dedicated Polygon actions
   const polygonAction = actions.find((a) => a.action === 'polygon-action');
 
-  // Filter out Farcaster, Lens, Base, Optimism, Celo, and Polygon actions from actionCardActions to avoid duplication
+  // Filter out Farcaster, Lens, Base, Optimism, and Polygon actions from actionCardActions to avoid duplication
   const filteredActionCards = actionCardActions.filter(
     (a) =>
       a !== farcasterActionCard &&
       a !== lensActionCard &&
       a !== baseActionCard &&
       a !== optimismActionCard &&
-      a !== celoActionCard &&
       a !== polygonActionCard,
   );
 
@@ -289,28 +274,6 @@ export function InteractiveElement({
         <OptimismActionHandler
           args={optimismAction?.args || optimismActionCard?.args || []}
         />
-      )}
-
-      {/* Handle both dedicated celo-action and action-card for Celo */}
-      {(celoAction || celoActionCard) && (
-        <CeloActionHandler
-          args={celoAction?.args || celoActionCard?.args || []}
-        />
-      )}
-
-      {/* Handle celo-ckes-action for cKES on Celo */}
-      {celoCkesAction && (
-        <CeloCkesActionHandler args={celoCkesAction?.args || []} />
-      )}
-
-      {/* Handle celo-ccop-action for cCOP on Celo */}
-      {celoCcopAction && (
-        <CeloCcopActionHandler args={celoCcopAction?.args || []} />
-      )}
-
-      {/* Handle celo-puso-action for PUSO on Celo */}
-      {celoPusoAction && (
-        <CeloPusoActionHandler args={celoPusoAction?.args || []} />
       )}
 
       {/* Handle both dedicated polygon-action and action-card for Polygon */}

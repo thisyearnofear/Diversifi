@@ -3,35 +3,26 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import { ethers } from 'ethers';
-import { CELO_TOKENS } from '@/utils/mento-utils';
 
 // Define token groups by region
 export const TOKEN_REGIONS = {
-  Africa: ['cKES'],
+  Africa: [],
   Europe: ['EURA'],
   USA: ['USDbC', 'USDC', 'DAI'],
-  LatAm: ['cCOP', 'BRZ'],
-  Asia: ['PUSO'],
+  LatAm: ['BRZ'],
+  Asia: [],
   RWA: [],
 };
 
 // Define conversion rates to USD for non-USD stablecoins
 export const TOKEN_USD_CONVERSION_RATES = {
-  cKES: 0.0078, // 1 KES ≈ 0.0078 USD
   EURA: 1.08, // 1 EUR ≈ 1.08 USD
-  cCOP: 0.00025, // 1 COP ≈ 0.00025 USD
   BRZ: 0.2, // 1 BRZ ≈ 0.20 USD
-  PUSO: 0.0179, // 1 PHP ≈ 0.0179 USD
   // Other tokens (USDbC, USDC, DAI) are already in USD
 };
 
 // Define token addresses by chain
 export const TOKEN_ADDRESSES = {
-  // Celo tokens
-  cKES: { address: CELO_TOKENS.CKES, chain: 'celo', decimals: 18 },
-  cCOP: { address: CELO_TOKENS.CCOP, chain: 'celo', decimals: 18 },
-  PUSO: { address: CELO_TOKENS.PUSO, chain: 'celo', decimals: 18 },
-
   // Base tokens
   USDbC: {
     address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
@@ -68,7 +59,6 @@ export const TOKEN_ADDRESSES = {
 
 // RPC URLs for different chains
 const RPC_URLS = {
-  celo: 'https://forno.celo.org',
   base: 'https://mainnet.base.org',
   optimism: 'https://mainnet.optimism.io',
   polygon: 'https://polygon-rpc.com',
