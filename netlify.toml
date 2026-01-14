@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install --no-frozen-lockfile && pnpm add -D -w stream-browserify buffer crypto-browserify util && pnpm build"
+  command = "pnpm install && pnpm build"
   publish = ".next"
 
 [build.environment]
