@@ -10,23 +10,15 @@ console.log(`Building in ${isProduction ? 'production' : 'development'} mode`);
 console.log(`Building on ${isNetlify ? 'Netlify' : 'local/other'} environment`);
 
 try {
-  // Ensure required dependencies are installed
-  if (isNetlify) {
-    console.log('Installing required dependencies for Netlify build...');
-    execSync('pnpm add -D -w stream-browserify buffer crypto-browserify util', { stdio: 'inherit' });
-  }
+  // Dependencies are managed via package.json - no need to install during build
 
-  // Skip migrations on Netlify completely
-  if (isNetlify) {
-    console.log('Building on Netlify - skipping database migrations');
-  }
-  // Only run migrations if we're not in production or if POSTGRES_URL is defined and we're not on Netlify
-  else if (!isProduction || process.env.POSTGRES_URL) {
-    console.log('Running database migrations...');
-    execSync('tsx lib/db/migrate', { stdio: 'inherit' });
-  } else {
-    console.log('Skipping database migrations in production environment');
-  }
+  // Skip all migrations during build
+  // Migrations should only run in production via manual command or deployment hooks
+  console.log('⏭️  Skipping database migrations during build');
+  console.log('   (Run "pnpm db:migrate" separately after deployment)');
+  
+  // Note: Database schema is defined in lib/db/schema.ts
+  // Migrations are version-controlled SQL files in lib/db/migrations/
 
   // Build the main Next.js app
   console.log('Building main Next.js application...');
