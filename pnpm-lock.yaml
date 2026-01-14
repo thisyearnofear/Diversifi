@@ -413,9 +413,6 @@ importers:
 
   packages/contracts:
     dependencies:
-      '@mento-protocol/mento-sdk':
-        specifier: ^1.0.7
-        version: 1.19.0(ethers@6.16.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       viem:
         specifier: 2.23.15
         version: 2.23.15(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -1895,15 +1892,6 @@ packages:
 
   '@marijn/find-cluster-break@1.0.2':
     resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==, tarball: https://registry.npmjs.org/@marijn/find-cluster-break/-/find-cluster-break-1.0.2.tgz}
-
-  '@mento-protocol/mento-core-ts@2.6.5-rc3':
-    resolution: {integrity: sha512-BMVPXKIFBw8BOoNWBODhDi6odIIBBU16guTzkNnDheFaeiExyBVIe+HpVc7vjvWgMbhESuDpN9tDmvzyjiN8Dg==, tarball: https://registry.npmjs.org/@mento-protocol/mento-core-ts/-/mento-core-ts-2.6.5-rc3.tgz}
-
-  '@mento-protocol/mento-sdk@1.19.0':
-    resolution: {integrity: sha512-+D94LFomVDdsKchyG/+dDmv7/UfGiBCiYR35bMLqwi13u700lKDb2c1y0B4njKLdBadOVglDBkslMneFVASSkw==, tarball: https://registry.npmjs.org/@mento-protocol/mento-sdk/-/mento-sdk-1.19.0.tgz}
-    engines: {node: '>=22'}
-    peerDependencies:
-      ethers: ^5.7
 
   '@metamask/eth-json-rpc-provider@1.0.1':
     resolution: {integrity: sha512-whiUMPlAOrVGmX8aKYVPvlKyG4CpQXiNNyt74vE1xb5sPvmx5oA7B/kOi/JdBvhGQq97U1/AVdXEdk2zkP8qyA==, tarball: https://registry.npmjs.org/@metamask/eth-json-rpc-provider/-/eth-json-rpc-provider-1.0.1.tgz}
@@ -7160,9 +7148,6 @@ packages:
   memoize-one@5.2.1:
     resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==, tarball: https://registry.npmjs.org/memoize-one/-/memoize-one-5.2.1.tgz}
 
-  mento-router-ts@0.2.0:
-    resolution: {integrity: sha512-wE142p1CSZSmqavPrkB3F++1/h/V6QNMm9wtFf9tdu3/4FgtkByFUOGmyIOaQVFldHle0POfZqC7KM5j3ZQgKA==, tarball: https://registry.npmjs.org/mento-router-ts/-/mento-router-ts-0.2.0.tgz}
-
   merge-descriptors@1.0.3:
     resolution: {integrity: sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ==, tarball: https://registry.npmjs.org/merge-descriptors/-/merge-descriptors-1.0.3.tgz}
 
@@ -11697,14 +11682,6 @@ snapshots:
       '@lit-labs/ssr-dom-shim': 1.5.1
 
   '@marijn/find-cluster-break@1.0.2': {}
-
-  '@mento-protocol/mento-core-ts@2.6.5-rc3': {}
-
-  '@mento-protocol/mento-sdk@1.19.0(ethers@6.16.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@mento-protocol/mento-core-ts': 2.6.5-rc3
-      ethers: 6.16.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      mento-router-ts: 0.2.0
 
   '@metamask/eth-json-rpc-provider@1.0.1':
     dependencies:
@@ -18844,8 +18821,6 @@ snapshots:
   media-typer@0.3.0: {}
 
   memoize-one@5.2.1: {}
-
-  mento-router-ts@0.2.0: {}
 
   merge-descriptors@1.0.3: {}
 
