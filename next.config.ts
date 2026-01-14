@@ -36,18 +36,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config) => {
-    config.resolve.fallback = {
-      fs: false,
-      net: false,
-      tls: false,
-      buffer: require.resolve('buffer/'),
-      stream: require.resolve('stream-browserify'),
-      util: require.resolve('util/'),
-      crypto: require.resolve('crypto-browserify'),
-    };
-    return config;
-  },
+
   skipTrailingSlashRedirect: true,
   output: 'standalone',
 };
