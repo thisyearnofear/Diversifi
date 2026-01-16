@@ -37,7 +37,8 @@ const fetchCreatedStarterKits = async (): Promise<StarterKit[]> => {
     throw new Error(`Failed to fetch created starter kits: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  return data.kits || [];
 };
 
 // Fetch claimed starter kits
@@ -48,7 +49,8 @@ const fetchClaimedStarterKits = async (): Promise<StarterKit[]> => {
     throw new Error(`Failed to fetch claimed starter kits: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  return data.kits || [];
 };
 
 // Hook for available starter kits

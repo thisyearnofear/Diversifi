@@ -571,6 +571,7 @@ export async function claimStarterKit({
       console.warn('⚠️ Database not available. Cannot claim starter kit.');
       return null;
     }
+    await createUserIfNotExists(userId);
     return await db
       .update(starterKit)
       .set({
@@ -592,6 +593,7 @@ export async function getClaimedStarterKits(userId: string) {
       );
       return [];
     }
+    await createUserIfNotExists(userId);
     return await db
       .select()
       .from(starterKit)
@@ -611,6 +613,7 @@ export async function getCreatedStarterKits(userId: string) {
       );
       return [];
     }
+    await createUserIfNotExists(userId);
     return await db
       .select()
       .from(starterKit)
@@ -654,6 +657,7 @@ export async function getUnclaimedStarterKits(userId: string) {
       );
       return [];
     }
+    await createUserIfNotExists(userId);
     return await db
       .select()
       .from(starterKit)

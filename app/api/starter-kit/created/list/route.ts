@@ -10,7 +10,7 @@ export async function GET() {
 
   try {
     const kits = await getCreatedStarterKits(session.user.id);
-    return NextResponse.json(kits);
+    return NextResponse.json({ kits });
   } catch (error) {
     console.error('Failed to list created starter kits:', error);
     return NextResponse.json(
