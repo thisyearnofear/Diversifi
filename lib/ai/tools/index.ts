@@ -2,7 +2,6 @@ import type { Session } from 'next-auth';
 import type { DataStreamWriter } from 'ai';
 import { createDocument } from './create-document';
 import { updateDocument } from './update-document';
-import { requestSuggestions } from './request-suggestions';
 import {
   saveUserInformation,
   getUserInformation,
@@ -26,10 +25,6 @@ export const setupTools = async ({
     ...baseTools,
     createDocument: createDocument({ session, dataStream }),
     updateDocument: updateDocument({ session, dataStream }),
-    requestSuggestions: requestSuggestions({
-      session,
-      dataStream,
-    }),
     saveUserInformation: saveUserInformation({ session }),
     getUserInformation: getUserInformation({ session }),
     deleteUserInformation: deleteUserInformationTool({ session }),

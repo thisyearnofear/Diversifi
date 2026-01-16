@@ -7,11 +7,8 @@ import {
   user,
   chat,
   document,
-  type Suggestion,
-  suggestion,
   type Message,
   message,
-  vote,
   userKnowledge,
   starterKit,
   type UserKnowledge,
@@ -119,7 +116,6 @@ export async function deleteChatById({ id }: { id: string }) {
       return null;
     }
 
-    await db.delete(vote).where(eq(vote.chatId, id));
     await db.delete(message).where(eq(message.chatId, id));
 
     return await db.delete(chat).where(eq(chat.id, id));
@@ -199,55 +195,7 @@ export async function getMessagesByChatId({ id }: { id: string }) {
   }
 }
 
-export async function voteMessage({
-  chatId,
-  messageId,
-  type,
-}: {
-  chatId: string;
-  messageId: string;
-  type: 'up' | 'down';
-}) {
-  try {
-    if (!db) {
-      console.warn('⚠️ Database not available. Cannot vote on message.');
-      return null;
-    }
 
-    const [existingVote] = await db
-      .select()
-      .from(vote)
-      .where(and(eq(vote.messageId, messageId)));
-
-    if (existingVote) {
-      return await db
-        .update(vote)
-        .set({ isUpvoted: type === 'up' })
-        .where(and(eq(vote.messageId, messageId), eq(vote.chatId, chatId)));
-    }
-    return await db.insert(vote).values({
-      chatId,
-      messageId,
-      isUpvoted: type === 'up',
-    });
-  } catch (error) {
-    console.error('Failed to upvote message in database', error);
-    throw error;
-  }
-}
-
-export async function getVotesByChatId({ id }: { id: string }) {
-  try {
-    if (!db) {
-      console.warn('⚠️ Database not available. Cannot get votes.');
-      return [];
-    }
-    return await db.select().from(vote).where(eq(vote.chatId, id));
-  } catch (error) {
-    console.error('Failed to get votes by chat id from database', error);
-    throw error;
-  }
-}
 
 export async function saveDocument({
   id,
@@ -351,44 +299,7 @@ export async function deleteDocumentsByIdAfterTimestamp({
   }
 }
 
-export async function saveSuggestions({
-  suggestions,
-}: {
-  suggestions: Array<Suggestion>;
-}) {
-  try {
-    if (!db) {
-      console.warn('⚠️ Database not available. Cannot save suggestions.');
-      return null;
-    }
-    return await db.insert(suggestion).values(suggestions);
-  } catch (error) {
-    console.error('Failed to save suggestions in database');
-    throw error;
-  }
-}
 
-export async function getSuggestionsByDocumentId({
-  documentId,
-}: {
-  documentId: string;
-}) {
-  try {
-    if (!db) {
-      console.warn('⚠️ Database not available. Cannot get suggestions.');
-      return [];
-    }
-    return await db
-      .select()
-      .from(suggestion)
-      .where(and(eq(suggestion.documentId, documentId)));
-  } catch (error) {
-    console.error(
-      'Failed to get suggestions by document version from database',
-    );
-    throw error;
-  }
-}
 
 export async function getMessageById({ id }: { id: string }) {
   try {

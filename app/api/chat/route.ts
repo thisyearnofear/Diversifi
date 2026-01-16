@@ -20,7 +20,6 @@ import {
 import { generateTitleFromUserMessage } from '../../actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
-import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { agentKitToTools } from '@/lib/web3/agentkit/framework-extensions/ai-sdk';
 import { z } from 'zod';
 import { tool } from 'ai';
@@ -161,10 +160,6 @@ export async function POST(request: Request) {
                 ...tools,
                 createDocument: createDocument({ session, dataStream }),
                 updateDocument: updateDocument({ session, dataStream }),
-                requestSuggestions: requestSuggestions({
-                  session,
-                  dataStream,
-                }),
                 saveUserInformation: saveUserInformation({ session }),
                 getUserInformation: getUserInformation({ session }),
                 getAvailableStarterKits: getAvailableStarterKitsTool(),
