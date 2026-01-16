@@ -1,23 +1,32 @@
 import { auth } from '@/app/auth';
 import { getVotesByChatId, voteMessage } from '@/lib/db/queries';
+import {
+  handleUnauthorized,
+  handleBadRequest,
+  handleSuccess,
+  handleApiError,
+} from '@/lib/api/errors';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const chatId = searchParams.get('chatId');
 
   if (!chatId) {
-    return new Response('chatId is required', { status: 400 });
+    return handleBadRequest('chatId is required');
   }
 
   const session = await auth();
 
-  if (!session || !session.user) {
-    return new Response('Unauthorized', { status: 401 });
+  if (!session?.user?.id) {
+    return handleUnauthorized();
   }
 
-  const votes = await getVotesByChatId({ id: chatId });
-
-  return Response.json(votes, { status: 200 });
+  try {
+    const votes = await getVotesByChatId({ id: chatId });
+    return handleSuccess(votes);
+  } catch (error) {
+    return handleApiError(error, 'Failed to fetch votes');
+  }
 }
 
 export async function PATCH(request: Request) {
@@ -29,20 +38,24 @@ export async function PATCH(request: Request) {
     await request.json();
 
   if (!chatId || !messageId || !type) {
-    return new Response('messageId and type are required', { status: 400 });
+    return handleBadRequest('chatId, messageId, and type are required');
   }
 
   const session = await auth();
 
-  if (!session || !session.user) {
-    return new Response('Unauthorized', { status: 401 });
+  if (!session?.user?.id) {
+    return handleUnauthorized();
   }
 
-  await voteMessage({
-    chatId,
-    messageId,
-    type: type,
-  });
+  try {
+    await voteMessage({
+      chatId,
+      messageId,
+      type: type,
+    });
 
-  return new Response('Message voted', { status: 200 });
+    return handleSuccess({ success: true });
+  } catch (error) {
+    return handleApiError(error, 'Failed to vote on message');
+  }
 }

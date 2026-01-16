@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { and, asc, desc, eq, gt, gte, inArray, isNull } from 'drizzle-orm';
 import { getDb } from './connection';
 

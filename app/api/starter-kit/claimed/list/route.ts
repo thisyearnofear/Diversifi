@@ -1,21 +1,21 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@/app/auth';
 import { getClaimedStarterKits } from '@/lib/db/queries';
+import {
+  handleUnauthorized,
+  handleSuccess,
+  handleApiError,
+} from '@/lib/api/errors';
 
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return handleUnauthorized();
   }
 
   try {
     const kits = await getClaimedStarterKits(session.user.id);
-    return NextResponse.json({ kits });
+    return handleSuccess({ kits });
   } catch (error) {
-    console.error('Failed to list claimed starter kits:', error);
-    return NextResponse.json(
-      { error: 'Failed to list claimed starter kits' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to list claimed starter kits');
   }
 }

@@ -16,6 +16,7 @@ import {
   decrypt,
   type SessionPayload,
 } from '@/lib/auth/session';
+import { createUserIfNotExists } from '@/lib/db/queries';
 
 const chain =
   process.env.NEXT_PUBLIC_ACTIVE_CHAIN === 'base' ? base : baseSepolia;
@@ -124,6 +125,9 @@ export const verifySiwe = async (message: string, signature: `0x${string}`) => {
         );
         return { status: 'failed', error: 'Signature verification failed' };
       }
+
+      // Ensure user exists in database before creating session
+      await createUserIfNotExists(parsedMessage.address);
 
       // Create session and explicitly set cookie
       // Clear any existing session first to avoid conflicts

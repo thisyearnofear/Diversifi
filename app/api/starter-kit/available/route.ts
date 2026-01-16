@@ -2,18 +2,19 @@ import {
   getAvailableStarterKits,
   claimAvailableStarterKit,
 } from '@/lib/db/queries';
-import { NextResponse } from 'next/server';
+import {
+  handleSuccess,
+  handleApiError,
+  handleBadRequest,
+  handleNotFound,
+} from '@/lib/api/errors';
 
 export async function GET() {
   try {
     const kits = await getAvailableStarterKits();
-    return NextResponse.json({ kits });
+    return handleSuccess({ kits });
   } catch (error) {
-    console.error('Failed to get available starter kits:', error);
-    return NextResponse.json(
-      { error: 'Failed to get available starter kits' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to get available starter kits');
   }
 }
 
@@ -22,27 +23,17 @@ export async function POST(request: Request) {
     const { userId } = await request.json();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: 'userId is required' },
-        { status: 400 },
-      );
+      return handleBadRequest('userId is required');
     }
 
     const kit = await claimAvailableStarterKit(userId);
 
     if (!kit) {
-      return NextResponse.json(
-        { error: 'No starter kits available' },
-        { status: 404 },
-      );
+      return handleNotFound('No starter kits available');
     }
 
-    return NextResponse.json({ kit });
+    return handleSuccess({ kit });
   } catch (error) {
-    console.error('Failed to claim starter kit:', error);
-    return NextResponse.json(
-      { error: 'Failed to claim starter kit' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to claim starter kit');
   }
 }
