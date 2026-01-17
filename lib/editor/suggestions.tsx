@@ -11,6 +11,13 @@ import { Suggestion as PreviewSuggestion } from '@/components/suggestion';
 
 import type { BlockKind } from '@/components/block';
 
+export interface Suggestion {
+  id: string;
+  originalText: string;
+  suggestedText: string;
+  description: string;
+}
+
 export interface UISuggestion extends Suggestion {
   selectionStart: number;
   selectionEnd: number;
