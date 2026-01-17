@@ -39,12 +39,36 @@ export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
+    let requestData;
+    try {
+      requestData = await request.json();
+    } catch (parseError) {
+      console.error('Failed to parse request JSON:', parseError);
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid request',
+          message: 'Failed to parse request body',
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
     const {
       id,
       messages,
       selectedChatModel,
     }: { id: string; messages: Array<Message>; selectedChatModel: string } =
-      await request.json();
+      requestData;
+
+    if (!id || !messages || !selectedChatModel) {
+      return new Response(
+        JSON.stringify({
+          error: 'Missing required fields',
+          message: 'id, messages, and selectedChatModel are required',
+        }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
 
     const attachments = messages.flatMap(
       (message) => message.experimental_attachments ?? [],
@@ -57,7 +81,7 @@ export async function POST(request: Request) {
       session = await auth();
     } catch (authError) {
       console.error('Authentication error in chat API:', authError);
-      // Continue without authentication
+      // Continue without authentication - app should work without auth
     }
 
     const userMessage = getMostRecentUserMessage(messages);
@@ -67,49 +91,71 @@ export async function POST(request: Request) {
     }
 
     if (session?.user?.id) {
-      const userInfo = await getUser(session.user.id);
-      userProfile = `USER-WALLET-ADDRESS=${
-        session.user.id
-      }. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile(
-        {
-          userInfo: userInfo[0],
-          attachments,
-        },
-      )}`;
-
-      const chat = await getChatById({ id });
-      if (!chat) {
-        const title = await generateTitleFromUserMessage({
-          message: userMessage,
-        });
-        await saveChat({ id, userId: session.user.id, title });
-
-        // Only attempt chat limit enforcement if we have a valid session
-        if (session?.user?.id) {
-          const enforceUrl = process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}/api/chat/enforce-limit`
-            : 'http://localhost:4000/api/chat/enforce-limit';
-
-          // Make chat limit enforcement completely non-blocking
-          // Use a fire-and-forget approach that won't affect the main flow
-          setTimeout(() => {
-            fetch(enforceUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                // Include session info to prevent 401
-                Cookie: request.headers.get('cookie') || '',
-              },
-            }).catch((error: Error) => {
-              // Just log the error and continue
-              console.warn('Chat limit enforcement failed:', error);
-            });
-          }, 0);
+      try {
+        const userInfo = await getUser(session.user.id);
+        if (userInfo && userInfo.length > 0) {
+          userProfile = `USER-WALLET-ADDRESS=${
+            session.user.id
+          }. IMPORTANT: The user has connected their wallet and is fully authenticated. DO NOT suggest connecting a wallet or signing in. ${generateUserProfile(
+            {
+              userInfo: userInfo[0],
+              attachments,
+            },
+          )}`;
+        } else {
+          userProfile = `USER-WALLET-ADDRESS=${session.user.id}. User is authenticated but no profile data available.`;
         }
+      } catch (userError) {
+        console.warn('Failed to load user info, continuing without it:', userError);
+        userProfile = `USER-WALLET-ADDRESS=${session.user.id}. (Profile unavailable)`;
       }
-      await saveMessages({
-        messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
-      });
+
+      try {
+        const chat = await getChatById({ id });
+        if (!chat) {
+          try {
+            const title = await generateTitleFromUserMessage({
+              message: userMessage,
+            });
+            await saveChat({ id, userId: session.user.id, title });
+          } catch (titleError) {
+            console.warn('Failed to save chat, continuing:', titleError);
+          }
+
+          // Only attempt chat limit enforcement if we have a valid session
+          if (session?.user?.id) {
+            const enforceUrl = process.env.VERCEL_URL
+              ? `https://${process.env.VERCEL_URL}/api/chat/enforce-limit`
+              : 'http://localhost:3000/api/chat/enforce-limit';
+
+            // Make chat limit enforcement completely non-blocking
+            // Use a fire-and-forget approach that won't affect the main flow
+            setTimeout(() => {
+              fetch(enforceUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  // Include session info to prevent 401
+                  Cookie: request.headers.get('cookie') || '',
+                },
+              }).catch((error: Error) => {
+                // Just log the error and continue
+                console.warn('Chat limit enforcement failed:', error);
+              });
+            }, 0);
+          }
+        }
+      } catch (chatError) {
+        console.warn('Failed to load/save chat, continuing without persistence:', chatError);
+      }
+
+      try {
+        await saveMessages({
+          messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
+        });
+      } catch (msgError) {
+        console.warn('Failed to save messages, continuing:', msgError);
+      }
     }
 
     let agentKit;

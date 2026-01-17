@@ -15,12 +15,14 @@ const config = createConfig({
   // Use type assertion to bypass type checking
   chains: [base, mainnet, celo, optimism, polygon] as any,
   transports: {
-    [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC || ""),
-    [mainnet.id]: http(process.env.NEXT_PUBLIC_ETHEREUM_RPC || ""),
-    [celo.id]: http(process.env.NEXT_PUBLIC_CELO_RPC || ""),
-    [optimism.id]: http(process.env.NEXT_PUBLIC_OPTIMISM_RPC || ""),
-    [polygon.id]: http(process.env.NEXT_PUBLIC_POLYGON_RPC || ""),
+    [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC || "https://mainnet.base.org"),
+    [mainnet.id]: http(process.env.NEXT_PUBLIC_ETHEREUM_RPC || "https://eth.llamarpc.com"),
+    [celo.id]: http(process.env.NEXT_PUBLIC_CELO_RPC || "https://forno.celo.org"),
+    [optimism.id]: http(process.env.NEXT_PUBLIC_OPTIMISM_RPC || "https://mainnet.optimism.io"),
+    [polygon.id]: http(process.env.NEXT_PUBLIC_POLYGON_RPC || "https://polygon-rpc.com"),
   },
+  // Prevent MetaMask SDK from trying to inject window.ethereum
+  ssr: false,
 });
 
 // Create a new query client
