@@ -2,7 +2,7 @@ import { type Message, createDataStreamResponse, streamText, Output } from 'ai';
 
 import { auth } from '@/app/auth';
 import type { Session } from 'next-auth';
-import { myProvider } from '@/lib/ai/models';
+import { myProvider, fallbackProvider } from '@/lib/ai/models';
 import { generateSystemPrompt } from '@/lib/ai/prompts';
 import {
   deleteChatById,
@@ -172,8 +172,14 @@ export async function POST(request: Request) {
 
     return createDataStreamResponse({
       execute: (dataStream) => {
+        // Select provider: use Venice fallback if Venice key exists, otherwise use OpenAI
+        const hasVeniceKey = !!process.env.VENICE_API_KEY;
+        const selectedProvider = hasVeniceKey ? fallbackProvider : myProvider;
+        
+        console.log(`[Chat API] Using ${hasVeniceKey ? 'Venice (fallback)' : 'OpenAI (primary)'} provider for model: ${selectedChatModel}`);
+
         const result = streamText({
-          model: myProvider.languageModel(selectedChatModel),
+          model: selectedProvider.languageModel(selectedChatModel),
           system: generateSystemPrompt({ selectedChatModel }) + userProfile,
           messages,
           maxSteps: 10,
