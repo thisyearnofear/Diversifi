@@ -6,7 +6,6 @@ import { useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
 import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
 import { fetcher, generateUUID } from '@/lib/utils';
 
 import { Block } from './block';
@@ -54,10 +53,7 @@ export function Chat({
 
   // We now handle the SEND_CHAT_MESSAGE event in the ActionHandler component
 
-  const { data: votes } = useSWR<Array<Vote>>(
-    isAuthenticated ? `/api/vote?chatId=${id}` : null,
-    fetcher,
-  );
+
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isBlockVisible = useBlockSelector((state) => state.isVisible);
@@ -83,7 +79,6 @@ export function Chat({
           <Messages
             chatId={id}
             isLoading={chatMethods.isLoading}
-            votes={votes}
             messages={chatMethods.messages}
             setMessages={chatMethods.setMessages}
             reload={chatMethods.reload}
@@ -116,7 +111,6 @@ export function Chat({
             messages={chatMethods.messages}
             setMessages={chatMethods.setMessages}
             reload={chatMethods.reload}
-            votes={votes}
             isReadonly={isReadonly}
           />
 

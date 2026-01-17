@@ -52,11 +52,9 @@ export async function middleware(request: NextRequest) {
 // Configure which routes use this middleware
 export const config = {
   matcher: [
-    '/api/vote',
     '/api/history',
     '/api/files/upload',
     '/api/document',
-    '/api/suggestions',
     // Excluding /api/chat to allow unauthenticated access
   ],
 };

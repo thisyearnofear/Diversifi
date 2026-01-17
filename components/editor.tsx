@@ -6,7 +6,7 @@ import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import React, { memo, useEffect, useRef } from 'react';
 
-import type { Suggestion } from '@/lib/db/schema';
+
 import {
   documentSchema,
   handleTransaction,
@@ -17,11 +17,7 @@ import {
   buildDocumentFromContent,
   createDecorations,
 } from '@/lib/editor/functions';
-import {
-  projectWithPositions,
-  suggestionsPlugin,
-  suggestionsPluginKey,
-} from '@/lib/editor/suggestions';
+import { suggestionsPlugin } from '@/lib/editor/suggestions';
 
 type EditorProps = {
   content: string;
@@ -29,13 +25,12 @@ type EditorProps = {
   status: 'streaming' | 'idle';
   isCurrentVersion: boolean;
   currentVersionIndex: number;
-  suggestions: Array<Suggestion>;
+  
 };
 
 function PureEditor({
   content,
   onSaveContent,
-  suggestions,
   status,
 }: EditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,25 +120,7 @@ function PureEditor({
     }
   }, [content, status]);
 
-  useEffect(() => {
-    if (editorRef.current?.state.doc && content) {
-      const projectedSuggestions = projectWithPositions(
-        editorRef.current.state.doc,
-        suggestions,
-      ).filter(
-        (suggestion) => suggestion.selectionStart && suggestion.selectionEnd,
-      );
 
-      const decorations = createDecorations(
-        projectedSuggestions,
-        editorRef.current,
-      );
-
-      const transaction = editorRef.current.state.tr;
-      transaction.setMeta(suggestionsPluginKey, { decorations });
-      editorRef.current.dispatch(transaction);
-    }
-  }, [suggestions, content]);
 
   return (
     <div className="relative prose dark:prose-invert" ref={containerRef} />
@@ -152,7 +129,6 @@ function PureEditor({
 
 function areEqual(prevProps: EditorProps, nextProps: EditorProps) {
   return (
-    prevProps.suggestions === nextProps.suggestions &&
     prevProps.currentVersionIndex === nextProps.currentVersionIndex &&
     prevProps.isCurrentVersion === nextProps.isCurrentVersion &&
     !(prevProps.status === 'streaming' && nextProps.status === 'streaming') &&

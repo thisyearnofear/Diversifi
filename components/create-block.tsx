@@ -1,4 +1,4 @@
-import type { Suggestion } from '@/lib/db/schema';
+
 import type { UseChatHelpers } from 'ai/react';
 import type { ComponentType, Dispatch, ReactNode, SetStateAction } from 'react';
 import type { DataStreamDelta } from './data-stream-handler';
@@ -39,7 +39,7 @@ interface BlockContent<M = any> {
   isCurrentVersion: boolean;
   currentVersionIndex: number;
   status: 'streaming' | 'idle';
-  suggestions: Array<Suggestion>;
+  
   onSaveContent: (updatedContent: string, debounce: boolean) => void;
   isInline: boolean;
   getDocumentContentById: (index: number) => string;

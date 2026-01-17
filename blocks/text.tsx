@@ -10,36 +10,15 @@ import {
   RedoIcon,
   UndoIcon,
 } from '@/components/icons';
-import type { Suggestion } from '@/lib/db/schema';
 import { toast } from 'sonner';
-import { getSuggestions } from './actions';
 
-interface TextBlockMetadata {
-  suggestions: Array<Suggestion>;
-}
-
-export const textBlock = new Block<'text', TextBlockMetadata>({
+export const textBlock = new Block<'text', {}>({
   kind: 'text',
   description: 'Useful for text content, like drafting essays and emails.',
-  initialize: async ({ documentId, setMetadata }) => {
-    const suggestions = await getSuggestions({ documentId });
-
-    setMetadata({
-      suggestions,
-    });
+  initialize: async ({ setMetadata }) => {
+    setMetadata({});
   },
-  onStreamPart: ({ streamPart, setMetadata, setBlock }) => {
-    if (streamPart.type === 'suggestion') {
-      setMetadata((metadata) => {
-        return {
-          suggestions: [
-            ...metadata.suggestions,
-            streamPart.content as Suggestion,
-          ],
-        };
-      });
-    }
-
+  onStreamPart: ({ streamPart, setBlock }) => {
     if (streamPart.type === 'text-delta') {
       setBlock((draftBlock) => {
         return {
@@ -83,16 +62,11 @@ export const textBlock = new Block<'text', TextBlockMetadata>({
         <div className="flex flex-row py-8 md:p-20 px-4">
           <Editor
             content={content}
-            suggestions={metadata ? metadata.suggestions : []}
             isCurrentVersion={isCurrentVersion}
             currentVersionIndex={currentVersionIndex}
             status={status}
             onSaveContent={onSaveContent}
           />
-
-          {metadata?.suggestions && metadata.suggestions.length > 0 ? (
-            <div className="md:hidden h-dvh w-12 shrink-0" />
-          ) : null}
         </div>
       </>
     );
@@ -161,16 +135,6 @@ export const textBlock = new Block<'text', TextBlockMetadata>({
         });
       },
     },
-    {
-      icon: <MessageIcon />,
-      description: 'Request suggestions',
-      onClick: ({ appendMessage }) => {
-        appendMessage({
-          role: 'user',
-          content:
-            'Please add suggestions you have that could improve the writing.',
-        });
-      },
-    },
+
   ],
 });

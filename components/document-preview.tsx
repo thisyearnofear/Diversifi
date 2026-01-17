@@ -245,7 +245,6 @@ const DocumentContent = ({ document }: { document: Document }) => {
     currentVersionIndex: 0,
     status: block.status,
     saveContent: () => {},
-    suggestions: [],
   };
 
   return (

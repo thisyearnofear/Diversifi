@@ -73,26 +73,3 @@ export interface Reward {
   claimedAt?: Date;
   createdAt: Date;
 }
-
-/**
- * Voting system
- */
-export interface Vote {
-  id: string;
-  userId: string;
-  proposalId: string;
-  choice: number;
-  weight: number;
-  timestamp: Date;
-}
-
-export interface Proposal {
-  id: string;
-  title: string;
-  description: string;
-  options: string[];
-  voteCount: number[];
-  status: 'active' | 'closed' | 'passed' | 'failed';
-  createdAt: Date;
-  endsAt: Date;
-}
